@@ -3,15 +3,16 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "./interfaces/ConnectorErrors.sol";
 import "./ZetaConnector.base.sol";
 import "./ZetaInterfaces.sol";
 
 contract ZetaConnectorEth is ZetaConnectorBase {
     constructor(
-        address _zetaTokenAddress,
-        address _tssAddress,
-        address _tssAddressUpdater
-    ) ZetaConnectorBase(_zetaTokenAddress, _tssAddress, _tssAddressUpdater) {}
+        address zetaTokenAddress,
+        address tssAddress,
+        address tssAddressUpdater
+    ) ZetaConnectorBase(zetaTokenAddress, tssAddress, tssAddressUpdater) {}
 
     function getLockedAmount() public view returns (uint256) {
         return IERC20(zetaToken).balanceOf(address(this));
@@ -19,7 +20,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
 
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), input.zetaAmount);
-        require(success == true, "ZetaConnector: error transferring Zeta");
+        if (!success) revert ZetaTransferError();
 
         emit ZetaSent(
             msg.sender,
@@ -41,7 +42,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
         bool success = IERC20(zetaToken).transfer(destinationAddress, zetaAmount);
-        require(success == true, "ZetaConnector: error transferring Zeta");
+        if (!success) revert ZetaTransferError();
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(

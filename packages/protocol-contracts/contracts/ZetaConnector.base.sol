@@ -4,16 +4,17 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-import "./ZetaReceiver.sol";
+import "./interfaces/ConnectorErrors.sol";
 import "./ZetaInterfaces.sol";
 
-contract ZetaConnectorBase is Pausable {
+contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public zetaToken;
 
     /**
-     * @dev Collectively hold by Zeta blockchain validators.
+     * @dev Collectively held by Zeta blockchain validators.
      */
     address public tssAddress;
+
     address public tssAddressUpdater;
 
     event ZetaSent(
@@ -44,36 +45,36 @@ contract ZetaConnectorBase is Pausable {
     );
 
     constructor(
-        address _zetaTokenAddress,
-        address _tssAddress,
-        address _tssAddressUpdater
+        address zetaTokenAddress,
+        address tssAddress_,
+        address tssAddressUpdater_
     ) {
-        zetaToken = _zetaTokenAddress;
-        tssAddress = _tssAddress;
-        tssAddressUpdater = _tssAddressUpdater;
+        zetaToken = zetaTokenAddress;
+        tssAddress = tssAddress_;
+        tssAddressUpdater = tssAddressUpdater_;
     }
 
     modifier onlyTssAddress() {
-        require(msg.sender == tssAddress, "ZetaConnector: only TSS address can call this function");
+        if (msg.sender != tssAddress) revert CallerIsNotTss(msg.sender);
         _;
     }
 
     modifier onlyTssUpdater() {
-        require(msg.sender == tssAddressUpdater, "ZetaConnector: only TSS updater can call this function");
+        if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
         _;
     }
 
-    // update the TSS Address in case of Zeta blockchain validator nodes churn
-    function updateTssAddress(address _tssAddress) external onlyTssUpdater {
-        require(_tssAddress != address(0), "ZetaConnector: invalid tssAddress");
+    function updateTssAddress(address tssAddress_) external onlyTssUpdater {
+        if (tssAddress_ == address(0)) revert InvalidAddress();
 
-        tssAddress = _tssAddress;
+        tssAddress = tssAddress_;
     }
 
-    // Change the ownership of tssAddressUpdater to the Zeta blockchain TSS nodes.
-    // Effectively, only Zeta blockchain validators collectively can update TSS Address afterwards.
+    /**I
+     * @dev Changes the ownership of tssAddressUpdater to be the one held by the Zeta blockchain TSS nodes.
+     */
     function renounceTssAddressUpdater() external onlyTssUpdater {
-        require(tssAddress != address(0), "ZetaConnector: invalid tssAddress");
+        if (tssAddress == address(0)) revert InvalidAddress();
 
         tssAddressUpdater = tssAddress;
     }
