@@ -1,0 +1,9 @@
+{
+  "name": "@zetachain/addresses",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "scripts": {
+    "tsc:watch": "npx tsc --watch"
+  }
+}

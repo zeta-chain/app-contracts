@@ -1,0 +1,1 @@
+export const ZETA_INITIAL_SUPPLY = 2_100_000_000;

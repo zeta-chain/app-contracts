@@ -1,0 +1,25 @@
+{
+  "files.eol": "\n",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#4b8b54",
+    "statusBarItem.hoverBackground": "#71C87D"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "[solidity]": {
+		"editor.tabSize": 4,
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+	},
+  "[typescript]": {
+    "editor.tabSize": 2,
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
+	"[javascript]": {
+    "editor.tabSize": 2,
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "solidity.defaultCompiler": "localNodeModule"
+}

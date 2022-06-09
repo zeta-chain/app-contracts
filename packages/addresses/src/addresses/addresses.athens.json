@@ -1,0 +1,44 @@
+{
+  "bsc-testnet": {
+    "connector": "0x202aed942eb71203741eced2913a29C695a7c7F6",
+    "crossChainCounter": "",
+    "crossChainNft": "0xa9016FB99846314E0f96f657E5271cFD7919a244",
+    "multiChainValue": "0x8f56b3e5b0D4bC33E7E52eC55271e73ece6024c6",
+    "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
+    "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
+    "uniswapV2Router02": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+    "zetaToken": "0xad7d0795ffdf21f20c89240D540487B1445c7D03",
+    "multiChainSwap": "0xD4fAa6BAbBb97E0BDF755D396af48CB66eBa736c"
+  },
+  "goerli": {
+    "connector": "0x0B16Fc7e2D627d82255ba21e53Cf6c11B5186046",
+    "crossChainCounter": "",
+    "crossChainNft": "0xe08f1d23a68231543a595391D82c39BbaFc22470",
+    "multiChainValue": "0x0EaA929a2874183e2324Bb2745F812c942b00F60",
+    "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
+    "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
+    "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+    "zetaToken": "0x011a76081989aDA18d0a16bf3fee2C6c3BD07B07",
+    "multiChainSwap": "0xDB6D960642ea523549Ad108F495c89cfE5E51668"
+  },
+  "polygon-mumbai": {
+    "connector": "0xa5467B39Ad9f51DEb6b30Abfa9828531dCBA99A9",
+    "crossChainCounter": "",
+    "crossChainNft": "",
+    "multiChainValue": "0xb3021F5603291895b0Df5fC6276cda33a0B90fa6",
+    "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
+    "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
+    "uniswapV2Router02": "",
+    "zetaToken": "0x84383be9B3Eda50ABD5899936D4963505d449de2"
+  },
+  "ropsten": {
+    "connector": "0x91Ea4f79D39DA890B03E965111953d0494936072",
+    "crossChainCounter": "",
+    "crossChainNft": "",
+    "multiChainValue": "0x4740f4051eA6D896C694303228D86Ba3141065ca",
+    "tss": "0x61141Bce5352fC9b5Ff648468676e356518D86AB",
+    "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
+    "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+    "zetaToken": "0x3357A3bd90A001282bA2152D6c0a2372c8E0e28E"
+  }
+}
