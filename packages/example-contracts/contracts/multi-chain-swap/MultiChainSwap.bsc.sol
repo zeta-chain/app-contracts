@@ -2,7 +2,6 @@
 pragma solidity 0.8.9;
 
 import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaReceiver.sol";
 
 abstract contract MultiChainSwapBsc is ZetaReceiver {
     address public connectorAddress;

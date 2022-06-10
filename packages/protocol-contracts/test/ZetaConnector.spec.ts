@@ -69,7 +69,7 @@ describe("ZetaConnector tests", () => {
       args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address],
     });
 
-    await zetaTokenNonEthContract.updateTSSAndConnectorAddresses(
+    await zetaTokenNonEthContract.updateTssAndConnectorAddresses(
       tssSigner.address,
       zetaConnectorNonEthContract.address
     );
@@ -525,7 +525,7 @@ describe("ZetaConnector tests", () => {
       });
 
       it("Should revert if mint fails", async () => {
-        await zetaTokenNonEthContract.updateTSSAndConnectorAddresses(tssSigner.address, randomSigner.address);
+        await zetaTokenNonEthContract.updateTssAndConnectorAddresses(tssSigner.address, randomSigner.address);
 
         await expect(
           zetaConnectorNonEthContract
