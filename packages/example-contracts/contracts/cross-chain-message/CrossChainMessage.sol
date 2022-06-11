@@ -40,13 +40,13 @@ contract CrossChainMessage is Ownable {
     /**
      * @dev Can be set on the constructor, but we favor this pattern for more flexibility.
      */
-    function setCrossChainID(uint256 _ccId) public onlyOwner {
+    function setCrossChainId(uint256 _ccId) public onlyOwner {
         _crossChainId = _ccId;
     }
 
     function sendHelloWorld() external {
         require(_crossChainAddress.length != 0, "Cross-chain address is not set");
-        require(_crossChainId != 0, "Cross-chain ID is not set");
+        require(_crossChainId != 0, "Cross-chain id is not set");
 
         _zeta.send(
             ZetaInterfaces.SendInput({
