@@ -1,43 +1,60 @@
-import { exec, spawn } from "node:child_process";
+#!/usr/bin/env node
+
+import fs from "fs";
+import inquirer from "inquirer";
+import { execSync } from "node:child_process";
 import path from "node:path";
-import util from "node:util";
 
 const projectRoot = path.join(__dirname, "../");
-const packageName = "example-contracts";
 const solcVersion = "0.8.12";
+const timestamp = Date.now();
 
-const dockerCommand = `cd /home/trufflecon/packages/${packageName} && \
-solc-select use ${solcVersion} && \
-slither ./
-`;
-
-const execPromise = util.promisify(exec);
+async function getPackageName() {
+  const packageName = await inquirer.prompt([
+    {
+      type: "list",
+      message: "Which set of contracts would you like to test?",
+      name: "contracts",
+      choices: ["protocol-contracts", "example-contracts"],
+    },
+  ]);
+  return packageName.contracts;
+}
 
 const run = async (command: string) => {
   try {
-    console.log("STARTING");
-    const { stdout, stderr } = await execPromise(command);
-    console.log("STARTING2");
-
-    if (stderr) {
-      console.error(`stderr: ${stderr}`);
-      return;
-    }
-    console.log("STARTING3");
-
-    console.log(`stdout:\n${stdout}`);
+    console.log("Starting -- This may take a few minutes...");
+    execSync(command, {
+      encoding: "utf-8",
+      stdio: "inherit",
+    });
+    console.log("Results output to the console and saved to slither-output/ in Markdown, JSON, and SARIF formats.");
   } catch (error: any) {
-    console.log("STARTING34");
-    if (error?.message) console.error(`error: ${error.message}`);
+    console.error("Error: Docker Failed To Run");
+    console.error(`${error}`);
   }
 };
 
-const runSlither = () =>
+function runSlither(packageName: string) {
+  const dockerCommand = `cd /home/trufflecon/packages/${packageName} && \
+  solc-select use ${solcVersion} && \
+  slither --json ../../scripts/slither-results/${packageName}-${timestamp}.json \
+  --sarif ../../scripts/slither-results/${packageName}-${timestamp}.sarif \
+  --checklist  ./ | tee ../../scripts/slither-results/${packageName}-${timestamp}.md`;
   run(`docker run -v "${projectRoot}":/home/trufflecon trailofbits/eth-security-toolbox  -c "${dockerCommand}"`);
+}
+
+function createOutputDir() {
+  var dir = "./slither-results";
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+}
 
 async function main() {
-  // await run("slither ");
-  await runSlither();
+  createOutputDir();
+  const packageName = await getPackageName();
+  await runSlither(packageName);
 }
 
 main()

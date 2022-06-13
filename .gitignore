@@ -20,3 +20,6 @@ tsconfig.tsbuildinfo
 # Misc
 .env
 .DS_Store
+
+#Slither
+slither-results* 
