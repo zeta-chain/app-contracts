@@ -44,13 +44,18 @@ describe("CrossChainWarriors tests", () => {
       zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
     await crossChainWarriorsContractChainB.setCrossChainId(chainAId);
-    await crossChainWarriorsContractChainB.setCrossChainAddress(
-      ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address])
-    );
 
-    await crossChainWarriorsContractChainA.setCrossChainAddress(
-      ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainB.address])
+    const encodedCrossChainAddressB = ethers.utils.solidityPack(
+      ["address"],
+      [crossChainWarriorsContractChainB.address]
     );
+    crossChainWarriorsContractChainA.setInteractorByChainId(chainBId, encodedCrossChainAddressB);
+
+    const encodedCrossChainAddressA = ethers.utils.solidityPack(
+      ["address"],
+      [crossChainWarriorsContractChainA.address]
+    );
+    crossChainWarriorsContractChainB.setInteractorByChainId(chainAId, encodedCrossChainAddressA);
 
     /**
      * @description to pay for cross-chain gas
@@ -151,7 +156,7 @@ describe("CrossChainWarriors tests", () => {
           zetaAmount: 0,
           message: encoder.encode(["address"], [deployerAddress]),
         })
-      ).to.be.revertedWith("This function can only be called by the Connector contract");
+      ).to.be.revertedWith(`InvalidCaller("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")`);
     });
 
     it("Should revert if the cross-chain address doesn't match with the stored one", async () => {
@@ -163,7 +168,7 @@ describe("CrossChainWarriors tests", () => {
           0,
           encoder.encode(["address"], [zetaConnectorMockContract.address])
         )
-      ).to.be.revertedWith("Cross-chain address doesn't match");
+      ).to.be.revertedWith("InvalidZetaMessageCall()");
     });
 
     it("Should revert if the message type doesn't match with CROSS_CHAIN_TRANSFER_MESSAGE", async () => {

@@ -32,14 +32,14 @@ describe("CrossChainCounter tests", () => {
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
     });
 
-    await crossChainCounterContractA.setCrossChainAddress(
-      ethers.utils.solidityPack(["address"], [crossChainCounterContractB.address])
-    );
-    await crossChainCounterContractB.setCrossChainAddress(
-      ethers.utils.solidityPack(["address"], [crossChainCounterContractA.address])
-    );
     await crossChainCounterContractA.setCrossChainId(chainBId);
     await crossChainCounterContractB.setCrossChainId(chainAId);
+
+    const encodedCrossChainAddressB = ethers.utils.solidityPack(["address"], [crossChainCounterContractB.address]);
+    crossChainCounterContractA.setInteractorByChainId(chainBId, encodedCrossChainAddressB);
+
+    const encodedCrossChainAddressA = ethers.utils.solidityPack(["address"], [crossChainCounterContractA.address]);
+    crossChainCounterContractB.setInteractorByChainId(chainAId, encodedCrossChainAddressA);
 
     accounts = await ethers.getSigners();
     [deployer] = accounts;
@@ -52,6 +52,7 @@ describe("CrossChainCounter tests", () => {
         zetaConnectorMockAddress: zetaConnectorMockContract.address,
       });
 
+      await unsetContract.setCrossChainId(chainBId);
       await expect(unsetContract.crossChainCount()).to.be.revertedWith("Cross-chain address is not set");
     });
 
@@ -60,7 +61,8 @@ describe("CrossChainCounter tests", () => {
         zetaConnectorMockAddress: zetaConnectorMockContract.address,
       });
 
-      await unsetContract.setCrossChainAddress(
+      await unsetContract.setInteractorByChainId(
+        chainAId,
         ethers.utils.solidityPack(["address"], [crossChainCounterContractB.address])
       );
 
@@ -78,7 +80,7 @@ describe("CrossChainCounter tests", () => {
           zetaAmount: 0,
           message: encoder.encode(["address"], [deployerAddress]),
         })
-      ).to.be.revertedWith("This function can only be called by the Connector contract");
+      ).to.be.revertedWith(`InvalidCaller("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")`);
     });
 
     it("Should revert if the cross-chain address doesn't match with the stored one", async () => {
@@ -90,7 +92,7 @@ describe("CrossChainCounter tests", () => {
           0,
           encoder.encode(["address"], [zetaConnectorMockContract.address])
         )
-      ).to.be.revertedWith("Cross-chain address doesn't match");
+      ).to.be.revertedWith("InvalidZetaMessageCall()");
     });
 
     describe("Given a valid message", () => {
