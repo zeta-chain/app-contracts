@@ -75,7 +75,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         uint256 destinationChainId,
         uint256 crossChainGasLimit
     ) external payable {
-        if (!isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (msg.value == 0) revert ValueShouldBeGreaterThanZero();
         if (
