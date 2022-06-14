@@ -3,67 +3,50 @@ import * as dotenv from "dotenv";
 import { exit } from "process";
 
 import { EVMChain, ZetaChain } from "./chains";
+import { getHardhatConfigNetworks } from "@zetachain/addresses/src/networks";
+import type { NetworksUserConfig, HttpNetworkUserConfig } from "hardhat/types";
 
 dotenv.config();
 
 const ZETA_NETWORK = process.env.ZETA_NETWORK;
-const MORALIS_API_KEY = process.env.MORALIS_API_KEY;
-const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-
-console.log(ZETA_NETWORK);
-console.log(MORALIS_API_KEY);
-console.log(ALCHEMY_API_KEY);
-
 let ethName: NetworkName;
-let ethRPC: string;
-let ethChainId: number;
-// let ropstenName: NetworkName;
-// let ropstenRPC: string;
-// let ropstenChainId: number;
 let bscName: NetworkName;
-let bscRPC: string;
-let bscChainId: number;
 let polygonName: NetworkName;
-let polygonRPC: string;
-let polygonChainId: number;
 let zetaRPC: string;
 let zetaChainId: number;
 let zetaNetwork: ZetaNetworkName;
 
+const PRIVATE_KEYS =
+  process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`, `0x${process.env.TSS_PRIVATE_KEY}`] : [];
+let networks: NetworksUserConfig = getHardhatConfigNetworks(PRIVATE_KEYS);
+
+
 if (ZETA_NETWORK === "athens") {
   console.log("Using Athens Networks");
-  ethName = "goerli";
-  ethRPC = `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
-  ethChainId = 5;
-  bscName = "bsc-testnet";
-  bscRPC = `https://speedy-nodes-nyc.moralis.io/${MORALIS_API_KEY}/bsc/testnet/archive`;
-  bscChainId = 97;
-  polygonName = "polygon-mumbai";
-  polygonRPC = `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
-  polygonChainId = 80001;
+  zetaNetwork = "athens";
   zetaRPC = "https://api.athens.zetachain.com/";
   zetaChainId = 1317;
-  zetaNetwork = "athens";
+  ethName = "goerli";
+  bscName = "bsc-testnet";
+  polygonName = 'polygon-mumbai';
 } else if (ZETA_NETWORK === "troy") {
   console.log("Using Troy Networks");
-  ethName = "eth-localnet";
-  ethRPC = "localhost:8100";
-  ethChainId = 5;
-  bscName = "bsc-localnet";
-  bscRPC = "localhost:8120";
-  bscChainId = 97;
-  polygonName = "polygon-localnet";
-  polygonRPC = "localhost:8140";
-  polygonChainId = 80001;
+  zetaNetwork = "troy";
   zetaRPC = "localhost:1317/";
   zetaChainId = 1317;
-  zetaNetwork = "troy";
+  ethName = "eth-localnet";
+  bscName = "bsc-localnet";
+  polygonName = "polygon-localnet";
 } else {
   console.log("ZETA_NETWORK Not Set. Exiting");
   exit();
 }
 
+const ethConfig = networks[ethName] as HttpNetworkUserConfig;
+const bscConfig = networks[bscName] as HttpNetworkUserConfig;
+const polygonConfig = networks[polygonName] as HttpNetworkUserConfig;
+
 export const zeta = new ZetaChain(zetaNetwork, zetaRPC, zetaChainId);
-export const eth = new EVMChain(ethName, ethRPC, ethChainId, zetaNetwork, {});
-export const bsc = new EVMChain(bscName, bscRPC, bscChainId, zetaNetwork, {});
-export const polygon = new EVMChain(polygonName, polygonRPC, polygonChainId, zetaNetwork, {});
+export const eth = new EVMChain(ethName, ethConfig.url as string, ethConfig.chainId as number, zetaNetwork, {});
+export const bsc = new EVMChain(bscName, bscConfig.url as string, bscConfig.chainId as number, zetaNetwork, {});
+export const polygon = new EVMChain(polygonName, polygonConfig.url as string, polygonConfig.chainId as number, zetaNetwork, {});
