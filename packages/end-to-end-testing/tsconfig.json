@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["./scripts", "src/lib", "./environments", "./test", "./typechain-types", "./**/*.json", "typechain-types"],
+  "exclude": ["artifacts", "cache"],
+  "files": ["./hardhat.config.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@zetachain/addresses/*": ["../addresses/src/*"],
+      "@zetachain/addresses": ["../addresses/src/index"]
+      
+    }
+  },
+}

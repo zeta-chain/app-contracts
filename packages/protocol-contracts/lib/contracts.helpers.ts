@@ -124,3 +124,23 @@ export const getContract = async <Factory extends ContractFactory, Contract exte
 
   return contract;
 };
+
+export const getTokenFactory = async (networkName: string) => {
+  let Factory;
+  if (isEthNetworkName(networkName)) {
+    Factory = (await ethers.getContractFactory("ZetaEth")) as ZetaEthFactory;
+  } else {
+    Factory = (await ethers.getContractFactory("ZetaNonEth")) as ZetaNonEthFactory;
+  }
+  return Factory;
+};
+
+export const getConnectorFactory = async (networkName: string) => {
+  let Factory;
+  if (isEthNetworkName(networkName)) {
+    Factory = (await ethers.getContractFactory("ZetaConnectorEth")) as ZetaConnectorEthFactory;
+  } else {
+    Factory = (await ethers.getContractFactory("ZetaConnectorNonEth")) as ZetaConnectorNonEthFactory;
+  }
+  return Factory;
+};
