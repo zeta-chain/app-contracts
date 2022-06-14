@@ -35,9 +35,6 @@ if (ZETA_NETWORK === "athens") {
   ethName = "goerli";
   ethRPC = `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
   ethChainId = 5;
-  // ropstenName = "ropsten";
-  // ropstenRPC = `https://speedy-nodes-nyc.moralis.io/${MORALIS_API_KEY}/eth/ropsten`;
-  // ropstenChainId = 3;
   bscName = "bsc-testnet";
   bscRPC = `https://speedy-nodes-nyc.moralis.io/${MORALIS_API_KEY}/bsc/testnet/archive`;
   bscChainId = 97;
@@ -68,6 +65,5 @@ if (ZETA_NETWORK === "athens") {
 
 export const zeta = new ZetaChain(zetaNetwork, zetaRPC, zetaChainId);
 export const eth = new EVMChain(ethName, ethRPC, ethChainId, zetaNetwork, {});
-// export const ropsten = new EVMChain(ropstenName, ropstenRPC, ropstenChainId, zetaNetwork, {});
 export const bsc = new EVMChain(bscName, bscRPC, bscChainId, zetaNetwork, {});
 export const polygon = new EVMChain(polygonName, polygonRPC, polygonChainId, zetaNetwork, {});
