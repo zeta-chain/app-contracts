@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./ZetaReceiver.sol";
 import "./ZetaInterfaces.sol";
+import "./ZetaConnectorErrors.sol";
 
-contract ZetaConnectorBase is Pausable {
+contract ZetaConnectorBase is Pausable, ZetaConnectorErrors {
     address public zetaToken;
 
     /**
@@ -43,14 +44,18 @@ contract ZetaConnectorBase is Pausable {
         bytes32 indexed internalSendHash
     );
 
+    event TSSAddressUpdated(address originSenderAddress, address newTSSAddress);
+
     constructor(
-        address _zetaTokenAddress,
-        address _tssAddress,
-        address _tssAddressUpdater
+        address zetaTokenAddress_,
+        address tssAddress_,
+        address tssAddressUpdater_
     ) {
-        zetaToken = _zetaTokenAddress;
-        tssAddress = _tssAddress;
-        tssAddressUpdater = _tssAddressUpdater;
+        if (zetaTokenAddress_ == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0))
+            revert AddressCantBeZero();
+        zetaToken = zetaTokenAddress_;
+        tssAddress = tssAddress_;
+        tssAddressUpdater = tssAddressUpdater_;
     }
 
     modifier onlyTssAddress() {
@@ -64,10 +69,11 @@ contract ZetaConnectorBase is Pausable {
     }
 
     // update the TSS Address in case of Zeta blockchain validator nodes churn
-    function updateTssAddress(address _tssAddress) external onlyTssUpdater {
-        require(_tssAddress != address(0), "ZetaConnector: invalid tssAddress");
+    function updateTssAddress(address tssAddress_) external onlyTssUpdater {
+        require(tssAddress_ != address(0), "ZetaConnector: invalid tssAddress");
 
-        tssAddress = _tssAddress;
+        tssAddress = tssAddress_;
+        emit TSSAddressUpdated(msg.sender, tssAddress_);
     }
 
     // Change the ownership of tssAddressUpdater to the Zeta blockchain TSS nodes.

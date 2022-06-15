@@ -1,10 +1,11 @@
 /* solhint-disable var-name-mixedcase */
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "./ZetaNonEthErrors.sol";
 
-contract ZetaNonEth is ERC20Burnable {
+contract ZetaNonEth is ERC20Burnable, ZetaNonEthErrors {
     /**
      * @dev Collectively hold by Zeta blockchain validators
      */
@@ -22,17 +23,19 @@ contract ZetaNonEth is ERC20Burnable {
 
     constructor(
         uint256 initialSupply,
-        address _TSSAddress,
-        address _TSSAddressUpdater
+        address TSSAddress_,
+        address TSSAddressUpdater_
     ) ERC20("Zeta", "ZETA") {
+        if (TSSAddress_ == address(0) || TSSAddressUpdater_ == address(0)) revert AddressCantBeZero();
         _mint(msg.sender, initialSupply * (10**uint256(decimals())));
 
-        TSSAddress = _TSSAddress;
-        TSSAddressUpdater = _TSSAddressUpdater;
+        TSSAddress = TSSAddress_;
+        TSSAddressUpdater = TSSAddressUpdater_;
     }
 
     function updateTSSAndConnectorAddresses(address _tss, address _connectorAddress) external {
-        require(msg.sender == TSSAddressUpdater, "ZetaNonEth: sender is not TSSAddressUpdater");
+        if (msg.sender != TSSAddressUpdater) revert InvalidCaller(TSSAddressUpdater, msg.sender);
+        if (_tss == address(0) || _connectorAddress == address(0)) revert AddressCantBeZero();
 
         TSSAddress = _tss;
         connectorAddress = _connectorAddress;
@@ -42,8 +45,8 @@ contract ZetaNonEth is ERC20Burnable {
      * @dev Sets TSSAddressUpdater to be TSSAddress
      */
     function renounceTSSAddressUpdater() external {
-        require(msg.sender == TSSAddressUpdater, "ZetaNonEth: sender is not TSSAddressUpdater");
-        require(TSSAddress != address(0), "ZetaNonEth: Invalid TSSAddress");
+        if (msg.sender != TSSAddressUpdater) revert InvalidCaller(TSSAddressUpdater, msg.sender);
+        if (TSSAddress == address(0)) revert AddressCantBeZero();
 
         TSSAddressUpdater = TSSAddress;
     }
@@ -56,10 +59,7 @@ contract ZetaNonEth is ERC20Burnable {
         /**
          * @dev Only Connector or TSS can mint since minting requires burning the equivalent in another chain
          */
-        require(
-            msg.sender == TSSAddress || msg.sender == connectorAddress,
-            "ZetaNonEth: only TSSAddress or connectorAddress can mint"
-        );
+        if (msg.sender != TSSAddress && msg.sender != connectorAddress) revert InvalidMinter(msg.sender);
 
         _mint(mintee, value);
 
