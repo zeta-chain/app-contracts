@@ -22,4 +22,6 @@ tsconfig.tsbuildinfo
 .DS_Store
 
 # Slither
-slither-results* 
+scripts/slither-results/*
+!scripts/slither-results/.gitkeep
+

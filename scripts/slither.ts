@@ -1,24 +1,34 @@
-#!/usr/bin/env node
-
 import fs from "fs";
 import inquirer from "inquirer";
 import { execSync } from "node:child_process";
 import path from "node:path";
 
 const projectRoot = path.join(__dirname, "../");
-const solcVersion = "0.8.12";
+const solcVersion = "0.8.9";
 const timestamp = Date.now();
+const packageNames = ["protocol-contracts", "example-contracts"];
 
 async function getPackageName() {
-  const packageName = await inquirer.prompt([
-    {
-      type: "list",
-      message: "Which set of contracts would you like to test?",
-      name: "contracts",
-      choices: ["protocol-contracts", "example-contracts"],
-    },
-  ]);
-  return packageName.contracts;
+  let packageName;
+  if (process.env.CI) {
+    packageName = process.argv[2];
+    if (!packageNames.includes(packageName)) {
+      console.error(`${packageName} is not a valid package name.`);
+      console.error(`Valid package names are: ${packageNames.join(", ")}`);
+      process.exit(1);
+    }
+    return packageName;
+  } else {
+    packageName = await inquirer.prompt([
+      {
+        type: "list",
+        message: "Which set of contracts would you like to test?",
+        name: "contracts",
+        choices: packageNames,
+      },
+    ]);
+    return packageName.contracts;
+  }
 }
 
 const run = async (command: string) => {
@@ -44,15 +54,7 @@ function runSlither(packageName: string) {
   run(`docker run -v "${projectRoot}":/home/trufflecon trailofbits/eth-security-toolbox  -c "${dockerCommand}"`);
 }
 
-function createOutputDir() {
-  var dir = "./slither-results";
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
-}
-
 async function main() {
-  createOutputDir();
   const packageName = await getPackageName();
   await runSlither(packageName);
 }
