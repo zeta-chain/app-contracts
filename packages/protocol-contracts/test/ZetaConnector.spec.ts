@@ -538,7 +538,7 @@ describe("ZetaConnector tests", () => {
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
               "0x0000000000000000000000000000000000000000000000000000000000000000"
             )
-        ).to.revertedWith("ZetaNonEth: only TSSAddress or connectorAddress can mint");
+        ).to.revertedWith(`InvalidMinter("0xF6a8aD553b265405526030c2102fda2bDcdDC177")`);
       });
 
       it("Should mint on the receiver address", async () => {
