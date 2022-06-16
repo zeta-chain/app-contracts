@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./interfaces/ConnectorErrors.sol";
 import "./interfaces/ZetaInterfaces.sol";
-import "./ZetaConnectorErrors.sol";
 
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public zetaToken;
