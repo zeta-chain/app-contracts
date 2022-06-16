@@ -73,10 +73,6 @@ describe("ZetaConnector tests", () => {
       tssSigner.address,
       zetaConnectorNonEthContract.address
     );
-
-    console.log(tssUpdater.address);
-    console.log(tssSigner.address);
-    console.log(randomSigner.address);
   });
 
   describe("ZetaConnector.base", () => {

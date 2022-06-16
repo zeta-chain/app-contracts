@@ -4,7 +4,7 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./interfaces/ZetaInterfaces.sol";
-import "./ZetaInteractorErrors.sol";
+import "./interfaces/ZetaInteractorErrors.sol";
 
 abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
     uint256 internal immutable currentChainId;
