@@ -9,10 +9,10 @@ import "./interfaces/ZetaInterfaces.sol";
 
 contract ZetaConnectorEth is ZetaConnectorBase {
     constructor(
-        address zetaTokenAddress,
-        address tssAddress,
-        address tssAddressUpdater
-    ) ZetaConnectorBase(zetaTokenAddress, tssAddress, tssAddressUpdater) {}
+        address zetaToken_,
+        address tssAddress_,
+        address tssAddressUpdater_
+    ) ZetaConnectorBase(zetaToken_, tssAddress_, tssAddressUpdater_) {}
 
     function getLockedAmount() external view returns (uint256) {
         return IERC20(zetaToken).balanceOf(address(this));
