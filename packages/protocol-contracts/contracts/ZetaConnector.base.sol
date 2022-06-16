@@ -47,15 +47,15 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     event TSSAddressUpdated(address originSenderAddress, address newTSSAddress);
 
     constructor(
-        address zetaTokenAddress,
+        address zetaToken_,
         address tssAddress_,
         address tssAddressUpdater_
     ) {
-        if (zetaTokenAddress == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) {
+        if (zetaToken_ == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) {
             revert InvalidAddress();
         }
 
-        zetaToken = zetaTokenAddress;
+        zetaToken = zetaToken_;
         tssAddress = tssAddress_;
         tssAddressUpdater = tssAddressUpdater_;
     }
