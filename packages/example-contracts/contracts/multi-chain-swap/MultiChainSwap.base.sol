@@ -4,8 +4,7 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaReceiver.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 import "./MultiChainSwapErrors.sol";
 
@@ -219,7 +218,11 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external isValidMessageCall(zetaMessage) {
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
+        external
+        override
+        isValidMessageCall(zetaMessage)
+    {
         (
             bytes32 messageType,
             address originSender,
@@ -299,7 +302,11 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         );
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external isValidRevertCall(zetaRevert) {
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
+        external
+        override
+        isValidRevertCall(zetaRevert)
+    {
         /**
          * @dev: If something goes wrong we must swap to the original token
          */

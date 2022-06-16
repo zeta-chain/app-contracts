@@ -4,7 +4,7 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./ZetaConnector.base.sol";
-import "./ZetaInterfaces.sol";
+import "./interfaces/ZetaInterfaces.sol";
 
 interface ZetaToken is IERC20 {
     function burnFrom(address account, uint256 amount) external;

@@ -3,7 +3,7 @@ pragma solidity 0.8.7;
 
 interface ZetaInterfaces {
     /**
-     * @dev Use SendInput to interact with our Connector: connector.send(SendInput)
+     * @dev Use SendInput to interact with the Connector: connector.send(SendInput)
      */
     struct SendInput {
         /// @dev Chain id of the destination chain. More about chain ids https://docs.zetachain.com/learn/glossary#chain-id
@@ -21,7 +21,7 @@ interface ZetaInterfaces {
     }
 
     /**
-     * @dev Our Connector will call your contract's onZetaMessage using this interface
+     * @dev Our Connector calls onZetaMessage with this struct as argument
      */
     struct ZetaMessage {
         bytes originSenderAddress;
@@ -32,7 +32,7 @@ interface ZetaInterfaces {
     }
 
     /**
-     * @dev Our Connector will call your contract's onZetaRevert using this interface
+     * @dev Our Connector calls onZetaRevert with this struct as argument
      */
     struct ZetaRevert {
         address originSenderAddress;
@@ -49,4 +49,17 @@ interface ZetaConnector {
      * @dev Sending value and data cross-chain is as easy as calling connector.send(SendInput)
      */
     function send(ZetaInterfaces.SendInput calldata input) external;
+}
+
+interface ZetaReceiver {
+    /**
+     * @dev onZetaMessage is called when a cross-chain message reaches a contract
+     */
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external;
+
+    /**
+     * @dev onZetaRevert is called when a cross-chain message reverts.
+     * It's useful to rollback to the original state
+     */
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external;
 }

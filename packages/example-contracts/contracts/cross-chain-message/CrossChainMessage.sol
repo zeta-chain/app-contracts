@@ -2,8 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaReceiver.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 /**
  * @dev A simple contract able to send and receive Hello World messages from other chains.

@@ -1,56 +1,54 @@
-/* solhint-disable var-name-mixedcase */
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
-import "./ZetaNonEthErrors.sol";
+import "./interfaces/ZetaErrors.sol";
 
-
-contract ZetaNonEth is ERC20Burnable, ZetaNonEthErrors {
+contract ZetaNonEth is ERC20Burnable, ZetaErrors {
     /**
      * @dev Collectively hold by Zeta blockchain validators
      */
-    address public TSSAddress;
+    address public tssAddress;
 
     /**
-     * @dev Initially a multi-sig, eventually hold by Zeta blockchain validators (via renounceTSSAddressUpdater)
+     * @dev Initially a multi-sig, eventually hold by Zeta blockchain validators (via renounceTssAddressUpdater)
      */
-    address public TSSAddressUpdater;
+    address public tssAddressUpdater;
 
     address public connectorAddress;
 
-    event MMinted(address indexed mintee, uint256 amount, bytes32 indexed internalSendHash);
-    event MBurnt(address indexed burnee, uint256 amount);
+    event Minted(address indexed mintee, uint256 amount, bytes32 indexed internalSendHash);
+    event Burnt(address indexed burnee, uint256 amount);
 
     constructor(
         uint256 initialSupply,
-        address TSSAddress_,
-        address TSSAddressUpdater_
+        address tssAddress_,
+        address tssAddressUpdater_
     ) ERC20("Zeta", "ZETA") {
-        if (TSSAddress_ == address(0) || TSSAddressUpdater_ == address(0)) revert AddressCantBeZero();
+        if (tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) revert InvalidAddress();
         _mint(msg.sender, initialSupply * (10**uint256(decimals())));
 
-        TSSAddress = TSSAddress_;
-        TSSAddressUpdater = TSSAddressUpdater_;
+        tssAddress = tssAddress_;
+        tssAddressUpdater = tssAddressUpdater_;
     }
 
-    function updateTSSAndConnectorAddresses(address _tss, address _connectorAddress) external {
-        if (msg.sender != TSSAddressUpdater) revert InvalidCaller(TSSAddressUpdater, msg.sender);
-        if (_tss == address(0) || _connectorAddress == address(0)) revert AddressCantBeZero();
+    function updateTssAndConnectorAddresses(address newTssAddress, address newConnectorAddress) external {
+        if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
+        if (newTssAddress == address(0)) revert InvalidAddress();
 
-        TSSAddress = _tss;
-        connectorAddress = _connectorAddress;
+        tssAddress = newTssAddress;
+        connectorAddress = newConnectorAddress;
     }
 
     /**
-     * @dev Sets TSSAddressUpdater to be TSSAddress
+     * @dev Sets tssAddressUpdater to be tssAddress
      */
-    function renounceTSSAddressUpdater() external {
-        if (msg.sender != TSSAddressUpdater) revert InvalidCaller(TSSAddressUpdater, msg.sender);
-        if (TSSAddress == address(0)) revert AddressCantBeZero();
+    function renounceTssAddressUpdater() external {
+        if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
+        if (tssAddress == address(0)) revert InvalidAddress();
 
-        TSSAddressUpdater = TSSAddress;
+        tssAddressUpdater = tssAddress;
     }
 
     function mint(
@@ -59,13 +57,14 @@ contract ZetaNonEth is ERC20Burnable, ZetaNonEthErrors {
         bytes32 internalSendHash
     ) external {
         /**
-         * @dev Only Connector or TSS can mint since minting requires burning the equivalent in another chain
+         * @dev Only Connector or TSS can mint. Minting requires burning the equivalent amount on another chain
          */
-        if (msg.sender != TSSAddress && msg.sender != connectorAddress) revert InvalidMinter(msg.sender);
+        if (msg.sender != tssAddress && msg.sender != connectorAddress) {
+            revert CallerIsNotTssOrConnector(msg.sender);
+        }
 
         _mint(mintee, value);
 
-        emit MMinted(mintee, value, internalSendHash);
+        emit Minted(mintee, value, internalSendHash);
     }
 }
-/* solhint-enable var-name-mixedcase */

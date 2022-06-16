@@ -3,8 +3,8 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./ZetaInterfaces.sol";
-import "./ZetaInteractorErrors.sol";
+import "./interfaces/ZetaInterfaces.sol";
+import "./interfaces/ZetaInteractorErrors.sol";
 
 abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
     uint256 internal immutable currentChainId;
@@ -42,7 +42,9 @@ abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
         if (msg.sender != address(connector)) revert InvalidCaller(msg.sender);
     }
 
-    /// @dev: useful for contracts that inherit from this one
+    /**
+     * @dev Useful for contracts that inherit from this one
+     */
     function isValidChainId(uint256 chainId) internal view returns (bool) {
         return (keccak256(interactorsByChainId[chainId]) != keccak256(new bytes(0)));
     }
