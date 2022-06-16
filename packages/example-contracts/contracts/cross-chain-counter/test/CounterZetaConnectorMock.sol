@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 import "../CrossChainCounter.sol";
 
@@ -47,7 +47,7 @@ contract CounterZetaConnectorMock is ZetaConnector {
             );
     }
 
-    function send(ZetaInterfaces.SendInput calldata sendInput) external {
+    function send(ZetaInterfaces.SendInput calldata sendInput) external override {
         uint256 originChainId = sendInput.destinationChainId == 2 ? 1 : 2;
         address dest = address(uint160(bytes20(sendInput.destinationAddress)));
 

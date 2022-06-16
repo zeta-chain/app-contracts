@@ -59,7 +59,9 @@ contract ZetaNonEth is ERC20Burnable, ZetaErrors {
         /**
          * @dev Only Connector or TSS can mint. Minting requires burning the equivalent amount on another chain
          */
-        if (msg.sender != tssAddress && msg.sender != connectorAddress) revert CallerIsNotTssOrConnector(msg.sender);
+        if (msg.sender != tssAddress && msg.sender != connectorAddress) {
+            revert CallerIsNotTssOrConnector(msg.sender);
+        }
 
         _mint(mintee, value);
 

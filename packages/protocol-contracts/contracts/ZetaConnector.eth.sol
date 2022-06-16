@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./interfaces/ConnectorErrors.sol";
 import "./ZetaConnector.base.sol";
-import "./ZetaInterfaces.sol";
+import "./interfaces/ZetaInterfaces.sol";
 
 contract ZetaConnectorEth is ZetaConnectorBase {
     constructor(

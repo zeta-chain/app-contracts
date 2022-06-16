@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "../ZetaInterfaces.sol";
+import "../interfaces/ZetaInterfaces.sol";
 
 contract ZetaReceiverMock is ZetaReceiver {
     event MockOnZetaMessage(address destinationAddress);

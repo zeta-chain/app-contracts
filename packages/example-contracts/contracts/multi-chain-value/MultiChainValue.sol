@@ -3,7 +3,7 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/ZetaEth.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 contract MultiChainValue is Ownable {
     address public zetaConnector;

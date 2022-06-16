@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, ZetaReceiver {
     using Counters for Counters.Counter;
@@ -117,7 +117,7 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external {
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
         require(
             keccak256(zetaMessage.originSenderAddress) == keccak256(_crossChainAddress),
@@ -140,7 +140,7 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
         _mintId(to, tokenId);
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external {
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
         require(zetaRevert.originSenderAddress == address(this), "Invalid originSenderAddress");
         require(zetaRevert.originChainId == _currentChainId, "Invalid originChainId");

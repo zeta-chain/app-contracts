@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./interfaces/ConnectorErrors.sol";
-import "./ZetaInterfaces.sol";
+import "./interfaces/ZetaInterfaces.sol";
 import "./ZetaConnectorErrors.sol";
 
 contract ZetaConnectorBase is ConnectorErrors, Pausable {

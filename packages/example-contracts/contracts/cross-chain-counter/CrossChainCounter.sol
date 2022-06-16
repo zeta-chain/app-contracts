@@ -2,7 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 contract CrossChainCounter is Ownable, ZetaReceiver {
     bytes32 public constant CROSS_CHAIN_INCREMENT_MESSAGE = keccak256("CROSS_CHAIN_INCREMENT");
@@ -47,7 +47,7 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external {
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
         require(
             keccak256(zetaMessage.originSenderAddress) == keccak256(_crossChainAddress),
@@ -62,7 +62,7 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
         counter[messageFrom]++;
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external {
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
         require(zetaRevert.originSenderAddress == address(this), "Invalid originSenderAddress");
         require(zetaRevert.originChainId == currentChainId, "Invalid originChainId");
