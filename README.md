@@ -64,4 +64,4 @@ yarn lint:fix
 
 ## Contributing
 
-We welcome (and appreciate) everyone's contributions, if you wanna contribute, read [CONTRIBUTING.md](CONTRIBUTING.md) for next steps.
+We welcome (and appreciate) everyone's contributions. If you wanna contribute, read [CONTRIBUTING.md](CONTRIBUTING.md) for next steps.
