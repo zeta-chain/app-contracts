@@ -15,7 +15,7 @@ const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.P
 
 const config: HardhatUserConfig = {
   solidity: {
-    compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.9" }],
+    compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.7" }],
     settings: {
       /**
        * @see {@link https://smock.readthedocs.io/en/latest/getting-started.html}

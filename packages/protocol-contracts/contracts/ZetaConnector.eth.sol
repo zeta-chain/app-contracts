@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -14,7 +14,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         address tssAddressUpdater
     ) ZetaConnectorBase(zetaTokenAddress, tssAddress, tssAddressUpdater) {}
 
-    function getLockedAmount() public view returns (uint256) {
+    function getLockedAmount() external view returns (uint256) {
         return IERC20(zetaToken).balanceOf(address(this));
     }
 
@@ -70,7 +70,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
         bool success = IERC20(zetaToken).transfer(originSenderAddress, zetaAmount);
-        require(success == true, "ZetaConnector: error transferring Zeta");
+        require(success, "ZetaConnector: error transferring Zeta");
 
         if (message.length > 0) {
             ZetaReceiver(originSenderAddress).onZetaRevert(

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./interfaces/ConnectorErrors.sol";
 import "./ZetaInterfaces.sol";
+import "./ZetaConnectorErrors.sol";
 
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public zetaToken;
@@ -44,11 +45,17 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes32 indexed internalSendHash
     );
 
+    event TSSAddressUpdated(address originSenderAddress, address newTSSAddress);
+
     constructor(
         address zetaTokenAddress,
         address tssAddress_,
         address tssAddressUpdater_
     ) {
+        if (zetaTokenAddress == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) {
+            revert InvalidAddress();
+        }
+
         zetaToken = zetaTokenAddress;
         tssAddress = tssAddress_;
         tssAddressUpdater = tssAddressUpdater_;
@@ -68,9 +75,11 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         if (tssAddress_ == address(0)) revert InvalidAddress();
 
         tssAddress = tssAddress_;
+
+        emit TSSAddressUpdated(msg.sender, tssAddress_);
     }
 
-    /**I
+    /**
      * @dev Changes the ownership of tssAddressUpdater to be the one held by the Zeta blockchain TSS nodes.
      */
     function renounceTssAddressUpdater() external onlyTssUpdater {

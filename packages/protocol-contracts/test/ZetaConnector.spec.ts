@@ -73,6 +73,10 @@ describe("ZetaConnector tests", () => {
       tssSigner.address,
       zetaConnectorNonEthContract.address
     );
+
+    console.log(tssUpdater.address);
+    console.log(tssSigner.address);
+    console.log(randomSigner.address);
   });
 
   describe("ZetaConnector.base", () => {
@@ -80,13 +84,13 @@ describe("ZetaConnector tests", () => {
       it("Should revert if the caller is not the TSS updater", async () => {
         await expect(
           zetaConnectorBaseContract.connect(randomSigner).updateTssAddress(randomSigner.address)
-        ).to.revertedWith("ZetaConnector: only TSS updater can call this function");
+        ).to.revertedWith(`CallerIsNotTssUpdater("${randomSigner.address}")`);
       });
 
       it("Should revert if the new TSS address is invalid", async () => {
         await expect(
           zetaConnectorBaseContract.updateTssAddress("0x0000000000000000000000000000000000000000")
-        ).to.revertedWith("ZetaConnector: invalid tssAddress");
+        ).to.revertedWith(`InvalidAddress()`);
       });
 
       it("Should change the TSS address if called by TSS updater", async () => {
@@ -101,11 +105,11 @@ describe("ZetaConnector tests", () => {
     describe("pause, unpause", () => {
       it("Should revert if not called by the TSS updater", async () => {
         await expect(zetaConnectorBaseContract.connect(randomSigner).pause()).to.revertedWith(
-          "ZetaConnector: only TSS updater can call this function"
+          `CallerIsNotTssUpdater("${randomSigner.address}")`
         );
 
         await expect(zetaConnectorBaseContract.connect(randomSigner).unpause()).to.revertedWith(
-          "ZetaConnector: only TSS updater can call this function"
+          `CallerIsNotTssUpdater("${randomSigner.address}")`
         );
       });
 
@@ -244,7 +248,7 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             "0x0000000000000000000000000000000000000000000000000000000000000000"
           )
-        ).to.revertedWith("ZetaConnector: only TSS address can call this function");
+        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")'`);
       });
 
       it("Should revert if Zeta transfer fails", async () => {
@@ -345,7 +349,7 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             "0x0000000000000000000000000000000000000000000000000000000000000000"
           )
-        ).to.revertedWith("ZetaConnector: only TSS address can call this function");
+        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
       });
 
       it("Should transfer to the origin address", async () => {
@@ -521,10 +525,13 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             "0x0000000000000000000000000000000000000000000000000000000000000000"
           )
-        ).to.revertedWith("ZetaConnector: only TSS address can call this function");
+        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")'`);
       });
 
       it("Should revert if mint fails", async () => {
+        /**
+         * Update TSS and Connector addresses so minting fails
+         */
         await zetaTokenNonEthContract.updateTssAndConnectorAddresses(tssSigner.address, randomSigner.address);
 
         await expect(
@@ -538,7 +545,7 @@ describe("ZetaConnector tests", () => {
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
               "0x0000000000000000000000000000000000000000000000000000000000000000"
             )
-        ).to.revertedWith("ZetaNonEth: only TSSAddress or connectorAddress can mint");
+        ).to.revertedWith(`CallerIsNotTssOrConnector("${zetaConnectorNonEthContract.address}")`);
       });
 
       it("Should mint on the receiver address", async () => {
@@ -618,7 +625,7 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             "0x0000000000000000000000000000000000000000000000000000000000000000"
           )
-        ).to.revertedWith("ZetaConnector: only TSS address can call this function");
+        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
       });
 
       it("Should mint on the origin address", async () => {

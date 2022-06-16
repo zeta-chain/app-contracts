@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
@@ -26,6 +26,7 @@ contract ZetaNonEth is ERC20Burnable, ZetaErrors {
         address tssAddress_,
         address tssAddressUpdater_
     ) ERC20("Zeta", "ZETA") {
+        if (tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) revert InvalidAddress();
         _mint(msg.sender, initialSupply * (10**uint256(decimals())));
 
         tssAddress = tssAddress_;
