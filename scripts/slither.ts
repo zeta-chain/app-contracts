@@ -57,6 +57,7 @@ function runSlither(packageName: string) {
   slither --json ../../scripts/slither-results/${packageName}-${timestamp}.json \
   --sarif ../../scripts/slither-results/${packageName}-${timestamp}.sarif \
   --checklist  ./ | tee ../../scripts/slither-results/${packageName}-${timestamp}.md`;
+
   run(`docker run -v "${projectRoot}":/home/trufflecon trailofbits/eth-security-toolbox  -c "${dockerCommand}"`);
 }
 
