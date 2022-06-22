@@ -10,5 +10,5 @@ interface ConnectorErrors {
 
     error ZetaTransferError();
 
-    error ValueAboveMaxSupply(uint256 maxSupply);
+    error ExceedsMaxSupply(uint256 maxSupply);
 }

@@ -676,7 +676,7 @@ describe("ZetaConnector tests", () => {
     });
 
     describe("MaxSupply", () => {
-      it("Should revert if the updater is not the TSS updater", async () => {
+      it("Should revert if the caller is not the TSS address", async () => {
         await expect(zetaConnectorNonEthContract.connect(randomSigner).setMaxSupply(0)).to.revertedWith(
           `CallerIsNotTss("${randomSigner.address}")`
         );
@@ -695,7 +695,7 @@ describe("ZetaConnector tests", () => {
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
               "0x0000000000000000000000000000000000000000000000000000000000000000"
             )
-        ).to.revertedWith(`ValueAboveMaxSupply(999)`);
+        ).to.revertedWith(`ExceedsMaxSupply(999)`);
       });
 
       it("Should mint it's value is bellow MaxSupply", async () => {
@@ -730,7 +730,7 @@ describe("ZetaConnector tests", () => {
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
               "0x0000000000000000000000000000000000000000000000000000000000000000"
             )
-        ).to.revertedWith(`ValueAboveMaxSupply(${initialSupply.add(supplyToAdd)})`);
+        ).to.revertedWith(`ExceedsMaxSupply(${initialSupply.add(supplyToAdd)})`);
       });
     });
   });
