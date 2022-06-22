@@ -38,10 +38,12 @@ async function getPackageName() {
 const run = async (command: string) => {
   try {
     console.log("Starting -- This may take a few minutes...");
+
     execSync(command, {
       encoding: "utf-8",
       stdio: "inherit",
     });
+
     console.log("Results output to the console and saved to slither-output/ in Markdown, JSON, and SARIF formats.");
   } catch (error: any) {
     console.error("Error: Docker Failed To Run");
