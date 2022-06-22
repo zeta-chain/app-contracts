@@ -3,12 +3,14 @@
     "connector": "0xB06c856C8eaBd1d8321b687E188204C1018BC4E5",
     "crossChainCounter": "",
     "crossChainNft": "",
+    "multiChainSwap": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf",
     "multiChainValue": "",
     "tss": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
     "tssUpdater": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    "uniswapV2Pool": "",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
-    "zetaToken": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf",
-    "multiChainSwap": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf"
+    "uniswapV3Pool": "",
+    "zetaToken": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf"
   },
   "eth-localnet": {
     "connector": "0xD7db1F9D0279876a9dcDb92e06057E0818b9B34b",
@@ -17,7 +19,9 @@
     "multiChainValue": "",
     "tss": "0x8C001e2204000D8ED10cAcf0F68106b68e036A26",
     "tssUpdater": "0xfBec4048e09749515110c89D881EcDcA4460D377",
+    "uniswapV2Pool": "",
     "uniswapV2Router02": "",
+    "uniswapV3Pool": "",
     "zetaToken": "0xaEF27C0E302005dB3b442edF762EB070Dc2DB9b5"
   },
   "bsc-localnet": {
@@ -27,7 +31,9 @@
     "multiChainValue": "",
     "tss": "0x8C001e2204000D8ED10cAcf0F68106b68e036A26",
     "tssUpdater": "0x12Dc2227AA4b98b00Ff8148fDA9Ef750929B0F68",
+    "uniswapV2Pool": "",
     "uniswapV2Router02": "",
+    "uniswapV3Pool": "",
     "zetaToken": "0x0CF6e5aA211A4b7da5d04e93dC40Ee18202a5f84"
   },
   "polygon-localnet": {
@@ -37,7 +43,9 @@
     "multiChainValue": "",
     "tss": "0x8C001e2204000D8ED10cAcf0F68106b68e036A26",
     "tssUpdater": "0x78C18E214174A08Fc32e174fb203Aba05B016789",
+    "uniswapV2Pool": "",
     "uniswapV2Router02": "",
+    "uniswapV3Pool": "",
     "zetaToken": "0xD443E93f689a7E1d517Fef799b1d2Fd2FA536d3A"
   }
 }

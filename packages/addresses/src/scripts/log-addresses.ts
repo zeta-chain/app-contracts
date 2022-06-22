@@ -1,4 +1,4 @@
-import { getExplorerUrl, getTestnetList, isZetaNetworkName, ZetaTestnetNetworkName } from "./addresses.helpers";
+import { getExplorerUrl, getTestnetList, isZetaNetworkName, ZetaTestnetNetworkName } from "../addresses.helpers";
 
 const network = process.argv[2];
 
