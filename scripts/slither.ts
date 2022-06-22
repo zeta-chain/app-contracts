@@ -1,5 +1,5 @@
 import fs from "fs";
-import inquirer, { Inquirer } from "inquirer";
+import inquirer from "inquirer";
 import { execSync } from "node:child_process";
 import path from "node:path";
 
