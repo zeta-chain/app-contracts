@@ -1,4 +1,3 @@
-import { MaxUint256 } from "@ethersproject/constants";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
@@ -69,8 +68,6 @@ describe("ZetaConnector tests", () => {
     zetaConnectorNonEthContract = await deployZetaConnectorNonEth({
       args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address],
     });
-
-    await zetaConnectorNonEthContract.connect(tssSigner).setMaxSupply(MaxUint256);
 
     await zetaTokenNonEthContract.updateTssAndConnectorAddresses(
       tssSigner.address,
