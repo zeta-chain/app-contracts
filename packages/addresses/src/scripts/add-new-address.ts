@@ -1,4 +1,4 @@
-import { addNewAddress } from "./addresses.helpers";
+import { addNewAddress } from "../addresses.helpers";
 
 const name = process.argv[2];
 
