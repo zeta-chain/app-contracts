@@ -140,8 +140,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         uint256 destinationChainId,
         uint256 crossChainGasLimit
     ) external {
-        if (keccak256(interactorsByChainId[destinationChainId]) == keccak256(new bytes(0)))
-            revert InvalidDestinationChainId();
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (originInputToken == address(0)) revert MissingOriginInputTokenAddress();
         if (

@@ -42,6 +42,9 @@ abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
         if (msg.sender != address(connector)) revert InvalidCaller(msg.sender);
     }
 
+    /**
+     * @dev Useful for contracts that inherit from this one
+     */
     function _isValidChainId(uint256 chainId) internal view returns (bool) {
         return (keccak256(interactorsByChainId[chainId]) != keccak256(new bytes(0)));
     }
