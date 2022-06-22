@@ -1538,6 +1538,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/axios@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@types/axios@npm:0.14.0"
+  dependencies:
+    axios: "*"
+  checksum: 12a230b9404055d81804cb57fe4739b2317111b28a39e2477b2513250e8b85725e6f6ce509fc2a9494a6da60facb8d80df875fcd747f62f6c3abebc7db60ae66
+  languageName: node
+  linkType: hard
+
 "@types/bn.js@npm:*, @types/bn.js@npm:^5.1.0":
   version: 5.1.0
   resolution: "@types/bn.js@npm:5.1.0"
@@ -1991,6 +2000,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@zetachain/end-to-end-testing@workspace:packages/end-to-end-testing"
   dependencies:
+    "@types/axios": ^0.14.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/protocol-contracts": "workspace:^"
     axios: ^0.27.2
@@ -2610,7 +2620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.27.2":
+"axios@npm:*, axios@npm:^0.27.2":
   version: 0.27.2
   resolution: "axios@npm:0.27.2"
   dependencies:
