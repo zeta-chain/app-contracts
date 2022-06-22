@@ -12,6 +12,7 @@ import axios from "axios";
 import * as dotenv from "dotenv";
 import { Overrides, providers, Signer, Wallet } from "ethers";
 import { ethers } from "hardhat";
+
 // const axios = require("axios").default;
 // dotenv.config();
 
@@ -130,7 +131,7 @@ export class EVMChain extends Blockchain {
     destinationNetwork: EVMChain,
     incrementNone: boolean = false,
     destinationAddress = destinationNetwork.accounts[0],
-    zetaAmount: string = "25000000000000000000", // 25
+    zetaAmount: string = "25000000000", // 25
     gasLimit: string = "300000",
     message: any = [],
     zetaParams: any = []

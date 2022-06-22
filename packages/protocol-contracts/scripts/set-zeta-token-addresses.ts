@@ -15,7 +15,7 @@ export async function setZetaAddresses() {
   const contract = factory.attach(getAddress("zetaToken")).connect(tssSigner);
 
   console.log("Updating");
-  await (await contract.updateTSSAndConnectorAddresses(getAddress("tss"), getAddress("connector"))).wait();
+  await (await contract.updateTssAndConnectorAddresses(getAddress("tss"), getAddress("connector"))).wait();
   console.log("Updated");
 }
 

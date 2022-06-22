@@ -1,25 +1,26 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "./interfaces/ConnectorErrors.sol";
 import "./ZetaConnector.base.sol";
-import "./ZetaInterfaces.sol";
+import "./interfaces/ZetaInterfaces.sol";
 
 contract ZetaConnectorEth is ZetaConnectorBase {
     constructor(
-        address _zetaTokenAddress,
-        address _tssAddress,
-        address _tssAddressUpdater
-    ) ZetaConnectorBase(_zetaTokenAddress, _tssAddress, _tssAddressUpdater) {}
+        address zetaToken_,
+        address tssAddress_,
+        address tssAddressUpdater_
+    ) ZetaConnectorBase(zetaToken_, tssAddress_, tssAddressUpdater_) {}
 
-    function getLockedAmount() public view returns (uint256) {
+    function getLockedAmount() external view returns (uint256) {
         return IERC20(zetaToken).balanceOf(address(this));
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), input.zetaAmount);
-        require(success == true, "ZetaConnector: error transferring Zeta");
+        if (!success) revert ZetaTransferError();
 
         emit ZetaSent(
             msg.sender,
@@ -41,7 +42,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
         bool success = IERC20(zetaToken).transfer(destinationAddress, zetaAmount);
-        require(success == true, "ZetaConnector: error transferring Zeta");
+        if (!success) revert ZetaTransferError();
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(
@@ -69,7 +70,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
         bool success = IERC20(zetaToken).transfer(originSenderAddress, zetaAmount);
-        require(success == true, "ZetaConnector: error transferring Zeta");
+        require(success, "ZetaConnector: error transferring Zeta");
 
         if (message.length > 0) {
             ZetaReceiver(originSenderAddress).onZetaRevert(
