@@ -32,11 +32,11 @@ describe("Remote TestNet Testing", () => {
 
     messageSendTest = await Promise.all([
       eth.sendConnectorMessage(bsc, false),
-      eth.sendConnectorMessage(polygon, true),
-      bsc.sendConnectorMessage(eth, false),
-      bsc.sendConnectorMessage(polygon, true),
-      polygon.sendConnectorMessage(eth, false),
-      polygon.sendConnectorMessage(bsc, true),
+      // eth.sendConnectorMessage(polygon, true),
+      // bsc.sendConnectorMessage(eth, false),
+      // bsc.sendConnectorMessage(polygon, true),
+      // polygon.sendConnectorMessage(eth, false),
+      // polygon.sendConnectorMessage(bsc, true),
     ]);
     await messageSendTest;
   });
@@ -45,11 +45,11 @@ describe("Remote TestNet Testing", () => {
     await messageSendTest;
     zetaNodeReceiveTest = await Promise.all([
       zeta.getTxWithHash(messageSendTest[0].hash),
-      zeta.getTxWithHash(messageSendTest[1].hash),
-      zeta.getTxWithHash(messageSendTest[2].hash),
-      zeta.getTxWithHash(messageSendTest[3].hash),
-      zeta.getTxWithHash(messageSendTest[4].hash),
-      zeta.getTxWithHash(messageSendTest[5].hash),
+      // zeta.getTxWithHash(messageSendTest[1].hash),
+      // zeta.getTxWithHash(messageSendTest[2].hash),
+      // zeta.getTxWithHash(messageSendTest[3].hash),
+      // zeta.getTxWithHash(messageSendTest[4].hash),
+      // zeta.getTxWithHash(messageSendTest[5].hash),
     ]);
     await zetaNodeReceiveTest;
     // console.info(zetaNodeReceiveTest[0]);
@@ -59,11 +59,11 @@ describe("Remote TestNet Testing", () => {
     await zetaNodeReceiveTest;
     txMiningTest = await Promise.all([
       zeta.confirmOutboundMined(zetaNodeReceiveTest[0].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[1].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[2].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[3].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[4].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[5].index),
+      // zeta.confirmOutboundMined(zetaNodeReceiveTest[1].index),
+      // zeta.confirmOutboundMined(zetaNodeReceiveTest[2].index),
+      // zeta.confirmOutboundMined(zetaNodeReceiveTest[3].index),
+      // zeta.confirmOutboundMined(zetaNodeReceiveTest[4].index),
+      // zeta.confirmOutboundMined(zetaNodeReceiveTest[5].index),
     ]);
     await txMiningTest;
   });

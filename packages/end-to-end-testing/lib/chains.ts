@@ -8,10 +8,11 @@ import {
   ZetaNonEth,
 } from "@zetachain/protocol-contracts/typechain-types";
 import { Axios, AxiosInstance } from "axios";
+import axios from "axios";
 import * as dotenv from "dotenv";
 import { Overrides, providers, Signer, Wallet } from "ethers";
 import { ethers } from "hardhat";
-const axios = require("axios").default;
+// const axios = require("axios").default;
 // dotenv.config();
 
 // console.debug = function () {}; // Disables Debug Level Logging
@@ -19,17 +20,17 @@ const axios = require("axios").default;
 
 const defaultOverrideOptions: Overrides = {
   gasLimit: 2500000,
-  gasPrice: 20000000000,
+  gasPrice: 40000000000,
 };
 
 export class Blockchain {
-  name: NetworkName | ZetaNetworkName;
-  chainId: number;
-  rpcEndpoint: string;
-  initStatus: undefined | Promise<void>;
-  p: any;
   accounts: any;
   api: AxiosInstance;
+  chainId: number;
+  initStatus: undefined | Promise<void>;
+  name: NetworkName | ZetaNetworkName;
+  p: any;
+  rpcEndpoint: string;
   type: ZetaNetworkName;
   wallet: Wallet;
   zetaNetworkName: ZetaNetworkName;
@@ -54,6 +55,7 @@ export class EVMChain extends Blockchain {
   zetaContract: ZetaEth | ZetaNonEth;
   signer: Signer | any;
   name: NetworkName;
+
   constructor(name: NetworkName, rpcEndpoint: string, chainId: number, type: ZetaNetworkName, explorerArgs: {}) {
     super(name, rpcEndpoint, chainId, type);
 
@@ -117,7 +119,7 @@ export class EVMChain extends Blockchain {
     return zetaConnectorContract.connect(signer);
   }
 
-  async getMPIEvents(eventName = "ZetaMessageReceiveEvent", filterKeyPairs = null) {
+  async getConnectorEvents(eventName = "ZetaMessageReceiveEvent", filterKeyPairs = null) {
     await this.initStatus;
     const sentFilter = await this.connectorContract.filters[eventName]();
     const sent = await this.connectorContract.queryFilter(sentFilter);
