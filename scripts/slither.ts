@@ -10,13 +10,16 @@ const packageNames = ["protocol-contracts", "example-contracts"];
 
 async function getPackageName() {
   let packageName;
+
   if (process.env.CI) {
     packageName = process.argv[2];
+
     if (!packageNames.includes(packageName)) {
       console.error(`${packageName} is not a valid package name.`);
       console.error(`Valid package names are: ${packageNames.join(", ")}`);
       process.exit(1);
     }
+
     return packageName;
   } else {
     packageName = await inquirer.prompt([
@@ -27,6 +30,7 @@ async function getPackageName() {
         choices: packageNames,
       },
     ]);
+
     return packageName.contracts;
   }
 }
