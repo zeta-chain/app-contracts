@@ -13,7 +13,7 @@ const PRIVATE_KEYS =
   process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`, `0x${process.env.TSS_PRIVATE_KEY}`] : [];
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.9",
+  solidity: "0.8.7",
   etherscan: {
     ...getHardhatConfigScanners(),
   },

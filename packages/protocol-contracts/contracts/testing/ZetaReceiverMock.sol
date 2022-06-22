@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
-import "../ZetaReceiver.sol";
+import "../interfaces/ZetaInterfaces.sol";
 
 contract ZetaReceiverMock is ZetaReceiver {
     event MockOnZetaMessage(address destinationAddress);
 
     event MockOnZetaRevert(address originSenderAddress);
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata _zetaMessage) external override {
-        emit MockOnZetaMessage(_zetaMessage.destinationAddress);
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
+        emit MockOnZetaMessage(zetaMessage.destinationAddress);
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata _zetaRevert) external override {
-        emit MockOnZetaRevert(_zetaRevert.originSenderAddress);
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
+        emit MockOnZetaRevert(zetaRevert.originSenderAddress);
     }
 }

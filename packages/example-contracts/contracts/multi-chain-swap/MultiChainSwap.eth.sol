@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 import "./MultiChainSwap.base.sol";
 

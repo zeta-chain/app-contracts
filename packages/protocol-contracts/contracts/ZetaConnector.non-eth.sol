@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./ZetaConnector.base.sol";
-import "./ZetaInterfaces.sol";
+import "./interfaces/ZetaInterfaces.sol";
 
 interface ZetaToken is IERC20 {
     function burnFrom(address account, uint256 amount) external;
@@ -18,12 +18,12 @@ interface ZetaToken is IERC20 {
 
 contract ZetaConnectorNonEth is ZetaConnectorBase {
     constructor(
-        address _zetaTokenAddress,
-        address _tssAddress,
-        address _tssAddressUpdater
-    ) ZetaConnectorBase(_zetaTokenAddress, _tssAddress, _tssAddressUpdater) {}
+        address zetaTokenAddress_,
+        address tssAddress_,
+        address tssAddressUpdater_
+    ) ZetaConnectorBase(zetaTokenAddress_, tssAddress_, tssAddressUpdater_) {}
 
-    function getLockedAmount() public view returns (uint256) {
+    function getLockedAmount() external view returns (uint256) {
         return ZetaToken(zetaToken).balanceOf(address(this));
     }
 
