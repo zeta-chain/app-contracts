@@ -698,7 +698,7 @@ describe("ZetaConnector tests", () => {
       });
 
       describe("onReceive, onRevert (mint)", () => {
-        it("Should mint it's value is below MaxSupply", async () => {
+        it("Should mint if total supply + supply to add < max supply", async () => {
           const supplyToAdd = 1000;
           const initialSupply = await zetaTokenNonEthContract.totalSupply();
 
