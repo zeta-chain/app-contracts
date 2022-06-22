@@ -17,7 +17,7 @@ interface ZetaToken is IERC20 {
 }
 
 contract ZetaConnectorNonEth is ZetaConnectorBase {
-    uint256 public maxSupply;
+    uint256 public maxSupply = 2**256 - 1;
 
     constructor(
         address zetaTokenAddress_,
