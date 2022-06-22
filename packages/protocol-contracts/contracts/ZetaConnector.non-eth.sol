@@ -105,7 +105,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         );
     }
 
-    function setMaxSupply(uint256 maxSupply_) external whenNotPaused onlyTssAddress {
+    function setMaxSupply(uint256 maxSupply_) external onlyTssAddress {
         maxSupply = maxSupply_;
     }
 }

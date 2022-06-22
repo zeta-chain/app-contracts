@@ -698,7 +698,7 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith(`ExceedsMaxSupply(999)`);
       });
 
-      it("Should mint it's value is bellow MaxSupply", async () => {
+      it("Should mint it's value is below MaxSupply", async () => {
         const supplyToAdd = 1000;
         const initialSupply = await zetaTokenNonEthContract.totalSupply();
         await zetaConnectorNonEthContract.connect(tssSigner).setMaxSupply(initialSupply.add(supplyToAdd));
