@@ -1,3 +1,4 @@
+import { MaxUint256 } from "@ethersproject/constants";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
@@ -68,6 +69,8 @@ describe("ZetaConnector tests", () => {
     zetaConnectorNonEthContract = await deployZetaConnectorNonEth({
       args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address],
     });
+
+    await zetaConnectorNonEthContract.connect(tssSigner).setMaxSupply(MaxUint256);
 
     await zetaTokenNonEthContract.updateTssAndConnectorAddresses(
       tssSigner.address,
@@ -669,6 +672,65 @@ describe("ZetaConnector tests", () => {
 
         const e2 = await zetaConnectorNonEthContract.queryFilter(zetaRevertedFilter);
         expect(e2.length).to.equal(1);
+      });
+    });
+
+    describe("MaxSupply", () => {
+      it("Should revert if the updater is not the TSS updater", async () => {
+        await expect(zetaConnectorNonEthContract.connect(randomSigner).setMaxSupply(0)).to.revertedWith(
+          `CallerIsNotTss("${randomSigner.address}")`
+        );
+      });
+
+      it("Should revert if want to mint more than MaxSupply", async () => {
+        await zetaConnectorNonEthContract.connect(tssSigner).setMaxSupply(999);
+        await expect(
+          zetaConnectorNonEthContract
+            .connect(tssSigner)
+            .onReceive(
+              randomSigner.address,
+              1,
+              zetaReceiverMockContract.address,
+              1000,
+              new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            )
+        ).to.revertedWith(`ValueAboveMaxSupply(999)`);
+      });
+
+      it("Should mint it's value is bellow MaxSupply", async () => {
+        const supplyToAdd = 1000;
+        const initialSupply = await zetaTokenNonEthContract.totalSupply();
+        await zetaConnectorNonEthContract.connect(tssSigner).setMaxSupply(initialSupply.add(supplyToAdd));
+        await expect(
+          zetaConnectorNonEthContract
+            .connect(tssSigner)
+            .onReceive(
+              randomSigner.address,
+              1,
+              zetaReceiverMockContract.address,
+              supplyToAdd,
+              new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            )
+        ).to.be.not.reverted;
+
+        const finalSupply = await zetaTokenNonEthContract.totalSupply();
+
+        expect(finalSupply).to.eq(initialSupply.add(supplyToAdd));
+
+        await expect(
+          zetaConnectorNonEthContract
+            .connect(tssSigner)
+            .onReceive(
+              randomSigner.address,
+              1,
+              zetaReceiverMockContract.address,
+              1,
+              new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+              "0x0000000000000000000000000000000000000000000000000000000000000000"
+            )
+        ).to.revertedWith(`ValueAboveMaxSupply(${initialSupply.add(supplyToAdd)})`);
       });
     });
   });
