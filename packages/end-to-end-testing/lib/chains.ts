@@ -1,27 +1,15 @@
 import { getAddress, isNetworkName, ZetaNetworkName } from "@zetachain/addresses";
-import { isLocalNetworkName, NetworkName } from "@zetachain/addresses/src/addresses.helpers";
-import { getConnectorFactory, getTokenFactory } from "@zetachain/protocol-contracts/lib/contracts.helpers";
-import {
-  ZetaConnectorEth,
-  ZetaConnectorNonEth,
-  ZetaEth,
-  ZetaNonEth,
-} from "@zetachain/protocol-contracts/typechain-types";
+import { isLocalNetworkName, NetworkName } from "@zetachain/addresses";
+import { getConnectorFactory, getTokenFactory } from "@zetachain/protocol-contracts";
+import { ZetaConnectorEth, ZetaConnectorNonEth, ZetaEth, ZetaNonEth } from "@zetachain/protocol-contracts";
 import { Axios, AxiosInstance } from "axios";
 import axios from "axios";
-import * as dotenv from "dotenv";
 import { Overrides, providers, Signer, Wallet } from "ethers";
 import { ethers } from "hardhat";
 
-// const axios = require("axios").default;
-// dotenv.config();
-
-// console.debug = function () {}; // Disables Debug Level Logging
-// console.info = function () {}; // Disables Info Level Logging
-
 const defaultOverrideOptions: Overrides = {
-  gasLimit: 2500000,
-  gasPrice: 40000000000,
+  gasLimit: "3000000",
+  gasPrice: "40000000000",
 };
 
 export class Blockchain {
@@ -30,7 +18,7 @@ export class Blockchain {
   chainId: number;
   initStatus: undefined | Promise<void>;
   name: NetworkName | ZetaNetworkName;
-  p: any;
+  p: ethers.providers.JsonRpcProvider;
   rpcEndpoint: string;
   type: ZetaNetworkName;
   wallet: Wallet;
@@ -68,6 +56,15 @@ export class EVMChain extends Blockchain {
       customNetworkName: this.name,
       customZetaNetwork: this.zetaNetworkName,
     });
+    this.api = axios.create({
+      baseURL: `${this.rpcEndpoint}`,
+      timeout: 15000,
+      jsonrpc: "2.0",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
     this.initStatus = this.init();
   }
 
@@ -89,16 +86,6 @@ export class EVMChain extends Blockchain {
 
     this.zetaContract = await this.getTokenContract(await this.signer);
     this.connectorContract = await this.getConnectorContract(await this.signer);
-
-    this.api = await axios.create({
-      baseURL: `${this.rpcEndpoint}`,
-      timeout: 15000,
-      jsonrpc: "2.0",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
   }
 
   async getAccountBalance(account = this.accounts) {
@@ -129,9 +116,9 @@ export class EVMChain extends Blockchain {
 
   async sendConnectorMessage(
     destinationNetwork: EVMChain,
-    incrementNone: boolean = false,
+    incrementNonce: boolean = false,
     destinationAddress = destinationNetwork.accounts[0],
-    zetaAmount: string = "25000000000", // 25
+    zetaAmount: string = "45000000000000000000", // 45
     gasLimit: string = "300000",
     message: any = [],
     zetaParams: any = []
@@ -152,10 +139,9 @@ export class EVMChain extends Blockchain {
      * @description Localnet automatically increments the nonce for each transaction.
      * When using public testnets the nonce must be incremented manually when sending transactions in rapid succession.
      */
-    if (incrementNone && !isLocalNetworkName(this.name)) {
+    if (incrementNonce && !isLocalNetworkName(this.name)) {
       overrideOptions.nonce = ((await this.wallet.getTransactionCount()) + 1).toString();
     }
-
     const tx = await this.connectorContract.send(input, defaultOverrideOptions);
     await tx.wait();
 

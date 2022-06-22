@@ -13,7 +13,6 @@ let messageSendTest: any;
 let txMiningTest: any;
 let zetaNodeReceiveTest: any;
 
-// Start Mocha Tests Here Calling Test Functions in Parallel
 describe("Remote TestNet Testing", () => {
   it("Check RPC Endpoints are responding", async () => {
     for (const network of [eth, bsc, polygon]) {
@@ -29,7 +28,7 @@ describe("Remote TestNet Testing", () => {
 
   it("Connector contract can send() messages", async () => {
     await transferTest;
-
+    await eth.initStatus;
     messageSendTest = await Promise.all([
       eth.sendConnectorMessage(bsc, false),
       // eth.sendConnectorMessage(polygon, true),
