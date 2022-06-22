@@ -62,7 +62,8 @@ function runSlither(packageName: string) {
 
 async function main() {
   const packageName = await getPackageName();
-  await runSlither(packageName);
+
+  runSlither(packageName);
 }
 
 main()
