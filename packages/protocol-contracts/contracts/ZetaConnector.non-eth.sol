@@ -79,6 +79,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
+        if (zetaAmount + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
         ZetaToken(zetaToken).mint(originSenderAddress, zetaAmount, internalSendHash);
 
         if (message.length > 0) {
