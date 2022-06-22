@@ -1913,6 +1913,7 @@ __metadata:
   dependencies:
     "@zetachain/addresses": "workspace:^"
     "@zetachain/protocol-contracts": "workspace:^"
+    axios: ^0.27.2
     ts-mocha: ^10.0.0
     tsconfig-paths: ^3.14.1
   languageName: unknown
@@ -14249,7 +14250,6 @@ __metadata:
     "@types/node": ^17.0.25
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
-    axios: ^0.27.2
     chai: ^4.3.6
     chai-bignumber: ^3.0.0
     dotenv: ^16.0.0
