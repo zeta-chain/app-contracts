@@ -1,31 +1,68 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { getAddress } from "@zetachain/addresses";
 import chai from "chai";
 import { ethers } from "hardhat";
 
-import { getZetaConnectorMock } from "../lib/zeta-interactor/ZetaInteractor.helpers";
-import { ZetaInteractorMock } from "../typechain-types";
+import {
+  deployZetaNonEth,
+  getZetaTokenConsumerMock,
+  getZetaTokenConsumerUniV2Strategy,
+} from "../lib/contracts.helpers";
+import {
+  IUniswapV2Router02,
+  UniswapV2Router02__factory,
+  ZetaNonEth,
+  ZetaTokenConsumerMock,
+  ZetaTokenConsumerUniV2,
+} from "../typechain-types";
 
 chai.should();
 
-describe("ZetaTokenConsumer tests", () => {
-  let zetaInteractorMock: ZetaInteractorMock;
-  const chainAId = 1;
-  const chainBId = 2;
+describe.only("ZetaTokenConsumer tests", () => {
+  let zetaTokenConsumerUniV2: ZetaTokenConsumerUniV2;
+  let zetaTokenConsumerMock: ZetaTokenConsumerMock;
+  let zetaTokenNonEth: ZetaNonEth;
+  let uniswapRouterFork: IUniswapV2Router02;
 
   let accounts: SignerWithAddress[];
-  let deployer: SignerWithAddress;
-  let crossChainContractB: SignerWithAddress;
-  let zetaConnector: SignerWithAddress;
-
-  const encoder = new ethers.utils.AbiCoder();
+  let tssUpdater: SignerWithAddress;
+  let tssSigner: SignerWithAddress;
+  let randomSigner: SignerWithAddress;
 
   beforeEach(async () => {
     accounts = await ethers.getSigners();
-    [deployer, crossChainContractB, zetaConnector] = accounts;
+    [tssUpdater, tssSigner, randomSigner] = accounts;
 
-    zetaInteractorMock = await getZetaConnectorMock(zetaConnector.address);
+    zetaTokenNonEth = await deployZetaNonEth({
+      args: [100_000, tssSigner.address, tssUpdater.address],
+    });
 
-    const encodedCrossChainAddressB = ethers.utils.solidityPack(["address"], [crossChainContractB.address]);
-    await (await zetaInteractorMock.setInteractorByChainId(chainBId, encodedCrossChainAddressB)).wait();
+    const uniswapRouterAddr = getAddress("uniswapV2Router02", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+    const uniswapRouterFactory = new UniswapV2Router02__factory(tssUpdater);
+    uniswapRouterFork = uniswapRouterFactory.attach(uniswapRouterAddr);
+
+    zetaTokenConsumerUniV2 = await getZetaTokenConsumerUniV2Strategy({
+      deployParams: [zetaTokenNonEth.address, uniswapRouterFork.address],
+    });
+    zetaTokenConsumerMock = await getZetaTokenConsumerMock(zetaTokenConsumerUniV2.address);
+  });
+
+  describe("getZetaFromEth", () => {
+    //
+  });
+
+  describe("getZetaFromToken", () => {
+    //
+  });
+
+  describe("getEthFromZeta", () => {
+    //
+  });
+
+  describe("getTokenFromZeta", () => {
+    //
   });
 });

@@ -2,7 +2,6 @@ import { BaseContract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 
 import {
-  ZetaConnector__factory as ZetaConnectorFactory,
   ZetaConnectorBase,
   ZetaConnectorBase__factory as ZetaConnectorBaseFactory,
   ZetaConnectorEth,
@@ -11,10 +10,17 @@ import {
   ZetaConnectorNonEth__factory as ZetaConnectorNonEthFactory,
   ZetaEth,
   ZetaEth__factory as ZetaEthFactory,
+  ZetaInteractorMock,
+  ZetaInteractorMock__factory as ZetaInteractorMockFactory,
   ZetaNonEth,
   ZetaNonEth__factory as ZetaNonEthFactory,
   ZetaReceiverMock,
   ZetaReceiverMock__factory as ZetaReceiverMockFactory,
+  ZetaTokenConsumer__factory,
+  ZetaTokenConsumerMock,
+  ZetaTokenConsumerMock__factory as ZetaTokenConsumerMockFactory,
+  ZetaTokenConsumerUniV2,
+  ZetaTokenConsumerUniV2__factory as ZetaTokenConsumerUniV2Factory,
 } from "../typechain-types";
 
 export const isEthNetworkName = (networkName: string) =>
@@ -93,6 +99,24 @@ export const getZetaConnectorEth = async (params: GetContractParams<ZetaConnecto
 export const getZetaConnectorNonEth = async (params: GetContractParams<ZetaConnectorNonEthFactory>) =>
   getContract<ZetaConnectorNonEthFactory, ZetaConnectorNonEth>({
     contractName: "ZetaConnectorNonEth",
+    ...params,
+  });
+
+export const getZetaInteractorMock = async (zetaToken: string) =>
+  getContract<ZetaInteractorMockFactory, ZetaInteractorMock>({
+    contractName: "ZetaInteractorMock",
+    deployParams: [zetaToken],
+  });
+
+export const getZetaTokenConsumerMock = async (strategyAddress: string) =>
+  getContract<ZetaTokenConsumerMockFactory, ZetaTokenConsumerMock>({
+    contractName: "ZetaTokenConsumerMock",
+    deployParams: [strategyAddress],
+  });
+
+export const getZetaTokenConsumerUniV2Strategy = async (params: GetContractParams<ZetaTokenConsumerUniV2Factory>) =>
+  getContract<ZetaTokenConsumerUniV2Factory, ZetaTokenConsumerUniV2>({
+    contractName: "ZetaTokenConsumerUniV2",
     ...params,
   });
 

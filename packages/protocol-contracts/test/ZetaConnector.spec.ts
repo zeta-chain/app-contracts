@@ -26,6 +26,7 @@ describe("ZetaConnector tests", () => {
   let zetaConnectorEthContract: ZetaConnectorEth;
   let zetaReceiverMockContract: ZetaReceiverMock;
   let zetaConnectorNonEthContract: ZetaConnectorNonEth;
+
   let tssUpdater: SignerWithAddress;
   let tssSigner: SignerWithAddress;
   let randomSigner: SignerWithAddress;

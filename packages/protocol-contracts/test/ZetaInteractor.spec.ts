@@ -2,7 +2,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { getZetaConnectorMock } from "../lib/zeta-interactor/ZetaInteractor.helpers";
+import { getZetaInteractorMock } from "../lib/contracts.helpers";
 import { ZetaInteractorMock } from "../typechain-types";
 import { getCustomErrorMessage } from "./test.helpers";
 
@@ -24,7 +24,7 @@ describe("ZetaInteractor tests", () => {
     accounts = await ethers.getSigners();
     [deployer, crossChainContractB, zetaConnector] = accounts;
 
-    zetaInteractorMock = await getZetaConnectorMock(zetaConnector.address);
+    zetaInteractorMock = await getZetaInteractorMock(zetaConnector.address);
 
     const encodedCrossChainAddressB = ethers.utils.solidityPack(["address"], [crossChainContractB.address]);
     await (await zetaInteractorMock.setInteractorByChainId(chainBId, encodedCrossChainAddressB)).wait();

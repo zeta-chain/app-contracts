@@ -14,19 +14,19 @@ contract ZetaTokenConsumerMock {
         zetaTokenConsumer = ZetaTokenConsumer(strategyAddress);
     }
 
-    function testgetZetaFromEth(uint256 minAmount) external payable {
+    function testGetZetaFromEth(uint256 minAmount) external payable {
         zetaTokenConsumer.getZetaFromEth(minAmount);
     }
 
-    function testgetZetaFromToken(uint256 minAmount) external {
+    function testGetZetaFromToken(uint256 minAmount) external {
         zetaTokenConsumer.getZetaFromToken(minAmount);
     }
 
-    function testgetEthFromZeta(uint256 minAmount) external payable {
+    function testGetEthFromZeta(uint256 minAmount) external payable {
         zetaTokenConsumer.getEthFromZeta(minAmount);
     }
 
-    function testgetTokenFromZeta(uint256 minAmount) external {
+    function testGetTokenFromZeta(uint256 minAmount) external {
         zetaTokenConsumer.getTokenFromZeta(minAmount);
     }
 }
