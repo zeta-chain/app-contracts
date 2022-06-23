@@ -8,13 +8,13 @@ interface ZetaInterfaces {
     struct SendInput {
         /// @dev Chain id of the destination chain. More about chain ids https://docs.zetachain.com/learn/glossary#chain-id
         uint256 destinationChainId;
-        /// @dev Address to send to on the destination chain (expressed in bytes since it can be non-EVM)
+        /// @dev Address receiving the message on the destination chain (expressed in bytes since it can be non-EVM)
         bytes destinationAddress;
-        /// @dev Gas amount limit for the destination chain's transaction
+        /// @dev Gas limit for the destination chain's transaction
         uint256 destinationGasLimit;
         /// @dev An encoded, arbitrary message to be parsed by the destination contract
         bytes message;
-        /// @dev The amount of ZETA that you want to send cross-chain + the gas fees to be paid for the transaction
+        /// @dev ZETA to be sent cross-chain + ZetaChain gas fees + destination chain gas fees (expressed in ZETA)
         uint256 zetaValueAndGas;
         /// @dev Optional parameters for the ZetaChain protocol
         bytes zetaParams;

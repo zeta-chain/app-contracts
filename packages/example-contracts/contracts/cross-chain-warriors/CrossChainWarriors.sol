@@ -96,10 +96,10 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
     function crossChainTransfer(address to, uint256 tokenId) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Transfer caller is not owner nor approved");
 
-        uint256 crossChainFees = 18000000000000000000;
+        uint256 crossChainGas = 18000000000000000000;
 
         {
-            bool success = _zetaToken.transferFrom(msg.sender, connectorAddress, crossChainFees);
+            bool success = _zetaToken.transferFrom(msg.sender, connectorAddress, crossChainGas);
             require(success == true, "CrossChainWarriors: error approving zeta");
         }
 
@@ -111,7 +111,7 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
                 destinationAddress: _crossChainAddress,
                 destinationGasLimit: 500000,
                 message: abi.encode(CROSS_CHAIN_TRANSFER_MESSAGE, tokenId, msg.sender, to),
-                zetaValueAndGas: crossChainFees,
+                zetaValueAndGas: crossChainGas,
                 zetaParams: abi.encode("")
             })
         );
