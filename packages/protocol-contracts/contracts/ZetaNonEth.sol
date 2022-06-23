@@ -6,28 +6,24 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "./interfaces/ZetaErrors.sol";
 
 contract ZetaNonEth is ERC20Burnable, ZetaErrors {
+    address public connectorAddress;
+
     /**
-     * @dev Collectively hold by Zeta blockchain validators
+     * @dev Collectively held by Zeta blockchain validators
      */
     address public tssAddress;
 
     /**
-     * @dev Initially a multi-sig, eventually hold by Zeta blockchain validators (via renounceTssAddressUpdater)
+     * @dev Initially a multi-sig, eventually held by Zeta blockchain validators (via renounceTssAddressUpdater)
      */
     address public tssAddressUpdater;
 
-    address public connectorAddress;
-
     event Minted(address indexed mintee, uint256 amount, bytes32 indexed internalSendHash);
+
     event Burnt(address indexed burnee, uint256 amount);
 
-    constructor(
-        uint256 initialSupply,
-        address tssAddress_,
-        address tssAddressUpdater_
-    ) ERC20("Zeta", "ZETA") {
+    constructor(address tssAddress_, address tssAddressUpdater_) ERC20("Zeta", "ZETA") {
         if (tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) revert InvalidAddress();
-        _mint(msg.sender, initialSupply * (10**uint256(decimals())));
 
         tssAddress = tssAddress_;
         tssAddressUpdater = tssAddressUpdater_;
@@ -57,14 +53,23 @@ contract ZetaNonEth is ERC20Burnable, ZetaErrors {
         bytes32 internalSendHash
     ) external {
         /**
-         * @dev Only Connector or TSS can mint. Minting requires burning the equivalent amount on another chain
+         * @dev Only Connector can mint. Minting requires burning the equivalent amount on another chain
          */
-        if (msg.sender != tssAddress && msg.sender != connectorAddress) {
-            revert CallerIsNotTssOrConnector(msg.sender);
-        }
+        if (msg.sender != connectorAddress) revert CallerIsNotConnector(msg.sender);
 
         _mint(mintee, value);
 
         emit Minted(mintee, value, internalSendHash);
+    }
+
+    function burnFrom(address account, uint256 amount) public override {
+        /**
+         * @dev Only Connector can burn.
+         */
+        if (msg.sender != connectorAddress) revert CallerIsNotConnector(msg.sender);
+
+        ERC20Burnable.burnFrom(account, amount);
+
+        emit Burnt(account, amount);
     }
 }

@@ -18,7 +18,7 @@ export async function deployZetaToken() {
     });
   } else {
     contract = await deployZetaNonEth({
-      args: [0, getAddress("tss"), getAddress("tssUpdater")],
+      args: [getAddress("tss"), getAddress("tssUpdater")],
     });
   }
 
