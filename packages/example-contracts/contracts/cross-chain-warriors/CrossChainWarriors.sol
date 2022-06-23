@@ -120,7 +120,7 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
     function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
         require(
-            keccak256(zetaMessage.originSenderAddress) == keccak256(_crossChainAddress),
+            keccak256(zetaMessage.zetaTxSenderAddress) == keccak256(_crossChainAddress),
             "Cross-chain address doesn't match"
         );
         require(zetaMessage.originChainId == _crossChainId, "Cross-chain id doesn't match");
@@ -142,7 +142,7 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
 
     function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
-        require(zetaRevert.originSenderAddress == address(this), "Invalid originSenderAddress");
+        require(zetaRevert.zetaTxSenderAddress == address(this), "Invalid zetaTxSenderAddress");
         require(zetaRevert.originChainId == _currentChainId, "Invalid originChainId");
 
         (bytes32 messageType, uint256 tokenId, address from) = abi.decode(

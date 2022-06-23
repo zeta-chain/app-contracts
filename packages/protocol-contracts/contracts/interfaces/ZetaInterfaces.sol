@@ -24,7 +24,7 @@ interface ZetaInterfaces {
      * @dev Our Connector calls onZetaMessage with this struct as argument
      */
     struct ZetaMessage {
-        bytes originSenderAddress;
+        bytes zetaTxSenderAddress;
         uint256 originChainId;
         address destinationAddress;
         uint256 zetaAmount;
@@ -35,7 +35,7 @@ interface ZetaInterfaces {
      * @dev Our Connector calls onZetaRevert with this struct as argument
      */
     struct ZetaRevert {
-        address originSenderAddress;
+        address zetaTxSenderAddress;
         uint256 originChainId;
         bytes destinationAddress;
         uint256 destinationChainId;

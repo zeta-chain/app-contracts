@@ -34,7 +34,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
     }
 
     function onReceive(
-        bytes calldata originSenderAddress,
+        bytes calldata zetaTxSenderAddress,
         uint256 originChainId,
         address destinationAddress,
         uint256 zetaAmount,
@@ -46,12 +46,12 @@ contract ZetaConnectorEth is ZetaConnectorBase {
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(
-                ZetaInterfaces.ZetaMessage(originSenderAddress, originChainId, destinationAddress, zetaAmount, message)
+                ZetaInterfaces.ZetaMessage(zetaTxSenderAddress, originChainId, destinationAddress, zetaAmount, message)
             );
         }
 
         emit ZetaReceived(
-            originSenderAddress,
+            zetaTxSenderAddress,
             originChainId,
             destinationAddress,
             zetaAmount,
@@ -61,7 +61,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
     }
 
     function onRevert(
-        address originSenderAddress,
+        address zetaTxSenderAddress,
         uint256 originChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
@@ -69,13 +69,13 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        bool success = IERC20(zetaToken).transfer(originSenderAddress, zetaAmount);
+        bool success = IERC20(zetaToken).transfer(zetaTxSenderAddress, zetaAmount);
         require(success, "ZetaConnector: error transferring Zeta");
 
         if (message.length > 0) {
-            ZetaReceiver(originSenderAddress).onZetaRevert(
+            ZetaReceiver(zetaTxSenderAddress).onZetaRevert(
                 ZetaInterfaces.ZetaRevert(
-                    originSenderAddress,
+                    zetaTxSenderAddress,
                     originChainId,
                     destinationAddress,
                     destinationChainId,
@@ -86,7 +86,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         }
 
         emit ZetaReverted(
-            originSenderAddress,
+            zetaTxSenderAddress,
             originChainId,
             destinationChainId,
             destinationAddress,

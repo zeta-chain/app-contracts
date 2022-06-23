@@ -7,7 +7,7 @@ import "../CrossChainWarriors.sol";
 
 contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
     function callOnZetaMessage(
-        bytes memory originSenderAddress,
+        bytes memory zetaTxSenderAddress,
         uint256 originChainId,
         address destinationAddress,
         uint256 zetaAmount,
@@ -16,7 +16,7 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
         return
             CrossChainWarriors(destinationAddress).onZetaMessage(
                 ZetaInterfaces.ZetaMessage({
-                    originSenderAddress: originSenderAddress,
+                    zetaTxSenderAddress: zetaTxSenderAddress,
                     originChainId: originChainId,
                     destinationAddress: destinationAddress,
                     zetaAmount: zetaAmount,
@@ -26,7 +26,7 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
     }
 
     function callOnZetaRevert(
-        address originSenderAddress,
+        address zetaTxSenderAddress,
         uint256 originChainId,
         uint256 destinationChainId,
         bytes calldata destinationAddress,
@@ -35,9 +35,9 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
         bytes calldata message
     ) public {
         return
-            CrossChainWarriors(originSenderAddress).onZetaRevert(
+            CrossChainWarriors(zetaTxSenderAddress).onZetaRevert(
                 ZetaInterfaces.ZetaRevert({
-                    originSenderAddress: originSenderAddress,
+                    zetaTxSenderAddress: zetaTxSenderAddress,
                     originChainId: originChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,

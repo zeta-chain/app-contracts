@@ -18,7 +18,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public tssAddressUpdater;
 
     event ZetaSent(
-        address indexed originSenderAddress,
+        address indexed zetaTxSenderAddress,
         uint256 destinationChainId,
         bytes destinationAddress,
         uint256 zetaAmount,
@@ -27,7 +27,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes zetaParams
     );
     event ZetaReceived(
-        bytes originSenderAddress,
+        bytes zetaTxSenderAddress,
         uint256 indexed originChainId,
         address indexed destinationAddress,
         uint256 zetaAmount,
@@ -35,7 +35,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes32 indexed internalSendHash
     );
     event ZetaReverted(
-        address originSenderAddress,
+        address zetaTxSenderAddress,
         uint256 originChainId,
         uint256 indexed destinationChainId,
         bytes indexed destinationAddress,
@@ -44,7 +44,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes32 indexed internalSendHash
     );
 
-    event TSSAddressUpdated(address originSenderAddress, address newTSSAddress);
+    event TSSAddressUpdated(address zetaTxSenderAddress, address newTSSAddress);
 
     constructor(
         address zetaToken_,
@@ -98,7 +98,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     function send(ZetaInterfaces.SendInput calldata input) external virtual {}
 
     function onReceive(
-        bytes calldata originSenderAddress,
+        bytes calldata zetaTxSenderAddress,
         uint256 originChainId,
         address destinationAddress,
         uint256 zetaAmount,
@@ -107,7 +107,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     ) external virtual {}
 
     function onRevert(
-        address originSenderAddress,
+        address zetaTxSenderAddress,
         uint256 originChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,

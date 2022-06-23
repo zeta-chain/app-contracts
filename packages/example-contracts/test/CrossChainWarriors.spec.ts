@@ -145,7 +145,7 @@ describe("CrossChainWarriors tests", () => {
     it("Should revert if the caller is not the Connector contract", async () => {
       await expect(
         crossChainWarriorsContractChainA.onZetaMessage({
-          originSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
+          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
           originChainId: 1,
           destinationAddress: crossChainWarriorsContractChainB.address,
           zetaAmount: 0,
