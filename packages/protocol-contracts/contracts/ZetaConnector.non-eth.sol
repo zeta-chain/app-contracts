@@ -29,6 +29,10 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         return ZetaToken(zetaToken).balanceOf(address(this));
     }
 
+    function setMaxSupply(uint256 maxSupply_) external onlyTssAddress {
+        maxSupply = maxSupply_;
+    }
+
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
         ZetaToken(zetaToken).burnFrom(msg.sender, input.zetaAmount);
 
@@ -104,9 +108,5 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
             message,
             internalSendHash
         );
-    }
-
-    function setMaxSupply(uint256 maxSupply_) external onlyTssAddress {
-        maxSupply = maxSupply_;
     }
 }
