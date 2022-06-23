@@ -28,7 +28,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     );
     event ZetaReceived(
         bytes zetaTxSenderAddress,
-        uint256 indexed originChainId,
+        uint256 indexed sourceChainId,
         address indexed destinationAddress,
         uint256 zetaAmount,
         bytes message,
@@ -36,7 +36,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     );
     event ZetaReverted(
         address zetaTxSenderAddress,
-        uint256 originChainId,
+        uint256 sourceChainId,
         uint256 indexed destinationChainId,
         bytes indexed destinationAddress,
         uint256 zetaAmount,
@@ -99,7 +99,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
 
     function onReceive(
         bytes calldata zetaTxSenderAddress,
-        uint256 originChainId,
+        uint256 sourceChainId,
         address destinationAddress,
         uint256 zetaAmount,
         bytes calldata message,
@@ -108,7 +108,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
 
     function onRevert(
         address zetaTxSenderAddress,
-        uint256 originChainId,
+        uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
         uint256 zetaAmount,

@@ -73,7 +73,7 @@ describe("CrossChainCounter tests", () => {
       await expect(
         crossChainCounterContractA.onZetaMessage({
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainCounterContractA.address]),
-          originChainId: 1,
+          sourceChainId: 1,
           destinationAddress: crossChainCounterContractB.address,
           zetaAmount: 0,
           message: encoder.encode(["address"], [deployerAddress]),

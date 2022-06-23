@@ -49,7 +49,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
 
     function onReceive(
         bytes calldata zetaTxSenderAddress,
-        uint256 originChainId,
+        uint256 sourceChainId,
         address destinationAddress,
         uint256 zetaAmount,
         bytes calldata message,
@@ -60,13 +60,13 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(
-                ZetaInterfaces.ZetaMessage(zetaTxSenderAddress, originChainId, destinationAddress, zetaAmount, message)
+                ZetaInterfaces.ZetaMessage(zetaTxSenderAddress, sourceChainId, destinationAddress, zetaAmount, message)
             );
         }
 
         emit ZetaReceived(
             zetaTxSenderAddress,
-            originChainId,
+            sourceChainId,
             destinationAddress,
             zetaAmount,
             message,
@@ -76,7 +76,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
 
     function onRevert(
         address zetaTxSenderAddress,
-        uint256 originChainId,
+        uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
         uint256 zetaAmount,
@@ -90,7 +90,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
             ZetaReceiver(zetaTxSenderAddress).onZetaRevert(
                 ZetaInterfaces.ZetaRevert(
                     zetaTxSenderAddress,
-                    originChainId,
+                    sourceChainId,
                     destinationAddress,
                     destinationChainId,
                     zetaAmount,
@@ -101,7 +101,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
 
         emit ZetaReverted(
             zetaTxSenderAddress,
-            originChainId,
+            sourceChainId,
             destinationChainId,
             destinationAddress,
             zetaAmount,

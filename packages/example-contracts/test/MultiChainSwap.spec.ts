@@ -403,7 +403,7 @@ describe("MultiChainSwap tests", () => {
       await expect(
         multiChainSwapContractA.onZetaMessage({
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
-          originChainId: chainBId,
+          sourceChainId: chainBId,
           destinationAddress: multiChainSwapContractB.address,
           zetaAmount: 0,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
@@ -429,7 +429,7 @@ describe("MultiChainSwap tests", () => {
       await expect(
         multiChainSwapContractA.onZetaRevert({
           zetaTxSenderAddress: deployer.address,
-          originChainId: chainAId,
+          sourceChainId: chainAId,
           destinationAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]),
           destinationChainId: chainBId,
           zetaAmount: 0,

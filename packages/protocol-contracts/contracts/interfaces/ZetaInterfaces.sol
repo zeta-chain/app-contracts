@@ -25,7 +25,7 @@ interface ZetaInterfaces {
      */
     struct ZetaMessage {
         bytes zetaTxSenderAddress;
-        uint256 originChainId;
+        uint256 sourceChainId;
         address destinationAddress;
         uint256 zetaAmount;
         bytes message;
@@ -36,7 +36,7 @@ interface ZetaInterfaces {
      */
     struct ZetaRevert {
         address zetaTxSenderAddress;
-        uint256 originChainId;
+        uint256 sourceChainId;
         bytes destinationAddress;
         uint256 destinationChainId;
         uint256 zetaAmount;

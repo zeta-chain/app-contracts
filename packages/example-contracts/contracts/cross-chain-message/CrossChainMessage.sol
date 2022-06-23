@@ -65,7 +65,7 @@ contract CrossChainMessage is Ownable {
             keccak256(_zetaMessage.zetaTxSenderAddress) == keccak256(_crossChainAddress),
             "Cross-chain address doesn't match"
         );
-        require(_zetaMessage.originChainId == _crossChainId, "Cross-chain id doesn't match");
+        require(_zetaMessage.sourceChainId == _crossChainId, "Cross-chain id doesn't match");
 
         /**
          * @dev Decode should follow the signature of the message provided to zeta.send.
@@ -88,7 +88,7 @@ contract CrossChainMessage is Ownable {
     function onZetaRevert(ZetaInterfaces.ZetaRevert calldata _zetaRevert) external {
         require(msg.sender == _zetaConnectorAddress, "This function can only be called by the Zeta Connector contract");
         require(_zetaRevert.zetaTxSenderAddress == address(this), "Invalid zetaTxSenderAddress");
-        require(_zetaRevert.originChainId == _currentChainId, "Invalid originChainId");
+        require(_zetaRevert.sourceChainId == _currentChainId, "Invalid sourceChainId");
 
         (bytes32 messageType, string memory helloWorldMessage) = abi.decode(_zetaRevert.message, (bytes32, string));
 

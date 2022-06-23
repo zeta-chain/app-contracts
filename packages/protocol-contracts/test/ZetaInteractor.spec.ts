@@ -35,7 +35,7 @@ describe("ZetaInteractor tests", () => {
       await expect(
         zetaInteractorMock.onZetaMessage({
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          originChainId: chainBId,
+          sourceChainId: chainBId,
           destinationAddress: crossChainContractB.address,
           zetaAmount: 0,
           message: encoder.encode(["address"], [zetaInteractorMock.address]),
@@ -47,7 +47,7 @@ describe("ZetaInteractor tests", () => {
       await expect(
         zetaInteractorMock.connect(zetaConnector).onZetaMessage({
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          originChainId: chainBId,
+          sourceChainId: chainBId,
           destinationAddress: crossChainContractB.address,
           zetaAmount: 0,
           message: encoder.encode(["address"], [crossChainContractB.address]),
@@ -61,7 +61,7 @@ describe("ZetaInteractor tests", () => {
       await expect(
         zetaInteractorMock.onZetaRevert({
           zetaTxSenderAddress: deployer.address,
-          originChainId: chainAId,
+          sourceChainId: chainAId,
           destinationAddress: ethers.utils.solidityPack(["address"], [crossChainContractB.address]),
           destinationChainId: chainBId,
           zetaAmount: 0,

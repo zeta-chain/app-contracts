@@ -21,7 +21,7 @@ abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
 
     modifier isValidMessageCall(ZetaInterfaces.ZetaMessage calldata zetaMessage) {
         _isValidCaller();
-        if (keccak256(zetaMessage.zetaTxSenderAddress) != keccak256(interactorsByChainId[zetaMessage.originChainId]))
+        if (keccak256(zetaMessage.zetaTxSenderAddress) != keccak256(interactorsByChainId[zetaMessage.sourceChainId]))
             revert InvalidZetaMessageCall();
         _;
     }
@@ -29,7 +29,7 @@ abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
     modifier isValidRevertCall(ZetaInterfaces.ZetaRevert calldata zetaRevert) {
         _isValidCaller();
         if (zetaRevert.zetaTxSenderAddress != address(this)) revert InvalidZetaRevertCall();
-        if (zetaRevert.originChainId != currentChainId) revert InvalidZetaRevertCall();
+        if (zetaRevert.sourceChainId != currentChainId) revert InvalidZetaRevertCall();
         _;
     }
 

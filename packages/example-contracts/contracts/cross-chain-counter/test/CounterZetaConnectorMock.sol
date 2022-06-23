@@ -8,7 +8,7 @@ import "../CrossChainCounter.sol";
 contract CounterZetaConnectorMock is ZetaConnector {
     function callOnZetaMessage(
         bytes memory zetaTxSenderAddress,
-        uint256 originChainId,
+        uint256 sourceChainId,
         address destinationAddress,
         uint256 zetaAmount,
         bytes calldata message
@@ -17,7 +17,7 @@ contract CounterZetaConnectorMock is ZetaConnector {
             CrossChainCounter(destinationAddress).onZetaMessage(
                 ZetaInterfaces.ZetaMessage({
                     zetaTxSenderAddress: zetaTxSenderAddress,
-                    originChainId: originChainId,
+                    sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     zetaAmount: zetaAmount,
                     message: message
@@ -27,7 +27,7 @@ contract CounterZetaConnectorMock is ZetaConnector {
 
     function callOnZetaRevert(
         address zetaTxSenderAddress,
-        uint256 originChainId,
+        uint256 sourceChainId,
         uint256 destinationChainId,
         bytes calldata destinationAddress,
         uint256 zetaAmount,
@@ -38,7 +38,7 @@ contract CounterZetaConnectorMock is ZetaConnector {
             CrossChainCounter(zetaTxSenderAddress).onZetaRevert(
                 ZetaInterfaces.ZetaRevert({
                     zetaTxSenderAddress: zetaTxSenderAddress,
-                    originChainId: originChainId,
+                    sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,
                     zetaAmount: zetaAmount,
@@ -48,13 +48,13 @@ contract CounterZetaConnectorMock is ZetaConnector {
     }
 
     function send(ZetaInterfaces.SendInput calldata sendInput) external override {
-        uint256 originChainId = sendInput.destinationChainId == 2 ? 1 : 2;
+        uint256 sourceChainId = sendInput.destinationChainId == 2 ? 1 : 2;
         address dest = address(uint160(bytes20(sendInput.destinationAddress)));
 
         return
             callOnZetaMessage(
                 abi.encodePacked(msg.sender),
-                originChainId,
+                sourceChainId,
                 dest,
                 sendInput.zetaAmount,
                 sendInput.message
