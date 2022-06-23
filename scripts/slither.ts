@@ -35,6 +35,20 @@ async function getPackageName() {
   }
 }
 
+async function getFilterPaths() {
+  if (process.env.CI) return "";
+
+  const { confirm: includeLibraries } = await inquirer.prompt([
+    {
+      type: "confirm",
+      message: "Do you want to include OpenZeppelin & Uniswap libraries in this scan?",
+      name: "confirm",
+    },
+  ]);
+
+  return includeLibraries ? "" : `--filter-paths "node_modules/@openzeppelin/","node_modules/@uniswap/"`;
+}
+
 const run = async (command: string) => {
   try {
     console.log("Starting -- This may take a few minutes...");
@@ -50,21 +64,17 @@ const run = async (command: string) => {
     console.error(`${error}`);
   }
 };
-
-function runSlither(packageName: string) {
+function runSlither(packageName: string, filterPaths: string) {
   const dockerCommand = `cd /home/trufflecon/packages/${packageName} && \
   solc-select use ${solcVersion} && \
   slither --json ../../scripts/slither-results/${packageName}-${timestamp}.json \
   --sarif ../../scripts/slither-results/${packageName}-${timestamp}.sarif \
-  --checklist  ./ | tee ../../scripts/slither-results/${packageName}-${timestamp}.md`;
-
+  --checklist  ./ ${filterPaths} | tee ../../scripts/slither-results/${packageName}-${timestamp}.md`;
   run(`docker run -v "${projectRoot}":/home/trufflecon trailofbits/eth-security-toolbox  -c "${dockerCommand}"`);
 }
 
 async function main() {
-  const packageName = await getPackageName();
-
-  runSlither(packageName);
+  runSlither(await getPackageName(), await getFilterPaths());
 }
 
 main()
