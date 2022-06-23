@@ -18,7 +18,7 @@ async function main() {
       destinationAddress: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
       destinationGasLimit: 1_000_000,
       message: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
-      zetaAmount: 0,
+      zetaValueAndFees: 0,
       zetaParams: [],
     })
   ).wait();

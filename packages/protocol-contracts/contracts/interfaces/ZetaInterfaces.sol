@@ -15,7 +15,7 @@ interface ZetaInterfaces {
         /// @dev An encoded, arbitrary message to be parsed by the destination contract
         bytes message;
         /// @dev The amount of ZETA that you want to send cross-chain + the gas fees to be paid for the transaction
-        uint256 zetaAmount;
+        uint256 zetaValueAndFees;
         /// @dev Optional parameters for the ZetaChain protocol
         bytes zetaParams;
     }
@@ -27,7 +27,7 @@ interface ZetaInterfaces {
         bytes zetaTxSenderAddress;
         uint256 sourceChainId;
         address destinationAddress;
-        uint256 zetaAmount;
+        uint256 zetaValueAndFees;
         bytes message;
     }
 
@@ -39,7 +39,7 @@ interface ZetaInterfaces {
         uint256 sourceChainId;
         bytes destinationAddress;
         uint256 destinationChainId;
-        uint256 zetaAmount;
+        uint256 zetaValueAndFees;
         bytes message;
     }
 }

@@ -53,7 +53,7 @@ contract CrossChainMessage is Ownable {
                 destinationAddress: _crossChainAddress,
                 destinationGasLimit: 2500000,
                 message: abi.encode(HELLO_WORLD_MESSAGE_TYPE, "Hello, Cross-Chain World!"),
-                zetaAmount: 0,
+                zetaValueAndFees: 0,
                 zetaParams: abi.encode("")
             })
         );

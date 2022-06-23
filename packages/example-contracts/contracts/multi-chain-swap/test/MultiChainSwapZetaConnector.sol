@@ -16,7 +16,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         bytes memory zetaTxSenderAddress,
         uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndFees,
         bytes calldata message
     ) public {
         return
@@ -25,7 +25,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
-                    zetaAmount: zetaAmount,
+                    zetaValueAndFees: zetaValueAndFees,
                     message: message
                 })
             );
@@ -36,7 +36,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         uint256 sourceChainId,
         uint256 destinationChainId,
         bytes calldata destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndFees,
         uint256, // destinationGasLimit
         bytes calldata message
     ) public {
@@ -47,7 +47,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,
-                    zetaAmount: zetaAmount,
+                    zetaValueAndFees: zetaValueAndFees,
                     message: message
                 })
             );
@@ -57,8 +57,8 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         uint256 sourceChainId = sendInput.destinationChainId == 2 ? 1 : 2;
         address dest = address(uint160(bytes20(sendInput.destinationAddress)));
 
-        if (sendInput.zetaAmount > 0) {
-            bool success = IERC20(zetaToken).transferFrom(msg.sender, dest, sendInput.zetaAmount);
+        if (sendInput.zetaValueAndFees > 0) {
+            bool success = IERC20(zetaToken).transferFrom(msg.sender, dest, sendInput.zetaValueAndFees);
             require(success == true, "MultiChainSwap: error transferring token");
         }
 
@@ -67,7 +67,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
                 abi.encodePacked(msg.sender),
                 sourceChainId,
                 dest,
-                sendInput.zetaAmount,
+                sendInput.zetaValueAndFees,
                 sendInput.message
             );
     }

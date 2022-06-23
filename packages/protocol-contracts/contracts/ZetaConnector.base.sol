@@ -21,7 +21,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         address indexed zetaTxSenderAddress,
         uint256 destinationChainId,
         bytes destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndFees,
         uint256 destinationGasLimit,
         bytes message,
         bytes zetaParams
@@ -30,7 +30,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes zetaTxSenderAddress,
         uint256 indexed sourceChainId,
         address indexed destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndFees,
         bytes message,
         bytes32 indexed internalSendHash
     );
@@ -39,7 +39,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         uint256 sourceChainId,
         uint256 indexed destinationChainId,
         bytes indexed destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndFees,
         bytes message,
         bytes32 indexed internalSendHash
     );
@@ -101,7 +101,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes calldata zetaTxSenderAddress,
         uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndFees,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}
@@ -111,7 +111,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
-        uint256 zetaAmount,
+        uint256 zetaValueAndFees,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}

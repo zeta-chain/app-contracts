@@ -73,11 +73,11 @@ describe("MultiChainSwap tests", () => {
     await tx.wait();
   };
 
-  const swapZetaToUSDC = async (signer: SignerWithAddress, zetaAmount: BigNumber) => {
+  const swapZetaToUSDC = async (signer: SignerWithAddress, zetaValueAndFees: BigNumber) => {
     const path = [zetaTokenMock.address, WETH, USDC_ADDR];
     const tx = await uniswapRouterFork
       .connect(signer)
-      .swapExactTokensForTokens(zetaAmount, 0, path, signer.address, (await getNow()) + 360);
+      .swapExactTokensForTokens(zetaValueAndFees, 0, path, signer.address, (await getNow()) + 360);
 
     await tx.wait();
   };
@@ -405,7 +405,7 @@ describe("MultiChainSwap tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
           sourceChainId: chainBId,
           destinationAddress: multiChainSwapContractB.address,
-          zetaAmount: 0,
+          zetaValueAndFees: 0,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
@@ -432,7 +432,7 @@ describe("MultiChainSwap tests", () => {
           sourceChainId: chainAId,
           destinationAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]),
           destinationChainId: chainBId,
-          zetaAmount: 0,
+          zetaValueAndFees: 0,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));

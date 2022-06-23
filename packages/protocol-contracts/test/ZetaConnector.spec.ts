@@ -134,7 +134,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).to.revertedWith("Pausable: paused");
@@ -151,7 +151,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).to.revertedWith("ERC20: transfer amount exceeds balance");
@@ -164,7 +164,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).to.revertedWith("ERC20: insufficient allowance");
@@ -185,7 +185,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).wait();
@@ -207,7 +207,7 @@ describe("ZetaConnector tests", () => {
           destinationChainId: 1,
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaAmount: 0,
+          zetaValueAndFees: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
         });
 
@@ -417,7 +417,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).to.revertedWith("Pausable: paused");
@@ -434,7 +434,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).to.revertedWith("ERC20: insufficient allowance");
@@ -447,7 +447,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).to.revertedWith("ERC20: insufficient allowance");
@@ -465,7 +465,7 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaAmount: 1000,
+            zetaValueAndFees: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           })
         ).wait();
@@ -484,7 +484,7 @@ describe("ZetaConnector tests", () => {
           destinationChainId: 1,
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaAmount: 0,
+          zetaValueAndFees: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
         });
 
