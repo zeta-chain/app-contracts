@@ -17,6 +17,8 @@ interface ZetaToken is IERC20 {
 }
 
 contract ZetaConnectorNonEth is ZetaConnectorBase {
+    uint256 public maxSupply = 2**256 - 1;
+
     constructor(
         address zetaTokenAddress_,
         address tssAddress_,
@@ -25,6 +27,10 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
 
     function getLockedAmount() external view returns (uint256) {
         return ZetaToken(zetaToken).balanceOf(address(this));
+    }
+
+    function setMaxSupply(uint256 maxSupply_) external onlyTssAddress {
+        maxSupply = maxSupply_;
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
@@ -49,6 +55,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
+        if (zetaAmount + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
         ZetaToken(zetaToken).mint(destinationAddress, zetaAmount, internalSendHash);
 
         if (message.length > 0) {
@@ -76,6 +83,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
+        if (zetaAmount + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
         ZetaToken(zetaToken).mint(originSenderAddress, zetaAmount, internalSendHash);
 
         if (message.length > 0) {
