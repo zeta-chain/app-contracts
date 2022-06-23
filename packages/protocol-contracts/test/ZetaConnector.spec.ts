@@ -132,7 +132,7 @@ describe("ZetaConnector tests", () => {
           zetaConnectorEthContract.send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -149,7 +149,7 @@ describe("ZetaConnector tests", () => {
           zetaConnectorEthContract.connect(randomSigner).send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -162,7 +162,7 @@ describe("ZetaConnector tests", () => {
           zetaConnectorEthContract.send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -183,7 +183,7 @@ describe("ZetaConnector tests", () => {
           await zetaConnectorEthContract.send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -205,7 +205,7 @@ describe("ZetaConnector tests", () => {
         await zetaConnectorEthContract.send({
           destinationAddress: randomSigner.address,
           destinationChainId: 1,
-          gasLimit: 2500000,
+          destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           zetaAmount: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -415,7 +415,7 @@ describe("ZetaConnector tests", () => {
           zetaConnectorNonEthContract.send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -432,7 +432,7 @@ describe("ZetaConnector tests", () => {
           zetaConnectorNonEthContract.connect(randomSigner).send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -445,7 +445,7 @@ describe("ZetaConnector tests", () => {
           zetaConnectorNonEthContract.send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -463,7 +463,7 @@ describe("ZetaConnector tests", () => {
           await zetaConnectorNonEthContract.send({
             destinationAddress: randomSigner.address,
             destinationChainId: 1,
-            gasLimit: 2500000,
+            destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaAmount: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
@@ -482,7 +482,7 @@ describe("ZetaConnector tests", () => {
         await zetaConnectorNonEthContract.send({
           destinationAddress: randomSigner.address,
           destinationChainId: 1,
-          gasLimit: 2500000,
+          destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           zetaAmount: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),

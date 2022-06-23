@@ -37,7 +37,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         uint256 destinationChainId,
         bytes calldata destinationAddress,
         uint256 zetaAmount,
-        uint256, // gasLimit
+        uint256, // destinationGasLimit
         bytes calldata message
     ) public {
         return

@@ -72,7 +72,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChainGasLimit
+        uint256 crossChaindestinationGasLimit
     ) external payable {
         if (!isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
@@ -108,7 +108,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: interactorsByChainId[destinationChainId],
-                gasLimit: crossChainGasLimit,
+                destinationGasLimit: crossChaindestinationGasLimit,
                 message: abi.encode(
                     CROSS_CHAIN_SWAP_MESSAGE,
                     msg.sender,
@@ -138,7 +138,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChainGasLimit
+        uint256 crossChaindestinationGasLimit
     ) external {
         if (keccak256(interactorsByChainId[destinationChainId]) == keccak256(new bytes(0)))
             revert InvalidDestinationChainId();
@@ -200,7 +200,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: interactorsByChainId[destinationChainId],
-                gasLimit: crossChainGasLimit,
+                destinationGasLimit: crossChaindestinationGasLimit,
                 message: abi.encode(
                     CROSS_CHAIN_SWAP_MESSAGE,
                     msg.sender,

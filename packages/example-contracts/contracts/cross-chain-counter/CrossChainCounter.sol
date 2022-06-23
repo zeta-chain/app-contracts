@@ -39,7 +39,7 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
             ZetaInterfaces.SendInput({
                 destinationChainId: _crossChainId,
                 destinationAddress: _crossChainAddress,
-                gasLimit: 2500000,
+                destinationGasLimit: 2500000,
                 message: abi.encode(CROSS_CHAIN_INCREMENT_MESSAGE, msg.sender),
                 zetaAmount: 0,
                 zetaParams: abi.encode("")

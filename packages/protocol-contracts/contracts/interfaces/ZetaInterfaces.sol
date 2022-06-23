@@ -11,7 +11,7 @@ interface ZetaInterfaces {
         /// @dev Address to send to on the destination chain (expressed in bytes since it can be non-EVM)
         bytes destinationAddress;
         /// @dev Gas amount limit for the destination chain's transaction
-        uint256 gasLimit;
+        uint256 destinationGasLimit;
         /// @dev An encoded, arbitrary message to be parsed by the destination contract
         bytes message;
         /// @dev The amount of ZETA that you want to send cross-chain + the gas fees to be paid for the transaction

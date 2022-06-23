@@ -109,7 +109,7 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
             ZetaInterfaces.SendInput({
                 destinationChainId: _crossChainId,
                 destinationAddress: _crossChainAddress,
-                gasLimit: zetaGasAmount,
+                destinationGasLimit: 500000,
                 message: abi.encode(CROSS_CHAIN_TRANSFER_MESSAGE, tokenId, msg.sender, to),
                 zetaAmount: zetaGasAmount,
                 zetaParams: abi.encode("")

@@ -46,7 +46,7 @@ contract MultiChainValue is Ownable {
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: destinationAddress,
-                gasLimit: 300000,
+                destinationGasLimit: 300000,
                 message: abi.encode(),
                 zetaAmount: zetaAmount,
                 zetaParams: abi.encode("")

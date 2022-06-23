@@ -22,7 +22,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         uint256 destinationChainId,
         bytes destinationAddress,
         uint256 zetaAmount,
-        uint256 gasLimit,
+        uint256 destinationGasLimit,
         bytes message,
         bytes zetaParams
     );

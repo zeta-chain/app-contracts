@@ -27,7 +27,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
             input.destinationChainId,
             input.destinationAddress,
             input.zetaAmount,
-            input.gasLimit,
+            input.destinationGasLimit,
             input.message,
             input.zetaParams
         );
