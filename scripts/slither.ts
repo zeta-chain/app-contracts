@@ -36,29 +36,17 @@ async function getPackageName() {
 }
 
 async function getFilterPaths() {
-  let filterPaths: string;
-  let includeLibraries;
+  if (process.env.CI) return "";
 
-  if (process.env.CI) {
-    includeLibraries = process.argv[3];
-  } else {
-    const question = await inquirer.prompt([
-      {
-        type: "confirm",
-        message: "Do you want to include OpenZeppelin & Uniswap libraries in this scan?",
-        name: "confirm",
-      },
-    ]);
-    includeLibraries = question.confirm;
-  }
+  const { confirm: includeLibraries } = await inquirer.prompt([
+    {
+      type: "confirm",
+      message: "Do you want to include OpenZeppelin & Uniswap libraries in this scan?",
+      name: "confirm",
+    },
+  ]);
 
-  if (!includeLibraries) {
-    filterPaths = '--filter-paths "node_modules/@openzeppelin/","node_modules/@uniswap/"';
-  } else {
-    filterPaths = "";
-  }
-
-  return filterPaths;
+  return includeLibraries ? "" : `--filter-paths "node_modules/@openzeppelin/","node_modules/@uniswap/"`;
 }
 
 const run = async (command: string) => {
@@ -86,9 +74,7 @@ function runSlither(packageName: string, filterPaths: string) {
 }
 
 async function main() {
-  const packageName = await getPackageName();
-  let filterPaths = await getFilterPaths();
-  runSlither(packageName, filterPaths);
+  runSlither(await getPackageName(), await getFilterPaths());
 }
 
 main()
