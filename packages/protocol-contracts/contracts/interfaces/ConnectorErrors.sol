@@ -9,4 +9,6 @@ interface ConnectorErrors {
     error InvalidAddress();
 
     error ZetaTransferError();
+
+    error ExceedsMaxSupply(uint256 maxSupply);
 }
