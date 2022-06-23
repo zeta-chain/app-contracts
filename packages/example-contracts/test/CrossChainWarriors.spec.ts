@@ -148,7 +148,7 @@ describe("CrossChainWarriors tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
           sourceChainId: 1,
           destinationAddress: crossChainWarriorsContractChainB.address,
-          zetaValueAndFees: 0,
+          zetaValueAndGas: 0,
           message: encoder.encode(["address"], [deployerAddress]),
         })
       ).to.be.revertedWith("This function can only be called by the Connector contract");

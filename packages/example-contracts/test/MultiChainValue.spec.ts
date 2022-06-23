@@ -82,7 +82,7 @@ describe("MultiChainValue tests", () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
 
       await expect(multiChainValueContractA.send(1, account1Address, 0)).to.be.revertedWith(
-        "MultiChainValue: zetaValueAndFees should be greater than 0"
+        "MultiChainValue: zetaValueAndGas should be greater than 0"
       );
     });
 

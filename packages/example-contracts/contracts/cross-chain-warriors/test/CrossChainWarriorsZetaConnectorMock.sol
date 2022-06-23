@@ -10,7 +10,7 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
         bytes memory zetaTxSenderAddress,
         uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaValueAndFees,
+        uint256 zetaValueAndGas,
         bytes calldata message
     ) public {
         return
@@ -19,7 +19,7 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
-                    zetaValueAndFees: zetaValueAndFees,
+                    zetaValueAndGas: zetaValueAndGas,
                     message: message
                 })
             );
@@ -30,7 +30,7 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
         uint256 sourceChainId,
         uint256 destinationChainId,
         bytes calldata destinationAddress,
-        uint256 zetaValueAndFees,
+        uint256 zetaValueAndGas,
         uint256, // destinationGasLimit
         bytes calldata message
     ) public {
@@ -41,7 +41,7 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,
-                    zetaValueAndFees: zetaValueAndFees,
+                    zetaValueAndGas: zetaValueAndGas,
                     message: message
                 })
             );
@@ -56,7 +56,7 @@ contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
                 abi.encodePacked(msg.sender),
                 sourceChainId,
                 dest,
-                sendInput.zetaValueAndFees,
+                sendInput.zetaValueAndGas,
                 sendInput.message
             );
     }

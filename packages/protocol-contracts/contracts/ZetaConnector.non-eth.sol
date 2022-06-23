@@ -34,13 +34,13 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
-        ZetaToken(zetaToken).burnFrom(msg.sender, input.zetaValueAndFees);
+        ZetaToken(zetaToken).burnFrom(msg.sender, input.zetaValueAndGas);
 
         emit ZetaSent(
             msg.sender,
             input.destinationChainId,
             input.destinationAddress,
-            input.zetaValueAndFees,
+            input.zetaValueAndGas,
             input.destinationGasLimit,
             input.message,
             input.zetaParams
@@ -51,16 +51,22 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         bytes calldata zetaTxSenderAddress,
         uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaValueAndFees,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        if (zetaValueAndFees + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
-        ZetaToken(zetaToken).mint(destinationAddress, zetaValueAndFees, internalSendHash);
+        if (zetaValueAndGas + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
+        ZetaToken(zetaToken).mint(destinationAddress, zetaValueAndGas, internalSendHash);
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(
-                ZetaInterfaces.ZetaMessage(zetaTxSenderAddress, sourceChainId, destinationAddress, zetaValueAndFees, message)
+                ZetaInterfaces.ZetaMessage(
+                    zetaTxSenderAddress,
+                    sourceChainId,
+                    destinationAddress,
+                    zetaValueAndGas,
+                    message
+                )
             );
         }
 
@@ -68,7 +74,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
             zetaTxSenderAddress,
             sourceChainId,
             destinationAddress,
-            zetaValueAndFees,
+            zetaValueAndGas,
             message,
             internalSendHash
         );
@@ -79,12 +85,12 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
-        uint256 zetaValueAndFees,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        if (zetaValueAndFees + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
-        ZetaToken(zetaToken).mint(zetaTxSenderAddress, zetaValueAndFees, internalSendHash);
+        if (zetaValueAndGas + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
+        ZetaToken(zetaToken).mint(zetaTxSenderAddress, zetaValueAndGas, internalSendHash);
 
         if (message.length > 0) {
             ZetaReceiver(zetaTxSenderAddress).onZetaRevert(
@@ -93,7 +99,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
                     sourceChainId,
                     destinationAddress,
                     destinationChainId,
-                    zetaValueAndFees,
+                    zetaValueAndGas,
                     message
                 )
             );
@@ -104,7 +110,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
             sourceChainId,
             destinationChainId,
             destinationAddress,
-            zetaValueAndFees,
+            zetaValueAndGas,
             message,
             internalSendHash
         );

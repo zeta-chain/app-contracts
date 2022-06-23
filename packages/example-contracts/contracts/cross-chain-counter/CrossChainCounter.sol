@@ -41,7 +41,7 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
                 destinationAddress: _crossChainAddress,
                 destinationGasLimit: 2500000,
                 message: abi.encode(CROSS_CHAIN_INCREMENT_MESSAGE, msg.sender),
-                zetaValueAndFees: 0,
+                zetaValueAndGas: 0,
                 zetaParams: abi.encode("")
             })
         );

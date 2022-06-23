@@ -33,13 +33,13 @@ contract MultiChainValue is Ownable {
     function send(
         uint256 destinationChainId,
         bytes calldata destinationAddress,
-        uint256 zetaValueAndFees
+        uint256 zetaValueAndGas
     ) external {
         require(availableChainIds[destinationChainId], "MultiChainValue: destinationChainId not available");
-        require(zetaValueAndFees != 0, "MultiChainValue: zetaValueAndFees should be greater than 0");
+        require(zetaValueAndGas != 0, "MultiChainValue: zetaValueAndGas should be greater than 0");
 
-        bool success1 = ZetaEth(zetaToken).approve(zetaConnector, zetaValueAndFees);
-        bool success2 = ZetaEth(zetaToken).transferFrom(msg.sender, address(this), zetaValueAndFees);
+        bool success1 = ZetaEth(zetaToken).approve(zetaConnector, zetaValueAndGas);
+        bool success2 = ZetaEth(zetaToken).transferFrom(msg.sender, address(this), zetaValueAndGas);
         require((success1 && success2) == true, "MultiChainValue: error transferring Zeta");
 
         connector.send(
@@ -48,7 +48,7 @@ contract MultiChainValue is Ownable {
                 destinationAddress: destinationAddress,
                 destinationGasLimit: 300000,
                 message: abi.encode(),
-                zetaValueAndFees: zetaValueAndFees,
+                zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );

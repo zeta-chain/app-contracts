@@ -19,14 +19,14 @@ contract ZetaConnectorEth is ZetaConnectorBase {
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
-        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), input.zetaValueAndFees);
+        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), input.zetaValueAndGas);
         if (!success) revert ZetaTransferError();
 
         emit ZetaSent(
             msg.sender,
             input.destinationChainId,
             input.destinationAddress,
-            input.zetaValueAndFees,
+            input.zetaValueAndGas,
             input.destinationGasLimit,
             input.message,
             input.zetaParams
@@ -37,16 +37,22 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         bytes calldata zetaTxSenderAddress,
         uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaValueAndFees,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        bool success = IERC20(zetaToken).transfer(destinationAddress, zetaValueAndFees);
+        bool success = IERC20(zetaToken).transfer(destinationAddress, zetaValueAndGas);
         if (!success) revert ZetaTransferError();
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(
-                ZetaInterfaces.ZetaMessage(zetaTxSenderAddress, sourceChainId, destinationAddress, zetaValueAndFees, message)
+                ZetaInterfaces.ZetaMessage(
+                    zetaTxSenderAddress,
+                    sourceChainId,
+                    destinationAddress,
+                    zetaValueAndGas,
+                    message
+                )
             );
         }
 
@@ -54,7 +60,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
             zetaTxSenderAddress,
             sourceChainId,
             destinationAddress,
-            zetaValueAndFees,
+            zetaValueAndGas,
             message,
             internalSendHash
         );
@@ -65,11 +71,11 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
-        uint256 zetaValueAndFees,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        bool success = IERC20(zetaToken).transfer(zetaTxSenderAddress, zetaValueAndFees);
+        bool success = IERC20(zetaToken).transfer(zetaTxSenderAddress, zetaValueAndGas);
         require(success, "ZetaConnector: error transferring Zeta");
 
         if (message.length > 0) {
@@ -79,7 +85,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
                     sourceChainId,
                     destinationAddress,
                     destinationChainId,
-                    zetaValueAndFees,
+                    zetaValueAndGas,
                     message
                 )
             );
@@ -90,7 +96,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
             sourceChainId,
             destinationChainId,
             destinationAddress,
-            zetaValueAndFees,
+            zetaValueAndGas,
             message,
             internalSendHash
         );
