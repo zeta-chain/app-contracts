@@ -52,13 +52,13 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
     );
 
     constructor(
-        address _zetaConnector,
-        address _zetaTokenInput,
-        address _uniswapV2Router
-    ) ZetaInteractor(_zetaConnector) {
-        zetaToken = _zetaTokenInput;
-        uniswapV2RouterAddress = _uniswapV2Router;
-        uniswapV2Router = IUniswapV2Router02(_uniswapV2Router);
+        address zetaConnector_,
+        address zetaTokenInput_,
+        address uniswapV2Router_
+    ) ZetaInteractor(zetaConnector_) {
+        zetaToken = zetaTokenInput_;
+        uniswapV2RouterAddress = uniswapV2Router_;
+        uniswapV2Router = IUniswapV2Router02(uniswapV2Router_);
         wETH = uniswapV2Router.WETH();
     }
 

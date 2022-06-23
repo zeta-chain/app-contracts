@@ -63,3 +63,21 @@ interface ZetaReceiver {
      */
     function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external;
 }
+
+/**
+ * @dev ZetaTokenConsumer makes it easier to handle the following situations:
+ *   - Getting Zeta using native coin (to pay for destination gas while using `connector.send`)
+ *   - Getting Zeta using a token (to pay for destination gas while using `connector.send`)
+ *   - Getting native coin using Zeta (to return unused destination gas when `onZetaRevert` is executed)
+ *   - Getting a token using Zeta (to return unused destination gas when `onZetaRevert` is executed)
+ * @dev The interface can be implemented using different strategies, like UniswapV2, UniswapV3, etc
+ */
+interface ZetaTokenConsumer {
+    function getZetaFromEth(uint256 minAmount) external payable;
+
+    function getZetaFromToken(uint256 minAmount) external;
+
+    function getEthFromZeta(uint256 minAmount) external payable;
+
+    function getTokenFromZeta(uint256 minAmount) external;
+}
