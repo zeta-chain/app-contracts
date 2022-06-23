@@ -140,7 +140,7 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith("Pausable: paused");
       });
 
-      it("Should revert if the sender has no enough zeta", async () => {
+      it("Should revert if the zetaTxSender has no enough zeta", async () => {
         await (
           await zetaTokenEthContract.connect(randomSigner).approve(zetaConnectorEthContract.address, 100_000)
         ).wait();
@@ -157,7 +157,7 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith("ERC20: transfer amount exceeds balance");
       });
 
-      it("Should revert if the sender didn't allow ZetaConnector to spend Zeta token", async () => {
+      it("Should revert if the zetaTxSender didn't allow ZetaConnector to spend Zeta token", async () => {
         await expect(
           zetaConnectorEthContract.send({
             destinationAddress: randomSigner.address,
@@ -170,7 +170,7 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith("ERC20: insufficient allowance");
       });
 
-      it("Should transfer Zeta token from the sender account to the Connector contract", async () => {
+      it("Should transfer Zeta token from the zetaTxSender account to the Connector contract", async () => {
         const initialBalanceDeployer = await zetaTokenEthContract.balanceOf(tssUpdater.address);
         const initialBalanceConnector = await zetaTokenEthContract.balanceOf(zetaConnectorEthContract.address);
 
@@ -348,13 +348,13 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
       });
 
-      it("Should transfer to the origin address", async () => {
+      it("Should transfer to the zetaTxSender address", async () => {
         await transfer100kZetaEth(zetaConnectorEthContract.address);
 
         const initialBalanceConnector = await zetaTokenEthContract.balanceOf(zetaConnectorEthContract.address);
-        const initialBalanceSender = await zetaTokenEthContract.balanceOf(zetaReceiverMockContract.address);
+        const initialBalanceZetaTxSender = await zetaTokenEthContract.balanceOf(zetaReceiverMockContract.address);
         expect(initialBalanceConnector.toString()).to.equal("100000");
-        expect(initialBalanceSender.toString()).to.equal("0");
+        expect(initialBalanceZetaTxSender.toString()).to.equal("0");
 
         await (
           await zetaConnectorEthContract
@@ -371,10 +371,10 @@ describe("ZetaConnector tests", () => {
         ).wait();
 
         const finalBalanceConnector = await zetaTokenEthContract.balanceOf(zetaConnectorEthContract.address);
-        const finalBalanceSender = await zetaTokenEthContract.balanceOf(zetaReceiverMockContract.address);
+        const finalBalanceZetaTxSender = await zetaTokenEthContract.balanceOf(zetaReceiverMockContract.address);
 
         expect(finalBalanceConnector.toString()).to.equal("99000");
-        expect(finalBalanceSender.toString()).to.equal("1000");
+        expect(finalBalanceZetaTxSender.toString()).to.equal("1000");
       });
 
       it("Should emit `ZetaReverted` on success", async () => {
@@ -423,7 +423,7 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith("Pausable: paused");
       });
 
-      it("Should revert if the sender has no enough zeta", async () => {
+      it("Should revert if the zetaTxSender has no enough zeta", async () => {
         await (
           await zetaTokenEthContract.connect(randomSigner).approve(zetaConnectorEthContract.address, 100_000)
         ).wait();
@@ -440,7 +440,7 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith("ERC20: insufficient allowance");
       });
 
-      it("Should revert if the sender didn't allow ZetaConnector to spend Zeta token", async () => {
+      it("Should revert if the zetaTxSender didn't allow ZetaConnector to spend Zeta token", async () => {
         await expect(
           zetaConnectorNonEthContract.send({
             destinationAddress: randomSigner.address,
@@ -453,7 +453,7 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith("ERC20: insufficient allowance");
       });
 
-      it("Should burn Zeta token from the sender account", async () => {
+      it("Should burn Zeta token from the zetaTxSender account", async () => {
         const initialBalanceDeployer = await zetaTokenNonEthContract.balanceOf(tssUpdater.address);
         expect(initialBalanceDeployer.toString()).to.equal("100000000000000000000000");
 
@@ -624,9 +624,9 @@ describe("ZetaConnector tests", () => {
         ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
       });
 
-      it("Should mint on the origin address", async () => {
-        const initialBalanceSender = await zetaTokenNonEthContract.balanceOf(zetaReceiverMockContract.address);
-        expect(initialBalanceSender.toString()).to.equal("0");
+      it("Should mint on the zetaTxSender address", async () => {
+        const initialBalanceZetaTxSender = await zetaTokenNonEthContract.balanceOf(zetaReceiverMockContract.address);
+        expect(initialBalanceZetaTxSender.toString()).to.equal("0");
 
         await (
           await zetaConnectorNonEthContract
@@ -642,8 +642,8 @@ describe("ZetaConnector tests", () => {
             )
         ).wait();
 
-        const finalBalanceSender = await zetaTokenNonEthContract.balanceOf(zetaReceiverMockContract.address);
-        expect(finalBalanceSender.toString()).to.equal("1000");
+        const finalBalanceZetaTxSender = await zetaTokenNonEthContract.balanceOf(zetaReceiverMockContract.address);
+        expect(finalBalanceZetaTxSender.toString()).to.equal("1000");
       });
 
       it("Should emit `ZetaReverted` on success", async () => {

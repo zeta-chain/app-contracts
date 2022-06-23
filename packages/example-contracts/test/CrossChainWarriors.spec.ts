@@ -246,14 +246,14 @@ describe("CrossChainWarriors tests", () => {
      * @description note that given how this test was implemented, the NFT will exist in the two chains
      * that's not the real-world behavior but it's ok for this unit test
      */
-    it("Should give the NFT back to the sender", async () => {
+    it("Should give the NFT back to the sourceTxOriginAddress", async () => {
       const nftId = 1;
 
       await (await crossChainWarriorsContractChainA.mintId(deployerAddress, nftId)).wait();
 
       await (await crossChainWarriorsContractChainA.crossChainTransfer(deployerAddress, nftId)).wait();
 
-      // Make sure that the NFT was removed from the origin chain
+      // Make sure that the NFT was removed from the source chain
       await expect(crossChainWarriorsContractChainA.ownerOf(nftId)).to.be.revertedWith(
         "ERC721: owner query for nonexistent token"
       );
