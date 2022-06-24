@@ -26,6 +26,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes message,
         bytes zetaParams
     );
+
     event ZetaReceived(
         bytes zetaTxSenderAddress,
         uint256 indexed sourceChainId,
@@ -34,6 +35,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes message,
         bytes32 indexed internalSendHash
     );
+
     event ZetaReverted(
         address zetaTxSenderAddress,
         uint256 sourceChainId,
@@ -44,7 +46,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes32 indexed internalSendHash
     );
 
-    event TSSAddressUpdated(address zetaTxSenderAddress, address newTSSAddress);
+    event TSSAddressUpdated(address zetaTxSenderAddress, address newTssAddress);
 
     constructor(
         address zetaToken_,
