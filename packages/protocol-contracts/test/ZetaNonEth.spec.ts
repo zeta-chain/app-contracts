@@ -24,14 +24,7 @@ describe("ZetaNonEth tests", () => {
     await (
       await zetaConnectorNonEthContract
         .connect(tssSigner)
-        .onReceive(
-          randomSigner.address,
-          1,
-          transferTo,
-          zeta100k,
-          [],
-          "0x0000000000000000000000000000000000000000000000000000000000000000"
-        )
+        .onReceive(randomSigner.address, 1, transferTo, zeta100k, [], ethers.constants.HashZero)
     ).wait();
   };
 
@@ -98,9 +91,7 @@ describe("ZetaNonEth tests", () => {
   describe("mint", () => {
     it("Should revert if the caller is not the Connector contract", async () => {
       expect(
-        zetaTokenNonEthContract
-          .connect(randomSigner)
-          .mint(tssUpdater.address, 100_000, "0x0000000000000000000000000000000000000000000000000000000000000000")
+        zetaTokenNonEthContract.connect(randomSigner).mint(tssUpdater.address, 100_000, ethers.constants.AddressZero)
       ).to.be.revertedWith(`CallerIsNotConnector("${randomSigner.address}")`);
     });
 
@@ -118,7 +109,7 @@ describe("ZetaNonEth tests", () => {
             zetaReceiverMockContract.address,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
       ).wait();
 

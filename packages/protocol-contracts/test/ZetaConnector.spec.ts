@@ -49,14 +49,7 @@ describe("ZetaConnector tests", () => {
     await (
       await zetaConnectorNonEthContract
         .connect(tssSigner)
-        .onReceive(
-          randomSigner.address,
-          1,
-          transferTo,
-          zeta100k,
-          [],
-          "0x0000000000000000000000000000000000000000000000000000000000000000"
-        )
+        .onReceive(randomSigner.address, 1, transferTo, zeta100k, [], ethers.constants.HashZero)
     ).wait();
   };
 
@@ -251,7 +244,7 @@ describe("ZetaConnector tests", () => {
             randomSigner.address,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith("Pausable: paused");
       });
@@ -264,7 +257,7 @@ describe("ZetaConnector tests", () => {
             randomSigner.address,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")'`);
       });
@@ -279,7 +272,7 @@ describe("ZetaConnector tests", () => {
               randomSigner.address,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).to.revertedWith("ERC20: transfer amount exceeds balance");
       });
@@ -301,7 +294,7 @@ describe("ZetaConnector tests", () => {
               zetaReceiverMockContract.address,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -328,7 +321,7 @@ describe("ZetaConnector tests", () => {
               zetaReceiverMockContract.address,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -351,7 +344,7 @@ describe("ZetaConnector tests", () => {
             2,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith("Pausable: paused");
       });
@@ -365,7 +358,7 @@ describe("ZetaConnector tests", () => {
             1,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
       });
@@ -388,7 +381,7 @@ describe("ZetaConnector tests", () => {
               1,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -416,7 +409,7 @@ describe("ZetaConnector tests", () => {
               1,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -528,7 +521,7 @@ describe("ZetaConnector tests", () => {
             randomSigner.address,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith("Pausable: paused");
       });
@@ -541,7 +534,7 @@ describe("ZetaConnector tests", () => {
             randomSigner.address,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")'`);
       });
@@ -561,7 +554,7 @@ describe("ZetaConnector tests", () => {
               zetaReceiverMockContract.address,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).to.revertedWith(`CallerIsNotConnector("${zetaConnectorNonEthContract.address}")`);
       });
@@ -579,7 +572,7 @@ describe("ZetaConnector tests", () => {
               zetaReceiverMockContract.address,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -602,7 +595,7 @@ describe("ZetaConnector tests", () => {
               zetaReceiverMockContract.address,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -625,7 +618,7 @@ describe("ZetaConnector tests", () => {
             2,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith("Pausable: paused");
       });
@@ -639,7 +632,7 @@ describe("ZetaConnector tests", () => {
             1,
             1000,
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            "0x0000000000000000000000000000000000000000000000000000000000000000"
+            ethers.constants.HashZero
           )
         ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
       });
@@ -658,7 +651,7 @@ describe("ZetaConnector tests", () => {
               1,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -683,7 +676,7 @@ describe("ZetaConnector tests", () => {
               1,
               1000,
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-              "0x0000000000000000000000000000000000000000000000000000000000000000"
+              ethers.constants.HashZero
             )
         ).wait();
 
@@ -711,7 +704,7 @@ describe("ZetaConnector tests", () => {
                 zetaReceiverMockContract.address,
                 1000,
                 new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-                "0x0000000000000000000000000000000000000000000000000000000000000000"
+                ethers.constants.HashZero
               )
           ).to.revertedWith(`ExceedsMaxSupply(999)`);
         });
@@ -733,7 +726,7 @@ describe("ZetaConnector tests", () => {
                 zetaReceiverMockContract.address,
                 supplyToAdd,
                 new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-                "0x0000000000000000000000000000000000000000000000000000000000000000"
+                ethers.constants.HashZero
               )
           ).to.be.not.reverted;
 
@@ -750,7 +743,7 @@ describe("ZetaConnector tests", () => {
                 zetaReceiverMockContract.address,
                 1,
                 new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-                "0x0000000000000000000000000000000000000000000000000000000000000000"
+                ethers.constants.HashZero
               )
           ).to.revertedWith(`ExceedsMaxSupply(${initialSupply.add(supplyToAdd)})`);
 
@@ -764,7 +757,7 @@ describe("ZetaConnector tests", () => {
                 2,
                 1000,
                 new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-                "0x0000000000000000000000000000000000000000000000000000000000000000"
+                ethers.constants.HashZero
               )
           ).to.revertedWith(`ExceedsMaxSupply(${initialSupply.add(supplyToAdd)})`);
         });
