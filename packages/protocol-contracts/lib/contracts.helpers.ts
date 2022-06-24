@@ -21,6 +21,8 @@ import {
   ZetaTokenConsumerMock__factory as ZetaTokenConsumerMockFactory,
   ZetaTokenConsumerUniV2,
   ZetaTokenConsumerUniV2__factory as ZetaTokenConsumerUniV2Factory,
+  ZetaTokenConsumerUniV3,
+  ZetaTokenConsumerUniV3__factory as ZetaTokenConsumerUniV3Factory,
 } from "../typechain-types";
 
 export const isEthNetworkName = (networkName: string) =>
@@ -117,6 +119,12 @@ export const getZetaTokenConsumerMock = async (strategyAddress: string) =>
 export const getZetaTokenConsumerUniV2Strategy = async (params: GetContractParams<ZetaTokenConsumerUniV2Factory>) =>
   getContract<ZetaTokenConsumerUniV2Factory, ZetaTokenConsumerUniV2>({
     contractName: "ZetaTokenConsumerUniV2",
+    ...params,
+  });
+
+export const getZetaTokenConsumerUniV3Strategy = async (params: GetContractParams<ZetaTokenConsumerUniV3Factory>) =>
+  getContract<ZetaTokenConsumerUniV3Factory, ZetaTokenConsumerUniV3>({
+    contractName: "ZetaTokenConsumerUniV3",
     ...params,
   });
 

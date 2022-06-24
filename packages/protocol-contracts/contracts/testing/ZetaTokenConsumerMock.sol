@@ -26,11 +26,11 @@ contract ZetaTokenConsumerMock {
         zetaTokenConsumer.getZetaFromToken(minAmountOut, inputToken, inputTokenAmount);
     }
 
-    function testGetEthFromZeta(uint256 minAmountOut) external payable {
-        zetaTokenConsumer.getEthFromZeta(minAmountOut);
-    }
+    // function testGetEthFromZeta(uint256 minAmountOut) external payable {
+    //     zetaTokenConsumer.getEthFromZeta(minAmountOut);
+    // }
 
-    function testGetTokenFromZeta(uint256 minAmountOut) external {
-        zetaTokenConsumer.getTokenFromZeta(minAmountOut);
-    }
+    // function testGetTokenFromZeta(uint256 minAmountOut) external {
+    //     zetaTokenConsumer.getTokenFromZeta(minAmountOut);
+    // }
 }

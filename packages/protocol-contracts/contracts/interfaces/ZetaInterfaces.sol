@@ -81,7 +81,11 @@ interface ZetaTokenConsumer {
         uint256 inputTokenAmount
     ) external;
 
-    function getEthFromZeta(uint256 minAmountOut) external payable;
+    function getEthFromZeta(uint256 minAmountOut, uint256 zetaTokenAmount) external;
 
-    function getTokenFromZeta(uint256 minAmountOut) external;
+    function getTokenFromZeta(
+        uint256 minAmountOut,
+        address outputToken,
+        uint256 zetaTokenAmount
+    ) external;
 }
