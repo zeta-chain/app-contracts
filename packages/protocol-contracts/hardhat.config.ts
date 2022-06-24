@@ -14,7 +14,11 @@ const PRIVATE_KEYS =
 
 const config: HardhatUserConfig = {
   solidity: {
-    compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.7" }],
+    compilers: [
+      { version: "0.6.6" /** For uniswap v2 */ },
+      { version: "0.7.6" /** For uniswap v3 */ },
+      { version: "0.8.7" },
+    ],
   },
   etherscan: {
     ...getHardhatConfigScanners(),

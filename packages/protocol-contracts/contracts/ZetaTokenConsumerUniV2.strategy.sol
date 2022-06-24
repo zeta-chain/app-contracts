@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 
 import "./interfaces/ZetaInterfaces.sol";
 
 interface ZetaTokenConsumerUniV2Errors {
-    error ErrorSwappingTokens();
+    error ErrorGettingZeta();
+
+    error ErrorExchangingZeta();
 }
 
 /**
  * @dev Uniswap V2 strategy for ZetaTokenConsumer
  */
 contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Errors {
-    /**
-     * @custom:todo (lucas): explain why 365
-     */
-    uint256 internal constant MAX_DEADLINE = 365;
+    uint256 internal constant MAX_DEADLINE = 100;
 
     address public uniswapV2RouterAddress;
     address internal immutable wETH;
@@ -31,13 +31,13 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         wETH = uniswapV2Router.WETH();
     }
 
-    function getZetaFromEth(uint256 minAmount) external payable override {
+    function getZetaFromEth(uint256 minAmountOut) external payable override {
         address[] memory path = new address[](2);
         path[0] = wETH;
         path[1] = zetaToken;
 
         uint256[] memory amounts = uniswapV2Router.swapExactETHForTokens{value: msg.value}(
-            minAmount,
+            minAmountOut,
             path,
             address(this),
             block.timestamp + MAX_DEADLINE
@@ -45,18 +45,47 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
 
         uint256 zetaAmount = amounts[path.length - 1];
 
-        if (zetaAmount == 0) revert ErrorSwappingTokens();
+        IERC20(zetaToken).transfer(msg.sender, zetaAmount);
     }
 
-    function getZetaFromToken(uint256 minAmount) external override {
+    function getZetaFromToken(
+        uint256 minAmountOut,
+        address inputToken,
+        uint256 inputTokenAmount
+    ) external override {
+        bool success = IERC20(inputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
+        if (!success) revert ErrorGettingZeta();
+
+        address[] memory path;
+        if (inputToken == wETH) {
+            path = new address[](2);
+            path[0] = wETH;
+            path[1] = zetaToken;
+        } else {
+            path = new address[](3);
+            path[0] = inputToken;
+            path[1] = wETH;
+            path[2] = zetaToken;
+        }
+
+        uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
+            inputTokenAmount,
+            minAmountOut,
+            path,
+            address(this),
+            block.timestamp + MAX_DEADLINE
+        );
+
+        uint256 zetaAmount = amounts[path.length - 1];
+
+        IERC20(zetaToken).transfer(msg.sender, zetaAmount);
+    }
+
+    function getEthFromZeta(uint256 minAmountOut) external payable override {
         //
     }
 
-    function getEthFromZeta(uint256 minAmount) external payable override {
-        //
-    }
-
-    function getTokenFromZeta(uint256 minAmount) external override {
+    function getTokenFromZeta(uint256 minAmountOut) external override {
         //
     }
 }
