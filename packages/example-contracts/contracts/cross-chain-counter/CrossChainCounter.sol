@@ -39,9 +39,9 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
             ZetaInterfaces.SendInput({
                 destinationChainId: _crossChainId,
                 destinationAddress: _crossChainAddress,
-                gasLimit: 2500000,
+                destinationGasLimit: 2500000,
                 message: abi.encode(CROSS_CHAIN_INCREMENT_MESSAGE, msg.sender),
-                zetaAmount: 0,
+                zetaValueAndGas: 0,
                 zetaParams: abi.encode("")
             })
         );
@@ -50,10 +50,10 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
     function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
         require(
-            keccak256(zetaMessage.originSenderAddress) == keccak256(_crossChainAddress),
+            keccak256(zetaMessage.zetaTxSenderAddress) == keccak256(_crossChainAddress),
             "Cross-chain address doesn't match"
         );
-        require(zetaMessage.originChainId == _crossChainId, "Cross-chain id doesn't match");
+        require(zetaMessage.sourceChainId == _crossChainId, "Cross-chain id doesn't match");
 
         (bytes32 messageType, address messageFrom) = abi.decode(zetaMessage.message, (bytes32, address));
 
@@ -64,8 +64,8 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
 
     function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
-        require(zetaRevert.originSenderAddress == address(this), "Invalid originSenderAddress");
-        require(zetaRevert.originChainId == currentChainId, "Invalid originChainId");
+        require(zetaRevert.zetaTxSenderAddress == address(this), "Invalid zetaTxSenderAddress");
+        require(zetaRevert.sourceChainId == currentChainId, "Invalid sourceChainId");
 
         (bytes32 messageType, address messageFrom) = abi.decode(zetaRevert.message, (bytes32, address));
 

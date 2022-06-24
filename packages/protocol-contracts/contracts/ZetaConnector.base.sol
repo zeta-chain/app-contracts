@@ -20,35 +20,35 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public tssAddressUpdater;
 
     event ZetaSent(
-        address indexed originSenderAddress,
-        uint256 destinationChainId,
-        bytes destinationAddress,
-        uint256 zetaAmount,
-        uint256 gasLimit,
+        address indexed zetaTxSenderAddress,
+        uint256 indexed destinationChainId,
+        bytes indexed destinationAddress,
+        uint256 zetaValueAndGas,
+        uint256 destinationGasLimit,
         bytes message,
         bytes zetaParams
     );
 
     event ZetaReceived(
-        bytes originSenderAddress,
-        uint256 indexed originChainId,
+        bytes zetaTxSenderAddress,
+        uint256 indexed sourceChainId,
         address indexed destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes message,
         bytes32 indexed internalSendHash
     );
 
     event ZetaReverted(
-        address originSenderAddress,
-        uint256 originChainId,
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
         uint256 indexed destinationChainId,
         bytes indexed destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes message,
         bytes32 indexed internalSendHash
     );
 
-    event TSSAddressUpdated(address updaterAddress, address newTssAddress);
+    event TSSAddressUpdated(address zetaTxSenderAddress, address newTssAddress);
 
     event PauserAddressUpdated(address updaterAddress, address newTssAddress);
 
@@ -119,20 +119,20 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     function send(ZetaInterfaces.SendInput calldata input) external virtual {}
 
     function onReceive(
-        bytes calldata originSenderAddress,
-        uint256 originChainId,
+        bytes calldata zetaTxSenderAddress,
+        uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}
 
     function onRevert(
-        address originSenderAddress,
-        uint256 originChainId,
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}

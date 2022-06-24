@@ -16,9 +16,9 @@ async function main() {
     await contract.send({
       destinationChainId: getChainId("bsc-testnet"),
       destinationAddress: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
-      gasLimit: 1_000_000,
+      destinationGasLimit: 1_000_000,
       message: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
-      zetaAmount: 0,
+      zetaValueAndGas: 0,
       zetaParams: [],
     })
   ).wait();
