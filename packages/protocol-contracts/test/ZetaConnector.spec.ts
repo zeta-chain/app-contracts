@@ -114,6 +114,45 @@ describe("ZetaConnector tests", () => {
       });
     });
 
+    describe("updatePauserAddress", () => {
+      it("Should revert if the caller is not the Pauser", async () => {
+        await expect(
+          zetaConnectorBaseContract.connect(randomSigner).updatePauserAddress(randomSigner.address)
+        ).to.revertedWith(`CallerIsNotPauser("${randomSigner.address}")`);
+      });
+
+      it("Should revert if the new Pauser address is invalid", async () => {
+        await expect(
+          zetaConnectorBaseContract
+            .connect(pauserSigner)
+            .updatePauserAddress("0x0000000000000000000000000000000000000000")
+        ).to.revertedWith(`InvalidAddress()`);
+      });
+
+      it("Should change the Pauser address if called by Pauser", async () => {
+        await (await zetaConnectorBaseContract.connect(pauserSigner).updatePauserAddress(randomSigner.address)).wait();
+
+        const address = await zetaConnectorBaseContract.pauserAddress();
+
+        expect(address).to.equal(randomSigner.address);
+      });
+
+      it("Should emit `PauserAddressUpdated` on success", async () => {
+        const pauserAddressUpdatedFilter = zetaConnectorBaseContract.filters.PauserAddressUpdated();
+        const e1 = await zetaConnectorBaseContract.queryFilter(pauserAddressUpdatedFilter);
+        expect(e1.length).to.equal(0);
+
+        await (await zetaConnectorBaseContract.connect(pauserSigner).updatePauserAddress(randomSigner.address)).wait();
+
+        const address = await zetaConnectorBaseContract.pauserAddress();
+
+        expect(address).to.equal(randomSigner.address);
+
+        const e2 = await zetaConnectorBaseContract.queryFilter(pauserAddressUpdatedFilter);
+        expect(e2.length).to.equal(1);
+      });
+    });
+
     describe("pause, unpause", () => {
       it("Should revert if not called by the Pauser", async () => {
         await expect(zetaConnectorBaseContract.connect(randomSigner).pause()).to.revertedWith(
