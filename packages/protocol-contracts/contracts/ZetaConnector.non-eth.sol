@@ -22,8 +22,9 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
     constructor(
         address zetaTokenAddress_,
         address tssAddress_,
-        address tssAddressUpdater_
-    ) ZetaConnectorBase(zetaTokenAddress_, tssAddress_, tssAddressUpdater_) {}
+        address tssAddressUpdater_,
+        address pauserAddress_
+    ) ZetaConnectorBase(zetaTokenAddress_, tssAddress_, tssAddressUpdater_, pauserAddress_) {}
 
     function getLockedAmount() external view returns (uint256) {
         return ZetaToken(zetaToken).balanceOf(address(this));

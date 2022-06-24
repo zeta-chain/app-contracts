@@ -10,6 +10,8 @@ import "./interfaces/ZetaInterfaces.sol";
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public zetaToken;
 
+    address public pauserAddress;
+
     /**
      * @dev Collectively held by Zeta blockchain validators.
      */
@@ -46,12 +48,15 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         bytes32 indexed internalSendHash
     );
 
-    event TSSAddressUpdated(address originSenderAddress, address newTssAddress);
+    event TSSAddressUpdated(address updaterAddress, address newTssAddress);
+
+    event PauserAddressUpdated(address updaterAddress, address newTssAddress);
 
     constructor(
         address zetaToken_,
         address tssAddress_,
-        address tssAddressUpdater_
+        address tssAddressUpdater_,
+        address pauserAddress_
     ) {
         if (zetaToken_ == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) {
             revert InvalidAddress();
@@ -60,6 +65,12 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         zetaToken = zetaToken_;
         tssAddress = tssAddress_;
         tssAddressUpdater = tssAddressUpdater_;
+        pauserAddress = pauserAddress_;
+    }
+
+    modifier onlyPauser() {
+        if (msg.sender != pauserAddress) revert CallerIsNotPauser(msg.sender);
+        _;
     }
 
     modifier onlyTssAddress() {
@@ -70,6 +81,14 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     modifier onlyTssUpdater() {
         if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
         _;
+    }
+
+    function updatePauserAddress(address pauserAddress_) external onlyPauser {
+        if (pauserAddress_ == address(0)) revert InvalidAddress();
+
+        tssAddress = pauserAddress_;
+
+        emit PauserAddressUpdated(msg.sender, pauserAddress_);
     }
 
     function updateTssAddress(address tssAddress_) external onlyTssUpdater {
@@ -89,11 +108,11 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         tssAddressUpdater = tssAddress;
     }
 
-    function pause() external onlyTssUpdater {
+    function pause() external onlyPauser {
         _pause();
     }
 
-    function unpause() external onlyTssUpdater {
+    function unpause() external onlyPauser {
         _unpause();
     }
 

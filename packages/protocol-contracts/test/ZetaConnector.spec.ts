@@ -30,6 +30,7 @@ describe("ZetaConnector tests", () => {
   let tssUpdater: SignerWithAddress;
   let tssSigner: SignerWithAddress;
   let randomSigner: SignerWithAddress;
+  let pauserSigner: SignerWithAddress;
 
   const tssUpdaterApproveConnectorEth = async () => {
     await (await zetaTokenEthContract.approve(zetaConnectorEthContract.address, parseEther("100000"))).wait();
@@ -61,7 +62,7 @@ describe("ZetaConnector tests", () => {
 
   beforeEach(async () => {
     const accounts = await ethers.getSigners();
-    [tssUpdater, tssSigner, randomSigner] = accounts;
+    [tssUpdater, tssSigner, randomSigner, pauserSigner] = accounts;
 
     zetaTokenEthContract = await deployZetaEth({
       args: [100_000],
@@ -73,13 +74,13 @@ describe("ZetaConnector tests", () => {
 
     zetaReceiverMockContract = await deployZetaReceiverMock();
     zetaConnectorBaseContract = await deployZetaConnectorBase({
-      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address],
+      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address],
     });
     zetaConnectorEthContract = await deployZetaConnectorEth({
-      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address],
+      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address],
     });
     zetaConnectorNonEthContract = await deployZetaConnectorNonEth({
-      args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address],
+      args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address],
     });
 
     await zetaTokenNonEthContract.updateTssAndConnectorAddresses(
@@ -114,22 +115,22 @@ describe("ZetaConnector tests", () => {
     });
 
     describe("pause, unpause", () => {
-      it("Should revert if not called by the TSS updater", async () => {
+      it("Should revert if not called by the Pauser", async () => {
         await expect(zetaConnectorBaseContract.connect(randomSigner).pause()).to.revertedWith(
-          `CallerIsNotTssUpdater("${randomSigner.address}")`
+          `CallerIsNotPauser("${randomSigner.address}")`
         );
 
         await expect(zetaConnectorBaseContract.connect(randomSigner).unpause()).to.revertedWith(
-          `CallerIsNotTssUpdater("${randomSigner.address}")`
+          `CallerIsNotPauser("${randomSigner.address}")`
         );
       });
 
-      it("Should pause if called by the TSS updater", async () => {
-        await (await zetaConnectorBaseContract.pause()).wait();
+      it("Should pause if called by the Pauser", async () => {
+        await (await zetaConnectorBaseContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorBaseContract.paused();
         expect(paused1).to.equal(true);
 
-        await (await zetaConnectorBaseContract.unpause()).wait();
+        await (await zetaConnectorBaseContract.connect(pauserSigner).unpause()).wait();
         const paused2 = await zetaConnectorBaseContract.paused();
         expect(paused2).to.equal(false);
       });
@@ -139,7 +140,7 @@ describe("ZetaConnector tests", () => {
   describe("ZetaConnector.eth", () => {
     describe("send", () => {
       it("Should revert if the contract is paused", async () => {
-        await (await zetaConnectorEthContract.pause()).wait();
+        await (await zetaConnectorEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorEthContract.paused();
         expect(paused1).to.equal(true);
 
@@ -233,7 +234,7 @@ describe("ZetaConnector tests", () => {
 
     describe("onReceive", () => {
       it("Should revert if the contract is paused", async () => {
-        await (await zetaConnectorEthContract.pause()).wait();
+        await (await zetaConnectorEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorEthContract.paused();
         expect(paused1).to.equal(true);
 
@@ -332,7 +333,7 @@ describe("ZetaConnector tests", () => {
 
     describe("onRevert", () => {
       it("Should revert if the contract is paused", async () => {
-        await (await zetaConnectorEthContract.pause()).wait();
+        await (await zetaConnectorEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorEthContract.paused();
         expect(paused1).to.equal(true);
 
@@ -422,7 +423,7 @@ describe("ZetaConnector tests", () => {
   describe("ZetaConnector.non-eth", () => {
     describe("send", () => {
       it("Should revert if the contract is paused", async () => {
-        await (await zetaConnectorNonEthContract.pause()).wait();
+        await (await zetaConnectorNonEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorNonEthContract.paused();
         expect(paused1).to.equal(true);
 
@@ -510,7 +511,7 @@ describe("ZetaConnector tests", () => {
 
     describe("onReceive", () => {
       it("Should revert if the contract is paused", async () => {
-        await (await zetaConnectorNonEthContract.pause()).wait();
+        await (await zetaConnectorNonEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorNonEthContract.paused();
         expect(paused1).to.equal(true);
 
@@ -606,7 +607,7 @@ describe("ZetaConnector tests", () => {
 
     describe("onRevert", () => {
       it("Should revert if the contract is paused", async () => {
-        await (await zetaConnectorNonEthContract.pause()).wait();
+        await (await zetaConnectorNonEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorNonEthContract.paused();
         expect(paused1).to.equal(true);
 

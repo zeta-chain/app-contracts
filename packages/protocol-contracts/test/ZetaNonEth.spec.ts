@@ -13,6 +13,7 @@ describe("ZetaNonEth tests", () => {
   let tssUpdater: SignerWithAddress;
   let tssSigner: SignerWithAddress;
   let randomSigner: SignerWithAddress;
+  let pauserSigner: SignerWithAddress;
 
   const tssUpdaterApproveConnectorNonEth = async () => {
     await (await zetaTokenNonEthContract.approve(zetaConnectorNonEthContract.address, parseEther("100000"))).wait();
@@ -36,7 +37,7 @@ describe("ZetaNonEth tests", () => {
 
   beforeEach(async () => {
     const accounts = await ethers.getSigners();
-    [tssUpdater, tssSigner, randomSigner] = accounts;
+    [tssUpdater, tssSigner, randomSigner, pauserSigner] = accounts;
 
     zetaTokenNonEthContract = await deployZetaNonEth({
       args: [tssSigner.address, tssUpdater.address],
@@ -44,7 +45,7 @@ describe("ZetaNonEth tests", () => {
 
     zetaReceiverMockContract = await deployZetaReceiverMock();
     zetaConnectorNonEthContract = await deployZetaConnectorNonEth({
-      args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address],
+      args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address],
     });
 
     await zetaTokenNonEthContract.updateTssAndConnectorAddresses(
