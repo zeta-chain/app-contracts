@@ -7,56 +7,56 @@ import "../CrossChainWarriors.sol";
 
 contract CrossChainWarriorsZetaConnectorMock is ZetaConnector {
     function callOnZetaMessage(
-        bytes memory originSenderAddress,
-        uint256 originChainId,
+        bytes memory zetaTxSenderAddress,
+        uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message
     ) public {
         return
             CrossChainWarriors(destinationAddress).onZetaMessage(
                 ZetaInterfaces.ZetaMessage({
-                    originSenderAddress: originSenderAddress,
-                    originChainId: originChainId,
+                    zetaTxSenderAddress: zetaTxSenderAddress,
+                    sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
-                    zetaAmount: zetaAmount,
+                    zetaValueAndGas: zetaValueAndGas,
                     message: message
                 })
             );
     }
 
     function callOnZetaRevert(
-        address originSenderAddress,
-        uint256 originChainId,
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
         uint256 destinationChainId,
         bytes calldata destinationAddress,
-        uint256 zetaAmount,
-        uint256, // gasLimit
+        uint256 zetaValueAndGas,
+        uint256, // destinationGasLimit
         bytes calldata message
     ) public {
         return
-            CrossChainWarriors(originSenderAddress).onZetaRevert(
+            CrossChainWarriors(zetaTxSenderAddress).onZetaRevert(
                 ZetaInterfaces.ZetaRevert({
-                    originSenderAddress: originSenderAddress,
-                    originChainId: originChainId,
+                    zetaTxSenderAddress: zetaTxSenderAddress,
+                    sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,
-                    zetaAmount: zetaAmount,
+                    zetaValueAndGas: zetaValueAndGas,
                     message: message
                 })
             );
     }
 
     function send(ZetaInterfaces.SendInput calldata sendInput) external override {
-        uint256 originChainId = sendInput.destinationChainId == 2 ? 1 : 2;
+        uint256 sourceChainId = sendInput.destinationChainId == 2 ? 1 : 2;
         address dest = address(uint160(bytes20(sendInput.destinationAddress)));
 
         return
             callOnZetaMessage(
                 abi.encodePacked(msg.sender),
-                originChainId,
+                sourceChainId,
                 dest,
-                sendInput.zetaAmount,
+                sendInput.zetaValueAndGas,
                 sendInput.message
             );
     }

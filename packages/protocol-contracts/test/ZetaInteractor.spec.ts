@@ -34,22 +34,22 @@ describe("ZetaInteractor tests", () => {
     it("Should revert if the caller is not ZetaConnector", async () => {
       await expect(
         zetaInteractorMock.onZetaMessage({
-          originSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          originChainId: chainBId,
+          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
+          sourceChainId: chainBId,
           destinationAddress: crossChainContractB.address,
-          zetaAmount: 0,
+          zetaValueAndGas: 0,
           message: encoder.encode(["address"], [zetaInteractorMock.address]),
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
 
-    it("Should revert if the originSenderAddress it not in interactorsByChainId", async () => {
+    it("Should revert if the zetaTxSenderAddress it not in interactorsByChainId", async () => {
       await expect(
         zetaInteractorMock.connect(zetaConnector).onZetaMessage({
-          originSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          originChainId: chainBId,
+          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
+          sourceChainId: chainBId,
           destinationAddress: crossChainContractB.address,
-          zetaAmount: 0,
+          zetaValueAndGas: 0,
           message: encoder.encode(["address"], [crossChainContractB.address]),
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidZetaMessageCall"));
@@ -60,11 +60,11 @@ describe("ZetaInteractor tests", () => {
     it("Should revert if the caller is not ZetaConnector", async () => {
       await expect(
         zetaInteractorMock.onZetaRevert({
-          originSenderAddress: deployer.address,
-          originChainId: chainAId,
+          zetaTxSenderAddress: deployer.address,
+          sourceChainId: chainAId,
           destinationAddress: ethers.utils.solidityPack(["address"], [crossChainContractB.address]),
           destinationChainId: chainBId,
-          zetaAmount: 0,
+          zetaValueAndGas: 0,
           message: encoder.encode(["address"], [zetaInteractorMock.address]),
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));

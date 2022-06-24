@@ -19,78 +19,84 @@ contract ZetaConnectorEth is ZetaConnectorBase {
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
-        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), input.zetaAmount);
+        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), input.zetaValueAndGas);
         if (!success) revert ZetaTransferError();
 
         emit ZetaSent(
             msg.sender,
             input.destinationChainId,
             input.destinationAddress,
-            input.zetaAmount,
-            input.gasLimit,
+            input.zetaValueAndGas,
+            input.destinationGasLimit,
             input.message,
             input.zetaParams
         );
     }
 
     function onReceive(
-        bytes calldata originSenderAddress,
-        uint256 originChainId,
+        bytes calldata zetaTxSenderAddress,
+        uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        bool success = IERC20(zetaToken).transfer(destinationAddress, zetaAmount);
+        bool success = IERC20(zetaToken).transfer(destinationAddress, zetaValueAndGas);
         if (!success) revert ZetaTransferError();
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(
-                ZetaInterfaces.ZetaMessage(originSenderAddress, originChainId, destinationAddress, zetaAmount, message)
+                ZetaInterfaces.ZetaMessage(
+                    zetaTxSenderAddress,
+                    sourceChainId,
+                    destinationAddress,
+                    zetaValueAndGas,
+                    message
+                )
             );
         }
 
         emit ZetaReceived(
-            originSenderAddress,
-            originChainId,
+            zetaTxSenderAddress,
+            sourceChainId,
             destinationAddress,
-            zetaAmount,
+            zetaValueAndGas,
             message,
             internalSendHash
         );
     }
 
     function onRevert(
-        address originSenderAddress,
-        uint256 originChainId,
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        bool success = IERC20(zetaToken).transfer(originSenderAddress, zetaAmount);
+        bool success = IERC20(zetaToken).transfer(zetaTxSenderAddress, zetaValueAndGas);
         require(success, "ZetaConnector: error transferring Zeta");
 
         if (message.length > 0) {
-            ZetaReceiver(originSenderAddress).onZetaRevert(
+            ZetaReceiver(zetaTxSenderAddress).onZetaRevert(
                 ZetaInterfaces.ZetaRevert(
-                    originSenderAddress,
-                    originChainId,
+                    zetaTxSenderAddress,
+                    sourceChainId,
                     destinationAddress,
                     destinationChainId,
-                    zetaAmount,
+                    zetaValueAndGas,
                     message
                 )
             );
         }
 
         emit ZetaReverted(
-            originSenderAddress,
-            originChainId,
+            zetaTxSenderAddress,
+            sourceChainId,
             destinationChainId,
             destinationAddress,
-            zetaAmount,
+            zetaValueAndGas,
             message,
             internalSendHash
         );

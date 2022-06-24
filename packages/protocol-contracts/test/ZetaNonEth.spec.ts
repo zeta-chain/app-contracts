@@ -134,9 +134,9 @@ describe("ZetaNonEth tests", () => {
       await zetaConnectorNonEthContract.send({
         destinationAddress: randomSigner.address,
         destinationChainId: 1,
-        gasLimit: 2500000,
+        destinationGasLimit: 2500000,
         message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-        zetaAmount: 1000,
+        zetaValueAndGas: 1000,
         zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
       });
 
