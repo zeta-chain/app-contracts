@@ -31,7 +31,7 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         wETH = uniswapV2Router.WETH();
     }
 
-    function getZetaFromEth(uint256 minAmountOut) external payable override {
+    function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable override {
         address[] memory path = new address[](2);
         path[0] = wETH;
         path[1] = zetaToken;
@@ -39,17 +39,20 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uniswapV2Router.swapExactETHForTokens{value: msg.value}(
             minAmountOut,
             path,
-            msg.sender,
+            destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
     }
 
     function getZetaFromToken(
+        address destinationAddress,
         uint256 minAmountOut,
         address inputToken,
         uint256 inputTokenAmount
     ) external override {
-        bool success = IERC20(inputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
+        bool success = IERC20(inputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
+        if (!success) revert ErrorGettingZeta();
+        success = IERC20(inputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
         if (!success) revert ErrorGettingZeta();
 
         address[] memory path;
@@ -64,21 +67,23 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
             path[2] = zetaToken;
         }
 
-        uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
+        uniswapV2Router.swapExactTokensForTokens(
             inputTokenAmount,
             minAmountOut,
             path,
-            address(this),
+            destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
-
-        uint256 zetaAmount = amounts[path.length - 1];
-
-        IERC20(zetaToken).transfer(msg.sender, zetaAmount);
     }
 
-    function getEthFromZeta(uint256 minAmountOut, uint256 zetaTokenAmount) external override {
-        bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
+    function getEthFromZeta(
+        address destinationAddress,
+        uint256 minAmountOut,
+        uint256 zetaTokenAmount
+    ) external override {
+        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
+        if (!success) revert ErrorExchangingZeta();
+        success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
 
         address[] memory path = new address[](2);
@@ -89,17 +94,20 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
             zetaTokenAmount,
             minAmountOut,
             path,
-            msg.sender,
+            destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
     }
 
     function getTokenFromZeta(
+        address destinationAddress,
         uint256 minAmountOut,
         address outputToken,
         uint256 zetaTokenAmount
     ) external override {
-        bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
+        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
+        if (!success) revert ErrorExchangingZeta();
+        success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
 
         address[] memory path;
@@ -114,16 +122,12 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
             path[2] = outputToken;
         }
 
-        uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
+        uniswapV2Router.swapExactTokensForTokens(
             zetaTokenAmount,
             minAmountOut,
             path,
-            address(this),
+            destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
-
-        uint256 tokenAmount = amounts[path.length - 1];
-
-        IERC20(outputToken).transfer(msg.sender, tokenAmount);
     }
 }

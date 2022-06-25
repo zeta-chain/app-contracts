@@ -11,6 +11,12 @@ interface ZetaTokenConsumerUniV3Errors {
     error InputCantBeZero();
 
     error ErrorGettingToken();
+
+    error ErrorSendingETH();
+}
+
+interface WETH9 {
+    function withdraw(uint256 wad) external;
 }
 
 /**
@@ -39,7 +45,11 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         wETH = wETH_;
     }
 
-    function getZetaFromEth(uint256 minAmountOut) external payable override {
+    receive() external payable {}
+
+    fallback() external payable {}
+
+    function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable override {
         if (msg.value == 0) revert InputCantBeZero();
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
@@ -47,7 +57,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
             tokenIn: wETH,
             tokenOut: zetaToken,
             fee: poolFee,
-            recipient: msg.sender,
+            recipient: destinationAddress,
             amountIn: msg.value,
             amountOutMinimum: minAmountOut,
             sqrtPriceLimitX96: 0
@@ -57,6 +67,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     }
 
     function getZetaFromToken(
+        address destinationAddress,
         uint256 minAmountOut,
         address inputToken,
         uint256 inputTokenAmount
@@ -64,7 +75,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         if (inputTokenAmount == 0) revert InputCantBeZero();
 
         bool success = IERC20(inputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
-
+        if (!success) revert ErrorGettingToken();
         success = IERC20(inputToken).approve(address(uniswapV3Router), inputTokenAmount);
         if (!success) revert ErrorGettingToken();
 
@@ -73,7 +84,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
             tokenIn: inputToken,
             tokenOut: zetaToken,
             fee: poolFee,
-            recipient: msg.sender,
+            recipient: destinationAddress,
             amountIn: inputTokenAmount,
             amountOutMinimum: minAmountOut,
             sqrtPriceLimitX96: 0
@@ -83,11 +94,15 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     }
 
     /// dev: it's the same as getTokenFromZeta(WETH) but we keep it in anothe function to avoid calling an external function from the contract
-    function getEthFromZeta(uint256 minAmountOut, uint256 zetaTokenAmount) external override {
+    function getEthFromZeta(
+        address destinationAddress,
+        uint256 minAmountOut,
+        uint256 zetaTokenAmount
+    ) external override {
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
-
+        if (!success) revert ErrorGettingToken();
         success = IERC20(zetaToken).approve(address(uniswapV3Router), zetaTokenAmount);
         if (!success) revert ErrorGettingToken();
 
@@ -96,16 +111,22 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
             tokenIn: zetaToken,
             tokenOut: wETH,
             fee: poolFee,
-            recipient: msg.sender,
+            recipient: address(this),
             amountIn: zetaTokenAmount,
             amountOutMinimum: minAmountOut,
             sqrtPriceLimitX96: 0
         });
 
-        uniswapV3Router.exactInputSingle(params);
+        uint256 amountOut = uniswapV3Router.exactInputSingle(params);
+
+        WETH9(wETH).withdraw(amountOut);
+
+        (bool sent, ) = destinationAddress.call{value: amountOut}("");
+        if (!sent) revert ErrorSendingETH();
     }
 
     function getTokenFromZeta(
+        address destinationAddress,
         uint256 minAmountOut,
         address outputToken,
         uint256 zetaTokenAmount
@@ -113,21 +134,18 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
-
+        if (!success) revert ErrorGettingToken();
         success = IERC20(zetaToken).approve(address(uniswapV3Router), zetaTokenAmount);
         if (!success) revert ErrorGettingToken();
 
-        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
+        ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            tokenIn: zetaToken,
-            tokenOut: outputToken,
-            fee: poolFee,
-            recipient: msg.sender,
+            path: abi.encodePacked(zetaToken, poolFee, wETH, poolFee, outputToken),
+            recipient: destinationAddress,
             amountIn: zetaTokenAmount,
-            amountOutMinimum: minAmountOut,
-            sqrtPriceLimitX96: 0
+            amountOutMinimum: minAmountOut
         });
 
-        uniswapV3Router.exactInputSingle(params);
+        uniswapV3Router.exactInput(params);
     }
 }
