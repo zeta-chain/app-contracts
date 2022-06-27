@@ -73,6 +73,11 @@ interface ZetaReceiver {
  * @dev The interface can be implemented using different strategies, like UniswapV2, UniswapV3, etc
  */
 interface ZetaTokenConsumer {
+    event EthExchangedForZeta(uint256 amountIn, uint256 amountOut);
+    event TokenExchangedForZeta(address token, uint256 amountIn, uint256 amountOut);
+    event ZetaExchangedForEth(uint256 amountIn, uint256 amountOut);
+    event ZetaExchangedForToken(address token, uint256 amountIn, uint256 amountOut);
+
     function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable;
 
     function getZetaFromToken(

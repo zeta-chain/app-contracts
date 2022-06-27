@@ -36,12 +36,16 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         path[0] = wETH;
         path[1] = zetaToken;
 
-        uniswapV2Router.swapExactETHForTokens{value: msg.value}(
+        uint256[] memory amounts = uniswapV2Router.swapExactETHForTokens{value: msg.value}(
             minAmountOut,
             path,
             destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
+
+        uint256 amountOut = amounts[path.length - 1];
+
+        emit EthExchangedForZeta(msg.value, amountOut);
     }
 
     function getZetaFromToken(
@@ -67,13 +71,16 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
             path[2] = zetaToken;
         }
 
-        uniswapV2Router.swapExactTokensForTokens(
+        uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
             inputTokenAmount,
             minAmountOut,
             path,
             destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
+        uint256 amountOut = amounts[path.length - 1];
+
+        emit TokenExchangedForZeta(inputToken, inputTokenAmount, amountOut);
     }
 
     function getEthFromZeta(
@@ -90,13 +97,17 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         path[0] = zetaToken;
         path[1] = wETH;
 
-        uniswapV2Router.swapExactTokensForETH(
+        uint256[] memory amounts = uniswapV2Router.swapExactTokensForETH(
             zetaTokenAmount,
             minAmountOut,
             path,
             destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
+
+        uint256 amountOut = amounts[path.length - 1];
+
+        emit ZetaExchangedForEth(zetaTokenAmount, amountOut);
     }
 
     function getTokenFromZeta(
@@ -122,12 +133,16 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
             path[2] = outputToken;
         }
 
-        uniswapV2Router.swapExactTokensForTokens(
+        uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
             zetaTokenAmount,
             minAmountOut,
             path,
             destinationAddress,
             block.timestamp + MAX_DEADLINE
         );
+
+        uint256 amountOut = amounts[path.length - 1];
+
+        emit ZetaExchangedForToken(outputToken, zetaTokenAmount, amountOut);
     }
 }

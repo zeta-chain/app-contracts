@@ -27,8 +27,8 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     // @todo: check in doc if this fee is max, min or anything else
     uint24 public constant poolFee = 3000;
 
-    address internal immutable wETH;
-    address public zetaToken;
+    address internal immutable WETH9Address;
+    address public immutable zetaToken;
 
     ISwapRouter public immutable uniswapV3Router;
     IQuoter public immutable quoter;
@@ -37,12 +37,12 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         address zetaTokenInput_,
         address uniswapV3Router_,
         address quoter_,
-        address wETH_
+        address WETH9Address_
     ) {
         zetaToken = zetaTokenInput_;
         uniswapV3Router = ISwapRouter(uniswapV3Router_);
         quoter = IQuoter(quoter_);
-        wETH = wETH_;
+        WETH9Address = WETH9Address_;
     }
 
     receive() external payable {}
@@ -54,7 +54,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            tokenIn: wETH,
+            tokenIn: WETH9Address,
             tokenOut: zetaToken,
             fee: poolFee,
             recipient: destinationAddress,
@@ -63,7 +63,8 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
             sqrtPriceLimitX96: 0
         });
 
-        uniswapV3Router.exactInputSingle{value: msg.value}(params);
+        uint256 amountOut = uniswapV3Router.exactInputSingle{value: msg.value}(params);
+        emit EthExchangedForZeta(msg.value, amountOut);
     }
 
     function getZetaFromToken(
@@ -90,7 +91,9 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
             sqrtPriceLimitX96: 0
         });
 
-        uniswapV3Router.exactInputSingle(params);
+        uint256 amountOut = uniswapV3Router.exactInputSingle(params);
+
+        emit TokenExchangedForZeta(inputToken, inputTokenAmount, amountOut);
     }
 
     /// dev: it's the same as getTokenFromZeta(WETH) but we keep it in anothe function to avoid calling an external function from the contract
@@ -109,7 +112,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
             deadline: block.timestamp + MAX_DEADLINE,
             tokenIn: zetaToken,
-            tokenOut: wETH,
+            tokenOut: WETH9Address,
             fee: poolFee,
             recipient: address(this),
             amountIn: zetaTokenAmount,
@@ -119,10 +122,12 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         uint256 amountOut = uniswapV3Router.exactInputSingle(params);
 
-        WETH9(wETH).withdraw(amountOut);
+        WETH9(WETH9Address).withdraw(amountOut);
 
         (bool sent, ) = destinationAddress.call{value: amountOut}("");
         if (!sent) revert ErrorSendingETH();
+
+        emit ZetaExchangedForEth(zetaTokenAmount, amountOut);
     }
 
     function getTokenFromZeta(
@@ -140,12 +145,14 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            path: abi.encodePacked(zetaToken, poolFee, wETH, poolFee, outputToken),
+            path: abi.encodePacked(zetaToken, poolFee, WETH9Address, poolFee, outputToken),
             recipient: destinationAddress,
             amountIn: zetaTokenAmount,
             amountOutMinimum: minAmountOut
         });
 
-        uniswapV3Router.exactInput(params);
+        uint256 amountOut = uniswapV3Router.exactInput(params);
+
+        emit ZetaExchangedForToken(outputToken, zetaTokenAmount, amountOut);
     }
 }
