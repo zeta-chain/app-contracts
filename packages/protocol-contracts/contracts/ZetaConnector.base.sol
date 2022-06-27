@@ -58,7 +58,12 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         address tssAddressUpdater_,
         address pauserAddress_
     ) {
-        if (zetaToken_ == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) {
+        if (
+            zetaToken_ == address(0) ||
+            tssAddress_ == address(0) ||
+            tssAddressUpdater_ == address(0) ||
+            pauserAddress_ == address(0)
+        ) {
             revert InvalidAddress();
         }
 
