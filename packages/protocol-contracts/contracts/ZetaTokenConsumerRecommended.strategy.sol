@@ -17,6 +17,7 @@ interface ZetaTokenConsumerRecommendedErrors {
 
 /**
  * @dev Recommended strategy for ZetaTokenConsumer
+ * @dev ZetaTokenConsumer events are not emitted here because this contract rely on selected strategy to avoid duplicated events
  */
 contract ZetaTokenConsumerRecommended is ZetaTokenConsumer, ZetaTokenConsumerRecommendedErrors {
     /**
@@ -38,7 +39,12 @@ contract ZetaTokenConsumerRecommended is ZetaTokenConsumer, ZetaTokenConsumerRec
         address tssAddress_,
         address tssAddressUpdater_
     ) {
-        if (tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) revert InvalidAddress();
+        if (
+            strategyAddress_ == address(0) ||
+            zetaToken_ == address(0) ||
+            tssAddress_ == address(0) ||
+            tssAddressUpdater_ == address(0)
+        ) revert InvalidAddress();
         strategyAddress = strategyAddress_;
         zetaToken = zetaToken_;
         tssAddress = tssAddress_;

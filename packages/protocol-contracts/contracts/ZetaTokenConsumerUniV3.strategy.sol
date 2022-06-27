@@ -8,6 +8,8 @@ import "@uniswap/v3-periphery/contracts/interfaces/IQuoter.sol";
 import "./interfaces/ZetaInterfaces.sol";
 
 interface ZetaTokenConsumerUniV3Errors {
+    error InvalidAddress();
+
     error InputCantBeZero();
 
     error ErrorGettingToken();
@@ -39,6 +41,12 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         address quoter_,
         address WETH9Address_
     ) {
+        if (
+            zetaTokenInput_ == address(0) ||
+            uniswapV3Router_ == address(0) ||
+            quoter_ == address(0) ||
+            WETH9Address_ == address(0)
+        ) revert InvalidAddress();
         zetaToken = zetaTokenInput_;
         uniswapV3Router = ISwapRouter(uniswapV3Router_);
         quoter = IQuoter(quoter_);
@@ -50,6 +58,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     fallback() external payable {}
 
     function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable override {
+        if (destinationAddress == address(0)) revert InvalidAddress();
         if (msg.value == 0) revert InputCantBeZero();
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
@@ -73,6 +82,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         address inputToken,
         uint256 inputTokenAmount
     ) external override {
+        if (destinationAddress == address(0) || inputToken == address(0)) revert InvalidAddress();
         if (inputTokenAmount == 0) revert InputCantBeZero();
 
         bool success = IERC20(inputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
@@ -96,12 +106,12 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         emit TokenExchangedForZeta(inputToken, inputTokenAmount, amountOut);
     }
 
-    /// dev: it's the same as getTokenFromZeta(WETH) but we keep it in anothe function to avoid calling an external function from the contract
     function getEthFromZeta(
         address destinationAddress,
         uint256 minAmountOut,
         uint256 zetaTokenAmount
     ) external override {
+        if (destinationAddress == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
@@ -136,6 +146,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         address outputToken,
         uint256 zetaTokenAmount
     ) external override {
+        if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);

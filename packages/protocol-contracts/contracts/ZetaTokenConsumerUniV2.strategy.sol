@@ -7,6 +7,10 @@ import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "./interfaces/ZetaInterfaces.sol";
 
 interface ZetaTokenConsumerUniV2Errors {
+    error InvalidAddress();
+
+    error InputCantBeZero();
+
     error ErrorGettingZeta();
 
     error ErrorExchangingZeta();
@@ -25,6 +29,8 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
     IUniswapV2Router02 internal uniswapV2Router;
 
     constructor(address zetaTokenInput_, address uniswapV2Router_) {
+        if (zetaTokenInput_ == address(0) || uniswapV2Router_ == address(0)) revert InvalidAddress();
+
         zetaToken = zetaTokenInput_;
         uniswapV2RouterAddress = uniswapV2Router_;
         uniswapV2Router = IUniswapV2Router02(uniswapV2Router_);
@@ -32,6 +38,9 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
     }
 
     function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable override {
+        if (destinationAddress == address(0)) revert InvalidAddress();
+        if (msg.value == 0) revert InputCantBeZero();
+
         address[] memory path = new address[](2);
         path[0] = wETH;
         path[1] = zetaToken;
@@ -54,6 +63,9 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         address inputToken,
         uint256 inputTokenAmount
     ) external override {
+        if (destinationAddress == address(0) || inputToken == address(0)) revert InvalidAddress();
+        if (inputTokenAmount == 0) revert InputCantBeZero();
+
         bool success = IERC20(inputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
         if (!success) revert ErrorGettingZeta();
         success = IERC20(inputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
@@ -88,6 +100,9 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 minAmountOut,
         uint256 zetaTokenAmount
     ) external override {
+        if (destinationAddress == address(0)) revert InvalidAddress();
+        if (zetaTokenAmount == 0) revert InputCantBeZero();
+
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
         success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
@@ -116,6 +131,9 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         address outputToken,
         uint256 zetaTokenAmount
     ) external override {
+        if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
+        if (zetaTokenAmount == 0) revert InputCantBeZero();
+
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
         success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
