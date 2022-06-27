@@ -2,6 +2,8 @@
 pragma solidity 0.8.7;
 
 interface ConnectorErrors {
+    error CallerIsNotPauser(address caller);
+
     error CallerIsNotTss(address caller);
 
     error CallerIsNotTssUpdater(address caller);

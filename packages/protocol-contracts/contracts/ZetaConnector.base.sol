@@ -10,6 +10,8 @@ import "./interfaces/ZetaInterfaces.sol";
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public zetaToken;
 
+    address public pauserAddress;
+
     /**
      * @dev Collectively held by Zeta blockchain validators.
      */
@@ -20,8 +22,8 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     event ZetaSent(
         address sourceTxOriginAddress,
         address indexed zetaTxSenderAddress,
-        uint256 destinationChainId,
-        bytes destinationAddress,
+        uint256 indexed destinationChainId,
+        bytes indexed destinationAddress,
         uint256 zetaValueAndGas,
         uint256 destinationGasLimit,
         bytes message,
@@ -49,18 +51,32 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
 
     event TSSAddressUpdated(address zetaTxSenderAddress, address newTssAddress);
 
+    event PauserAddressUpdated(address updaterAddress, address newTssAddress);
+
     constructor(
         address zetaToken_,
         address tssAddress_,
-        address tssAddressUpdater_
+        address tssAddressUpdater_,
+        address pauserAddress_
     ) {
-        if (zetaToken_ == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) {
+        if (
+            zetaToken_ == address(0) ||
+            tssAddress_ == address(0) ||
+            tssAddressUpdater_ == address(0) ||
+            pauserAddress_ == address(0)
+        ) {
             revert InvalidAddress();
         }
 
         zetaToken = zetaToken_;
         tssAddress = tssAddress_;
         tssAddressUpdater = tssAddressUpdater_;
+        pauserAddress = pauserAddress_;
+    }
+
+    modifier onlyPauser() {
+        if (msg.sender != pauserAddress) revert CallerIsNotPauser(msg.sender);
+        _;
     }
 
     modifier onlyTssAddress() {
@@ -71,6 +87,14 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     modifier onlyTssUpdater() {
         if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
         _;
+    }
+
+    function updatePauserAddress(address pauserAddress_) external onlyPauser {
+        if (pauserAddress_ == address(0)) revert InvalidAddress();
+
+        pauserAddress = pauserAddress_;
+
+        emit PauserAddressUpdated(msg.sender, pauserAddress_);
     }
 
     function updateTssAddress(address tssAddress_) external {
@@ -91,11 +115,11 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         tssAddressUpdater = tssAddress;
     }
 
-    function pause() external onlyTssUpdater {
+    function pause() external onlyPauser {
         _pause();
     }
 
-    function unpause() external onlyTssUpdater {
+    function unpause() external onlyPauser {
         _unpause();
     }
 
