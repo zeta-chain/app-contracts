@@ -15,7 +15,7 @@ async function main() {
     await hardhat
       .run("verify:verify", {
         address: getAddress("zetaToken"),
-        contract: "contracts/evm/ZetaEth.sol:ZetaEth",
+        contract: "contracts/evm/Zeta.eth.sol:ZetaEth",
         constructorArguments: [ZETA_INITIAL_SUPPLY],
       })
       .catch(handleCatch);
@@ -31,7 +31,7 @@ async function main() {
     await hardhat
       .run("verify:verify", {
         address: getAddress("zetaToken"),
-        constructorArguments: [0, getAddress("tss"), getAddress("tssUpdater")],
+        constructorArguments: [getAddress("tss"), getAddress("tssUpdater")],
       })
       .catch(handleCatch);
 
