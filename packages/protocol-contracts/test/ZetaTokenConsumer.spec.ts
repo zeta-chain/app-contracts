@@ -108,7 +108,7 @@ describe.only("ZetaTokenConsumer tests", () => {
     [tssUpdater, tssSigner, randomSigner] = accounts;
 
     zetaTokenNonEth = await deployZetaNonEth({
-      args: [100_000, tssSigner.address, tssUpdater.address],
+      args: [tssSigner.address, tssUpdater.address],
     });
 
     uniswapV2RouterAddr = getAddress("uniswapV2Router02", {
@@ -116,7 +116,7 @@ describe.only("ZetaTokenConsumer tests", () => {
       customZetaNetwork: "mainnet",
     });
 
-    /// dev: for testing purposes we use and existing uni v3 pool
+    // dev: for testing purposes we use an existing uni v3 pool
     await swapToken(tssUpdater, DAI, parseEther("10000"));
     await swapToken(randomSigner, DAI, parseEther("10000"));
     await swapToken(randomSigner, DAI, parseEther("10000"));
@@ -144,20 +144,21 @@ describe.only("ZetaTokenConsumer tests", () => {
       const initialZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
       await zetaTokenConsumer.getZetaFromEth(randomSigner.address, 1, { value: parseEther("1") });
       const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
-      await expect(finalZetaBalance).to.be.gt(initialZetaBalance);
+
+      expect(finalZetaBalance).to.be.gt(initialZetaBalance);
     };
 
-    it("should get zeta from eth using UniV2", async () => {
+    it("Should get zeta from eth using UniV2", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV2.connect(randomSigner);
       await shouldGetZetaFromETH(zetaTokenConsumer);
     });
 
-    it("should get zeta from eth using UniV3", async () => {
+    it("Should get zeta from eth using UniV3", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
       await shouldGetZetaFromETH(zetaTokenConsumer);
     });
 
-    it("should get zeta from eth using recommended", async () => {
+    it("Should get zeta from eth using recommended", async () => {
       const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
       await shouldGetZetaFromETH(zetaTokenConsumer);
     });
@@ -174,19 +175,21 @@ describe.only("ZetaTokenConsumer tests", () => {
 
       await zetaTokenConsumer.getZetaFromToken(randomSigner.address, 1, USDC, parseUnits("100", 6));
       const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
-      await expect(finalZetaBalance).to.be.gt(initialZetaBalance);
+
+      expect(finalZetaBalance).to.be.gt(initialZetaBalance);
     };
-    it("should get zeta from token using UniV2", async () => {
+
+    it("Should get zeta from token using UniV2", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV2.connect(randomSigner);
       await shouldGetZetaFromToken(zetaTokenConsumer);
     });
 
-    it("should get zeta from token using UniV3", async () => {
+    it("Should get zeta from token using UniV3", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
       await shouldGetZetaFromToken(zetaTokenConsumer);
     });
 
-    it("should get zeta from token using recommended", async () => {
+    it("Should get zeta from token using recommended", async () => {
       const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
       await shouldGetZetaFromToken(zetaTokenConsumer);
     });
@@ -194,26 +197,28 @@ describe.only("ZetaTokenConsumer tests", () => {
 
   describe("getEthFromZeta", () => {
     const shouldGetETHFromZeta = async (zetaTokenConsumer: ZetaTokenConsumer) => {
-      const initialZetaBalance = await ethers.provider.getBalance(randomSigner.address);
+      const initialEthBalance = await ethers.provider.getBalance(randomSigner.address);
       const tx1 = await zetaTokenNonEth.connect(randomSigner).approve(zetaTokenConsumer.address, MaxUint256);
       await tx1.wait();
 
       await zetaTokenConsumer.getEthFromZeta(randomSigner.address, 1, parseUnits("5000", 18));
-      const finalZetaBalance = await ethers.provider.getBalance(randomSigner.address);
-      await expect(finalZetaBalance).to.be.gt(initialZetaBalance);
+      const finalEthBalance = await ethers.provider.getBalance(randomSigner.address);
+
+      expect(finalEthBalance).to.be.gt(initialEthBalance);
     };
-    it("should get eth from zeta using UniV2", async () => {
+
+    it("Should get eth from zeta using UniV2", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV2.connect(randomSigner);
       await shouldGetETHFromZeta(zetaTokenConsumer);
     });
 
-    it("should get eth from zeta using UniV3", async () => {
+    it("Should get eth from zeta using UniV3", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
 
       await shouldGetETHFromZeta(zetaTokenConsumer);
     });
 
-    it("should get eth from zeta using recommended", async () => {
+    it("Should get eth from zeta using recommended", async () => {
       const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
       await shouldGetETHFromZeta(zetaTokenConsumer);
     });
@@ -223,25 +228,27 @@ describe.only("ZetaTokenConsumer tests", () => {
     const shouldGetTokenFromZeta = async (zetaTokenConsumer: ZetaTokenConsumer) => {
       const USDCContract = IERC20__factory.connect(USDC, randomSigner);
 
-      const initialZetaBalance = await USDCContract.balanceOf(randomSigner.address);
+      const initialTokenBalance = await USDCContract.balanceOf(randomSigner.address);
       const tx1 = await zetaTokenNonEth.connect(randomSigner).approve(zetaTokenConsumer.address, MaxUint256);
       await tx1.wait();
 
       await zetaTokenConsumer.getTokenFromZeta(randomSigner.address, 1, USDC, parseUnits("5000", 18));
-      const finalZetaBalance = await USDCContract.balanceOf(randomSigner.address);
-      await expect(finalZetaBalance).to.be.gt(initialZetaBalance);
+      const finalTokenBalance = await USDCContract.balanceOf(randomSigner.address);
+
+      expect(finalTokenBalance).to.be.gt(initialTokenBalance);
     };
-    it("should get token from zeta using UniV2", async () => {
+
+    it("Should get token from zeta using UniV2", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV2.connect(randomSigner);
       await shouldGetTokenFromZeta(zetaTokenConsumer);
     });
 
-    it("should get token from zeta using UniV3", async () => {
+    it("Should get token from zeta using UniV3", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
       await shouldGetTokenFromZeta(zetaTokenConsumer);
     });
 
-    it("should get token from zeta using recommended", async () => {
+    it("Should get token from zeta using recommended", async () => {
       const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
       await shouldGetTokenFromZeta(zetaTokenConsumer);
     });
