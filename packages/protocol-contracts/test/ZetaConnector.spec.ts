@@ -92,16 +92,24 @@ describe("ZetaConnector tests", () => {
 
   describe("ZetaConnector.base", () => {
     describe("updateTssAddress", () => {
-      it("Should revert if the caller is not the TSS updater", async () => {
+      it("Should revert if the caller is not TSS or TSS updater", async () => {
         await expect(
           zetaConnectorBaseContract.connect(randomSigner).updateTssAddress(randomSigner.address)
-        ).to.revertedWith(`CallerIsNotTssUpdater("${randomSigner.address}")`);
+        ).to.revertedWith(`CallerIsNotTssOrUpdater("${randomSigner.address}")`);
       });
 
       it("Should revert if the new TSS address is invalid", async () => {
         await expect(
           zetaConnectorBaseContract.updateTssAddress("0x0000000000000000000000000000000000000000")
         ).to.revertedWith(`InvalidAddress()`);
+      });
+
+      it("Should change the TSS address if called by TSS", async () => {
+        await (await zetaConnectorBaseContract.connect(tssSigner).updateTssAddress(randomSigner.address)).wait();
+
+        const address = await zetaConnectorBaseContract.tssAddress();
+
+        expect(address).to.equal(randomSigner.address);
       });
 
       it("Should change the TSS address if called by TSS updater", async () => {
