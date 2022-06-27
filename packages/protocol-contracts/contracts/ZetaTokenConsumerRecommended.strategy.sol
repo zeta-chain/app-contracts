@@ -51,10 +51,6 @@ contract ZetaTokenConsumerRecommended is ZetaTokenConsumer, ZetaTokenConsumerRec
         tssAddressUpdater = tssAddressUpdater_;
     }
 
-    receive() external payable {}
-
-    fallback() external payable {}
-
     function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable override {
         ZetaTokenConsumer(strategyAddress).getZetaFromEth{value: msg.value}(destinationAddress, minAmountOut);
     }
