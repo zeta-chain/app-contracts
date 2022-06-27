@@ -26,7 +26,7 @@ interface WETH9 {
  */
 contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Errors {
     uint256 internal constant MAX_DEADLINE = 100;
-    // @todo: check in doc if this fee is max, min or anything else
+    // @todo: update if 0.3% pool exists and if not we can use another one
     uint24 public constant poolFee = 3000;
 
     address internal immutable WETH9Address;
