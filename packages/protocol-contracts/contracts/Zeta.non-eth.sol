@@ -29,12 +29,12 @@ contract ZetaNonEth is ERC20Burnable, ZetaErrors {
         tssAddressUpdater = tssAddressUpdater_;
     }
 
-    function updateTssAndConnectorAddresses(address newTssAddress, address newConnectorAddress) external {
+    function updateTssAndConnectorAddresses(address tssAddress_, address connectorAddress_) external {
         if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
-        if (newTssAddress == address(0)) revert InvalidAddress();
+        if (tssAddress_ == address(0) || connectorAddress_ == address(0)) revert InvalidAddress();
 
-        tssAddress = newTssAddress;
-        connectorAddress = newConnectorAddress;
+        tssAddress = tssAddress_;
+        connectorAddress = connectorAddress_;
     }
 
     /**
