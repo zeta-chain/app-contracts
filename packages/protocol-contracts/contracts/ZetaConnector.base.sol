@@ -10,6 +10,8 @@ import "./interfaces/ZetaInterfaces.sol";
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public zetaToken;
 
+    address public pauserAddress;
+
     /**
      * @dev Collectively held by Zeta blockchain validators.
      */
@@ -18,46 +20,63 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public tssAddressUpdater;
 
     event ZetaSent(
-        address indexed originSenderAddress,
-        uint256 destinationChainId,
-        bytes destinationAddress,
-        uint256 zetaAmount,
-        uint256 gasLimit,
+        address sourceTxOriginAddress,
+        address indexed zetaTxSenderAddress,
+        uint256 indexed destinationChainId,
+        bytes indexed destinationAddress,
+        uint256 zetaValueAndGas,
+        uint256 destinationGasLimit,
         bytes message,
         bytes zetaParams
     );
+
     event ZetaReceived(
-        bytes originSenderAddress,
-        uint256 indexed originChainId,
+        bytes zetaTxSenderAddress,
+        uint256 indexed sourceChainId,
         address indexed destinationAddress,
-        uint256 zetaAmount,
-        bytes message,
-        bytes32 indexed internalSendHash
-    );
-    event ZetaReverted(
-        address originSenderAddress,
-        uint256 originChainId,
-        uint256 indexed destinationChainId,
-        bytes indexed destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes message,
         bytes32 indexed internalSendHash
     );
 
-    event TSSAddressUpdated(address originSenderAddress, address newTSSAddress);
+    event ZetaReverted(
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
+        uint256 indexed destinationChainId,
+        bytes indexed destinationAddress,
+        uint256 zetaValueAndGas,
+        bytes message,
+        bytes32 indexed internalSendHash
+    );
+
+    event TSSAddressUpdated(address zetaTxSenderAddress, address newTssAddress);
+
+    event PauserAddressUpdated(address updaterAddress, address newTssAddress);
 
     constructor(
         address zetaToken_,
         address tssAddress_,
-        address tssAddressUpdater_
+        address tssAddressUpdater_,
+        address pauserAddress_
     ) {
-        if (zetaToken_ == address(0) || tssAddress_ == address(0) || tssAddressUpdater_ == address(0)) {
+        if (
+            zetaToken_ == address(0) ||
+            tssAddress_ == address(0) ||
+            tssAddressUpdater_ == address(0) ||
+            pauserAddress_ == address(0)
+        ) {
             revert InvalidAddress();
         }
 
         zetaToken = zetaToken_;
         tssAddress = tssAddress_;
         tssAddressUpdater = tssAddressUpdater_;
+        pauserAddress = pauserAddress_;
+    }
+
+    modifier onlyPauser() {
+        if (msg.sender != pauserAddress) revert CallerIsNotPauser(msg.sender);
+        _;
     }
 
     modifier onlyTssAddress() {
@@ -70,7 +89,16 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         _;
     }
 
-    function updateTssAddress(address tssAddress_) external onlyTssUpdater {
+    function updatePauserAddress(address pauserAddress_) external onlyPauser {
+        if (pauserAddress_ == address(0)) revert InvalidAddress();
+
+        pauserAddress = pauserAddress_;
+
+        emit PauserAddressUpdated(msg.sender, pauserAddress_);
+    }
+
+    function updateTssAddress(address tssAddress_) external {
+        if (msg.sender != tssAddress && msg.sender != tssAddressUpdater) revert CallerIsNotTssOrUpdater(msg.sender);
         if (tssAddress_ == address(0)) revert InvalidAddress();
 
         tssAddress = tssAddress_;
@@ -87,31 +115,31 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         tssAddressUpdater = tssAddress;
     }
 
-    function pause() external onlyTssUpdater {
+    function pause() external onlyPauser {
         _pause();
     }
 
-    function unpause() external onlyTssUpdater {
+    function unpause() external onlyPauser {
         _unpause();
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external virtual {}
 
     function onReceive(
-        bytes calldata originSenderAddress,
-        uint256 originChainId,
+        bytes calldata zetaTxSenderAddress,
+        uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}
 
     function onRevert(
-        address originSenderAddress,
-        uint256 originChainId,
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}

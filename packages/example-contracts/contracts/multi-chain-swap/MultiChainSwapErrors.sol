@@ -14,7 +14,7 @@ interface MultiChainSwapErrors {
 
     error InsufficientOutToken();
 
-    error MissingOriginInputTokenAddress();
+    error MissingSourceInputTokenAddress();
 
     error InvalidMessageType();
 }

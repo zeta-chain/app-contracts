@@ -51,9 +51,9 @@ contract CrossChainMessage is Ownable {
             ZetaInterfaces.SendInput({
                 destinationChainId: _crossChainId,
                 destinationAddress: _crossChainAddress,
-                gasLimit: 2500000,
+                destinationGasLimit: 2500000,
                 message: abi.encode(HELLO_WORLD_MESSAGE_TYPE, "Hello, Cross-Chain World!"),
-                zetaAmount: 0,
+                zetaValueAndGas: 0,
                 zetaParams: abi.encode("")
             })
         );
@@ -62,10 +62,10 @@ contract CrossChainMessage is Ownable {
     function onZetaMessage(ZetaInterfaces.ZetaMessage calldata _zetaMessage) external {
         require(msg.sender == _zetaConnectorAddress, "This function can only be called by the Zeta Connector contract");
         require(
-            keccak256(_zetaMessage.originSenderAddress) == keccak256(_crossChainAddress),
+            keccak256(_zetaMessage.zetaTxSenderAddress) == keccak256(_crossChainAddress),
             "Cross-chain address doesn't match"
         );
-        require(_zetaMessage.originChainId == _crossChainId, "Cross-chain id doesn't match");
+        require(_zetaMessage.sourceChainId == _crossChainId, "Cross-chain id doesn't match");
 
         /**
          * @dev Decode should follow the signature of the message provided to zeta.send.
@@ -87,8 +87,8 @@ contract CrossChainMessage is Ownable {
      */
     function onZetaRevert(ZetaInterfaces.ZetaRevert calldata _zetaRevert) external {
         require(msg.sender == _zetaConnectorAddress, "This function can only be called by the Zeta Connector contract");
-        require(_zetaRevert.originSenderAddress == address(this), "Invalid originSenderAddress");
-        require(_zetaRevert.originChainId == _currentChainId, "Invalid originChainId");
+        require(_zetaRevert.zetaTxSenderAddress == address(this), "Invalid zetaTxSenderAddress");
+        require(_zetaRevert.sourceChainId == _currentChainId, "Invalid sourceChainId");
 
         (bytes32 messageType, string memory helloWorldMessage) = abi.decode(_zetaRevert.message, (bytes32, string));
 

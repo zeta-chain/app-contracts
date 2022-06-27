@@ -8,14 +8,14 @@ interface ZetaInterfaces {
     struct SendInput {
         /// @dev Chain id of the destination chain. More about chain ids https://docs.zetachain.com/learn/glossary#chain-id
         uint256 destinationChainId;
-        /// @dev Address to send to on the destination chain (expressed in bytes since it can be non-EVM)
+        /// @dev Address receiving the message on the destination chain (expressed in bytes since it can be non-EVM)
         bytes destinationAddress;
-        /// @dev Gas amount limit for the destination chain's transaction
-        uint256 gasLimit;
+        /// @dev Gas limit for the destination chain's transaction
+        uint256 destinationGasLimit;
         /// @dev An encoded, arbitrary message to be parsed by the destination contract
         bytes message;
-        /// @dev The amount of ZETA that you want to send cross-chain + the gas fees to be paid for the transaction
-        uint256 zetaAmount;
+        /// @dev ZETA to be sent cross-chain + ZetaChain gas fees + destination chain gas fees (expressed in ZETA)
+        uint256 zetaValueAndGas;
         /// @dev Optional parameters for the ZetaChain protocol
         bytes zetaParams;
     }
@@ -24,10 +24,10 @@ interface ZetaInterfaces {
      * @dev Our Connector calls onZetaMessage with this struct as argument
      */
     struct ZetaMessage {
-        bytes originSenderAddress;
-        uint256 originChainId;
+        bytes zetaTxSenderAddress;
+        uint256 sourceChainId;
         address destinationAddress;
-        uint256 zetaAmount;
+        uint256 zetaValueAndGas;
         bytes message;
     }
 
@@ -35,11 +35,11 @@ interface ZetaInterfaces {
      * @dev Our Connector calls onZetaRevert with this struct as argument
      */
     struct ZetaRevert {
-        address originSenderAddress;
-        uint256 originChainId;
+        address zetaTxSenderAddress;
+        uint256 sourceChainId;
         bytes destinationAddress;
         uint256 destinationChainId;
-        uint256 zetaAmount;
+        uint256 zetaValueAndGas;
         bytes message;
     }
 }
