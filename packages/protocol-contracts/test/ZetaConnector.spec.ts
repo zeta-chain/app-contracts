@@ -229,6 +229,24 @@ describe("ZetaConnector tests", () => {
         const e2 = await zetaConnectorEthContract.queryFilter(zetaSentFilter);
         expect(e2.length).to.equal(1);
       });
+
+      it("Should emit `ZetaSent` with tx.origin as the first parameter", async () => {
+        const zetaSentFilter = zetaConnectorEthContract.filters.ZetaSent();
+        const e1 = await zetaConnectorEthContract.queryFilter(zetaSentFilter);
+        expect(e1.length).to.equal(0);
+
+        await zetaConnectorEthContract.connect(randomSigner).send({
+          destinationAddress: randomSigner.address,
+          destinationChainId: 1,
+          destinationGasLimit: 2500000,
+          message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+          zetaValueAndGas: 0,
+          zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+        });
+
+        const e2 = await zetaConnectorEthContract.queryFilter(zetaSentFilter);
+        expect(e2[0].args[0].toString()).to.equal(randomSigner.address);
+      });
     });
 
     describe("onReceive", () => {
@@ -505,6 +523,24 @@ describe("ZetaConnector tests", () => {
 
         const e2 = await zetaConnectorNonEthContract.queryFilter(zetaSentFilter);
         expect(e2.length).to.equal(1);
+      });
+
+      it("Should emit `ZetaSent` with tx.origin as the first parameter", async () => {
+        const zetaSentFilter = zetaConnectorNonEthContract.filters.ZetaSent();
+        const e1 = await zetaConnectorNonEthContract.queryFilter(zetaSentFilter);
+        expect(e1.length).to.equal(0);
+
+        await zetaConnectorNonEthContract.connect(randomSigner).send({
+          destinationAddress: randomSigner.address,
+          destinationChainId: 1,
+          destinationGasLimit: 2500000,
+          message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+          zetaValueAndGas: 0,
+          zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+        });
+
+        const e2 = await zetaConnectorNonEthContract.queryFilter(zetaSentFilter);
+        expect(e2[0].args[0].toString()).to.equal(randomSigner.address);
       });
     });
 

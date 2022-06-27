@@ -23,6 +23,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         if (!success) revert ZetaTransferError();
 
         emit ZetaSent(
+            tx.origin,
             msg.sender,
             input.destinationChainId,
             input.destinationAddress,
