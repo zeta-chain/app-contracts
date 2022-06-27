@@ -4,7 +4,7 @@ import { execSync } from "node:child_process";
 import path from "node:path";
 
 const projectRoot = path.join(__dirname, "../");
-const solcVersion = "0.8.9";
+const solcVersion = "0.8.7";
 const timestamp = Date.now();
 const packageNames = ["protocol-contracts", "example-contracts"];
 
