@@ -96,7 +96,8 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         emit PauserAddressUpdated(msg.sender, pauserAddress_);
     }
 
-    function updateTssAddress(address tssAddress_) external onlyTssUpdater {
+    function updateTssAddress(address tssAddress_) external {
+        if (msg.sender != tssAddress && msg.sender != tssAddressUpdater) revert CallerIsNotTssOrUpdater(msg.sender);
         if (tssAddress_ == address(0)) revert InvalidAddress();
 
         tssAddress = tssAddress_;
