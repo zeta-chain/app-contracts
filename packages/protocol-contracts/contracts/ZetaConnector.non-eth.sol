@@ -37,6 +37,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         ZetaToken(zetaToken).burnFrom(msg.sender, input.zetaValueAndGas);
 
         emit ZetaSent(
+            tx.origin,
             msg.sender,
             input.destinationChainId,
             input.destinationAddress,

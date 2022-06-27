@@ -18,6 +18,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public tssAddressUpdater;
 
     event ZetaSent(
+        address sourceTxOriginAddress,
         address indexed zetaTxSenderAddress,
         uint256 destinationChainId,
         bytes destinationAddress,
