@@ -145,11 +145,11 @@ describe("CrossChainWarriors tests", () => {
     it("Should revert if the caller is not the Connector contract", async () => {
       await expect(
         crossChainWarriorsContractChainA.onZetaMessage({
-          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
-          sourceChainId: 1,
           destinationAddress: crossChainWarriorsContractChainB.address,
-          zetaValueAndGas: 0,
           message: encoder.encode(["address"], [deployerAddress]),
+          sourceChainId: 1,
+          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
+          zetaValueAndGas: 0,
         })
       ).to.be.revertedWith("This function can only be called by the Connector contract");
     });

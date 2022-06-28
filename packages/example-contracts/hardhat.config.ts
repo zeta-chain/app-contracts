@@ -14,6 +14,16 @@ dotenv.config();
 const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [];
 
 const config: HardhatUserConfig = {
+  etherscan: {
+    ...getHardhatConfigScanners(),
+  },
+  gasReporter: {
+    currency: "USD",
+    enabled: process.env.REPORT_GAS !== undefined,
+  },
+  networks: {
+    ...getHardhatConfigNetworks(PRIVATE_KEYS),
+  },
   solidity: {
     compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.7" }],
     settings: {
@@ -26,16 +36,6 @@ const config: HardhatUserConfig = {
         },
       },
     },
-  },
-  etherscan: {
-    ...getHardhatConfigScanners(),
-  },
-  networks: {
-    ...getHardhatConfigNetworks(PRIVATE_KEYS),
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
   },
 };
 

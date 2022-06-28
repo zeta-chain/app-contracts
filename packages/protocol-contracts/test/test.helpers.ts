@@ -2,7 +2,7 @@ import { BigNumber, ContractReceipt } from "ethers";
 
 import { ZetaTokenConsumer__factory } from "../typechain-types";
 
-type CustomErrorParamType = string | BigNumber | number;
+type CustomErrorParamType = BigNumber | number | string;
 export const getCustomErrorMessage = (errorMethod: string, params?: [CustomErrorParamType]) => {
   const stringParams = params
     ? params

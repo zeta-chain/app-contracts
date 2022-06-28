@@ -102,17 +102,17 @@ describe.only("ZetaTokenConsumer tests", () => {
     await tx3.wait();
 
     const params: INonfungiblePositionManager.MintParamsStruct = {
-      token0: USDC,
-      token1: DAI,
+      amount0Desired: parseEther("10"),
+      amount0Min: 0,
+      amount1Desired: parseEther("10"),
+      amount1Min: 0,
+      deadline: (await getNow()) + 360,
       fee: 3000,
+      recipient: signer.address,
       tickLower: 193,
       tickUpper: 194,
-      amount0Desired: parseEther("10"),
-      amount1Desired: parseEther("10"),
-      amount0Min: 0,
-      amount1Min: 0,
-      recipient: signer.address,
-      deadline: (await getNow()) + 360,
+      token0: USDC,
+      token1: DAI,
     };
 
     const tx4 = await uniswapRouter.mint(params);

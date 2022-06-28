@@ -15,16 +15,16 @@ async function main() {
     await hardhat
       .run("verify:verify", {
         address: getAddress("zetaToken"),
-        contract: "contracts/evm/Zeta.eth.sol:ZetaEth",
         constructorArguments: [ZETA_INITIAL_SUPPLY],
+        contract: "contracts/evm/Zeta.eth.sol:ZetaEth",
       })
       .catch(handleCatch);
 
     await hardhat
       .run("verify:verify", {
         address: getAddress("connector"),
-        contract: "contracts/evm/ZetaConnector.eth.sol:ZetaConnectorEth",
         constructorArguments: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")],
+        contract: "contracts/evm/ZetaConnector.eth.sol:ZetaConnectorEth",
       })
       .catch(handleCatch);
   } else {
@@ -38,8 +38,8 @@ async function main() {
     await hardhat
       .run("verify:verify", {
         address: getAddress("connector"),
-        contract: "contracts/evm/ZetaConnector.non-eth.sol:ZetaConnectorNonEth",
         constructorArguments: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")],
+        contract: "contracts/evm/ZetaConnector.non-eth.sol:ZetaConnectorNonEth",
       })
       .catch(handleCatch);
   }

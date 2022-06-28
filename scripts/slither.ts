@@ -23,10 +23,10 @@ async function getPackageName() {
   } else {
     packageName = await inquirer.prompt([
       {
-        type: "list",
+        choices: packageNames,
         message: "Which set of contracts would you like to test?",
         name: "contracts",
-        choices: packageNames,
+        type: "list",
       },
     ]);
 
@@ -39,9 +39,9 @@ async function getFilterPaths() {
 
   const { confirm: includeLibraries } = await inquirer.prompt([
     {
-      type: "confirm",
       message: "Do you want to include OpenZeppelin & Uniswap libraries in this scan?",
       name: "confirm",
+      type: "confirm",
     },
   ]);
 

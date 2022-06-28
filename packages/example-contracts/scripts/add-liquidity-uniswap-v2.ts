@@ -56,7 +56,7 @@ const addZetaEthLiquidity = async (
     0,
     deployer.address,
     (await getNow()) + 360,
-    { value: ETHToAdd, gasLimit: 10_000_000 }
+    { gasLimit: 10_000_000, value: ETHToAdd }
   );
   await tx2.wait();
 };
