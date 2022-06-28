@@ -172,7 +172,7 @@ describe.only("ZetaTokenConsumer tests", () => {
 
     uniswapV3RouterAddr = UNI_ROUTER_V3;
     zetaTokenConsumerUniV3 = await getZetaTokenConsumerUniV3Strategy({
-      deployParams: [zetaTokenNonEthAddress, uniswapV3RouterAddr, UNI_QUOTER_V3, WETH9],
+      deployParams: [zetaTokenNonEthAddress, uniswapV3RouterAddr, UNI_QUOTER_V3, WETH9, 3000, 3000],
     });
 
     zetaTokenConsumerRecommended = await getZetaTokenConsumerRecommendedStrategy({

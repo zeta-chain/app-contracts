@@ -27,7 +27,8 @@ interface WETH9 {
 contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Errors {
     uint256 internal constant MAX_DEADLINE = 100;
     // @todo: update if 0.3% pool exists and if not we can use another one
-    uint24 public constant poolFee = 3000;
+    uint24 public immutable zetaPoolFee;
+    uint24 public immutable tokensPoolFee;
 
     address internal immutable WETH9Address;
     address public immutable zetaToken;
@@ -39,7 +40,9 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         address zetaToken_,
         address uniswapV3Router_,
         address quoter_,
-        address WETH9Address_
+        address WETH9Address_,
+        uint24 zetaPoolFee_,
+        uint24 tokensPoolFee_
     ) {
         if (
             zetaToken_ == address(0) ||
@@ -52,6 +55,8 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         uniswapV3Router = ISwapRouter(uniswapV3Router_);
         quoter = IQuoter(quoter_);
         WETH9Address = WETH9Address_;
+        zetaPoolFee = zetaPoolFee_;
+        tokensPoolFee = tokensPoolFee_;
     }
 
     receive() external payable {}
@@ -64,7 +69,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
             deadline: block.timestamp + MAX_DEADLINE,
             tokenIn: WETH9Address,
             tokenOut: zetaToken,
-            fee: poolFee,
+            fee: zetaPoolFee,
             recipient: destinationAddress,
             amountIn: msg.value,
             amountOutMinimum: minAmountOut,
@@ -91,7 +96,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            path: abi.encodePacked(inputToken, poolFee, WETH9Address, poolFee, zetaToken),
+            path: abi.encodePacked(inputToken, tokensPoolFee, WETH9Address, zetaPoolFee, zetaToken),
             recipient: destinationAddress,
             amountIn: inputTokenAmount,
             amountOutMinimum: minAmountOut
@@ -119,7 +124,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
             deadline: block.timestamp + MAX_DEADLINE,
             tokenIn: zetaToken,
             tokenOut: WETH9Address,
-            fee: poolFee,
+            fee: zetaPoolFee,
             recipient: address(this),
             amountIn: zetaTokenAmount,
             amountOutMinimum: minAmountOut,
@@ -152,7 +157,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            path: abi.encodePacked(zetaToken, poolFee, WETH9Address, poolFee, outputToken),
+            path: abi.encodePacked(zetaToken, zetaPoolFee, WETH9Address, tokensPoolFee, outputToken),
             recipient: destinationAddress,
             amountIn: zetaTokenAmount,
             amountOutMinimum: minAmountOut
