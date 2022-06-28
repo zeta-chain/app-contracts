@@ -1,6 +1,8 @@
 # ZetaChain Protocol Contracts
 
-ZetaChain Protocol Contracts are the contracts needed to interact with ZetaChain infrastructure. You don't need to deploy this contracts, are deployed and manage by us.
+This package includes:
+* Contracts that interact directly with the protocol (Connector, Zeta token).
+* Utilities and interfaces to make it easy to develop multichain dApps on ZetaChain (ZetaInteractor, ZetaInterfaces, ZetaTokenConsumer).
 
 ## Special addresses
 
