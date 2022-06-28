@@ -6,6 +6,6 @@ This package includes:
 
 ## Addresses
 
-- Tss Address: Collectively hold by Zeta blockchain validators.
+* TSS address: collectively held by Zeta blockchain validators.
 
 - Tss Updater Address: This address will combine a Gnosis multi-sig and Open Zeppelin timelock to ensure transparency and improve security.
