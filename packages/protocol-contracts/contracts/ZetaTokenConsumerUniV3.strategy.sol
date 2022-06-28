@@ -77,6 +77,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         });
 
         uint256 amountOut = uniswapV3Router.exactInputSingle{value: msg.value}(params);
+
         emit EthExchangedForZeta(msg.value, amountOut);
     }
 
