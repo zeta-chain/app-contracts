@@ -21,12 +21,12 @@ interface ZetaTokenConsumerRecommendedErrors {
  */
 contract ZetaTokenConsumerRecommended is ZetaTokenConsumer, ZetaTokenConsumerRecommendedErrors {
     /**
-     * @dev Collectively hold by Zeta blockchain validators
+     * @dev Collectively held by Zeta blockchain validators
      */
     address public tssAddress;
 
     /**
-     * @dev Initially a multi-sig, eventually hold by Zeta blockchain validators (via renounceTssAddressUpdater)
+     * @dev Initially a multi-sig, eventually held by Zeta blockchain validators (via renounceTssAddressUpdater)
      */
     address public tssAddressUpdater;
 
