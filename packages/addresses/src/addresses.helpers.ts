@@ -15,7 +15,13 @@ export type ZetaAddress =
   | "tss"
   | "tssUpdater"
   | "uniswapV2Router02"
-  | "zetaToken";
+  | "zetaToken"
+  | "dai"
+  | "usdc"
+  | "weth9"
+  | "uniswapV3NftManager"
+  | "uniswapV3Quoter"
+  | "uniswapV3Router";
 
 type NetworkAddresses = Record<ZetaAddress, string>;
 const zetaAddresses: Record<ZetaAddress, boolean> = {
@@ -29,6 +35,12 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   tssUpdater: true,
   uniswapV2Router02: true,
   zetaToken: true,
+  dai: true,
+  usdc: true,
+  weth9: true,
+  uniswapV3NftManager: true,
+  uniswapV3Quoter: true,
+  uniswapV3Router: true,
 };
 
 export const isZetaAddress = (a: string | undefined): a is ZetaAddress => Boolean(zetaAddresses[a as ZetaAddress]);

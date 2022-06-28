@@ -25,13 +25,13 @@ import {
   ZetaTokenConsumerUniV3,
 } from "../typechain-types";
 import { parseZetaConsumerLog } from "./test.helpers";
-import { DAI, UNI_NFT_MANAGER_V3, UNI_QUOTER_V3, UNI_ROUTER_V3, USDC, WETH9 } from "./ZetaTokenConsumer.constants";
 
 chai.should();
 
 describe.only("ZetaTokenConsumer tests", () => {
   let uniswapV2RouterAddr: string;
   let uniswapV3RouterAddr: string;
+  let USDCAddr: string;
 
   let zetaTokenConsumerUniV2: ZetaTokenConsumerUniV2;
   let zetaTokenConsumerUniV3: ZetaTokenConsumerUniV3;
@@ -65,6 +65,21 @@ describe.only("ZetaTokenConsumer tests", () => {
    * @todo (andy): WIP, not in use yet
    */
   const createPoolV3 = async (signer: SignerWithAddress, tokenAddress: string) => {
+    const DAI = getAddress("dai", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
+    const UNI_NFT_MANAGER_V3 = getAddress("uniswapV3NftManager", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
+    const USDC = getAddress("usdc", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
     await swapToken(signer, DAI, parseUnits("10000", 18));
 
     const token = IERC20__factory.connect(USDC, signer);
@@ -113,6 +128,31 @@ describe.only("ZetaTokenConsumer tests", () => {
     });
 
     uniswapV2RouterAddr = getAddress("uniswapV2Router02", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
+    const DAI = getAddress("dai", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
+    const UNI_QUOTER_V3 = getAddress("uniswapV3Quoter", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
+    const UNI_ROUTER_V3 = getAddress("uniswapV3Router", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
+    const WETH9 = getAddress("weth9", {
+      customNetworkName: "eth-mainnet",
+      customZetaNetwork: "mainnet",
+    });
+
+    USDCAddr = getAddress("usdc", {
       customNetworkName: "eth-mainnet",
       customZetaNetwork: "mainnet",
     });
@@ -171,14 +211,14 @@ describe.only("ZetaTokenConsumer tests", () => {
 
   describe("getZetaFromToken", () => {
     const shouldGetZetaFromToken = async (zetaTokenConsumer: ZetaTokenConsumer) => {
-      const USDCContract = IERC20__factory.connect(USDC, randomSigner);
-      await swapToken(randomSigner, USDC, parseUnits("10000", 6));
+      const USDCContract = IERC20__factory.connect(USDCAddr, randomSigner);
+      await swapToken(randomSigner, USDCAddr, parseUnits("10000", 6));
 
       const initialZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
       const tx1 = await USDCContract.approve(zetaTokenConsumer.address, MaxUint256);
       await tx1.wait();
 
-      const tx2 = await zetaTokenConsumer.getZetaFromToken(randomSigner.address, 1, USDC, parseUnits("100", 6));
+      const tx2 = await zetaTokenConsumer.getZetaFromToken(randomSigner.address, 1, USDCAddr, parseUnits("100", 6));
       const result = await tx2.wait();
 
       const eventNames = parseZetaConsumerLog(result.logs);
@@ -239,13 +279,13 @@ describe.only("ZetaTokenConsumer tests", () => {
 
   describe("getTokenFromZeta", () => {
     const shouldGetTokenFromZeta = async (zetaTokenConsumer: ZetaTokenConsumer) => {
-      const USDCContract = IERC20__factory.connect(USDC, randomSigner);
+      const USDCContract = IERC20__factory.connect(USDCAddr, randomSigner);
 
       const initialTokenBalance = await USDCContract.balanceOf(randomSigner.address);
       const tx1 = await zetaTokenNonEth.connect(randomSigner).approve(zetaTokenConsumer.address, MaxUint256);
       await tx1.wait();
 
-      const tx2 = await zetaTokenConsumer.getTokenFromZeta(randomSigner.address, 1, USDC, parseUnits("5000", 18));
+      const tx2 = await zetaTokenConsumer.getTokenFromZeta(randomSigner.address, 1, USDCAddr, parseUnits("5000", 18));
       const result = await tx2.wait();
 
       const eventNames = parseZetaConsumerLog(result.logs);
