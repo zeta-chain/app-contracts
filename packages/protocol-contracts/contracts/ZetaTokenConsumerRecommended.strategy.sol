@@ -17,7 +17,7 @@ interface ZetaTokenConsumerRecommendedErrors {
 
 /**
  * @dev Recommended strategy for ZetaTokenConsumer
- * @dev ZetaTokenConsumer events are not emitted here because this contract rely on selected strategy to avoid duplicated events
+ * @dev ZetaTokenConsumer events are not emitted here because this contract relies on a selected strategy that should emit them
  */
 contract ZetaTokenConsumerRecommended is ZetaTokenConsumer, ZetaTokenConsumerRecommendedErrors {
     /**
