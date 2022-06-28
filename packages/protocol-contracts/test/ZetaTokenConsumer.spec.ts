@@ -8,7 +8,6 @@ import { ethers } from "hardhat";
 
 import {
   deployZetaNonEth,
-  getZetaTokenConsumerRecommendedStrategy,
   getZetaTokenConsumerUniV2Strategy,
   getZetaTokenConsumerUniV3Strategy,
 } from "../lib/contracts.helpers";
@@ -20,7 +19,6 @@ import {
   IPoolInitializer__factory,
   UniswapV2Router02__factory,
   ZetaTokenConsumer,
-  ZetaTokenConsumerRecommended,
   ZetaTokenConsumerUniV2,
   ZetaTokenConsumerUniV3,
 } from "../typechain-types";
@@ -28,14 +26,13 @@ import { parseZetaConsumerLog } from "./test.helpers";
 
 chai.should();
 
-describe.only("ZetaTokenConsumer tests", () => {
+describe("ZetaTokenConsumer tests", () => {
   let uniswapV2RouterAddr: string;
   let uniswapV3RouterAddr: string;
   let USDCAddr: string;
 
   let zetaTokenConsumerUniV2: ZetaTokenConsumerUniV2;
   let zetaTokenConsumerUniV3: ZetaTokenConsumerUniV3;
-  let zetaTokenConsumerRecommended: ZetaTokenConsumerRecommended;
   let zetaTokenNonEthAddress: string;
   let zetaTokenNonEth: IERC20;
 
@@ -174,10 +171,6 @@ describe.only("ZetaTokenConsumer tests", () => {
     zetaTokenConsumerUniV3 = await getZetaTokenConsumerUniV3Strategy({
       deployParams: [zetaTokenNonEthAddress, uniswapV3RouterAddr, UNI_QUOTER_V3, WETH9, 3000, 3000],
     });
-
-    zetaTokenConsumerRecommended = await getZetaTokenConsumerRecommendedStrategy({
-      deployParams: [zetaTokenConsumerUniV3.address, zetaTokenNonEthAddress, tssSigner.address, tssUpdater.address],
-    });
   });
 
   describe("getZetaFromEth", () => {
@@ -200,11 +193,6 @@ describe.only("ZetaTokenConsumer tests", () => {
 
     it("Should get zeta from eth using UniV3", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
-      await shouldGetZetaFromETH(zetaTokenConsumer);
-    });
-
-    it("Should get zeta from eth using recommended", async () => {
-      const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
       await shouldGetZetaFromETH(zetaTokenConsumer);
     });
   });
@@ -237,11 +225,6 @@ describe.only("ZetaTokenConsumer tests", () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
       await shouldGetZetaFromToken(zetaTokenConsumer);
     });
-
-    it("Should get zeta from token using recommended", async () => {
-      const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
-      await shouldGetZetaFromToken(zetaTokenConsumer);
-    });
   });
 
   describe("getEthFromZeta", () => {
@@ -268,11 +251,6 @@ describe.only("ZetaTokenConsumer tests", () => {
     it("Should get eth from zeta using UniV3", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
 
-      await shouldGetETHFromZeta(zetaTokenConsumer);
-    });
-
-    it("Should get eth from zeta using recommended", async () => {
-      const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
       await shouldGetETHFromZeta(zetaTokenConsumer);
     });
   });
@@ -302,11 +280,6 @@ describe.only("ZetaTokenConsumer tests", () => {
 
     it("Should get token from zeta using UniV3", async () => {
       const zetaTokenConsumer = zetaTokenConsumerUniV3.connect(randomSigner);
-      await shouldGetTokenFromZeta(zetaTokenConsumer);
-    });
-
-    it("Should get token from zeta using recommended", async () => {
-      const zetaTokenConsumer = zetaTokenConsumerRecommended.connect(randomSigner);
       await shouldGetTokenFromZeta(zetaTokenConsumer);
     });
   });

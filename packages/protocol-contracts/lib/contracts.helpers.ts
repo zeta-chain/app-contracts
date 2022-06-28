@@ -16,8 +16,6 @@ import {
   ZetaNonEth__factory as ZetaNonEthFactory,
   ZetaReceiverMock,
   ZetaReceiverMock__factory as ZetaReceiverMockFactory,
-  ZetaTokenConsumerRecommended,
-  ZetaTokenConsumerRecommended__factory as ZetaTokenConsumerRecommendedFactory,
   ZetaTokenConsumerUniV2,
   ZetaTokenConsumerUniV2__factory as ZetaTokenConsumerUniV2Factory,
   ZetaTokenConsumerUniV3,
@@ -118,14 +116,6 @@ export const getZetaTokenConsumerUniV2Strategy = async (params: GetContractParam
 export const getZetaTokenConsumerUniV3Strategy = async (params: GetContractParams<ZetaTokenConsumerUniV3Factory>) =>
   getContract<ZetaTokenConsumerUniV3Factory, ZetaTokenConsumerUniV3>({
     contractName: "ZetaTokenConsumerUniV3",
-    ...params,
-  });
-
-export const getZetaTokenConsumerRecommendedStrategy = async (
-  params: GetContractParams<ZetaTokenConsumerRecommendedFactory>
-) =>
-  getContract<ZetaTokenConsumerRecommendedFactory, ZetaTokenConsumerRecommended>({
-    contractName: "ZetaTokenConsumerRecommended",
     ...params,
   });
 
