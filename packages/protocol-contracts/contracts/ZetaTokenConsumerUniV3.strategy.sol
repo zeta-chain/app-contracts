@@ -53,10 +53,6 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         WETH9Address = WETH9Address_;
     }
 
-    receive() external payable {}
-
-    fallback() external payable {}
-
     function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable override {
         if (destinationAddress == address(0)) revert InvalidAddress();
         if (msg.value == 0) revert InputCantBeZero();
