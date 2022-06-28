@@ -4,7 +4,7 @@ This package includes:
 * Contracts that interact directly with the protocol (Connector, Zeta token).
 * Utilities and interfaces to make it easy to develop multichain dApps on ZetaChain (ZetaInteractor, ZetaInterfaces, ZetaTokenConsumer).
 
-## Special addresses
+## Addresses
 
 - Tss Address: Collectively hold by Zeta blockchain validators.
 
