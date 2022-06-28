@@ -28,7 +28,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     uint256 internal constant MAX_DEADLINE = 100;
 
     uint24 public immutable zetaPoolFee;
-    uint24 public immutable tokensPoolFee;
+    uint24 public immutable tokenPoolFee;
 
     address internal immutable WETH9Address;
     address public immutable zetaToken;
@@ -42,7 +42,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         address quoter_,
         address WETH9Address_,
         uint24 zetaPoolFee_,
-        uint24 tokensPoolFee_
+        uint24 tokenPoolFee_
     ) {
         if (
             zetaToken_ == address(0) ||
@@ -56,7 +56,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         quoter = IQuoter(quoter_);
         WETH9Address = WETH9Address_;
         zetaPoolFee = zetaPoolFee_;
-        tokensPoolFee = tokensPoolFee_;
+        tokenPoolFee = tokenPoolFee_;
     }
 
     receive() external payable {}
@@ -96,7 +96,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            path: abi.encodePacked(inputToken, tokensPoolFee, WETH9Address, zetaPoolFee, zetaToken),
+            path: abi.encodePacked(inputToken, tokenPoolFee, WETH9Address, zetaPoolFee, zetaToken),
             recipient: destinationAddress,
             amountIn: inputTokenAmount,
             amountOutMinimum: minAmountOut
@@ -157,7 +157,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            path: abi.encodePacked(zetaToken, zetaPoolFee, WETH9Address, tokensPoolFee, outputToken),
+            path: abi.encodePacked(zetaToken, zetaPoolFee, WETH9Address, tokenPoolFee, outputToken),
             recipient: destinationAddress,
             amountIn: zetaTokenAmount,
             amountOutMinimum: minAmountOut
