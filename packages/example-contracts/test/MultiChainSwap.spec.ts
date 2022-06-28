@@ -402,11 +402,11 @@ describe("MultiChainSwap tests", () => {
     it("Should revert if the caller is not ZetaConnector", async () => {
       await expect(
         multiChainSwapContractA.onZetaMessage({
-          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
-          sourceChainId: chainBId,
           destinationAddress: multiChainSwapContractB.address,
-          zetaValueAndGas: 0,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
+          sourceChainId: chainBId,
+          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
+          zetaValueAndGas: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -428,12 +428,12 @@ describe("MultiChainSwap tests", () => {
     it("Should revert if the caller is not ZetaConnector", async () => {
       await expect(
         multiChainSwapContractA.onZetaRevert({
-          zetaTxSenderAddress: deployer.address,
-          sourceChainId: chainAId,
           destinationAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]),
           destinationChainId: chainBId,
-          zetaValueAndGas: 0,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
+          sourceChainId: chainAId,
+          zetaTxSenderAddress: deployer.address,
+          zetaValueAndGas: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });

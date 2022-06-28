@@ -137,8 +137,8 @@ describe("ZetaNonEth tests", () => {
         destinationChainId: 1,
         destinationGasLimit: 2500000,
         message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-        zetaValueAndGas: 1000,
         zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+        zetaValueAndGas: 1000,
       });
 
       const e2 = await zetaTokenNonEthContract.queryFilter(zetaBurntFilter);

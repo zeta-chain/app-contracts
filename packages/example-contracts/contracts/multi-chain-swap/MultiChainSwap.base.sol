@@ -52,13 +52,13 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
     );
 
     constructor(
-        address _zetaConnector,
-        address _zetaTokenInput,
-        address _uniswapV2Router
-    ) ZetaInteractor(_zetaConnector) {
-        zetaToken = _zetaTokenInput;
-        uniswapV2RouterAddress = _uniswapV2Router;
-        uniswapV2Router = IUniswapV2Router02(_uniswapV2Router);
+        address zetaConnector_,
+        address zetaToken_,
+        address uniswapV2Router_
+    ) ZetaInteractor(zetaConnector_) {
+        zetaToken = zetaToken_;
+        uniswapV2RouterAddress = uniswapV2Router_;
+        uniswapV2Router = IUniswapV2Router02(uniswapV2Router_);
         wETH = uniswapV2Router.WETH();
     }
 
@@ -74,7 +74,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         uint256 destinationChainId,
         uint256 crossChaindestinationGasLimit
     ) external payable {
-        if (!isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (msg.value == 0) revert ValueShouldBeGreaterThanZero();
         if (
@@ -140,8 +140,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         uint256 destinationChainId,
         uint256 crossChaindestinationGasLimit
     ) external {
-        if (keccak256(interactorsByChainId[destinationChainId]) == keccak256(new bytes(0)))
-            revert InvalidDestinationChainId();
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (sourceInputToken == address(0)) revert MissingSourceInputTokenAddress();
         if (

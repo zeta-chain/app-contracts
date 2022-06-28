@@ -27,6 +27,7 @@ describe("ZetaConnector tests", () => {
   let zetaConnectorEthContract: ZetaConnectorEth;
   let zetaReceiverMockContract: ZetaReceiverMock;
   let zetaConnectorNonEthContract: ZetaConnectorNonEth;
+
   let tssUpdater: SignerWithAddress;
   let tssSigner: SignerWithAddress;
   let randomSigner: SignerWithAddress;
@@ -197,8 +198,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: 1000,
           })
         ).to.revertedWith("Pausable: paused");
       });
@@ -214,8 +215,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: 1000,
           })
         ).to.revertedWith("ERC20: transfer amount exceeds balance");
       });
@@ -227,8 +228,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: 1000,
           })
         ).to.revertedWith("ERC20: insufficient allowance");
       });
@@ -248,8 +249,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: 1000,
           })
         ).wait();
 
@@ -270,8 +271,8 @@ describe("ZetaConnector tests", () => {
           destinationChainId: 1,
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+          zetaValueAndGas: 0,
         });
 
         const e2 = await zetaConnectorEthContract.queryFilter(zetaSentFilter);
@@ -288,8 +289,8 @@ describe("ZetaConnector tests", () => {
           destinationChainId: 1,
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+          zetaValueAndGas: 0,
         });
 
         const e2 = await zetaConnectorEthContract.queryFilter(zetaSentFilter);
@@ -498,8 +499,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: 1000,
           })
         ).to.revertedWith("Pausable: paused");
       });
@@ -515,8 +516,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: 1000,
           })
         ).to.revertedWith("ERC20: insufficient allowance");
       });
@@ -528,8 +529,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: 1000,
           })
         ).to.revertedWith("ERC20: insufficient allowance");
       });
@@ -546,8 +547,8 @@ describe("ZetaConnector tests", () => {
             destinationChainId: 1,
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: parseEther("1"),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+            zetaValueAndGas: parseEther("1"),
           })
         ).wait();
 
@@ -565,8 +566,8 @@ describe("ZetaConnector tests", () => {
           destinationChainId: 1,
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+          zetaValueAndGas: 0,
         });
 
         const e2 = await zetaConnectorNonEthContract.queryFilter(zetaSentFilter);
@@ -583,8 +584,8 @@ describe("ZetaConnector tests", () => {
           destinationChainId: 1,
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+          zetaValueAndGas: 0,
         });
 
         const e2 = await zetaConnectorNonEthContract.queryFilter(zetaSentFilter);
