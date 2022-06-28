@@ -45,6 +45,7 @@ contract ZetaTokenConsumerRecommended is ZetaTokenConsumer, ZetaTokenConsumerRec
             tssAddress_ == address(0) ||
             tssAddressUpdater_ == address(0)
         ) revert InvalidAddress();
+
         strategyAddress = strategyAddress_;
         zetaToken = zetaToken_;
         tssAddress = tssAddress_;

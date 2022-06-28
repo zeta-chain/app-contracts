@@ -61,7 +61,7 @@ describe.only("ZetaTokenConsumer tests", () => {
   };
 
   /**
-   * @custom:todo (andy): WIP, not in use yet
+   * @todo (andy): WIP, not in use yet
    */
   const createPoolV3 = async (signer: SignerWithAddress, tokenAddress: string) => {
     await swapToken(signer, DAI, parseUnits("10000", 18));
@@ -116,7 +116,7 @@ describe.only("ZetaTokenConsumer tests", () => {
       customZetaNetwork: "mainnet",
     });
 
-    // dev: for testing purposes we use an existing uni v3 pool
+    // For testing purposes we use an existing uni v3 pool
     await swapToken(tssUpdater, DAI, parseEther("10000"));
     await swapToken(randomSigner, DAI, parseEther("10000"));
     await swapToken(randomSigner, DAI, parseEther("10000"));
