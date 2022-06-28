@@ -28,10 +28,10 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
 
     IUniswapV2Router02 internal uniswapV2Router;
 
-    constructor(address zetaTokenInput_, address uniswapV2Router_) {
-        if (zetaTokenInput_ == address(0) || uniswapV2Router_ == address(0)) revert InvalidAddress();
+    constructor(address zetaToken_, address uniswapV2Router_) {
+        if (zetaToken_ == address(0) || uniswapV2Router_ == address(0)) revert InvalidAddress();
 
-        zetaToken = zetaTokenInput_;
+        zetaToken = zetaToken_;
         uniswapV2RouterAddress = uniswapV2Router_;
         uniswapV2Router = IUniswapV2Router02(uniswapV2Router_);
         wETH = uniswapV2Router.WETH();

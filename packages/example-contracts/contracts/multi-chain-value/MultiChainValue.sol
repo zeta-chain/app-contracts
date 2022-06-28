@@ -12,9 +12,9 @@ contract MultiChainValue is Ownable {
 
     mapping(uint256 => bool) public availableChainIds;
 
-    constructor(address zetaConnector_, address zetaTokenInput_) {
+    constructor(address zetaConnector_, address zetaToken_) {
         zetaConnector = zetaConnector_;
-        zetaToken = zetaTokenInput_;
+        zetaToken = zetaToken_;
         connector = ZetaConnector(zetaConnector_);
     }
 

@@ -36,18 +36,19 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     IQuoter public immutable quoter;
 
     constructor(
-        address zetaTokenInput_,
+        address zetaToken_,
         address uniswapV3Router_,
         address quoter_,
         address WETH9Address_
     ) {
         if (
-            zetaTokenInput_ == address(0) ||
+            zetaToken_ == address(0) ||
             uniswapV3Router_ == address(0) ||
             quoter_ == address(0) ||
             WETH9Address_ == address(0)
         ) revert InvalidAddress();
-        zetaToken = zetaTokenInput_;
+
+        zetaToken = zetaToken_;
         uniswapV3Router = ISwapRouter(uniswapV3Router_);
         quoter = IQuoter(quoter_);
         WETH9Address = WETH9Address_;
