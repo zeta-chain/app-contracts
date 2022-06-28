@@ -89,18 +89,15 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         success = IERC20(inputToken).approve(address(uniswapV3Router), inputTokenAmount);
         if (!success) revert ErrorGettingToken();
 
-        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
+        ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
-            tokenIn: inputToken,
-            tokenOut: zetaToken,
-            fee: poolFee,
+            path: abi.encodePacked(inputToken, poolFee, WETH9Address, poolFee, zetaToken),
             recipient: destinationAddress,
             amountIn: inputTokenAmount,
-            amountOutMinimum: minAmountOut,
-            sqrtPriceLimitX96: 0
+            amountOutMinimum: minAmountOut
         });
 
-        uint256 amountOut = uniswapV3Router.exactInputSingle(params);
+        uint256 amountOut = uniswapV3Router.exactInput(params);
 
         emit TokenExchangedForZeta(inputToken, inputTokenAmount, amountOut);
     }

@@ -24,6 +24,7 @@ import {
   ZetaTokenConsumerUniV2,
   ZetaTokenConsumerUniV3,
 } from "../typechain-types";
+import { parseZetaConsumerLog } from "./test.helpers";
 import { DAI, UNI_NFT_MANAGER_V3, UNI_QUOTER_V3, UNI_ROUTER_V3, USDC, WETH9 } from "./ZetaTokenConsumer.constants";
 
 chai.should();
@@ -142,9 +143,13 @@ describe.only("ZetaTokenConsumer tests", () => {
   describe("getZetaFromEth", () => {
     const shouldGetZetaFromETH = async (zetaTokenConsumer: ZetaTokenConsumer) => {
       const initialZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
-      await zetaTokenConsumer.getZetaFromEth(randomSigner.address, 1, { value: parseEther("1") });
-      const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
+      const tx = await zetaTokenConsumer.getZetaFromEth(randomSigner.address, 1, { value: parseEther("1") });
 
+      const result = await tx.wait();
+      const eventNames = parseZetaConsumerLog(result.logs);
+      expect(eventNames.filter((e) => e === "EthExchangedForZeta")).to.have.lengthOf(1);
+
+      const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
       expect(finalZetaBalance).to.be.gt(initialZetaBalance);
     };
 
@@ -173,9 +178,13 @@ describe.only("ZetaTokenConsumer tests", () => {
       const tx1 = await USDCContract.approve(zetaTokenConsumer.address, MaxUint256);
       await tx1.wait();
 
-      await zetaTokenConsumer.getZetaFromToken(randomSigner.address, 1, USDC, parseUnits("100", 6));
-      const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
+      const tx2 = await zetaTokenConsumer.getZetaFromToken(randomSigner.address, 1, USDC, parseUnits("100", 6));
+      const result = await tx2.wait();
 
+      const eventNames = parseZetaConsumerLog(result.logs);
+      expect(eventNames.filter((e) => e === "TokenExchangedForZeta")).to.have.lengthOf(1);
+
+      const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
       expect(finalZetaBalance).to.be.gt(initialZetaBalance);
     };
 
@@ -201,9 +210,13 @@ describe.only("ZetaTokenConsumer tests", () => {
       const tx1 = await zetaTokenNonEth.connect(randomSigner).approve(zetaTokenConsumer.address, MaxUint256);
       await tx1.wait();
 
-      await zetaTokenConsumer.getEthFromZeta(randomSigner.address, 1, parseUnits("5000", 18));
-      const finalEthBalance = await ethers.provider.getBalance(randomSigner.address);
+      const tx2 = await zetaTokenConsumer.getEthFromZeta(randomSigner.address, 1, parseUnits("5000", 18));
+      const result = await tx2.wait();
 
+      const eventNames = parseZetaConsumerLog(result.logs);
+      expect(eventNames.filter((e) => e === "ZetaExchangedForEth")).to.have.lengthOf(1);
+
+      const finalEthBalance = await ethers.provider.getBalance(randomSigner.address);
       expect(finalEthBalance).to.be.gt(initialEthBalance);
     };
 
@@ -232,9 +245,13 @@ describe.only("ZetaTokenConsumer tests", () => {
       const tx1 = await zetaTokenNonEth.connect(randomSigner).approve(zetaTokenConsumer.address, MaxUint256);
       await tx1.wait();
 
-      await zetaTokenConsumer.getTokenFromZeta(randomSigner.address, 1, USDC, parseUnits("5000", 18));
-      const finalTokenBalance = await USDCContract.balanceOf(randomSigner.address);
+      const tx2 = await zetaTokenConsumer.getTokenFromZeta(randomSigner.address, 1, USDC, parseUnits("5000", 18));
+      const result = await tx2.wait();
 
+      const eventNames = parseZetaConsumerLog(result.logs);
+      expect(eventNames.filter((e) => e === "ZetaExchangedForToken")).to.have.lengthOf(1);
+
+      const finalTokenBalance = await USDCContract.balanceOf(randomSigner.address);
       expect(finalTokenBalance).to.be.gt(initialTokenBalance);
     };
 
