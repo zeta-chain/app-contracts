@@ -1241,10 +1241,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "@openzeppelin/contracts@npm:4.5.0"
-  checksum: 1c9c5dff041905771d2a83ac29c64dbf0b48603de43f74a34fb1358813d7c7bf259efe2f64e2112b410c5cca7a0b41aaedd882368be5f01a6d50a3ee0740f962
+"@openzeppelin/contracts@npm:4.6.0":
+  version: 4.6.0
+  resolution: "@openzeppelin/contracts@npm:4.6.0"
+  checksum: 1de06211b279d7aef2bb9abbdd58eb80c71256f7e888a10855ea23bb06ef8723b22fb550d06af60247dfbd7f0f23de9821732012d7541a823339070a8442d1db
   languageName: node
   linkType: hard
 
@@ -2106,7 +2106,7 @@ __metadata:
   resolution: "@zetachain/example-contracts@workspace:packages/example-contracts"
   dependencies:
     "@defi-wonderland/smock": ^2.0.7
-    "@openzeppelin/contracts": ^4.5.0
+    "@openzeppelin/contracts": 4.6.0
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/protocol-contracts": "workspace:^"
@@ -2121,7 +2121,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@zetachain/protocol-contracts@workspace:packages/protocol-contracts"
   dependencies:
-    "@openzeppelin/contracts": ^4.5.0
+    "@openzeppelin/contracts": 4.6.0
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@uniswap/v3-periphery": 1.1.0
     ethers: 5.6.8
