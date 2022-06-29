@@ -57,17 +57,28 @@ describe("ZetaNonEth tests", () => {
   });
 
   describe("updateTssAndConnectorAddresses", () => {
-    it("Should revert if the caller is not tssAddressUpdater", async () => {
+    it("Should revert if the caller is not tssAddressUpdater or TSS", async () => {
       expect(
         zetaTokenNonEthContract
           .connect(randomSigner)
-          .updateTssAndConnectorAddresses(tssSigner.address, zetaConnectorNonEthContract.address)
-      ).to.be.revertedWith(`CallerIsNotTssUpdater("${randomSigner.address}")`);
+          .updateTssAndConnectorAddresses(randomSigner.address, zetaConnectorNonEthContract.address)
+      ).to.be.revertedWith(`CallerIsNotTssOrUpdater("${randomSigner.address}")`);
     });
 
     it("Should change the addresses if the caller is tssAddressUpdater", async () => {
       await (
         await zetaTokenNonEthContract.updateTssAndConnectorAddresses(randomSigner.address, randomSigner.address)
+      ).wait();
+
+      expect(await zetaTokenNonEthContract.tssAddress()).to.equal(randomSigner.address);
+      expect(await zetaTokenNonEthContract.connectorAddress()).to.equal(randomSigner.address);
+    });
+
+    it("Should change the addresses if the caller is TSS", async () => {
+      await (
+        await zetaTokenNonEthContract
+          .connect(tssSigner)
+          .updateTssAndConnectorAddresses(randomSigner.address, randomSigner.address)
       ).wait();
 
       expect(await zetaTokenNonEthContract.tssAddress()).to.equal(randomSigner.address);

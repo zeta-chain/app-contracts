@@ -8,6 +8,8 @@ interface ZetaErrors {
 
     error CallerIsNotTssUpdater(address caller);
 
+    error CallerIsNotTssOrUpdater(address caller);
+
     error InvalidAddress();
 
     error ZetaTransferError();
