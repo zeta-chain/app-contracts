@@ -7,8 +7,6 @@ import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 interface MultiChainValueErrors {
-    error InvalidMessageType();
-
     error ErrorTransferringZeta();
 
     error ChainIdAlreadyEnabled();
