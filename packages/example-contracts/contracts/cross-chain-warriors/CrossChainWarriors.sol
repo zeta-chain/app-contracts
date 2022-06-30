@@ -27,8 +27,6 @@ contract CrossChainWarriors is
 
     bytes32 public constant CROSS_CHAIN_TRANSFER_MESSAGE = keccak256("CROSS_CHAIN_TRANSFER");
 
-    uint256 internal _crossChainId;
-
     IERC20 internal _zetaToken;
 
     string public baseURI;
@@ -48,11 +46,6 @@ contract CrossChainWarriors is
          */
         tokenIds.increment();
         if (useEven) tokenIds.increment();
-    }
-
-    function setCrossChainData(uint256 crossChainId, bytes calldata contractAddress) external onlyOwner {
-        _crossChainId = crossChainId;
-        interactorsByChainId[crossChainId] = contractAddress;
     }
 
     function setBaseURI(string memory baseURIParam) public onlyOwner {
@@ -92,8 +85,12 @@ contract CrossChainWarriors is
      * @dev Cross-chain functions
      */
 
-    function crossChainTransfer(address to, uint256 tokenId) external {
-        if (!_isValidChainId(_crossChainId)) revert InvalidDestinationChainId();
+    function crossChainTransfer(
+        uint256 crossChainId,
+        address to,
+        uint256 tokenId
+    ) external {
+        if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
         if (!_isApprovedOrOwner(_msgSender(), tokenId)) revert InvalidTransferCaller();
 
         uint256 crossChainGas = 18000000000000000000;
@@ -107,8 +104,8 @@ contract CrossChainWarriors is
 
         connector.send(
             ZetaInterfaces.SendInput({
-                destinationChainId: _crossChainId,
-                destinationAddress: interactorsByChainId[_crossChainId],
+                destinationChainId: crossChainId,
+                destinationAddress: interactorsByChainId[crossChainId],
                 destinationGasLimit: 500000,
                 message: abi.encode(CROSS_CHAIN_TRANSFER_MESSAGE, tokenId, msg.sender, to),
                 zetaValueAndGas: crossChainGas,

@@ -16,28 +16,19 @@ interface CrossChainMessageErrors {
  */
 contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErrors {
     bytes32 public constant HELLO_WORLD_MESSAGE_TYPE = keccak256("CROSS_CHAIN_HELLO_WORLD");
-    uint256 _crossChainId;
 
     event HelloWorldEvent(string messageData);
     event RevertedHelloWorldEvent(string messageData);
 
     constructor(address connectorAddress_) ZetaInteractor(connectorAddress_) {}
 
-    /**
-     * @dev The cross-chain address cannot be set on the constructor since it depends on the deployment of the contract on the other chain.
-     */
-    function setCrossChainData(uint256 crossChainId, bytes calldata contractAddress) external onlyOwner {
-        _crossChainId = crossChainId;
-        interactorsByChainId[crossChainId] = contractAddress;
-    }
-
-    function sendHelloWorld() external {
-        if (!_isValidChainId(_crossChainId)) revert InvalidDestinationChainId();
+    function sendHelloWorld(uint256 crossChainId) external {
+        if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
 
         connector.send(
             ZetaInterfaces.SendInput({
-                destinationChainId: _crossChainId,
-                destinationAddress: interactorsByChainId[_crossChainId],
+                destinationChainId: crossChainId,
+                destinationAddress: interactorsByChainId[crossChainId],
                 destinationGasLimit: 2500000,
                 message: abi.encode(HELLO_WORLD_MESSAGE_TYPE, "Hello, Cross-Chain World!"),
                 zetaValueAndGas: 0,

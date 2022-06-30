@@ -32,10 +32,10 @@ describe("CrossChainCounter tests", () => {
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
     });
 
-    await crossChainCounterContractA.setCrossChainData(chainBId,
+    await crossChainCounterContractA.setInteractorByChainId(chainBId,
       ethers.utils.solidityPack(["address"], [crossChainCounterContractB.address])
     );
-    await crossChainCounterContractB.setCrossChainData(chainAId, 
+    await crossChainCounterContractB.setInteractorByChainId(chainAId, 
       ethers.utils.solidityPack(["address"], [crossChainCounterContractA.address])
     );
 
@@ -50,7 +50,7 @@ describe("CrossChainCounter tests", () => {
         zetaConnectorMockAddress: zetaConnectorMockContract.address,
       });
 
-      await expect(unsetContract.crossChainCount()).to.be.revertedWith("InvalidDestinationChainId()");
+      await expect(unsetContract.crossChainCount(chainAId)).to.be.revertedWith("InvalidDestinationChainId()");
     });
 
     it("Should revert if the cross chain id wasn't set", async () => {
@@ -58,7 +58,7 @@ describe("CrossChainCounter tests", () => {
         zetaConnectorMockAddress: zetaConnectorMockContract.address,
       });
 
-      await expect(unsetContract.crossChainCount()).to.be.revertedWith("InvalidDestinationChainId()");
+      await expect(unsetContract.crossChainCount(chainAId)).to.be.revertedWith("InvalidDestinationChainId()");
     });
   });
 

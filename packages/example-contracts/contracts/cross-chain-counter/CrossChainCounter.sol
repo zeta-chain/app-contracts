@@ -15,22 +15,16 @@ contract CrossChainCounter is ZetaInteractor, ZetaReceiver, CrossChainCounterErr
     bytes32 public constant CROSS_CHAIN_INCREMENT_MESSAGE = keccak256("CROSS_CHAIN_INCREMENT");
 
     mapping(address => uint256) public counter;
-    uint256 _crossChainId;
 
     constructor(address connectorAddress_) ZetaInteractor(connectorAddress_) {}
 
-    function setCrossChainData(uint256 crossChainId, bytes calldata contractAddress) external onlyOwner {
-        _crossChainId = crossChainId;
-        interactorsByChainId[crossChainId] = contractAddress;
-    }
-
-    function crossChainCount() external {
-        if (!_isValidChainId(_crossChainId)) revert InvalidDestinationChainId();
+    function crossChainCount(uint256 crossChainId) external {
+        if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
 
         connector.send(
             ZetaInterfaces.SendInput({
-                destinationChainId: _crossChainId,
-                destinationAddress: interactorsByChainId[_crossChainId],
+                destinationChainId: crossChainId,
+                destinationAddress: interactorsByChainId[crossChainId],
                 destinationGasLimit: 2500000,
                 message: abi.encode(CROSS_CHAIN_INCREMENT_MESSAGE, msg.sender),
                 zetaValueAndGas: 0,

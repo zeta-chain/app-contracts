@@ -43,11 +43,11 @@ describe("CrossChainWarriors tests", () => {
       zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
 
-    await crossChainWarriorsContractChainB.setCrossChainData(chainAId, 
+    await crossChainWarriorsContractChainB.setInteractorByChainId(chainAId, 
       ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address])
     );
 
-    await crossChainWarriorsContractChainA.setCrossChainData(chainBId,
+    await crossChainWarriorsContractChainA.setInteractorByChainId(chainBId,
       ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainB.address])
     );
 
@@ -110,7 +110,7 @@ describe("CrossChainWarriors tests", () => {
       /**
        * The caller is the contract deployer and the NFT owner is account1
        */
-      expect(crossChainWarriorsContractChainA.crossChainTransfer(account1Address, id)).to.be.revertedWith(
+      expect(crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id)).to.be.revertedWith(
         "Transfer caller is not owner nor approved"
       );
     });
@@ -122,7 +122,7 @@ describe("CrossChainWarriors tests", () => {
 
       expect(await crossChainWarriorsContractChainA.ownerOf(id)).to.equal(deployerAddress);
 
-      await (await crossChainWarriorsContractChainA.crossChainTransfer(account1Address, id)).wait();
+      await (await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id)).wait();
 
       expect(crossChainWarriorsContractChainA.ownerOf(id)).to.be.revertedWith(
         "ERC721: owner query for nonexistent token"
@@ -134,7 +134,7 @@ describe("CrossChainWarriors tests", () => {
 
       await (await crossChainWarriorsContractChainA.mintId(deployerAddress, id)).wait();
 
-      await (await crossChainWarriorsContractChainA.crossChainTransfer(account1Address, id)).wait();
+      await (await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id)).wait();
 
       expect(await crossChainWarriorsContractChainB.ownerOf(id)).to.equal(account1Address);
     });
@@ -250,7 +250,7 @@ describe("CrossChainWarriors tests", () => {
 
       await (await crossChainWarriorsContractChainA.mintId(deployerAddress, nftId)).wait();
 
-      await (await crossChainWarriorsContractChainA.crossChainTransfer(deployerAddress, nftId)).wait();
+      await (await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, deployerAddress, nftId)).wait();
 
       // Make sure that the NFT was removed from the source chain
       await expect(crossChainWarriorsContractChainA.ownerOf(nftId)).to.be.revertedWith(
