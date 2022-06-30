@@ -2,43 +2,35 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
-contract CrossChainCounter is Ownable, ZetaReceiver {
+interface CrossChainCounterErrors {
+    error InvalidMessageType();
+
+    error DecrementOverflow();
+}
+
+contract CrossChainCounter is ZetaInteractor, ZetaReceiver, CrossChainCounterErrors {
     bytes32 public constant CROSS_CHAIN_INCREMENT_MESSAGE = keccak256("CROSS_CHAIN_INCREMENT");
 
-    address public connectorAddress;
-    ZetaConnector internal connector;
-
-    uint256 internal immutable currentChainId;
-    uint256 internal _crossChainId;
-    bytes internal _crossChainAddress;
-
     mapping(address => uint256) public counter;
+    uint256 _crossChainId;
 
-    constructor(address connectorAddress_) {
-        currentChainId = block.chainid;
+    constructor(address connectorAddress_) ZetaInteractor(connectorAddress_) {}
 
-        connectorAddress = connectorAddress_;
-        connector = ZetaConnector(connectorAddress_);
-    }
-
-    function setCrossChainAddress(bytes calldata ccAddress) public onlyOwner {
-        _crossChainAddress = ccAddress;
-    }
-
-    function setCrossChainId(uint256 ccId) public onlyOwner {
-        _crossChainId = ccId;
+    function setCrossChainData(uint256 crossChainId, bytes calldata contractAddress) external onlyOwner {
+        _crossChainId = crossChainId;
+        interactorsByChainId[crossChainId] = contractAddress;
     }
 
     function crossChainCount() external {
-        require(_crossChainAddress.length != 0, "Cross-chain address is not set");
-        require(_crossChainId != 0, "Cross-chain id is not set");
+        if (!_isValidChainId(_crossChainId)) revert InvalidDestinationChainId();
 
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: _crossChainId,
-                destinationAddress: _crossChainAddress,
+                destinationAddress: interactorsByChainId[_crossChainId],
                 destinationGasLimit: 2500000,
                 message: abi.encode(CROSS_CHAIN_INCREMENT_MESSAGE, msg.sender),
                 zetaValueAndGas: 0,
@@ -47,30 +39,27 @@ contract CrossChainCounter is Ownable, ZetaReceiver {
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
-        require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
-        require(
-            keccak256(zetaMessage.zetaTxSenderAddress) == keccak256(_crossChainAddress),
-            "Cross-chain address doesn't match"
-        );
-        require(zetaMessage.sourceChainId == _crossChainId, "Cross-chain id doesn't match");
-
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
+        external
+        override
+        isValidMessageCall(zetaMessage)
+    {
         (bytes32 messageType, address messageFrom) = abi.decode(zetaMessage.message, (bytes32, address));
 
-        require(messageType == CROSS_CHAIN_INCREMENT_MESSAGE, "Invalid message type");
+        if (messageType != CROSS_CHAIN_INCREMENT_MESSAGE) revert InvalidMessageType();
 
         counter[messageFrom]++;
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
-        require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
-        require(zetaRevert.zetaTxSenderAddress == address(this), "Invalid zetaTxSenderAddress");
-        require(zetaRevert.sourceChainId == currentChainId, "Invalid sourceChainId");
-
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
+        external
+        override
+        isValidRevertCall(zetaRevert)
+    {
         (bytes32 messageType, address messageFrom) = abi.decode(zetaRevert.message, (bytes32, address));
 
-        require(messageType == CROSS_CHAIN_INCREMENT_MESSAGE, "Invalid message type");
-        require(counter[messageFrom] > 0, "Decrement overflow");
+        if (messageType != CROSS_CHAIN_INCREMENT_MESSAGE) revert InvalidMessageType();
+        if (counter[messageFrom] <= 0) revert DecrementOverflow();
 
         counter[messageFrom]--;
     }

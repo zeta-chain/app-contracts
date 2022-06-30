@@ -44,7 +44,7 @@ describe("MultiChainValue tests", () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
 
       await expect(multiChainValueContractA.addAvailableChainId(1)).to.be.revertedWith(
-        "MultiChainValue: destinationChainId already enabled"
+        "ChainIdAlreadyEnabled()"
       );
     });
 
@@ -58,7 +58,7 @@ describe("MultiChainValue tests", () => {
   describe("removeAvailableChainId", () => {
     it("Should prevent disabling a chainId that's already disabled", async () => {
       await expect(multiChainValueContractA.removeAvailableChainId(1)).to.be.revertedWith(
-        "MultiChainValue: destinationChainId not available"
+        "ChainIdNotAvailable()"
       );
     });
 
@@ -74,7 +74,7 @@ describe("MultiChainValue tests", () => {
   describe("send", () => {
     it("Should prevent sending value to a disabled chainId", async () => {
       await expect(multiChainValueContractA.send(1, account1Address, 100_000)).to.be.revertedWith(
-        "MultiChainValue: destinationChainId not available"
+        "InvalidDestinationChainId()"
       );
     });
 
@@ -82,7 +82,7 @@ describe("MultiChainValue tests", () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
 
       await expect(multiChainValueContractA.send(1, account1Address, 0)).to.be.revertedWith(
-        "MultiChainValue: zetaValueAndGas should be greater than 0"
+        "InvalidZetaValueAndGas()"
       );
     });
 

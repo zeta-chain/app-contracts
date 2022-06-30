@@ -36,19 +36,18 @@ describe("CrossChainWarriors tests", () => {
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
-    await crossChainWarriorsContractChainA.setCrossChainId(chainBId);
 
     crossChainWarriorsContractChainB = await deployCrossChainWarriorsMock({
       customUseEven: true,
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
-    await crossChainWarriorsContractChainB.setCrossChainId(chainAId);
-    await crossChainWarriorsContractChainB.setCrossChainAddress(
+
+    await crossChainWarriorsContractChainB.setCrossChainData(chainAId, 
       ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address])
     );
 
-    await crossChainWarriorsContractChainA.setCrossChainAddress(
+    await crossChainWarriorsContractChainA.setCrossChainData(chainBId,
       ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainB.address])
     );
 
@@ -151,7 +150,7 @@ describe("CrossChainWarriors tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
           zetaValueAndGas: 0,
         })
-      ).to.be.revertedWith("This function can only be called by the Connector contract");
+      ).to.be.revertedWith(`InvalidCaller("${deployer.address}")`);
     });
 
     it("Should revert if the cross-chain address doesn't match with the stored one", async () => {
@@ -163,7 +162,7 @@ describe("CrossChainWarriors tests", () => {
           0,
           encoder.encode(["address"], [zetaConnectorMockContract.address])
         )
-      ).to.be.revertedWith("Cross-chain address doesn't match");
+      ).to.be.revertedWith("InvalidZetaMessageCall()");
     });
 
     it("Should revert if the message type doesn't match with CROSS_CHAIN_TRANSFER_MESSAGE", async () => {
@@ -182,7 +181,7 @@ describe("CrossChainWarriors tests", () => {
             [invalidMessageType, 1, deployerAddress, deployerAddress]
           )
         )
-      ).to.be.revertedWith("Invalid message type");
+      ).to.be.revertedWith("InvalidMessageType()");
     });
 
     it("Should revert if the token already exists", async () => {

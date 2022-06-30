@@ -3,29 +3,37 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/Zeta.eth.sol";
+import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
-contract MultiChainValue is Ownable {
-    address public zetaConnector;
-    address public zetaToken;
-    ZetaConnector internal connector;
+interface MultiChainValueErrors {
+    error InvalidMessageType();
 
+    error ErrorTransferringZeta();
+
+    error ChainIdAlreadyEnabled();
+
+    error ChainIdNotAvailable();
+
+    error InvalidZetaValueAndGas();
+}
+
+contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
+    address public zetaToken;
     mapping(uint256 => bool) public availableChainIds;
 
-    constructor(address zetaConnector_, address zetaToken_) {
-        zetaConnector = zetaConnector_;
+    constructor(address connectorAddress_, address zetaToken_) ZetaInteractor(connectorAddress_) {
         zetaToken = zetaToken_;
-        connector = ZetaConnector(zetaConnector_);
     }
 
     function addAvailableChainId(uint256 destinationChainId) external onlyOwner {
-        require(!availableChainIds[destinationChainId], "MultiChainValue: destinationChainId already enabled");
+        if (availableChainIds[destinationChainId]) revert ChainIdAlreadyEnabled();
 
         availableChainIds[destinationChainId] = true;
     }
 
     function removeAvailableChainId(uint256 destinationChainId) external onlyOwner {
-        require(availableChainIds[destinationChainId], "MultiChainValue: destinationChainId not available");
+        if (!availableChainIds[destinationChainId]) revert ChainIdNotAvailable();
 
         delete availableChainIds[destinationChainId];
     }
@@ -35,12 +43,12 @@ contract MultiChainValue is Ownable {
         bytes calldata destinationAddress,
         uint256 zetaValueAndGas
     ) external {
-        require(availableChainIds[destinationChainId], "MultiChainValue: destinationChainId not available");
-        require(zetaValueAndGas != 0, "MultiChainValue: zetaValueAndGas should be greater than 0");
+        if (!availableChainIds[destinationChainId]) revert InvalidDestinationChainId();
+        if (zetaValueAndGas == 0) revert InvalidZetaValueAndGas();
 
-        bool success1 = ZetaEth(zetaToken).approve(zetaConnector, zetaValueAndGas);
+        bool success1 = ZetaEth(zetaToken).approve(address(connector), zetaValueAndGas);
         bool success2 = ZetaEth(zetaToken).transferFrom(msg.sender, address(this), zetaValueAndGas);
-        require((success1 && success2) == true, "MultiChainValue: error transferring Zeta");
+        if (!(success1 && success2)) revert ErrorTransferringZeta();
 
         connector.send(
             ZetaInterfaces.SendInput({
