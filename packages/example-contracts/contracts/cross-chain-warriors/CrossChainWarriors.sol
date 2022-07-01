@@ -6,21 +6,27 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
 
-contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, ZetaReceiver {
+interface CrossChainWarriorsErrors {
+    error InvalidMessageType();
+
+    error InvalidTransferCaller();
+
+    error ErrorApprovingZeta();
+}
+
+contract CrossChainWarriors is
+    ERC721("CrossChainWarriors", "CCWAR"),
+    ZetaInteractor,
+    ZetaReceiver,
+    CrossChainWarriorsErrors
+{
     using Counters for Counters.Counter;
     using Strings for uint256;
 
     bytes32 public constant CROSS_CHAIN_TRANSFER_MESSAGE = keccak256("CROSS_CHAIN_TRANSFER");
 
-    uint256 internal immutable _currentChainId;
-    uint256 internal _crossChainId;
-    bytes internal _crossChainAddress;
-
-    address public connectorAddress;
-    ZetaConnector internal connector;
-
-    address public zetaTokenAddress;
     IERC20 internal _zetaToken;
 
     string public baseURI;
@@ -29,16 +35,10 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
 
     constructor(
         address connectorAddress_,
-        address zetaTokenAddress_,
+        address zetaTokenAddress,
         bool useEven
-    ) {
-        _currentChainId = block.chainid;
-
-        connectorAddress = connectorAddress_;
-        connector = ZetaConnector(connectorAddress_);
-
-        zetaTokenAddress = zetaTokenAddress_;
-        _zetaToken = IERC20(zetaTokenAddress_);
+    ) ZetaInteractor(connectorAddress_) {
+        _zetaToken = IERC20(zetaTokenAddress);
 
         /**
          * @dev A simple way to prevent collisions between cross-chain token ids
@@ -46,14 +46,6 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
          */
         tokenIds.increment();
         if (useEven) tokenIds.increment();
-    }
-
-    function setCrossChainAddress(bytes calldata ccAddress) public onlyOwner {
-        _crossChainAddress = ccAddress;
-    }
-
-    function setCrossChainId(uint256 ccId) public onlyOwner {
-        _crossChainId = ccId;
     }
 
     function setBaseURI(string memory baseURIParam) public onlyOwner {
@@ -93,22 +85,27 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
      * @dev Cross-chain functions
      */
 
-    function crossChainTransfer(address to, uint256 tokenId) external {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "Transfer caller is not owner nor approved");
+    function crossChainTransfer(
+        uint256 crossChainId,
+        address to,
+        uint256 tokenId
+    ) external {
+        if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
+        if (!_isApprovedOrOwner(_msgSender(), tokenId)) revert InvalidTransferCaller();
 
         uint256 crossChainGas = 18000000000000000000;
 
         {
-            bool success = _zetaToken.transferFrom(msg.sender, connectorAddress, crossChainGas);
-            require(success == true, "CrossChainWarriors: error approving zeta");
+            bool success = _zetaToken.transferFrom(msg.sender, address(connector), crossChainGas);
+            if (!success) revert ErrorApprovingZeta();
         }
 
         _burnWarrior(tokenId);
 
         connector.send(
             ZetaInterfaces.SendInput({
-                destinationChainId: _crossChainId,
-                destinationAddress: _crossChainAddress,
+                destinationChainId: crossChainId,
+                destinationAddress: interactorsByChainId[crossChainId],
                 destinationGasLimit: 500000,
                 message: abi.encode(CROSS_CHAIN_TRANSFER_MESSAGE, tokenId, msg.sender, to),
                 zetaValueAndGas: crossChainGas,
@@ -117,14 +114,11 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
-        require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
-        require(
-            keccak256(zetaMessage.zetaTxSenderAddress) == keccak256(_crossChainAddress),
-            "Cross-chain address doesn't match"
-        );
-        require(zetaMessage.sourceChainId == _crossChainId, "Cross-chain id doesn't match");
-
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
+        external
+        override
+        isValidMessageCall(zetaMessage)
+    {
         (
             bytes32 messageType,
             uint256 tokenId,
@@ -135,22 +129,22 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
             address to
         ) = abi.decode(zetaMessage.message, (bytes32, uint256, address, address));
 
-        require(messageType == CROSS_CHAIN_TRANSFER_MESSAGE, "Invalid message type");
+        if (messageType != CROSS_CHAIN_TRANSFER_MESSAGE) revert InvalidMessageType();
 
         _mintId(to, tokenId);
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
-        require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
-        require(zetaRevert.zetaTxSenderAddress == address(this), "Invalid zetaTxSenderAddress");
-        require(zetaRevert.sourceChainId == _currentChainId, "Invalid sourceChainId");
-
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
+        external
+        override
+        isValidRevertCall(zetaRevert)
+    {
         (bytes32 messageType, uint256 tokenId, address from) = abi.decode(
             zetaRevert.message,
             (bytes32, uint256, address)
         );
 
-        require(messageType == CROSS_CHAIN_TRANSFER_MESSAGE, "Invalid message type");
+        if (messageType != CROSS_CHAIN_TRANSFER_MESSAGE) revert InvalidMessageType();
 
         _mintId(from, tokenId);
     }

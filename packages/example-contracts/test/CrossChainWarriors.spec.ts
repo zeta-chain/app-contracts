@@ -36,19 +36,18 @@ describe("CrossChainWarriors tests", () => {
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
-    await crossChainWarriorsContractChainA.setCrossChainId(chainBId);
 
     crossChainWarriorsContractChainB = await deployCrossChainWarriorsMock({
       customUseEven: true,
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
-    await crossChainWarriorsContractChainB.setCrossChainId(chainAId);
-    await crossChainWarriorsContractChainB.setCrossChainAddress(
+
+    await crossChainWarriorsContractChainB.setInteractorByChainId(chainAId, 
       ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address])
     );
 
-    await crossChainWarriorsContractChainA.setCrossChainAddress(
+    await crossChainWarriorsContractChainA.setInteractorByChainId(chainBId,
       ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainB.address])
     );
 
@@ -111,7 +110,7 @@ describe("CrossChainWarriors tests", () => {
       /**
        * The caller is the contract deployer and the NFT owner is account1
        */
-      expect(crossChainWarriorsContractChainA.crossChainTransfer(account1Address, id)).to.be.revertedWith(
+      expect(crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id)).to.be.revertedWith(
         "Transfer caller is not owner nor approved"
       );
     });
@@ -123,7 +122,7 @@ describe("CrossChainWarriors tests", () => {
 
       expect(await crossChainWarriorsContractChainA.ownerOf(id)).to.equal(deployerAddress);
 
-      await (await crossChainWarriorsContractChainA.crossChainTransfer(account1Address, id)).wait();
+      await (await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id)).wait();
 
       expect(crossChainWarriorsContractChainA.ownerOf(id)).to.be.revertedWith(
         "ERC721: owner query for nonexistent token"
@@ -135,7 +134,7 @@ describe("CrossChainWarriors tests", () => {
 
       await (await crossChainWarriorsContractChainA.mintId(deployerAddress, id)).wait();
 
-      await (await crossChainWarriorsContractChainA.crossChainTransfer(account1Address, id)).wait();
+      await (await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id)).wait();
 
       expect(await crossChainWarriorsContractChainB.ownerOf(id)).to.equal(account1Address);
     });
@@ -151,7 +150,7 @@ describe("CrossChainWarriors tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
           zetaValueAndGas: 0,
         })
-      ).to.be.revertedWith("This function can only be called by the Connector contract");
+      ).to.be.revertedWith(`InvalidCaller("${deployer.address}")`);
     });
 
     it("Should revert if the cross-chain address doesn't match with the stored one", async () => {
@@ -163,7 +162,7 @@ describe("CrossChainWarriors tests", () => {
           0,
           encoder.encode(["address"], [zetaConnectorMockContract.address])
         )
-      ).to.be.revertedWith("Cross-chain address doesn't match");
+      ).to.be.revertedWith("InvalidZetaMessageCall()");
     });
 
     it("Should revert if the message type doesn't match with CROSS_CHAIN_TRANSFER_MESSAGE", async () => {
@@ -182,7 +181,7 @@ describe("CrossChainWarriors tests", () => {
             [invalidMessageType, 1, deployerAddress, deployerAddress]
           )
         )
-      ).to.be.revertedWith("Invalid message type");
+      ).to.be.revertedWith("InvalidMessageType()");
     });
 
     it("Should revert if the token already exists", async () => {
@@ -251,7 +250,7 @@ describe("CrossChainWarriors tests", () => {
 
       await (await crossChainWarriorsContractChainA.mintId(deployerAddress, nftId)).wait();
 
-      await (await crossChainWarriorsContractChainA.crossChainTransfer(deployerAddress, nftId)).wait();
+      await (await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, deployerAddress, nftId)).wait();
 
       // Make sure that the NFT was removed from the source chain
       await expect(crossChainWarriorsContractChainA.ownerOf(nftId)).to.be.revertedWith(
