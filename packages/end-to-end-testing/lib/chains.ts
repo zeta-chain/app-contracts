@@ -59,6 +59,7 @@ export class EVMChain extends Blockchain {
     this.api = axios.create({
       baseURL: `${this.rpcEndpoint}`,
       timeout: 15000,
+      // @ts-ignore
       jsonrpc: "2.0",
       headers: {
         Accept: "application/json",
@@ -176,7 +177,7 @@ export class ZetaChain extends Blockchain {
     });
   }
 
-  async getTxWithHash(txHash: string, timeout: number = 18) {
+  async getTxWithHash(txHash: string, timeout: number = 18): Promise<{ index: string }> {
     let i: number = 0;
     let response;
     console.debug("Checking Zetachain For Transaction With Source Hash: " + txHash);

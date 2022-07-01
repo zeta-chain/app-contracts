@@ -1,4 +1,5 @@
 import { assert, expect } from "chai";
+import { ContractTransaction } from "ethers";
 import { describe } from "mocha";
 
 import { bsc, eth, polygon, zeta } from "./lib/environments";
@@ -9,9 +10,9 @@ console.debug = function () {}; // Disables Debug Level Logging
 
 let approvalTest: any;
 let transferTest: any;
-let messageSendTest: any;
+let messageSendTest: Promise<ContractTransaction[]>;
 let txMiningTest: any;
-let zetaNodeReceiveTest: any;
+let zetaNodeReceiveTest: Promise<{ index: string }[]>;
 
 describe("Remote TestNet Testing", () => {
   it("Check RPC Endpoints are responding", async () => {
@@ -29,7 +30,7 @@ describe("Remote TestNet Testing", () => {
   it("Connector contract can send() messages", async () => {
     await transferTest;
     await eth.initStatus;
-    messageSendTest = await Promise.all([
+    messageSendTest = Promise.all([
       eth.sendConnectorMessage(bsc, false),
       eth.sendConnectorMessage(polygon, true),
       bsc.sendConnectorMessage(eth, false),
@@ -37,33 +38,19 @@ describe("Remote TestNet Testing", () => {
       polygon.sendConnectorMessage(eth, false),
       polygon.sendConnectorMessage(bsc, true),
     ]);
-    await messageSendTest;
   });
 
   it("Connector Message Events are detected by ZetaNode", async () => {
-    await messageSendTest;
-    zetaNodeReceiveTest = await Promise.all([
-      zeta.getTxWithHash(messageSendTest[0].hash),
-      zeta.getTxWithHash(messageSendTest[1].hash),
-      zeta.getTxWithHash(messageSendTest[2].hash),
-      zeta.getTxWithHash(messageSendTest[3].hash),
-      zeta.getTxWithHash(messageSendTest[4].hash),
-      zeta.getTxWithHash(messageSendTest[5].hash),
-    ]);
-    await zetaNodeReceiveTest;
-    // console.info(zetaNodeReceiveTest[0]);
+    const messageSendTestResult = await messageSendTest;
+
+    zetaNodeReceiveTest = Promise.all(messageSendTestResult.map(({ hash }) => zeta.getTxWithHash(hash)));
   });
 
   it("Connector Messages are transitioning to OutboundMined status", async () => {
-    await zetaNodeReceiveTest;
-    txMiningTest = await Promise.all([
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[0].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[1].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[2].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[3].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[4].index),
-      zeta.confirmOutboundMined(zetaNodeReceiveTest[5].index),
-    ]);
+    const zetaNodeReceiveTestResult = await zetaNodeReceiveTest;
+
+    txMiningTest = await Promise.all(zetaNodeReceiveTestResult.map(({ index }) => zeta.confirmOutboundMined(index)));
+
     await txMiningTest;
   });
 });

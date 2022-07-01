@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "run": "yarn ts-mocha --timeout 2000000 main.ts",
-    "test-troy": "ZETA_NETWORK=troy EXECUTE_PROGRAMMATICALLY=true yarn ts-mocha --timeout 2000000 main.ts",
-    "test-athens": "ZETA_NETWORK=athens EXECUTE_PROGRAMMATICALLY=true yarn ts-mocha --timeout 2000000 main.ts"
+    "test:troy": "ZETA_NETWORK=troy EXECUTE_PROGRAMMATICALLY=true yarn ts-mocha -b --timeout 2000000 main.spec.ts",
+    "test:athens": "ZETA_NETWORK=athens EXECUTE_PROGRAMMATICALLY=true yarn ts-mocha -b --timeout 2000000 main.spec.ts"
   },
   "devDependencies": {
     "tsconfig-paths": "^3.14.1"
