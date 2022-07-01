@@ -22,13 +22,13 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErr
 
     constructor(address connectorAddress_) ZetaInteractor(connectorAddress_) {}
 
-    function sendHelloWorld(uint256 crossChainId) external {
-        if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
+    function sendHelloWorld(uint256 destinationChainId) external {
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         connector.send(
             ZetaInterfaces.SendInput({
-                destinationChainId: crossChainId,
-                destinationAddress: interactorsByChainId[crossChainId],
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
                 destinationGasLimit: 2500000,
                 message: abi.encode(HELLO_WORLD_MESSAGE_TYPE, "Hello, Cross-Chain World!"),
                 zetaValueAndGas: 0,

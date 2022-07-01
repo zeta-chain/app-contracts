@@ -18,13 +18,13 @@ contract CrossChainCounter is ZetaInteractor, ZetaReceiver, CrossChainCounterErr
 
     constructor(address connectorAddress_) ZetaInteractor(connectorAddress_) {}
 
-    function crossChainCount(uint256 crossChainId) external {
-        if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
+    function crossChainCount(uint256 destinationChainId) external {
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         connector.send(
             ZetaInterfaces.SendInput({
-                destinationChainId: crossChainId,
-                destinationAddress: interactorsByChainId[crossChainId],
+                destinationChainId: destinationChainId,
+                destinationAddress: interactorsByChainId[destinationChainId],
                 destinationGasLimit: 2500000,
                 message: abi.encode(CROSS_CHAIN_INCREMENT_MESSAGE, msg.sender),
                 zetaValueAndGas: 0,
