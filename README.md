@@ -32,6 +32,14 @@ ZetaChain is a public, decentralized blockchain and smart contract platform buil
 
         yarn compile
 
+### Packages
+
+#### [Addresses](packages/addresses)
+
+#### [Example contracts](packages/example-contracts)
+
+#### [Protocol contracts](packages/example-contracts)
+
 ### Cross-repo commands
 
 #### Package-specific commands
