@@ -1,10 +1,10 @@
 import { getAddress, isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
-import { isEthNetworkName } from "../lib/contracts.helpers";
+import { getZetaFactoryEth, getZetaFactoryNonEth, isEthNetworkName } from "../lib/contracts.helpers";
 import { ZetaEth__factory as ZetaEthFactory, ZetaNonEth__factory as ZetaNonEthFactory } from "../typechain-types";
 
-const approvalAmount = "10000000000000000000000000"; // 10000000 ZETA
+const approvalAmount = ethers.utils.parseEther("10000000.0");
 
 export async function setTokenApproval() {
   if (!isNetworkName(network.name)) {
@@ -12,15 +12,12 @@ export async function setTokenApproval() {
   }
 
   let contract;
-  let factory;
-
   if (isEthNetworkName(network.name)) {
-    factory = (await ethers.getContractFactory("ZetaEth")) as ZetaEthFactory;
+    contract = await getZetaFactoryEth({ deployParams: null, existingContractAddress: getAddress("zetaToken") });
   } else {
-    factory = (await ethers.getContractFactory("ZetaNonEth")) as ZetaNonEthFactory;
+    contract = await getZetaFactoryNonEth({ deployParams: null, existingContractAddress: getAddress("zetaToken") });
   }
 
-  contract = factory.attach(getAddress("zetaToken"));
   let tx = await contract.approve(getAddress("connector"), approvalAmount);
   tx.wait();
 

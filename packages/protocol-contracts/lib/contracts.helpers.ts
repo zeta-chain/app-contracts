@@ -96,6 +96,18 @@ export const getZetaConnectorNonEth = async (params: GetContractParams<ZetaConne
     ...params,
   });
 
+export const getZetaFactoryNonEth = async (params: GetContractParams<ZetaNonEthFactory>) =>
+  await getContract<ZetaNonEthFactory, ZetaNonEth>({
+    contractName: "ZetaNonEth",
+    ...params,
+  });
+
+export const getZetaFactoryEth = async (params: GetContractParams<ZetaEthFactory>) =>
+  await getContract<ZetaEthFactory, ZetaEth>({
+    contractName: "ZetaNonEth",
+    ...params,
+  });
+
 export type GetContractParams<Factory extends ContractFactory> =
   | {
       deployParams: Parameters<Factory["deploy"]>;
