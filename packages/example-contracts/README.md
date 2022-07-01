@@ -1,5 +1,7 @@
 # ZetaChain example contracts
 
+> ⚠️ The contracts **are not audited yet**, use at your own risk.
+
 ## Environment variables
 
 Follow the template in `.env.example`.
