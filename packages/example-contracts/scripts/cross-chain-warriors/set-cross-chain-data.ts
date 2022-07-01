@@ -21,13 +21,11 @@ async function main() {
 
   const encodedCrossChainAddress = ethers.utils.solidityPack(["address"], [crossChainAddress]);
 
-  console.log("Setting cross-chain address:", encodedCrossChainAddress);
+  console.log("Setting cross-chain data:", _networkVariables.crossChainId, encodedCrossChainAddress);
 
-  await (await crossChainWarriorsContract.setCrossChainAddress(encodedCrossChainAddress)).wait();
-
-  console.log("Setting cross-chain id:", _networkVariables.crossChainId);
-
-  await (await crossChainWarriorsContract.setCrossChainId(_networkVariables.crossChainId)).wait();
+  await (
+    await crossChainWarriorsContract.setInteractorByChainId(_networkVariables.crossChainId, encodedCrossChainAddress)
+  ).wait();
 }
 
 main().catch((error) => {

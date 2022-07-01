@@ -14,7 +14,8 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf"
+    "zetaToken": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf",
+    "zetaTokenConsumer": ""
   },
   "eth-localnet": {
     "connector": "0xD7db1F9D0279876a9dcDb92e06057E0818b9B34b",
@@ -30,7 +31,8 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0xaEF27C0E302005dB3b442edF762EB070Dc2DB9b5"
+    "zetaToken": "0xaEF27C0E302005dB3b442edF762EB070Dc2DB9b5",
+    "zetaTokenConsumer": ""
   },
   "bsc-localnet": {
     "connector": "0x960bd6A9d8424455953a68c17Be7f56e0cf83A9E",
@@ -46,7 +48,8 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0x0CF6e5aA211A4b7da5d04e93dC40Ee18202a5f84"
+    "zetaToken": "0x0CF6e5aA211A4b7da5d04e93dC40Ee18202a5f84",
+    "zetaTokenConsumer": ""
   },
   "polygon-localnet": {
     "connector": "0xa16BD8468d10d28E6c16F03798EEb710fc84F616",
@@ -62,6 +65,7 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0xD443E93f689a7E1d517Fef799b1d2Fd2FA536d3A"
+    "zetaToken": "0xD443E93f689a7E1d517Fef799b1d2Fd2FA536d3A",
+    "zetaTokenConsumer": ""
   }
 }
