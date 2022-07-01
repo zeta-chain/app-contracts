@@ -112,6 +112,7 @@ export const getZetaFactoryEth = async (params: GetContractParams<ZetaEthFactory
     contractName: "ZetaNonEth",
     ...params,
   });
+
 export const getZetaInteractorMock = async (zetaToken: string) =>
   getContract<ZetaInteractorMockFactory, ZetaInteractorMock>({
     contractName: "ZetaInteractorMock",
