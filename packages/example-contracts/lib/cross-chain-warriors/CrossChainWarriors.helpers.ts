@@ -1,5 +1,6 @@
 import { getAddress } from "@zetachain/addresses";
 import assert from "assert";
+import { ContractFactory } from "ethers";
 import { ethers, network } from "hardhat";
 
 import {
@@ -9,8 +10,20 @@ import {
   CrossChainWarriorsMock__factory as CrossChainWarriorsMockFactory,
   CrossChainWarriorsZetaConnectorMock,
   CrossChainWarriorsZetaConnectorMock__factory as CrossChainWarriorsZetaConnectorMockFactory,
+  ZetaTokenConsumerUniV2,
+  ZetaTokenConsumerUniV2__factory as ZetaTokenConsumerUniV2Factory,
 } from "../../typechain-types";
 import { isNetworkName } from "../shared/network.constants";
+
+export type GetContractParams<Factory extends ContractFactory> =
+  | {
+      deployParams: Parameters<Factory["deploy"]>;
+      existingContractAddress?: null;
+    }
+  | {
+      deployParams?: null;
+      existingContractAddress: string;
+    };
 
 /**
  * @description only for testing or local environment
@@ -19,9 +32,11 @@ export const deployCrossChainWarriorsMock = async ({
   customUseEven,
   zetaConnectorMockAddress,
   zetaTokenMockAddress,
+  zetaTokenConsumerAddress,
 }: {
   customUseEven: boolean;
   zetaConnectorMockAddress: string;
+  zetaTokenConsumerAddress: string;
   zetaTokenMockAddress: string;
 }) => {
   const isLocalEnvironment = network.name === "hardhat";
@@ -35,6 +50,7 @@ export const deployCrossChainWarriorsMock = async ({
   const crossChainWarriorsContract = (await Factory.deploy(
     zetaConnectorMockAddress,
     zetaTokenMockAddress,
+    zetaTokenConsumerAddress,
     useEven
   )) as CrossChainWarriorsMock;
 
@@ -43,9 +59,10 @@ export const deployCrossChainWarriorsMock = async ({
   return crossChainWarriorsContract;
 };
 
-export const getCrossChainWarriorsArgs = (): [string, string, boolean] => [
+export const getCrossChainWarriorsArgs = (): [string, string, string, boolean] => [
   getAddress("connector"),
   getAddress("zetaToken"),
+  getAddress("zetaToken"), /// @todo: check how to fix it
   network.name === "goerli",
 ];
 
@@ -64,7 +81,8 @@ export const getCrossChainWarriors = async (existingContractAddress?: string) =>
   const crossChainWarriorsContract = (await Factory.deploy(
     getCrossChainWarriorsArgs()[0],
     getCrossChainWarriorsArgs()[1],
-    getCrossChainWarriorsArgs()[2]
+    getCrossChainWarriorsArgs()[2],
+    getCrossChainWarriorsArgs()[3]
   )) as CrossChainWarriors;
 
   await crossChainWarriorsContract.deployed();
@@ -82,4 +100,14 @@ export const deployZetaConnectorMock = async () => {
   await zetaConnectorMockContract.deployed();
 
   return zetaConnectorMockContract;
+};
+
+export const deployZetaTokenConsumerUniV2 = async (zetaToken_: string, uniswapV2Router_: string) => {
+  const Factory = (await ethers.getContractFactory("ZetaTokenConsumerUniV2")) as ZetaTokenConsumerUniV2Factory;
+
+  const ZetaTokenConsumerUniV2Contract = (await Factory.deploy(zetaToken_, uniswapV2Router_)) as ZetaTokenConsumerUniV2;
+
+  await ZetaTokenConsumerUniV2Contract.deployed();
+
+  return ZetaTokenConsumerUniV2Contract;
 };

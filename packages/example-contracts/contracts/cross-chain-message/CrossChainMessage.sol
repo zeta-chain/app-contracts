@@ -20,10 +20,17 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErr
     event HelloWorldEvent(string messageData);
     event RevertedHelloWorldEvent(string messageData);
 
-    constructor(address connectorAddress_) ZetaInteractor(connectorAddress_) {}
+    ZetaTokenConsumer private _zetaConsumer;
 
-    function sendHelloWorld(uint256 destinationChainId) external {
+    constructor(address connectorAddress_, address zetaConsumerAddress) ZetaInteractor(connectorAddress_) {
+        _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
+    }
+
+    function sendHelloWorld(uint256 destinationChainId) external payable {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
+
+        uint256 crossChainGas = 18000000000000000000;
+        _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
 
         connector.send(
             ZetaInterfaces.SendInput({

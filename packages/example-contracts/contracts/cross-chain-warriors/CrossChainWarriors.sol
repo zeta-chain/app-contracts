@@ -33,12 +33,16 @@ contract CrossChainWarriors is
 
     Counters.Counter public tokenIds;
 
+    ZetaTokenConsumer private _zetaConsumer;
+
     constructor(
         address connectorAddress_,
         address zetaTokenAddress,
+        address zetaConsumerAddress,
         bool useEven
     ) ZetaInteractor(connectorAddress_) {
         _zetaToken = IERC20(zetaTokenAddress);
+        _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
 
         /**
          * @dev A simple way to prevent collisions between cross-chain token ids
@@ -89,16 +93,12 @@ contract CrossChainWarriors is
         uint256 crossChainId,
         address to,
         uint256 tokenId
-    ) external {
+    ) external payable {
         if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
         if (!_isApprovedOrOwner(_msgSender(), tokenId)) revert InvalidTransferCaller();
 
         uint256 crossChainGas = 18000000000000000000;
-
-        {
-            bool success = _zetaToken.transferFrom(msg.sender, address(connector), crossChainGas);
-            if (!success) revert ErrorApprovingZeta();
-        }
+        _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
 
         _burnWarrior(tokenId);
 
