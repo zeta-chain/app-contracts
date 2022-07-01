@@ -10,8 +10,6 @@ import {
   CrossChainWarriorsMock__factory as CrossChainWarriorsMockFactory,
   CrossChainWarriorsZetaConnectorMock,
   CrossChainWarriorsZetaConnectorMock__factory as CrossChainWarriorsZetaConnectorMockFactory,
-  ZetaTokenConsumerUniV2,
-  ZetaTokenConsumerUniV2__factory as ZetaTokenConsumerUniV2Factory,
 } from "../../typechain-types";
 import { isNetworkName } from "../shared/network.constants";
 
@@ -100,14 +98,4 @@ export const deployZetaConnectorMock = async () => {
   await zetaConnectorMockContract.deployed();
 
   return zetaConnectorMockContract;
-};
-
-export const deployZetaTokenConsumerUniV2 = async (zetaToken_: string, uniswapV2Router_: string) => {
-  const Factory = (await ethers.getContractFactory("ZetaTokenConsumerUniV2")) as ZetaTokenConsumerUniV2Factory;
-
-  const ZetaTokenConsumerUniV2Contract = (await Factory.deploy(zetaToken_, uniswapV2Router_)) as ZetaTokenConsumerUniV2;
-
-  await ZetaTokenConsumerUniV2Contract.deployed();
-
-  return ZetaTokenConsumerUniV2Contract;
 };

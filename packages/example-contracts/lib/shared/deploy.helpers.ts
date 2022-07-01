@@ -10,6 +10,8 @@ import {
   UniswapV2Router02__factory as UniswapV2Router02Factory,
   ZetaEthMock,
   ZetaEthMock__factory as ZetaEthMockFactory,
+  ZetaTokenConsumerUniV2,
+  ZetaTokenConsumerUniV2__factory,
 } from "../../typechain-types";
 
 export type GetContractParams<Factory extends ContractFactory> =
@@ -83,4 +85,14 @@ export const verifyContract = (
   )}`;
 
   execSync(command);
+};
+
+export const deployZetaTokenConsumerUniV2 = async (zetaToken_: string, uniswapV2Router_: string) => {
+  const Factory = (await ethers.getContractFactory("ZetaTokenConsumerUniV2")) as ZetaTokenConsumerUniV2__factory;
+
+  const ZetaTokenConsumerUniV2Contract = (await Factory.deploy(zetaToken_, uniswapV2Router_)) as ZetaTokenConsumerUniV2;
+
+  await ZetaTokenConsumerUniV2Contract.deployed();
+
+  return ZetaTokenConsumerUniV2Contract;
 };

@@ -7,9 +7,8 @@ import { ethers } from "hardhat";
 import {
   deployCrossChainWarriorsMock,
   deployZetaConnectorMock,
-  deployZetaTokenConsumerUniV2,
 } from "../lib/cross-chain-warriors/CrossChainWarriors.helpers";
-import { getZetaMock } from "../lib/shared/deploy.helpers";
+import { deployZetaTokenConsumerUniV2, getZetaMock } from "../lib/shared/deploy.helpers";
 import { CrossChainWarriorsMock, CrossChainWarriorsZetaConnectorMock, ZetaEthMock } from "../typechain-types";
 import { ZetaTokenConsumerUniV2 } from "../typechain-types/@zetachain/protocol-contracts/contracts/ZetaTokenConsumerUniV2.strategy.sol";
 import { addZetaEthLiquidityTest, getMintTokenId } from "./test.helpers";
@@ -38,8 +37,8 @@ describe("CrossChainWarriors tests", () => {
     deployerAddress = deployer.address;
     account1Address = account1.address;
 
-    zetaConnectorMockContract = await deployZetaConnectorMock();
     zetaEthTokenMockContract = await getZetaMock();
+    zetaConnectorMockContract = await deployZetaConnectorMock();
 
     const uniswapRouterAddr = getAddress("uniswapV2Router02", {
       customNetworkName: "eth-mainnet",
