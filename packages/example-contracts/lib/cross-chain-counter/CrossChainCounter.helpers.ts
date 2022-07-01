@@ -44,7 +44,7 @@ export const getCrossChainCounter = async (existingContractAddress?: string) => 
   }
 
   console.log("Deploying CrossChainCounter");
-  const crossChainCounterContract = (await Factory.deploy(_networkVariables.CONNECTOR_ADDRESS)) as CrossChainCounter;
+  const crossChainCounterContract = (await Factory.deploy(_networkVariables.connectorAddress)) as CrossChainCounter;
 
   await crossChainCounterContract.deployed();
 

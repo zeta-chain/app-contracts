@@ -14,12 +14,12 @@ async function main() {
   console.log("Sending");
   await (
     await contract.send({
-      destinationChainId: getChainId("bsc-testnet"),
       destinationAddress: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
-      gasLimit: 1_000_000,
+      destinationChainId: getChainId("bsc-testnet"),
+      destinationGasLimit: 1_000_000,
       message: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
-      zetaAmount: 0,
       zetaParams: [],
+      zetaValueAndGas: 0,
     })
   ).wait();
   console.log("Sent");

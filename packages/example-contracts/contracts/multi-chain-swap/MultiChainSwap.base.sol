@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaReceiver.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 import "./MultiChainSwapErrors.sol";
 
@@ -20,8 +19,8 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
     IUniswapV2Router02 internal uniswapV2Router;
 
     event SentTokenSwap(
-        address originSender,
-        address originInputToken,
+        address sourceTxOrigin,
+        address sourceInputToken,
         uint256 inputTokenAmount,
         address destinationOutToken,
         uint256 outTokenMinAmount,
@@ -29,7 +28,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
     );
 
     event SentEthSwap(
-        address originSender,
+        address sourceTxOrigin,
         uint256 inputEthAmount,
         address destinationOutToken,
         uint256 outTokenMinAmount,
@@ -37,8 +36,8 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
     );
 
     event Swapped(
-        address originSender,
-        address originInputToken,
+        address sourceTxOrigin,
+        address sourceInputToken,
         uint256 inputTokenAmount,
         address destinationOutToken,
         uint256 outTokenFinalAmount,
@@ -46,20 +45,20 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
     );
 
     event RevertedSwap(
-        address originSender,
-        address originInputToken,
+        address sourceTxOrigin,
+        address sourceInputToken,
         uint256 inputTokenAmount,
         uint256 inputTokenReturnedAmount
     );
 
     constructor(
-        address _zetaConnector,
-        address _zetaTokenInput,
-        address _uniswapV2Router
-    ) ZetaInteractor(_zetaConnector) {
-        zetaToken = _zetaTokenInput;
-        uniswapV2RouterAddress = _uniswapV2Router;
-        uniswapV2Router = IUniswapV2Router02(_uniswapV2Router);
+        address zetaConnector_,
+        address zetaToken_,
+        address uniswapV2Router_
+    ) ZetaInteractor(zetaConnector_) {
+        zetaToken = zetaToken_;
+        uniswapV2RouterAddress = uniswapV2Router_;
+        uniswapV2Router = IUniswapV2Router02(uniswapV2Router_);
         wETH = uniswapV2Router.WETH();
     }
 
@@ -73,9 +72,9 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChainGasLimit
+        uint256 crossChaindestinationGasLimit
     ) external payable {
-        if (!isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (msg.value == 0) revert ValueShouldBeGreaterThanZero();
         if (
@@ -83,7 +82,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             (destinationOutToken == address(0) && !isDestinationOutETH)
         ) revert OutTokenInvariant();
 
-        uint256 zetaAmount;
+        uint256 zetaValueAndGas;
         {
             address[] memory path = new address[](2);
             path[0] = wETH;
@@ -96,12 +95,12 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                 block.timestamp + MAX_DEADLINE
             );
 
-            zetaAmount = amounts[path.length - 1];
+            zetaValueAndGas = amounts[path.length - 1];
         }
-        if (zetaAmount == 0) revert ErrorSwappingTokens();
+        if (zetaValueAndGas == 0) revert ErrorSwappingTokens();
 
         {
-            bool success = IERC20(zetaToken).approve(address(connector), zetaAmount);
+            bool success = IERC20(zetaToken).approve(address(connector), zetaValueAndGas);
             if (!success) revert ErrorApprovingTokens(zetaToken);
         }
 
@@ -109,7 +108,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: interactorsByChainId[destinationChainId],
-                gasLimit: crossChainGasLimit,
+                destinationGasLimit: crossChaindestinationGasLimit,
                 message: abi.encode(
                     CROSS_CHAIN_SWAP_MESSAGE,
                     msg.sender,
@@ -121,14 +120,14 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                     outTokenMinAmount,
                     true // inputTokenIsETH
                 ),
-                zetaAmount: zetaAmount,
+                zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );
     }
 
     function swapTokensForTokensCrossChain(
-        address originInputToken,
+        address sourceInputToken,
         uint256 inputTokenAmount,
         bytes calldata receiverAddress,
         address destinationOutToken,
@@ -139,43 +138,42 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChainGasLimit
+        uint256 crossChaindestinationGasLimit
     ) external {
-        if (keccak256(interactorsByChainId[destinationChainId]) == keccak256(new bytes(0)))
-            revert InvalidDestinationChainId();
+        if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
-        if (originInputToken == address(0)) revert MissingOriginInputTokenAddress();
+        if (sourceInputToken == address(0)) revert MissingSourceInputTokenAddress();
         if (
             (destinationOutToken != address(0) && isDestinationOutETH) ||
             (destinationOutToken == address(0) && !isDestinationOutETH)
         ) revert OutTokenInvariant();
 
-        uint256 zetaAmount;
+        uint256 zetaValueAndGas;
 
-        if (originInputToken == zetaToken) {
+        if (sourceInputToken == zetaToken) {
             bool success1 = IERC20(zetaToken).transferFrom(msg.sender, address(this), inputTokenAmount);
             bool success2 = IERC20(zetaToken).approve(address(connector), inputTokenAmount);
             if (!success1 || !success2) revert ErrorTransferringTokens(zetaToken);
 
-            zetaAmount = inputTokenAmount;
+            zetaValueAndGas = inputTokenAmount;
         } else {
             /**
              * @dev If the input token is not Zeta, trade it using Uniswap
              */
             {
-                bool success1 = IERC20(originInputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
-                bool success2 = IERC20(originInputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
-                if (!success1 || !success2) revert ErrorTransferringTokens(originInputToken);
+                bool success1 = IERC20(sourceInputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
+                bool success2 = IERC20(sourceInputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
+                if (!success1 || !success2) revert ErrorTransferringTokens(sourceInputToken);
             }
 
             address[] memory path;
-            if (originInputToken == wETH) {
+            if (sourceInputToken == wETH) {
                 path = new address[](2);
                 path[0] = wETH;
                 path[1] = zetaToken;
             } else {
                 path = new address[](3);
-                path[0] = originInputToken;
+                path[0] = sourceInputToken;
                 path[1] = wETH;
                 path[2] = zetaToken;
             }
@@ -188,12 +186,12 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                 block.timestamp + MAX_DEADLINE
             );
 
-            zetaAmount = amounts[path.length - 1];
-            if (zetaAmount == 0) revert ErrorSwappingTokens();
+            zetaValueAndGas = amounts[path.length - 1];
+            if (zetaValueAndGas == 0) revert ErrorSwappingTokens();
         }
 
         {
-            bool success = IERC20(zetaToken).approve(address(connector), zetaAmount);
+            bool success = IERC20(zetaToken).approve(address(connector), zetaValueAndGas);
             if (!success) revert ErrorApprovingTokens(zetaToken);
         }
 
@@ -201,11 +199,11 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: interactorsByChainId[destinationChainId],
-                gasLimit: crossChainGasLimit,
+                destinationGasLimit: crossChaindestinationGasLimit,
                 message: abi.encode(
                     CROSS_CHAIN_SWAP_MESSAGE,
                     msg.sender,
-                    originInputToken,
+                    sourceInputToken,
                     inputTokenAmount,
                     receiverAddress,
                     destinationOutToken,
@@ -213,17 +211,21 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                     outTokenMinAmount,
                     false // inputTokenIsETH
                 ),
-                zetaAmount: zetaAmount,
+                zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external isValidMessageCall(zetaMessage) {
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
+        external
+        override
+        isValidMessageCall(zetaMessage)
+    {
         (
             bytes32 messageType,
-            address originSender,
-            address originInputToken,
+            address sourceTxOrigin,
+            address sourceInputToken,
             uint256 inputTokenAmount,
             bytes memory receiverAddressEncoded,
             address destinationOutToken,
@@ -238,18 +240,18 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
 
         uint256 outTokenFinalAmount;
         if (destinationOutToken == zetaToken) {
-            if (zetaMessage.zetaAmount < outTokenMinAmount) revert InsufficientOutToken();
+            if (zetaMessage.zetaValueAndGas < outTokenMinAmount) revert InsufficientOutToken();
 
-            bool success = IERC20(zetaToken).transfer(receiverAddress, zetaMessage.zetaAmount);
+            bool success = IERC20(zetaToken).transfer(receiverAddress, zetaMessage.zetaValueAndGas);
             if (!success) revert ErrorTransferringTokens(zetaToken);
 
-            outTokenFinalAmount = zetaMessage.zetaAmount;
+            outTokenFinalAmount = zetaMessage.zetaValueAndGas;
         } else {
             /**
              * @dev If the out token is not Zeta, get it using Uniswap
              */
             {
-                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaMessage.zetaAmount);
+                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaMessage.zetaValueAndGas);
                 if (!success) revert ErrorApprovingTokens(zetaToken);
             }
 
@@ -268,7 +270,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             uint256[] memory amounts;
             if (isDestinationOutETH) {
                 amounts = uniswapV2Router.swapExactTokensForETH(
-                    zetaMessage.zetaAmount,
+                    zetaMessage.zetaValueAndGas,
                     outTokenMinAmount,
                     path,
                     receiverAddress,
@@ -276,7 +278,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                 );
             } else {
                 amounts = uniswapV2Router.swapExactTokensForTokens(
-                    zetaMessage.zetaAmount,
+                    zetaMessage.zetaValueAndGas,
                     outTokenMinAmount,
                     path,
                     receiverAddress,
@@ -290,8 +292,8 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         }
 
         emit Swapped(
-            originSender,
-            originInputToken,
+            sourceTxOrigin,
+            sourceInputToken,
             inputTokenAmount,
             destinationOutToken,
             outTokenFinalAmount,
@@ -299,30 +301,43 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         );
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external isValidRevertCall(zetaRevert) {
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
+        external
+        override
+        isValidRevertCall(zetaRevert)
+    {
         /**
-         * @dev: If something goes wrong we must swap to the original token
+         * @dev: If something goes wrong we must swap to the source input token
          */
-        (, address originSender, address originInputToken, uint256 inputTokenAmount, , , , , bool inputTokenIsETH) = abi
-            .decode(zetaRevert.message, (bytes32, address, address, uint256, bytes, address, bool, uint256, bool));
+        (
+            ,
+            address sourceTxOrigin,
+            address sourceInputToken,
+            uint256 inputTokenAmount,
+            ,
+            ,
+            ,
+            ,
+            bool inputTokenIsETH
+        ) = abi.decode(zetaRevert.message, (bytes32, address, address, uint256, bytes, address, bool, uint256, bool));
 
         uint256 inputTokenReturnedAmount;
-        if (originInputToken == zetaToken) {
-            bool success1 = IERC20(zetaToken).approve(address(this), zetaRevert.zetaAmount);
-            bool success2 = IERC20(zetaToken).transferFrom(address(this), originSender, zetaRevert.zetaAmount);
+        if (sourceInputToken == zetaToken) {
+            bool success1 = IERC20(zetaToken).approve(address(this), zetaRevert.zetaValueAndGas);
+            bool success2 = IERC20(zetaToken).transferFrom(address(this), sourceTxOrigin, zetaRevert.zetaValueAndGas);
             if (!success1 || !success2) revert ErrorTransferringTokens(zetaToken);
-            inputTokenReturnedAmount = zetaRevert.zetaAmount;
+            inputTokenReturnedAmount = zetaRevert.zetaValueAndGas;
         } else {
             /**
-             * @dev If the original input token is not Zeta, trade it using Uniswap
+             * @dev If the source input token is not Zeta, trade it using Uniswap
              */
             {
-                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaRevert.zetaAmount);
+                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaRevert.zetaValueAndGas);
                 if (!success) revert ErrorTransferringTokens(zetaToken);
             }
 
             address[] memory path;
-            if (originInputToken == wETH) {
+            if (sourceInputToken == wETH) {
                 path = new address[](2);
                 path[0] = zetaToken;
                 path[1] = wETH;
@@ -330,25 +345,25 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                 path = new address[](3);
                 path[0] = zetaToken;
                 path[1] = wETH;
-                path[2] = originInputToken;
+                path[2] = sourceInputToken;
             }
             {
                 uint256[] memory amounts;
 
                 if (inputTokenIsETH) {
                     amounts = uniswapV2Router.swapExactTokensForETH(
-                        zetaRevert.zetaAmount,
+                        zetaRevert.zetaValueAndGas,
                         0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
                         path,
-                        originSender,
+                        sourceTxOrigin,
                         block.timestamp + MAX_DEADLINE
                     );
                 } else {
                     amounts = uniswapV2Router.swapExactTokensForTokens(
-                        zetaRevert.zetaAmount,
+                        zetaRevert.zetaValueAndGas,
                         0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
                         path,
-                        originSender,
+                        sourceTxOrigin,
                         block.timestamp + MAX_DEADLINE
                     );
                 }
@@ -356,6 +371,6 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             }
         }
 
-        emit RevertedSwap(originSender, originInputToken, inputTokenAmount, inputTokenReturnedAmount);
+        emit RevertedSwap(sourceTxOrigin, sourceInputToken, inputTokenAmount, inputTokenReturnedAmount);
     }
 }

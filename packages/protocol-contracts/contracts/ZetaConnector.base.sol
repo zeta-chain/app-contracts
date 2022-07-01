@@ -1,108 +1,145 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-import "./ZetaReceiver.sol";
-import "./ZetaInterfaces.sol";
+import "./interfaces/ConnectorErrors.sol";
+import "./interfaces/ZetaInterfaces.sol";
 
-contract ZetaConnectorBase is Pausable {
+contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public zetaToken;
 
+    address public pauserAddress;
+
     /**
-     * @dev Collectively hold by Zeta blockchain validators.
+     * @dev Collectively held by Zeta blockchain validators.
      */
     address public tssAddress;
+
     address public tssAddressUpdater;
 
     event ZetaSent(
-        address indexed originSenderAddress,
-        uint256 destinationChainId,
-        bytes destinationAddress,
-        uint256 zetaAmount,
-        uint256 gasLimit,
+        address sourceTxOriginAddress,
+        address indexed zetaTxSenderAddress,
+        uint256 indexed destinationChainId,
+        bytes indexed destinationAddress,
+        uint256 zetaValueAndGas,
+        uint256 destinationGasLimit,
         bytes message,
         bytes zetaParams
     );
+
     event ZetaReceived(
-        bytes originSenderAddress,
-        uint256 indexed originChainId,
+        bytes zetaTxSenderAddress,
+        uint256 indexed sourceChainId,
         address indexed destinationAddress,
-        uint256 zetaAmount,
-        bytes message,
-        bytes32 indexed internalSendHash
-    );
-    event ZetaReverted(
-        address originSenderAddress,
-        uint256 originChainId,
-        uint256 indexed destinationChainId,
-        bytes indexed destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes message,
         bytes32 indexed internalSendHash
     );
 
+    event ZetaReverted(
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
+        uint256 indexed destinationChainId,
+        bytes indexed destinationAddress,
+        uint256 zetaValueAndGas,
+        bytes message,
+        bytes32 indexed internalSendHash
+    );
+
+    event TSSAddressUpdated(address zetaTxSenderAddress, address newTssAddress);
+
+    event PauserAddressUpdated(address updaterAddress, address newTssAddress);
+
     constructor(
-        address _zetaTokenAddress,
-        address _tssAddress,
-        address _tssAddressUpdater
+        address zetaToken_,
+        address tssAddress_,
+        address tssAddressUpdater_,
+        address pauserAddress_
     ) {
-        zetaToken = _zetaTokenAddress;
-        tssAddress = _tssAddress;
-        tssAddressUpdater = _tssAddressUpdater;
+        if (
+            zetaToken_ == address(0) ||
+            tssAddress_ == address(0) ||
+            tssAddressUpdater_ == address(0) ||
+            pauserAddress_ == address(0)
+        ) {
+            revert InvalidAddress();
+        }
+
+        zetaToken = zetaToken_;
+        tssAddress = tssAddress_;
+        tssAddressUpdater = tssAddressUpdater_;
+        pauserAddress = pauserAddress_;
+    }
+
+    modifier onlyPauser() {
+        if (msg.sender != pauserAddress) revert CallerIsNotPauser(msg.sender);
+        _;
     }
 
     modifier onlyTssAddress() {
-        require(msg.sender == tssAddress, "ZetaConnector: only TSS address can call this function");
+        if (msg.sender != tssAddress) revert CallerIsNotTss(msg.sender);
         _;
     }
 
     modifier onlyTssUpdater() {
-        require(msg.sender == tssAddressUpdater, "ZetaConnector: only TSS updater can call this function");
+        if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
         _;
     }
 
-    // update the TSS Address in case of Zeta blockchain validator nodes churn
-    function updateTssAddress(address _tssAddress) external onlyTssUpdater {
-        require(_tssAddress != address(0), "ZetaConnector: invalid tssAddress");
+    function updatePauserAddress(address pauserAddress_) external onlyPauser {
+        if (pauserAddress_ == address(0)) revert InvalidAddress();
 
-        tssAddress = _tssAddress;
+        pauserAddress = pauserAddress_;
+
+        emit PauserAddressUpdated(msg.sender, pauserAddress_);
     }
 
-    // Change the ownership of tssAddressUpdater to the Zeta blockchain TSS nodes.
-    // Effectively, only Zeta blockchain validators collectively can update TSS Address afterwards.
+    function updateTssAddress(address tssAddress_) external {
+        if (msg.sender != tssAddress && msg.sender != tssAddressUpdater) revert CallerIsNotTssOrUpdater(msg.sender);
+        if (tssAddress_ == address(0)) revert InvalidAddress();
+
+        tssAddress = tssAddress_;
+
+        emit TSSAddressUpdated(msg.sender, tssAddress_);
+    }
+
+    /**
+     * @dev Changes the ownership of tssAddressUpdater to be the one held by the Zeta blockchain TSS nodes.
+     */
     function renounceTssAddressUpdater() external onlyTssUpdater {
-        require(tssAddress != address(0), "ZetaConnector: invalid tssAddress");
+        if (tssAddress == address(0)) revert InvalidAddress();
 
         tssAddressUpdater = tssAddress;
     }
 
-    function pause() external onlyTssUpdater {
+    function pause() external onlyPauser {
         _pause();
     }
 
-    function unpause() external onlyTssUpdater {
+    function unpause() external onlyPauser {
         _unpause();
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external virtual {}
 
     function onReceive(
-        bytes calldata originSenderAddress,
-        uint256 originChainId,
+        bytes calldata zetaTxSenderAddress,
+        uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}
 
     function onRevert(
-        address originSenderAddress,
-        uint256 originChainId,
+        address zetaTxSenderAddress,
+        uint256 sourceChainId,
         bytes calldata destinationAddress,
         uint256 destinationChainId,
-        uint256 zetaAmount,
+        uint256 zetaValueAndGas,
         bytes calldata message,
         bytes32 internalSendHash
     ) external virtual {}

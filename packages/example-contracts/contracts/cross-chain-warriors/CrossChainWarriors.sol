@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInterfaces.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaReceiver.sol";
+import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, ZetaReceiver {
     using Counters for Counters.Counter;
@@ -97,10 +96,10 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
     function crossChainTransfer(address to, uint256 tokenId) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Transfer caller is not owner nor approved");
 
-        uint256 zetaGasAmount = 18000000000000000000;
+        uint256 crossChainGas = 18000000000000000000;
 
         {
-            bool success = _zetaToken.transferFrom(msg.sender, connectorAddress, zetaGasAmount);
+            bool success = _zetaToken.transferFrom(msg.sender, connectorAddress, crossChainGas);
             require(success == true, "CrossChainWarriors: error approving zeta");
         }
 
@@ -110,21 +109,21 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
             ZetaInterfaces.SendInput({
                 destinationChainId: _crossChainId,
                 destinationAddress: _crossChainAddress,
-                gasLimit: zetaGasAmount,
+                destinationGasLimit: 500000,
                 message: abi.encode(CROSS_CHAIN_TRANSFER_MESSAGE, tokenId, msg.sender, to),
-                zetaAmount: zetaGasAmount,
+                zetaValueAndGas: crossChainGas,
                 zetaParams: abi.encode("")
             })
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external {
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
         require(
-            keccak256(zetaMessage.originSenderAddress) == keccak256(_crossChainAddress),
+            keccak256(zetaMessage.zetaTxSenderAddress) == keccak256(_crossChainAddress),
             "Cross-chain address doesn't match"
         );
-        require(zetaMessage.originChainId == _crossChainId, "Cross-chain id doesn't match");
+        require(zetaMessage.sourceChainId == _crossChainId, "Cross-chain id doesn't match");
 
         (
             bytes32 messageType,
@@ -141,10 +140,10 @@ contract CrossChainWarriors is ERC721("CrossChainWarriors", "CCWAR"), Ownable, Z
         _mintId(to, tokenId);
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external {
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external override {
         require(msg.sender == connectorAddress, "This function can only be called by the Connector contract");
-        require(zetaRevert.originSenderAddress == address(this), "Invalid originSenderAddress");
-        require(zetaRevert.originChainId == _currentChainId, "Invalid originChainId");
+        require(zetaRevert.zetaTxSenderAddress == address(this), "Invalid zetaTxSenderAddress");
+        require(zetaRevert.sourceChainId == _currentChainId, "Invalid sourceChainId");
 
         (bytes32 messageType, uint256 tokenId, address from) = abi.decode(
             zetaRevert.message,

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./ZetaInterfaces.sol";
-import "./ZetaInteractorErrors.sol";
+import "./interfaces/ZetaInterfaces.sol";
+import "./interfaces/ZetaInteractorErrors.sol";
 
 abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
     uint256 internal immutable currentChainId;
@@ -21,15 +21,15 @@ abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
 
     modifier isValidMessageCall(ZetaInterfaces.ZetaMessage calldata zetaMessage) {
         _isValidCaller();
-        if (keccak256(zetaMessage.originSenderAddress) != keccak256(interactorsByChainId[zetaMessage.originChainId]))
+        if (keccak256(zetaMessage.zetaTxSenderAddress) != keccak256(interactorsByChainId[zetaMessage.sourceChainId]))
             revert InvalidZetaMessageCall();
         _;
     }
 
     modifier isValidRevertCall(ZetaInterfaces.ZetaRevert calldata zetaRevert) {
         _isValidCaller();
-        if (zetaRevert.originSenderAddress != address(this)) revert InvalidZetaRevertCall();
-        if (zetaRevert.originChainId != currentChainId) revert InvalidZetaRevertCall();
+        if (zetaRevert.zetaTxSenderAddress != address(this)) revert InvalidZetaRevertCall();
+        if (zetaRevert.sourceChainId != currentChainId) revert InvalidZetaRevertCall();
         _;
     }
 
@@ -42,7 +42,10 @@ abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
         if (msg.sender != address(connector)) revert InvalidCaller(msg.sender);
     }
 
-    function isValidChainId(uint256 chainId) internal view returns (bool) {
+    /**
+     * @dev Useful for contracts that inherit from this one
+     */
+    function _isValidChainId(uint256 chainId) internal view returns (bool) {
         return (keccak256(interactorsByChainId[chainId]) != keccak256(new bytes(0)));
     }
 

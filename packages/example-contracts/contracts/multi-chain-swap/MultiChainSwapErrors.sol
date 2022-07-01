@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.7;
 
 interface MultiChainSwapErrors {
     error ErrorTransferringTokens(address token);
@@ -14,7 +14,7 @@ interface MultiChainSwapErrors {
 
     error InsufficientOutToken();
 
-    error MissingOriginInputTokenAddress();
+    error MissingSourceInputTokenAddress();
 
     error InvalidMessageType();
 }

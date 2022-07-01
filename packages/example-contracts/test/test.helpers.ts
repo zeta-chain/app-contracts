@@ -36,7 +36,7 @@ export const parseZetaLog = (logs: ContractReceipt["logs"]) => {
   return eventNames;
 };
 
-type CustomErrorParamType = string | BigNumber | number;
+type CustomErrorParamType = BigNumber | number | string;
 export const getCustomErrorMessage = (errorMethod: string, params?: [CustomErrorParamType]) => {
   const stringParams = params
     ? params

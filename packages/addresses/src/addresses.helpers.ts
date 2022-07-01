@@ -9,12 +9,18 @@ export type ZetaAddress =
   | "connector"
   | "crossChainCounter"
   | "crossChainNft"
+  | "dai"
   | "multiChainSwap"
   | "multiChainSwapZetaConnector"
   | "multiChainValue"
   | "tss"
   | "tssUpdater"
   | "uniswapV2Router02"
+  | "uniswapV3NftManager"
+  | "uniswapV3Quoter"
+  | "uniswapV3Router"
+  | "usdc"
+  | "weth9"
   | "zetaToken";
 
 type NetworkAddresses = Record<ZetaAddress, string>;
@@ -22,12 +28,18 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   connector: true,
   crossChainCounter: true,
   crossChainNft: true,
+  dai: true,
   multiChainSwap: true,
   multiChainSwapZetaConnector: true,
   multiChainValue: true,
   tss: true,
   tssUpdater: true,
   uniswapV2Router02: true,
+  uniswapV3NftManager: true,
+  uniswapV3Quoter: true,
+  uniswapV3Router: true,
+  usdc: true,
+  weth9: true,
   zetaToken: true,
 };
 
@@ -37,7 +49,7 @@ export const isZetaAddress = (a: string | undefined): a is ZetaAddress => Boolea
  * @description Localnet
  */
 
-export type LocalNetworkName = "hardhat" | "eth-localnet" | "bsc-localnet" | "polygon-localnet";
+export type LocalNetworkName = "bsc-localnet" | "eth-localnet" | "hardhat" | "polygon-localnet";
 export type ZetaLocalNetworkName = "troy";
 type LocalnetAddressGroup = Record<LocalNetworkName, NetworkAddresses>;
 export const isLocalNetworkName = (networkName: string): networkName is LocalNetworkName =>
@@ -92,20 +104,20 @@ const getMainnetList: () => Record<ZetaMainnetNetworkName, MainnetAddressGroup> 
  * @description Shared
  */
 
-export type NetworkName = LocalNetworkName | TestnetNetworkName | MainnetNetworkName;
-export type ZetaNetworkName = ZetaLocalNetworkName | ZetaTestnetNetworkName | ZetaMainnetNetworkName;
+export type NetworkName = LocalNetworkName | MainnetNetworkName | TestnetNetworkName;
+export type ZetaNetworkName = ZetaLocalNetworkName | ZetaMainnetNetworkName | ZetaTestnetNetworkName;
 
 export const getChainId = (networkName: NetworkName) => {
   const chainIds: Record<NetworkName, number> = {
-    "bsc-testnet": 97,
-    "eth-mainnet": 1,
-    "polygon-mumbai": 80001,
-    goerli: 5,
-    ropsten: 3,
-    hardhat: 1337,
-    "eth-localnet": 5,
     "bsc-localnet": 97,
+    "bsc-testnet": 97,
+    "eth-localnet": 5,
+    "eth-mainnet": 1,
+    goerli: 5,
+    hardhat: 1337,
     "polygon-localnet": 80001,
+    "polygon-mumbai": 80001,
+    ropsten: 3,
   };
 
   return chainIds[networkName];
@@ -123,15 +135,15 @@ export const getScanVariable = ({ customNetworkName }: { customNetworkName?: str
   dotenv.config();
 
   const v = {
-    "bsc-testnet": process.env.BSCSCAN_API_KEY || "",
-    "eth-mainnet": process.env.ETHERSCAN_API_KEY || "",
-    "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || "",
-    goerli: process.env.ETHERSCAN_API_KEY || "",
-    ropsten: process.env.ETHERSCAN_API_KEY || "",
-    hardhat: "",
-    "eth-localnet": "",
     "bsc-localnet": "",
+    "bsc-testnet": process.env.BSCSCAN_API_KEY || "",
+    "eth-localnet": "",
+    "eth-mainnet": process.env.ETHERSCAN_API_KEY || "",
+    goerli: process.env.ETHERSCAN_API_KEY || "",
+    hardhat: "",
     "polygon-localnet": "",
+    "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || "",
+    ropsten: process.env.ETHERSCAN_API_KEY || "",
   };
 
   return v[networkName];
@@ -143,15 +155,15 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
   dotenv.config();
 
   const v = {
-    "bsc-testnet": "https://testnet.bscscan.com/",
-    "eth-mainnet": "https://etherscan.io/",
-    "polygon-mumbai": "https://mumbai.polygonscan.com/",
-    goerli: "https://goerli.etherscan.io/",
-    ropsten: "https://ropsten.etherscan.io/",
-    hardhat: "",
-    "eth-localnet": "",
     "bsc-localnet": "",
+    "bsc-testnet": "https://testnet.bscscan.com/",
+    "eth-localnet": "",
+    "eth-mainnet": "https://etherscan.io/",
+    goerli: "https://goerli.etherscan.io/",
+    hardhat: "",
     "polygon-localnet": "",
+    "polygon-mumbai": "https://mumbai.polygonscan.com/",
+    ropsten: "https://ropsten.etherscan.io/",
   };
 
   return v[networkName];
@@ -317,9 +329,9 @@ export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) 
     const orderedFileNetworks = Object.keys(fileNetworks)
       .sort()
       .reduce((obj, key) => {
-        obj[key as MainnetNetworkName | TestnetNetworkName | LocalNetworkName] = fileNetworks[key];
+        obj[key as LocalNetworkName | MainnetNetworkName | TestnetNetworkName] = fileNetworks[key];
         return obj;
-      }, {} as MainnetAddressGroup & TestnetAddressGroup & LocalnetAddressGroup);
+      }, {} as LocalnetAddressGroup & MainnetAddressGroup & TestnetAddressGroup);
 
     writeFileSync(addressesFilePath, JSON.stringify(orderedFileNetworks, null, 2));
   });

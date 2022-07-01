@@ -73,11 +73,11 @@ describe("MultiChainSwap tests", () => {
     await tx.wait();
   };
 
-  const swapZetaToUSDC = async (signer: SignerWithAddress, zetaAmount: BigNumber) => {
+  const swapZetaToUSDC = async (signer: SignerWithAddress, zetaValueAndGas: BigNumber) => {
     const path = [zetaTokenMock.address, WETH, USDC_ADDR];
     const tx = await uniswapRouterFork
       .connect(signer)
-      .swapExactTokensForTokens(zetaAmount, 0, path, signer.address, (await getNow()) + 360);
+      .swapExactTokensForTokens(zetaValueAndGas, 0, path, signer.address, (await getNow()) + 360);
 
     await tx.wait();
   };
@@ -142,7 +142,7 @@ describe("MultiChainSwap tests", () => {
       ).to.be.revertedWith(getCustomErrorMessage("InvalidDestinationChainId"));
     });
 
-    it("Should revert if the originInputToken isn't provided", async () => {
+    it("Should revert if the sourceInputToken isn't provided", async () => {
       await expect(
         multiChainSwapContractA.swapTokensForTokensCrossChain(
           AddressZero,
@@ -154,7 +154,7 @@ describe("MultiChainSwap tests", () => {
           chainBId,
           MaxUint256
         )
-      ).to.be.revertedWith(getCustomErrorMessage("MissingOriginInputTokenAddress"));
+      ).to.be.revertedWith(getCustomErrorMessage("MissingSourceInputTokenAddress"));
     });
 
     it("Should revert if the destinationOutToken isn't provided", async () => {
@@ -324,7 +324,7 @@ describe("MultiChainSwap tests", () => {
       await addZetaEthLiquidity();
       await swapZetaToUSDC(deployer, parseUnits("10"));
 
-      const senderInitialZetaBalance = await zetaTokenMock.balanceOf(deployer.address);
+      const originAddressInitialZetaBalance = await zetaTokenMock.balanceOf(deployer.address);
       expect(await zetaTokenMock.balanceOf(account1.address)).to.be.eq(0);
 
       const ZETA_TO_TRANSFER = parseUnits("1");
@@ -367,7 +367,7 @@ describe("MultiChainSwap tests", () => {
       await expect(call).to.be.revertedWith(getCustomErrorMessage("InvalidDestinationChainId"));
     });
 
-    it("Should revert if the originInputToken isn't provided", async () => {
+    it("Should revert if the sourceInputToken isn't provided", async () => {
       const call = multiChainSwapContractA.swapTokensForTokensCrossChain(
         AddressZero,
         ZETA_USDC_PRICE,
@@ -379,7 +379,7 @@ describe("MultiChainSwap tests", () => {
         MaxUint256
       );
 
-      await expect(call).to.be.revertedWith(getCustomErrorMessage("MissingOriginInputTokenAddress"));
+      await expect(call).to.be.revertedWith(getCustomErrorMessage("MissingSourceInputTokenAddress"));
     });
 
     it("Should revert if the destinationOutToken isn't provided", async () => {
@@ -402,16 +402,16 @@ describe("MultiChainSwap tests", () => {
     it("Should revert if the caller is not ZetaConnector", async () => {
       await expect(
         multiChainSwapContractA.onZetaMessage({
-          originSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
-          originChainId: chainBId,
           destinationAddress: multiChainSwapContractB.address,
-          zetaAmount: 0,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
+          sourceChainId: chainBId,
+          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
+          zetaValueAndGas: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
 
-    it("Should revert if the originSenderAddress it not in interactorsByChainId", async () => {
+    it("Should revert if the zetaTxSenderAddress it not in interactorsByChainId", async () => {
       await expect(
         zetaConnectorMock.callOnZetaMessage(
           ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]),
@@ -428,12 +428,12 @@ describe("MultiChainSwap tests", () => {
     it("Should revert if the caller is not ZetaConnector", async () => {
       await expect(
         multiChainSwapContractA.onZetaRevert({
-          originSenderAddress: deployer.address,
-          originChainId: chainAId,
           destinationAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]),
           destinationChainId: chainBId,
-          zetaAmount: 0,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
+          sourceChainId: chainAId,
+          zetaTxSenderAddress: deployer.address,
+          zetaValueAndGas: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -445,7 +445,7 @@ describe("MultiChainSwap tests", () => {
       const tx1 = await zetaTokenMock.transfer(multiChainSwapContractA.address, parseUnits("100"));
       await tx1.wait();
 
-      const senderInitialZetaBalance = await zetaTokenMock.balanceOf(deployer.address);
+      const originAddressInitialZetaBalance = await zetaTokenMock.balanceOf(deployer.address);
 
       const message = encoder.encode(
         ["bytes32", "address", "address", "uint256", "bytes", "address", "bool", "uint256", "bool"],
@@ -474,8 +474,8 @@ describe("MultiChainSwap tests", () => {
 
       await tx2.wait();
 
-      const senderFinalZetaBalance = await zetaTokenMock.balanceOf(deployer.address);
-      expect(senderFinalZetaBalance).to.be.eq(senderInitialZetaBalance.add(10));
+      const originAddressFinalZetaBalance = await zetaTokenMock.balanceOf(deployer.address);
+      expect(originAddressFinalZetaBalance).to.be.eq(originAddressInitialZetaBalance.add(10));
     });
 
     it("Should trade the returned Zeta back for the input token", async () => {
@@ -485,7 +485,7 @@ describe("MultiChainSwap tests", () => {
       const tx1 = await zetaTokenMock.transfer(multiChainSwapContractA.address, parseUnits("100"));
       await tx1.wait();
 
-      const senderInitialUSDCBalance = await USDCTokenContract.balanceOf(deployer.address);
+      const originAddressInitialUSDCBalance = await USDCTokenContract.balanceOf(deployer.address);
 
       const message = encoder.encode(
         ["bytes32", "address", "address", "uint256", "bytes", "address", "bool", "uint256", "bool"],
@@ -514,9 +514,11 @@ describe("MultiChainSwap tests", () => {
 
       await tx2.wait();
 
-      const senderFinalUSDCBalance = await USDCTokenContract.balanceOf(deployer.address);
-      expect(senderFinalUSDCBalance).to.be.lt(senderInitialUSDCBalance.add(ZETA_USDC_PRICE));
-      expect(senderFinalUSDCBalance).to.be.gt(senderInitialUSDCBalance.add(ZETA_USDC_PRICE).mul(995).div(1000));
+      const originAddressFinalUSDCBalance = await USDCTokenContract.balanceOf(deployer.address);
+      expect(originAddressFinalUSDCBalance).to.be.lt(originAddressInitialUSDCBalance.add(ZETA_USDC_PRICE));
+      expect(originAddressFinalUSDCBalance).to.be.gt(
+        originAddressInitialUSDCBalance.add(ZETA_USDC_PRICE).mul(995).div(1000)
+      );
     });
 
     it("Should trade the returned ETH back to the caller", async () => {
@@ -526,7 +528,7 @@ describe("MultiChainSwap tests", () => {
       const tx1 = await zetaTokenMock.transfer(multiChainSwapContractA.address, parseUnits("100"));
       await tx1.wait();
 
-      const senderInitialETHBalance = await ethers.provider.getBalance(deployer.address);
+      const originAddressInitialETHBalance = await ethers.provider.getBalance(deployer.address);
 
       const message = encoder.encode(
         ["bytes32", "address", "address", "uint256", "bytes", "address", "bool", "uint256", "bool"],
@@ -555,9 +557,9 @@ describe("MultiChainSwap tests", () => {
 
       await tx2.wait();
 
-      const senderFinalETHBalance = await ethers.provider.getBalance(deployer.address);
-      expect(senderFinalETHBalance).to.be.gt(senderInitialETHBalance.add("1"));
-      expect(senderFinalETHBalance).to.be.lt(senderInitialETHBalance.add("1").mul(1005).div(1000));
+      const originAddressFinalETHBalance = await ethers.provider.getBalance(deployer.address);
+      expect(originAddressFinalETHBalance).to.be.gt(originAddressInitialETHBalance.add("1"));
+      expect(originAddressFinalETHBalance).to.be.lt(originAddressInitialETHBalance.add("1").mul(1005).div(1000));
     });
 
     it("Should emit a RevertedSwap event", async () => {
@@ -567,7 +569,7 @@ describe("MultiChainSwap tests", () => {
       const tx1 = await zetaTokenMock.transfer(multiChainSwapContractA.address, parseUnits("100"));
       await tx1.wait();
 
-      const senderInitialETHBalance = await ethers.provider.getBalance(deployer.address);
+      const originAddressInitialETHBalance = await ethers.provider.getBalance(deployer.address);
 
       const message = encoder.encode(
         ["bytes32", "address", "address", "uint256", "bytes", "address", "bool", "uint256", "bool"],
