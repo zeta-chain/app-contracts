@@ -2,7 +2,6 @@ import { BaseContract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 
 import {
-  ZetaConnector__factory as ZetaConnectorFactory,
   ZetaConnectorBase,
   ZetaConnectorBase__factory as ZetaConnectorBaseFactory,
   ZetaConnectorEth,
@@ -11,6 +10,8 @@ import {
   ZetaConnectorNonEth__factory as ZetaConnectorNonEthFactory,
   ZetaEth,
   ZetaEth__factory as ZetaEthFactory,
+  ZetaInteractorMock,
+  ZetaInteractorMock__factory as ZetaInteractorMockFactory,
   ZetaNonEth,
   ZetaNonEth__factory as ZetaNonEthFactory,
   ZetaReceiverMock,
@@ -94,6 +95,24 @@ export const getZetaConnectorNonEth = async (params: GetContractParams<ZetaConne
   getContract<ZetaConnectorNonEthFactory, ZetaConnectorNonEth>({
     contractName: "ZetaConnectorNonEth",
     ...params,
+  });
+
+export const getZetaFactoryNonEth = async (params: GetContractParams<ZetaNonEthFactory>) =>
+  await getContract<ZetaNonEthFactory, ZetaNonEth>({
+    contractName: "ZetaNonEth",
+    ...params,
+  });
+
+export const getZetaFactoryEth = async (params: GetContractParams<ZetaEthFactory>) =>
+  await getContract<ZetaEthFactory, ZetaEth>({
+    contractName: "ZetaNonEth",
+    ...params,
+  });
+
+export const getZetaInteractorMock = async (zetaToken: string) =>
+  getContract<ZetaInteractorMockFactory, ZetaInteractorMock>({
+    contractName: "ZetaInteractorMock",
+    deployParams: [zetaToken],
   });
 
 export type GetContractParams<Factory extends ContractFactory> =
