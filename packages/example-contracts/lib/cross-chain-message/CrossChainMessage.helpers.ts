@@ -59,19 +59,3 @@ export const deployZetaConnectorMock = async () => {
 
   return zetaConnectorMockContract;
 };
-
-export const parseCrossChainMessageLog = (logs: ContractReceipt["logs"]) => {
-  const iface = CrossChainMessage__factory.createInterface();
-
-  const eventNames = logs.map((log) => {
-    try {
-      const parsedLog = iface.parseLog(log);
-
-      return parsedLog.name;
-    } catch (e: any) {
-      return "NO_ZETA_LOG";
-    }
-  });
-
-  return eventNames;
-};

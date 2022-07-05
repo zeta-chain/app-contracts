@@ -7,7 +7,6 @@ import { ethers } from "hardhat";
 import {
   deployCrossChainMessageMock,
   deployZetaConnectorMock,
-  parseCrossChainMessageLog,
 } from "../lib/cross-chain-message/CrossChainMessage.helpers";
 import { deployZetaTokenConsumerUniV2, getZetaMock } from "../lib/shared/deploy.helpers";
 import { CrossChainMessage, CrossChainMessageConnector, ZetaEthMock } from "../typechain-types";

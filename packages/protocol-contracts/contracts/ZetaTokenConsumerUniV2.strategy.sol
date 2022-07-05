@@ -60,7 +60,6 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 amountOut = amounts[path.length - 1];
 
         emit EthExchangedForZeta(msg.value, amountOut);
-
         return amountOut;
     }
 
