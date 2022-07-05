@@ -16,6 +16,7 @@ export type ZetaAddress =
   | "tss"
   | "tssUpdater"
   | "uniswapV2Router02"
+  | "uniswapV3Factory"
   | "uniswapV3NftManager"
   | "uniswapV3Quoter"
   | "uniswapV3Router"
@@ -35,6 +36,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   tss: true,
   tssUpdater: true,
   uniswapV2Router02: true,
+  uniswapV3Factory: true,
   uniswapV3NftManager: true,
   uniswapV3Quoter: true,
   uniswapV3Router: true,

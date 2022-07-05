@@ -1,11 +1,10 @@
 import { MaxUint256 } from "@ethersproject/constants";
-import { parseEther } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { bytecode } from "@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json";
-import { getAddress } from "@zetachain/addresses";
 import bn from "bignumber.js";
 import { BigNumber, BigNumberish } from "ethers";
 import { utils } from "ethers";
+import { ethers } from "hardhat";
 
 import {
   IERC20,
@@ -14,6 +13,13 @@ import {
   IUniswapV3Pool__factory,
   IWETH9__factory,
 } from "../typechain-types";
+
+export const getNow = async () => {
+  const block = await ethers.provider.getBlock("latest");
+  return block.timestamp;
+};
+
+const GAS_LIMIT = 6000000;
 
 bn.config({ DECIMAL_PLACES: 40, EXPONENTIAL_AT: 999999 });
 
@@ -70,25 +76,30 @@ export function computePoolAddress(factoryAddress: string, [tokenA, tokenB]: [st
   return utils.getAddress(`0x${utils.keccak256(sanitizedInputs).slice(-40)}`);
 }
 
-export const createPoolV3 = async (
-  zetaTokenAddress: string,
-  zetaToAdd: BigNumber,
-  ETHToAdd: BigNumber,
-  deployer: SignerWithAddress
-) => {
-  const WETHAddr = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; // WETH MAINNET
-  const WETH = IERC20__factory.connect(WETHAddr, deployer);
+export interface createPoolV3Params {
+  ETHToAdd: BigNumber;
+  WETHAddress: string;
+  deployer: SignerWithAddress;
+  uniswapFactoryV3Address: string;
+  uniswapNFTManagerV3Address: string;
+  zetaToAdd: BigNumber;
+  zetaTokenAddress: string;
+}
+
+export const createZetaEthPoolUniV2 = async ({
+  WETHAddress,
+  uniswapFactoryV3Address,
+  uniswapNFTManagerV3Address,
+  zetaTokenAddress,
+  zetaToAdd,
+  ETHToAdd,
+  deployer,
+}: createPoolV3Params) => {
+  const WETH = IERC20__factory.connect(WETHAddress, deployer);
 
   let tokens: [IERC20, IERC20] = [WETH, WETH];
 
-  const UNI_NFT_MANAGER_V3 = getAddress("uniswapV3NftManager", {
-    customNetworkName: "eth-mainnet",
-    customZetaNetwork: "mainnet",
-  });
-
-  const UNI_FACTORY_V3 = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
-
-  let tokenAddr0 = WETHAddr;
+  let tokenAddr0 = WETHAddress;
   let tokenAddr1 = zetaTokenAddress;
 
   if (tokenAddr1 < tokenAddr0) {
@@ -98,43 +109,47 @@ export const createPoolV3 = async (
   }
 
   tokens[0] = IERC20__factory.connect(tokenAddr0, deployer);
-  const tx1 = await tokens[0].approve(UNI_NFT_MANAGER_V3, MaxUint256);
+  const tx1 = await tokens[0].approve(uniswapNFTManagerV3Address, MaxUint256);
   await tx1.wait();
 
   tokens[1] = IERC20__factory.connect(tokenAddr1, deployer);
-  const tx2 = await tokens[1].approve(UNI_NFT_MANAGER_V3, MaxUint256);
+  const tx2 = await tokens[1].approve(uniswapNFTManagerV3Address, MaxUint256);
   await tx2.wait();
 
-  const WETH9 = IWETH9__factory.connect(WETHAddr, deployer);
+  const WETH9 = IWETH9__factory.connect(WETHAddress, deployer);
   await WETH9.deposit({ value: ETHToAdd });
 
-  const factory = IUniswapV3Pool__factory.connect(UNI_FACTORY_V3, deployer);
-  const nft = IPoolInitializer__factory.connect(UNI_NFT_MANAGER_V3, deployer);
+  const factory = IUniswapV3Pool__factory.connect(uniswapFactoryV3Address, deployer);
+  const nft = IPoolInitializer__factory.connect(uniswapNFTManagerV3Address, deployer);
 
   const expectedAddress = computePoolAddress(factory.address, [tokens[0].address, tokens[1].address], FeeAmount.MEDIUM);
-  const codeAfter = await deployer.provider!.getCode(expectedAddress);
-  // expect(codeAfter).to.not.eq("0x");
-  // if != 0x pool already exist
+  const code = await deployer.provider!.getCode(expectedAddress);
 
-  await nft.createAndInitializePoolIfNecessary(
-    tokens[0].address,
-    tokens[1].address,
-    FeeAmount.MEDIUM,
-    encodePriceSqrt(1, 1),
-    { gasLimit: 6000000 }
+  // if code == '0x' means the pool it's not created yet
+  if (code === "0x") {
+    await nft.createAndInitializePoolIfNecessary(
+      tokens[0].address,
+      tokens[1].address,
+      FeeAmount.MEDIUM,
+      encodePriceSqrt(1, 1),
+      { gasLimit: GAS_LIMIT }
+    );
+  }
+
+  await nft.mint(
+    {
+      amount0Desired: tokens[0].address === WETHAddress ? ETHToAdd : zetaToAdd,
+      amount0Min: 0,
+      amount1Desired: tokens[1].address === WETHAddress ? ETHToAdd : zetaToAdd,
+      amount1Min: 0,
+      deadline: (await getNow()) + 360,
+      fee: FeeAmount.MEDIUM,
+      recipient: deployer.address,
+      tickLower: getMinTick(TICK_SPACINGS[FeeAmount.MEDIUM]),
+      tickUpper: getMaxTick(TICK_SPACINGS[FeeAmount.MEDIUM]),
+      token0: tokens[0].address,
+      token1: tokens[1].address,
+    },
+    { gasLimit: GAS_LIMIT }
   );
-
-  nft.mint({
-    amount0Desired: tokens[0].address === WETHAddr ? ETHToAdd : zetaToAdd,
-    amount0Min: 0,
-    amount1Desired: tokens[1].address === WETHAddr ? ETHToAdd : zetaToAdd,
-    amount1Min: 0,
-    deadline: 1,
-    fee: FeeAmount.MEDIUM,
-    recipient: deployer.address,
-    tickLower: getMinTick(TICK_SPACINGS[FeeAmount.MEDIUM]),
-    tickUpper: getMaxTick(TICK_SPACINGS[FeeAmount.MEDIUM]),
-    token0: tokens[0].address,
-    token1: tokens[1].address,
-  });
 };

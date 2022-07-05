@@ -9,6 +9,7 @@
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+    "uniswapV3Factory": "",
     "uniswapV3NftManager": "",
     "uniswapV3Quoter": "",
     "uniswapV3Router": "",
@@ -26,11 +27,12 @@
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
-    "uniswapV3NftManager": "",
-    "uniswapV3Quoter": "",
-    "uniswapV3Router": "",
+    "uniswapV3Factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+    "uniswapV3NftManager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
+    "uniswapV3Quoter": "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6",
+    "uniswapV3Router": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     "usdc": "",
-    "weth9": "",
+    "weth9": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
     "zetaToken": "0x011a76081989aDA18d0a16bf3fee2C6c3BD07B07"
   },
   "polygon-mumbai": {
@@ -42,11 +44,12 @@
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "",
+    "uniswapV3Factory": "",
     "uniswapV3NftManager": "",
     "uniswapV3Quoter": "",
     "uniswapV3Router": "",
     "usdc": "",
-    "weth9": "",
+    "weth9": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
     "zetaToken": "0x84383be9B3Eda50ABD5899936D4963505d449de2"
   },
   "ropsten": {
@@ -58,11 +61,12 @@
     "tss": "0x61141Bce5352fC9b5Ff648468676e356518D86AB",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
-    "uniswapV3NftManager": "",
-    "uniswapV3Quoter": "",
-    "uniswapV3Router": "",
+    "uniswapV3Factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+    "uniswapV3NftManager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
+    "uniswapV3Quoter": "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6",
+    "uniswapV3Router": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
     "usdc": "",
-    "weth9": "",
+    "weth9": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
     "zetaToken": "0x3357A3bd90A001282bA2152D6c0a2372c8E0e28E"
   }
 }

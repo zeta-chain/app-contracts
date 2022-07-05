@@ -8,6 +8,7 @@
     "tss": "",
     "tssUpdater": "",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+    "uniswapV3Factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
     "uniswapV3NftManager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
     "uniswapV3Quoter": "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6",
     "uniswapV3Router": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
