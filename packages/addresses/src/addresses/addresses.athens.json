@@ -14,7 +14,8 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0xad7d0795ffdf21f20c89240D540487B1445c7D03"
+    "zetaToken": "0xad7d0795ffdf21f20c89240D540487B1445c7D03",
+    "zetaTokenConsumerUniV2": ""
   },
   "goerli": {
     "connector": "0x0B16Fc7e2D627d82255ba21e53Cf6c11B5186046",
@@ -31,7 +32,8 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0x011a76081989aDA18d0a16bf3fee2C6c3BD07B07"
+    "zetaToken": "0x011a76081989aDA18d0a16bf3fee2C6c3BD07B07",
+    "zetaTokenConsumerUniV2": ""
   },
   "polygon-mumbai": {
     "connector": "0xa5467B39Ad9f51DEb6b30Abfa9828531dCBA99A9",
@@ -47,7 +49,8 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0x84383be9B3Eda50ABD5899936D4963505d449de2"
+    "zetaToken": "0x84383be9B3Eda50ABD5899936D4963505d449de2",
+    "zetaTokenConsumerUniV2": ""
   },
   "ropsten": {
     "connector": "0x91Ea4f79D39DA890B03E965111953d0494936072",
@@ -63,6 +66,7 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0x3357A3bd90A001282bA2152D6c0a2372c8E0e28E"
+    "zetaToken": "0x3357A3bd90A001282bA2152D6c0a2372c8E0e28E",
+    "zetaTokenConsumerUniV2": ""
   }
 }

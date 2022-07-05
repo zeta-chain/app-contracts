@@ -1,6 +1,15 @@
+import { MaxUint256 } from "@ethersproject/constants";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { getAddress } from "@zetachain/addresses";
 import { BigNumber, ContractReceipt } from "ethers";
 
-import { IUniswapV2Pair__factory, MultiChainSwapBase__factory } from "../typechain-types";
+import { getNow } from "../lib/shared/deploy.helpers";
+import {
+  ERC20__factory,
+  IUniswapV2Pair__factory,
+  MultiChainSwapBase__factory,
+  UniswapV2Router02__factory,
+} from "../typechain-types";
 
 export const getMintTokenId = (mintTx: ContractReceipt) => mintTx.events?.[0].args?.tokenId;
 
@@ -50,4 +59,33 @@ export const getCustomErrorMessage = (errorMethod: string, params?: [CustomError
         .join(", ")
     : "";
   return `VM Exception while processing transaction: reverted with custom error '${errorMethod}(${stringParams})'`;
+};
+
+export const addZetaEthLiquidityTest = async (
+  zetaTokenAddress: string,
+  zetaToAdd: BigNumber,
+  ETHToAdd: BigNumber,
+  deployer: SignerWithAddress
+) => {
+  const uniswapRouterAddr = getAddress("uniswapV2Router02", {
+    customNetworkName: "eth-mainnet",
+    customZetaNetwork: "mainnet",
+  });
+  const uniswapRouter = UniswapV2Router02__factory.connect(uniswapRouterAddr, deployer);
+
+  const ZetaTokenContract = ERC20__factory.connect(zetaTokenAddress, deployer);
+
+  const tx1 = await ZetaTokenContract.approve(uniswapRouter.address, MaxUint256);
+  await tx1.wait();
+
+  const tx2 = await uniswapRouter.addLiquidityETH(
+    ZetaTokenContract.address,
+    zetaToAdd,
+    0,
+    0,
+    deployer.address,
+    (await getNow()) + 360,
+    { gasLimit: 10_000_000, value: ETHToAdd }
+  );
+  await tx2.wait();
 };

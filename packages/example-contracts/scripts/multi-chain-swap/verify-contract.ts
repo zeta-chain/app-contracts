@@ -1,8 +1,6 @@
 import { getAddress } from "@zetachain/addresses";
 import hardhat from "hardhat";
 
-import { getCrossChainWarriorsArgs } from "../../lib/cross-chain-warriors/CrossChainWarriors.helpers";
-
 async function main() {
   await hardhat.run("verify:verify", {
     address: getAddress("multiChainSwap"),

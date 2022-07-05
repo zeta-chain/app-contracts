@@ -78,25 +78,25 @@ interface ZetaTokenConsumer {
     event ZetaExchangedForEth(uint256 amountIn, uint256 amountOut);
     event ZetaExchangedForToken(address token, uint256 amountIn, uint256 amountOut);
 
-    function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable;
+    function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable returns (uint256);
 
     function getZetaFromToken(
         address destinationAddress,
         uint256 minAmountOut,
         address inputToken,
         uint256 inputTokenAmount
-    ) external;
+    ) external returns (uint256);
 
     function getEthFromZeta(
         address destinationAddress,
         uint256 minAmountOut,
         uint256 zetaTokenAmount
-    ) external;
+    ) external returns (uint256);
 
     function getTokenFromZeta(
         address destinationAddress,
         uint256 minAmountOut,
         address outputToken,
         uint256 zetaTokenAmount
-    ) external;
+    ) external returns (uint256);
 }
