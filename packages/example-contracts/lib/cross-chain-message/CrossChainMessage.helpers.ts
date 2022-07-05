@@ -25,9 +25,11 @@ export type GetContractParams<Factory extends ContractFactory> =
 export const deployCrossChainMessageMock = async ({
   zetaConnectorMockAddress,
   zetaTokenConsumerAddress,
+  zetaTokenMockAddress,
 }: {
   zetaConnectorMockAddress: string;
   zetaTokenConsumerAddress: string;
+  zetaTokenMockAddress: string;
 }) => {
   const isLocalEnvironment = network.name === "hardhat";
 
@@ -37,6 +39,7 @@ export const deployCrossChainMessageMock = async ({
 
   const crossChainMessageContract = (await Factory.deploy(
     zetaConnectorMockAddress,
+    zetaTokenMockAddress,
     zetaTokenConsumerAddress
   )) as CrossChainMessage;
 

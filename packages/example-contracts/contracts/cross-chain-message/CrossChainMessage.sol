@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
@@ -21,8 +22,14 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErr
     event RevertedHelloWorldEvent(string messageData);
 
     ZetaTokenConsumer private _zetaConsumer;
+    IERC20 internal _zetaToken;
 
-    constructor(address connectorAddress, address zetaConsumerAddress) ZetaInteractor(connectorAddress) {
+    constructor(
+        address connectorAddress,
+        address zetaTokenAddress,
+        address zetaConsumerAddress
+    ) ZetaInteractor(connectorAddress) {
+        _zetaToken = IERC20(zetaTokenAddress);
         _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
     }
 
@@ -30,7 +37,8 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErr
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         uint256 crossChainGas = 18 * (10**18);
-        _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
+        uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
+        _zetaToken.approve(address(connector), zetaValueAndGas);
 
         connector.send(
             ZetaInterfaces.SendInput({
@@ -38,7 +46,7 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErr
                 destinationAddress: interactorsByChainId[destinationChainId],
                 destinationGasLimit: 2500000,
                 message: abi.encode(HELLO_WORLD_MESSAGE_TYPE, "Hello, Cross-Chain World!"),
-                zetaValueAndGas: 0,
+                zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );

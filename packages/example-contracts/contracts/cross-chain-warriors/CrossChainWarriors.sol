@@ -98,7 +98,8 @@ contract CrossChainWarriors is
         if (!_isApprovedOrOwner(_msgSender(), tokenId)) revert InvalidTransferCaller();
 
         uint256 crossChainGas = 18 * (10**18);
-        _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
+        uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
+        _zetaToken.approve(address(connector), zetaValueAndGas);
 
         _burnWarrior(tokenId);
 
@@ -108,7 +109,7 @@ contract CrossChainWarriors is
                 destinationAddress: interactorsByChainId[crossChainId],
                 destinationGasLimit: 500000,
                 message: abi.encode(CROSS_CHAIN_TRANSFER_MESSAGE, tokenId, msg.sender, to),
-                zetaValueAndGas: crossChainGas,
+                zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );

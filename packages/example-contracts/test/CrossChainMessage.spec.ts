@@ -55,11 +55,13 @@ describe("CrossChainMessage tests", () => {
     crossChainMessageContractChainA = await deployCrossChainMessageMock({
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
+      zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
 
     crossChainMessageContractChainB = await deployCrossChainMessageMock({
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
+      zetaTokenMockAddress: zetaEthTokenMockContract.address,
     });
 
     await crossChainMessageContractChainB.setInteractorByChainId(
@@ -78,6 +80,7 @@ describe("CrossChainMessage tests", () => {
       const unsetContract = await deployCrossChainMessageMock({
         zetaConnectorMockAddress: zetaConnectorMockContract.address,
         zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
+        zetaTokenMockAddress: zetaEthTokenMockContract.address,
       });
 
       await expect(unsetContract.sendHelloWorld(chainAId)).to.be.revertedWith("InvalidDestinationChainId()");

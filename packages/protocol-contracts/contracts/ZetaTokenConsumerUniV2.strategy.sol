@@ -37,7 +37,12 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         wETH = uniswapV2Router.WETH();
     }
 
-    function getZetaFromEth(address destinationAddress, uint256 minAmountOut) external payable override {
+    function getZetaFromEth(address destinationAddress, uint256 minAmountOut)
+        external
+        payable
+        override
+        returns (uint256)
+    {
         if (destinationAddress == address(0)) revert InvalidAddress();
         if (msg.value == 0) revert InputCantBeZero();
 
@@ -55,6 +60,8 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 amountOut = amounts[path.length - 1];
 
         emit EthExchangedForZeta(msg.value, amountOut);
+
+        return amountOut;
     }
 
     function getZetaFromToken(
@@ -62,7 +69,7 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 minAmountOut,
         address inputToken,
         uint256 inputTokenAmount
-    ) external override {
+    ) external override returns (uint256) {
         if (destinationAddress == address(0) || inputToken == address(0)) revert InvalidAddress();
         if (inputTokenAmount == 0) revert InputCantBeZero();
 
@@ -93,13 +100,14 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 amountOut = amounts[path.length - 1];
 
         emit TokenExchangedForZeta(inputToken, inputTokenAmount, amountOut);
+        return amountOut;
     }
 
     function getEthFromZeta(
         address destinationAddress,
         uint256 minAmountOut,
         uint256 zetaTokenAmount
-    ) external override {
+    ) external override returns (uint256) {
         if (destinationAddress == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
@@ -123,6 +131,7 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 amountOut = amounts[path.length - 1];
 
         emit ZetaExchangedForEth(zetaTokenAmount, amountOut);
+        return amountOut;
     }
 
     function getTokenFromZeta(
@@ -130,7 +139,7 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 minAmountOut,
         address outputToken,
         uint256 zetaTokenAmount
-    ) external override {
+    ) external override returns (uint256) {
         if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
@@ -162,5 +171,6 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         uint256 amountOut = amounts[path.length - 1];
 
         emit ZetaExchangedForToken(outputToken, zetaTokenAmount, amountOut);
+        return amountOut;
     }
 }
