@@ -1,7 +1,7 @@
 import { FakeContract, smock } from "@defi-wonderland/smock";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero, MaxUint256 } from "@ethersproject/constants";
-import { parseUnits } from "@ethersproject/units";
+import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress } from "@zetachain/addresses";
 import chai, { expect } from "chai";
@@ -56,12 +56,12 @@ describe("MultiChainSwap tests", () => {
     // 2 ZETA = 1 ETH
     const tx2 = await uniswapRouterFork.addLiquidityETH(
       zetaTokenMock.address,
-      parseUnits("2000"),
+      parseUnits("1000"),
       0,
       0,
       deployer.address,
       (await getNow()) + 360,
-      { value: parseUnits("1000") }
+      { value: parseUnits("500") }
     );
     await tx2.wait();
   };

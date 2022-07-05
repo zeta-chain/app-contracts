@@ -87,12 +87,8 @@ export const verifyContract = (
   execSync(command);
 };
 
-export const deployZetaTokenConsumerUniV2 = async (zetaToken_: string, uniswapV2Router_: string) => {
-  const Factory = (await ethers.getContractFactory("ZetaTokenConsumerUniV2")) as ZetaTokenConsumerUniV2__factory;
-
-  const ZetaTokenConsumerUniV2Contract = (await Factory.deploy(zetaToken_, uniswapV2Router_)) as ZetaTokenConsumerUniV2;
-
-  await ZetaTokenConsumerUniV2Contract.deployed();
-
-  return ZetaTokenConsumerUniV2Contract;
-};
+export const deployZetaTokenConsumerUniV2 = async (zetaToken_: string, uniswapV2Router_: string) =>
+  getContract<ZetaTokenConsumerUniV2__factory, ZetaTokenConsumerUniV2>({
+    contractName: "ZetaTokenConsumerUniV2",
+    ...{ deployParams: [zetaToken_, uniswapV2Router_] },
+  });

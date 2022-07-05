@@ -31,18 +31,18 @@ export const deployCrossChainMessageMock = async ({
 }) => {
   const isLocalEnvironment = network.name === "hardhat";
 
-  assert(isLocalEnvironment, "localDeployCrossChainWarriors is only intended to be used in the local environment");
+  assert(isLocalEnvironment, "deployCrossChainMessageMock is only intended to be used in the local environment");
 
   const Factory = (await ethers.getContractFactory("CrossChainMessage")) as CrossChainMessage__factory;
 
-  const crossChainWarriorsContract = (await Factory.deploy(
+  const crossChainMessageContract = (await Factory.deploy(
     zetaConnectorMockAddress,
     zetaTokenConsumerAddress
   )) as CrossChainMessage;
 
-  await crossChainWarriorsContract.deployed();
+  await crossChainMessageContract.deployed();
 
-  return crossChainWarriorsContract;
+  return crossChainMessageContract;
 };
 
 export const deployZetaConnectorMock = async () => {

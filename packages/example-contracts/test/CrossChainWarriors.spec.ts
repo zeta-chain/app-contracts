@@ -46,7 +46,7 @@ describe("CrossChainWarriors tests", () => {
     });
 
     await addZetaEthLiquidityTest(zetaEthTokenMockContract.address, parseEther("200000"), parseEther("100"), deployer);
-    //@dev: just to guarantee the running account has no zeta at all but still can use our protocol :D
+    // @dev: guarantee that the account has no zeta balance but still can use the protocol :D
     const zetaBalance = await zetaEthTokenMockContract.balanceOf(deployer.address);
     await zetaEthTokenMockContract.transfer(accounts[5].address, zetaBalance);
 

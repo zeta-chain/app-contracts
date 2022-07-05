@@ -22,7 +22,7 @@ export type ZetaAddress =
   | "usdc"
   | "weth9"
   | "zetaToken"
-  | "zetaTokenConsumer";
+  | "zetaTokenConsumerUniV2";
 
 type NetworkAddresses = Record<ZetaAddress, string>;
 const zetaAddresses: Record<ZetaAddress, boolean> = {
@@ -42,7 +42,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   usdc: true,
   weth9: true,
   zetaToken: true,
-  zetaTokenConsumer: true,
+  zetaTokenConsumerUniV2: true,
 };
 
 export const isZetaAddress = (a: string | undefined): a is ZetaAddress => Boolean(zetaAddresses[a as ZetaAddress]);

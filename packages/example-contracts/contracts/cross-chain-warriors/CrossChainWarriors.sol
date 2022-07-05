@@ -36,11 +36,11 @@ contract CrossChainWarriors is
     ZetaTokenConsumer private _zetaConsumer;
 
     constructor(
-        address connectorAddress_,
+        address connectorAddress,
         address zetaTokenAddress,
         address zetaConsumerAddress,
         bool useEven
-    ) ZetaInteractor(connectorAddress_) {
+    ) ZetaInteractor(connectorAddress) {
         _zetaToken = IERC20(zetaTokenAddress);
         _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
 
@@ -97,7 +97,7 @@ contract CrossChainWarriors is
         if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
         if (!_isApprovedOrOwner(_msgSender(), tokenId)) revert InvalidTransferCaller();
 
-        uint256 crossChainGas = 18000000000000000000;
+        uint256 crossChainGas = 18 * (10**18);
         _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
 
         _burnWarrior(tokenId);

@@ -60,7 +60,7 @@ export const deployCrossChainWarriorsMock = async ({
 export const getCrossChainWarriorsArgs = (): [string, string, string, boolean] => [
   getAddress("connector"),
   getAddress("zetaToken"),
-  getAddress("zetaTokenConsumer"),
+  getAddress("zetaTokenConsumerUniV2"),
   network.name === "goerli",
 ];
 

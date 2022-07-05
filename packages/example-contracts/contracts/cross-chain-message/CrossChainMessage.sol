@@ -22,14 +22,14 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErr
 
     ZetaTokenConsumer private _zetaConsumer;
 
-    constructor(address connectorAddress_, address zetaConsumerAddress) ZetaInteractor(connectorAddress_) {
+    constructor(address connectorAddress, address zetaConsumerAddress) ZetaInteractor(connectorAddress) {
         _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
     }
 
     function sendHelloWorld(uint256 destinationChainId) external payable {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
-        uint256 crossChainGas = 18000000000000000000;
+        uint256 crossChainGas = 18 * (10**18);
         _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
 
         connector.send(

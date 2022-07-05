@@ -46,7 +46,7 @@ describe("CrossChainMessage tests", () => {
     });
 
     await addZetaEthLiquidityTest(zetaEthTokenMockContract.address, parseEther("200000"), parseEther("100"), deployer);
-    //@dev: just to guarantee the running account has no zeta at all but still can use our protocol :D
+    // @dev: guarantee that the account has no zeta balance but still can use the protocol :D
     const zetaBalance = await zetaEthTokenMockContract.balanceOf(deployer.address);
     await zetaEthTokenMockContract.transfer(accounts[5].address, zetaBalance);
 
@@ -115,7 +115,7 @@ describe("CrossChainMessage tests", () => {
     });
 
     describe("Given a valid message", () => {
-      it("Should emit a message", async () => {
+      it("Should emit `HelloWorldEvent`", async () => {
         const messageType = await crossChainMessageContractChainA.HELLO_WORLD_MESSAGE_TYPE();
 
         const tx = await zetaConnectorMockContract.callOnZetaMessage(
@@ -126,9 +126,12 @@ describe("CrossChainMessage tests", () => {
           encoder.encode(["bytes32", "string"], [messageType, SAMPLE_TEXT])
         );
 
-        const result = await tx.wait();
-        const eventNames = parseCrossChainMessageLog(result.logs);
-        expect(eventNames.filter((e) => e === "HelloWorldEvent")).to.have.lengthOf(1);
+        await tx.wait();
+
+        const helloWorldEventFilter = crossChainMessageContractChainB.filters.HelloWorldEvent();
+        const e1 = await crossChainMessageContractChainB.queryFilter(helloWorldEventFilter);
+        expect(e1.length).to.equal(1);
+        expect(e1[0].transactionHash).to.equal(tx.hash);
       });
     });
   });
