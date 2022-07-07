@@ -4,14 +4,13 @@ import { ethers } from "ethers";
 export const buildBytecode = (constructorTypes: any[], constructorArgs: any[], contractBytecode: string) =>
   `${contractBytecode}${encodeParams(constructorTypes, constructorArgs).slice(2)}`;
 
-// @todo: update because we use a different address generator method
-// export const buildCreate2Address = (saltHex: string, byteCode: string, factoryAddress: string) => {
-//   const payload = ethers.utils.keccak256(
-//     `0x${["ff", factoryAddress, saltHex, ethers.utils.keccak256(byteCode)].map((x) => x.replace(/0x/, "")).join("")}`
-//   );
+export const buildCreate2Address = (saltHex: string, byteCode: string, factoryAddress: string) => {
+  const payload = ethers.utils.keccak256(
+    `0x${["ff", factoryAddress, saltHex, ethers.utils.keccak256(byteCode)].map((x) => x.replace(/0x/, "")).join("")}`
+  );
 
-//   return `0x${payload.slice(-40)}`.toLowerCase();
-// };
+  return `0x${payload.slice(-40)}`.toLowerCase();
+};
 
 export const numberToUint256 = (value: number) => {
   const hex = value.toString(16);

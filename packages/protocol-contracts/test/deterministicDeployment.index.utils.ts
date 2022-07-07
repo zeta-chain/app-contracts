@@ -3,7 +3,7 @@ import assert from "assert";
 import { ethers, Signer } from "ethers";
 
 import { ImmutableCreate2Factory__factory } from "../typechain-types";
-import { buildBytecode } from "./deterministicDeployment.utils";
+import { buildBytecode, buildCreate2Address, saltToHex } from "./deterministicDeployment.utils";
 
 export async function deployContract({
   factoryAddress,
@@ -41,34 +41,6 @@ export async function deployContract({
     txHash: result.transactionHash as string,
   };
 }
-
-/**
- * Calculate create2 address of a contract.
- *
- * Calculates deterministic create2 address locally.
- *
- */
-// export function getCreate2Address({
-//   salt,
-//   contractBytecode,
-//   constructorTypes = [] as string[],
-//   constructorArgs = [] as any[],
-//   signerAddress,
-//   factoryAddress,
-// }: {
-//   constructorArgs?: any[];
-//   constructorTypes?: string[];
-//   contractBytecode: string;
-//   factoryAddress: string;
-//   salt: string;
-//   signerAddress: string;
-// }) {
-//   return buildCreate2Address(
-//     saltToHex(salt, signerAddress),
-//     buildBytecode(constructorTypes, constructorArgs, contractBytecode),
-//     factoryAddress
-//   );
-// }
 
 /**
  * Determine if a given contract is deployed.
