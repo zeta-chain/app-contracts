@@ -14,7 +14,7 @@ import { buildBytecode, buildCreate2Address, saltToHex } from "./deterministicDe
 
 chai.should();
 
-describe("ZetaTokenConsumer tests", () => {
+describe("Deterministic deployment tests", () => {
   let immutableCreate2: ImmutableCreate2Factory;
 
   let accounts: SignerWithAddress[];
@@ -28,7 +28,7 @@ describe("ZetaTokenConsumer tests", () => {
     immutableCreate2 = await immutableCreate2Factory.deploy();
   });
 
-  describe("getZetaFromEth", () => {
+  describe("Deploy zeta token with deterministic deployment", () => {
     it("Should deploy a contract", async () => {
       const salthex = saltToHex("hola", signer.address);
       const constructorTypes = ["uint256"];
