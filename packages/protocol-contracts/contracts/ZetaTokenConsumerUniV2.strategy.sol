@@ -20,7 +20,7 @@ interface ZetaTokenConsumerUniV2Errors {
  * @dev Uniswap V2 strategy for ZetaTokenConsumer
  */
 contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Errors {
-    uint256 internal constant MAX_DEADLINE = 100;
+    uint256 internal constant MAX_DEADLINE = 200;
 
     address public uniswapV2RouterAddress;
     address internal immutable wETH;

@@ -7,6 +7,7 @@ import "./interfaces/ZetaInterfaces.sol";
 import "./interfaces/ZetaInteractorErrors.sol";
 
 abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
+    bytes32 constant ZERO_BYTES = keccak256(new bytes(0));
     uint256 internal immutable currentChainId;
     ZetaConnector public connector;
 
@@ -46,7 +47,7 @@ abstract contract ZetaInteractor is Ownable, ZetaInteractorErrors {
      * @dev Useful for contracts that inherit from this one
      */
     function _isValidChainId(uint256 chainId) internal view returns (bool) {
-        return (keccak256(interactorsByChainId[chainId]) != keccak256(new bytes(0)));
+        return (keccak256(interactorsByChainId[chainId]) != ZERO_BYTES);
     }
 
     function setInteractorByChainId(uint256 destinationChainId, bytes calldata contractAddress) external onlyOwner {

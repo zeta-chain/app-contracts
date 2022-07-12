@@ -9,7 +9,7 @@ import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 import "./MultiChainSwapErrors.sol";
 
 contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapErrors {
-    uint16 internal constant MAX_DEADLINE = 365;
+    uint16 internal constant MAX_DEADLINE = 200;
     bytes32 public constant CROSS_CHAIN_SWAP_MESSAGE = keccak256("CROSS_CHAIN_SWAP");
 
     address public uniswapV2RouterAddress;
