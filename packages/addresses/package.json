@@ -2,6 +2,12 @@
   "name": "@zetachain/addresses",
   "version": "0.0.1",
   "license": "MIT",
+  "private": "true",
+  "author": "zetachain",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "main": "src/index.ts",
   "scripts": {
     "tsc:watch": "npx tsc --watch"
