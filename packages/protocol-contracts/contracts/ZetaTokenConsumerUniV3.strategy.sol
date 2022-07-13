@@ -38,7 +38,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     ISwapRouter public immutable uniswapV3Router;
     IQuoter public immutable quoter;
 
-    bool internal locked;
+    bool internal _locked;
 
     constructor(
         address zetaToken_,
@@ -64,10 +64,10 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     }
 
     modifier nonReentrant() {
-        if (locked) revert RentrancyError();
-        locked = true;
+        if (_locked) revert RentrancyError();
+        _locked = true;
         _;
-        locked = false;
+        _locked = false;
     }
 
     receive() external payable {}
