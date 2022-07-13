@@ -15,6 +15,8 @@ interface ZetaTokenConsumerUniV3Errors {
     error ErrorGettingToken();
 
     error ErrorSendingETH();
+
+    error RentrancyError();
 }
 
 interface WETH9 {
@@ -25,7 +27,7 @@ interface WETH9 {
  * @dev Uniswap V3 strategy for ZetaTokenConsumer
  */
 contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Errors {
-    uint256 internal constant MAX_DEADLINE = 100;
+    uint256 internal constant MAX_DEADLINE = 200;
 
     uint24 public immutable zetaPoolFee;
     uint24 public immutable tokenPoolFee;
@@ -35,6 +37,8 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
     ISwapRouter public immutable uniswapV3Router;
     IQuoter public immutable quoter;
+
+    bool internal locked;
 
     constructor(
         address zetaToken_,
@@ -57,6 +61,13 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         WETH9Address = WETH9Address_;
         zetaPoolFee = zetaPoolFee_;
         tokenPoolFee = tokenPoolFee_;
+    }
+
+    modifier nonReentrant() {
+        if (locked) revert RentrancyError();
+        locked = true;
+        _;
+        locked = false;
     }
 
     receive() external payable {}
@@ -143,10 +154,11 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
 
         WETH9(WETH9Address).withdraw(amountOut);
 
+        emit ZetaExchangedForEth(zetaTokenAmount, amountOut);
+
         (bool sent, ) = destinationAddress.call{value: amountOut}("");
         if (!sent) revert ErrorSendingETH();
 
-        emit ZetaExchangedForEth(zetaTokenAmount, amountOut);
         return amountOut;
     }
 
@@ -155,7 +167,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         uint256 minAmountOut,
         address outputToken,
         uint256 zetaTokenAmount
-    ) external override returns (uint256) {
+    ) external override nonReentrant returns (uint256) {
         if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 

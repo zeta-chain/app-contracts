@@ -5,16 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./ZetaConnector.base.sol";
 import "./interfaces/ZetaInterfaces.sol";
-
-interface ZetaToken is IERC20 {
-    function burnFrom(address account, uint256 amount) external;
-
-    function mint(
-        address mintee,
-        uint256 value,
-        bytes32 internalSendHash
-    ) external;
-}
+import "./interfaces/ZetaNonEthInterface.sol";
 
 contract ZetaConnectorNonEth is ZetaConnectorBase {
     uint256 public maxSupply = 2**256 - 1;
@@ -27,7 +18,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
     ) ZetaConnectorBase(zetaTokenAddress_, tssAddress_, tssAddressUpdater_, pauserAddress_) {}
 
     function getLockedAmount() external view returns (uint256) {
-        return ZetaToken(zetaToken).balanceOf(address(this));
+        return ZetaNonEthInterface(zetaToken).balanceOf(address(this));
     }
 
     function setMaxSupply(uint256 maxSupply_) external onlyTssAddress {
@@ -35,7 +26,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
     }
 
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
-        ZetaToken(zetaToken).burnFrom(msg.sender, input.zetaValueAndGas);
+        ZetaNonEthInterface(zetaToken).burnFrom(msg.sender, input.zetaValueAndGas);
 
         emit ZetaSent(
             tx.origin,
@@ -57,8 +48,9 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        if (zetaValueAndGas + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
-        ZetaToken(zetaToken).mint(destinationAddress, zetaValueAndGas, internalSendHash);
+        if (zetaValueAndGas + ZetaNonEthInterface(zetaToken).totalSupply() > maxSupply)
+            revert ExceedsMaxSupply(maxSupply);
+        ZetaNonEthInterface(zetaToken).mint(destinationAddress, zetaValueAndGas, internalSendHash);
 
         if (message.length > 0) {
             ZetaReceiver(destinationAddress).onZetaMessage(
@@ -91,8 +83,9 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         bytes calldata message,
         bytes32 internalSendHash
     ) external override whenNotPaused onlyTssAddress {
-        if (zetaValueAndGas + ZetaToken(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
-        ZetaToken(zetaToken).mint(zetaTxSenderAddress, zetaValueAndGas, internalSendHash);
+        if (zetaValueAndGas + ZetaNonEthInterface(zetaToken).totalSupply() > maxSupply)
+            revert ExceedsMaxSupply(maxSupply);
+        ZetaNonEthInterface(zetaToken).mint(zetaTxSenderAddress, zetaValueAndGas, internalSendHash);
 
         if (message.length > 0) {
             ZetaReceiver(zetaTxSenderAddress).onZetaRevert(
