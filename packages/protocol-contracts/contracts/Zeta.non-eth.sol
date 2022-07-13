@@ -5,7 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 import "./interfaces/ZetaErrors.sol";
 
-contract ZetaNonEth is ERC20Burnable, ZetaErrors {
+import "./interfaces/ZetaNonEthInterface.sol";
+
+contract ZetaNonEth is ZetaNonEthInterface, ERC20Burnable, ZetaErrors {
     address public connectorAddress;
 
     /**
@@ -51,7 +53,7 @@ contract ZetaNonEth is ERC20Burnable, ZetaErrors {
         address mintee,
         uint256 value,
         bytes32 internalSendHash
-    ) external {
+    ) external override {
         /**
          * @dev Only Connector can mint. Minting requires burning the equivalent amount on another chain
          */
@@ -62,7 +64,7 @@ contract ZetaNonEth is ERC20Burnable, ZetaErrors {
         emit Minted(mintee, value, internalSendHash);
     }
 
-    function burnFrom(address account, uint256 amount) public override {
+    function burnFrom(address account, uint256 amount) public override(ZetaNonEthInterface, ERC20Burnable) {
         /**
          * @dev Only Connector can burn.
          */

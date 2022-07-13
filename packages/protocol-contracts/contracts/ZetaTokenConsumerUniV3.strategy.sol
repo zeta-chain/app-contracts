@@ -63,7 +63,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         tokenPoolFee = tokenPoolFee_;
     }
 
-    modifier noReentrant() {
+    modifier nonReentrant() {
         if (locked) revert RentrancyError();
         locked = true;
         _;
@@ -167,7 +167,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         uint256 minAmountOut,
         address outputToken,
         uint256 zetaTokenAmount
-    ) external override noReentrant returns (uint256) {
+    ) external override nonReentrant returns (uint256) {
         if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
