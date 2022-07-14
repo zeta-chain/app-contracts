@@ -22,19 +22,17 @@ interface ZetaTokenConsumerUniV2Errors {
 contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Errors {
     uint256 internal constant MAX_DEADLINE = 200;
 
-    address public uniswapV2RouterAddress;
     address internal immutable wETH;
-    address public zetaToken;
+    address public immutable zetaToken;
 
-    IUniswapV2Router02 internal uniswapV2Router;
+    IUniswapV2Router02 internal immutable uniswapV2Router;
 
     constructor(address zetaToken_, address uniswapV2Router_) {
         if (zetaToken_ == address(0) || uniswapV2Router_ == address(0)) revert InvalidAddress();
 
         zetaToken = zetaToken_;
-        uniswapV2RouterAddress = uniswapV2Router_;
         uniswapV2Router = IUniswapV2Router02(uniswapV2Router_);
-        wETH = uniswapV2Router.WETH();
+        wETH = IUniswapV2Router02(uniswapV2Router_).WETH();
     }
 
     function getZetaFromEth(address destinationAddress, uint256 minAmountOut)
@@ -74,7 +72,7 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
 
         bool success = IERC20(inputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
         if (!success) revert ErrorGettingZeta();
-        success = IERC20(inputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
+        success = IERC20(inputToken).approve(address(uniswapV2Router), inputTokenAmount);
         if (!success) revert ErrorGettingZeta();
 
         address[] memory path;
@@ -112,7 +110,7 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
 
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
-        success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
+        success = IERC20(zetaToken).approve(address(uniswapV2Router), zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
 
         address[] memory path = new address[](2);
@@ -144,7 +142,7 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
 
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
-        success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaTokenAmount);
+        success = IERC20(zetaToken).approve(address(uniswapV2Router), zetaTokenAmount);
         if (!success) revert ErrorExchangingZeta();
 
         address[] memory path;

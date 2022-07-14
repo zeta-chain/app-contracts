@@ -16,7 +16,7 @@ interface ZetaTokenConsumerUniV3Errors {
 
     error ErrorSendingETH();
 
-    error RentrancyError();
+    error ReentrancyError();
 }
 
 interface WETH9 {
@@ -64,7 +64,7 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
     }
 
     modifier nonReentrant() {
-        if (_locked) revert RentrancyError();
+        if (_locked) revert ReentrancyError();
         _locked = true;
         _;
         _locked = false;
