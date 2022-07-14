@@ -8,7 +8,7 @@ import "./interfaces/ConnectorErrors.sol";
 import "./interfaces/ZetaInterfaces.sol";
 
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
-    address public zetaToken;
+    address public immutable zetaToken;
 
     address public pauserAddress;
 
