@@ -2,6 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 
 import "./interfaces/ZetaInterfaces.sol";
@@ -10,16 +11,13 @@ interface ZetaTokenConsumerUniV2Errors {
     error InvalidAddress();
 
     error InputCantBeZero();
-
-    error ErrorGettingZeta();
-
-    error ErrorExchangingZeta();
 }
 
 /**
  * @dev Uniswap V2 strategy for ZetaTokenConsumer
  */
 contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Errors {
+    using SafeERC20 for IERC20;
     uint256 internal constant MAX_DEADLINE = 200;
 
     address internal immutable wETH;
@@ -70,10 +68,8 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         if (destinationAddress == address(0) || inputToken == address(0)) revert InvalidAddress();
         if (inputTokenAmount == 0) revert InputCantBeZero();
 
-        bool success = IERC20(inputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
-        if (!success) revert ErrorGettingZeta();
-        success = IERC20(inputToken).approve(address(uniswapV2Router), inputTokenAmount);
-        if (!success) revert ErrorGettingZeta();
+        IERC20(inputToken).safeTransferFrom(msg.sender, address(this), inputTokenAmount);
+        IERC20(inputToken).safeApprove(address(uniswapV2Router), inputTokenAmount);
 
         address[] memory path;
         if (inputToken == wETH) {
@@ -108,10 +104,8 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         if (destinationAddress == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
-        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
-        if (!success) revert ErrorExchangingZeta();
-        success = IERC20(zetaToken).approve(address(uniswapV2Router), zetaTokenAmount);
-        if (!success) revert ErrorExchangingZeta();
+        IERC20(zetaToken).safeTransferFrom(msg.sender, address(this), zetaTokenAmount);
+        IERC20(zetaToken).safeApprove(address(uniswapV2Router), zetaTokenAmount);
 
         address[] memory path = new address[](2);
         path[0] = zetaToken;
@@ -140,10 +134,8 @@ contract ZetaTokenConsumerUniV2 is ZetaTokenConsumer, ZetaTokenConsumerUniV2Erro
         if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
-        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
-        if (!success) revert ErrorExchangingZeta();
-        success = IERC20(zetaToken).approve(address(uniswapV2Router), zetaTokenAmount);
-        if (!success) revert ErrorExchangingZeta();
+        IERC20(zetaToken).safeTransferFrom(msg.sender, address(this), zetaTokenAmount);
+        IERC20(zetaToken).safeApprove(address(uniswapV2Router), zetaTokenAmount);
 
         address[] memory path;
         if (outputToken == wETH) {

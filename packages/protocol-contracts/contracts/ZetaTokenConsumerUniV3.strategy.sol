@@ -2,6 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/IQuoter.sol";
 
@@ -11,8 +12,6 @@ interface ZetaTokenConsumerUniV3Errors {
     error InvalidAddress();
 
     error InputCantBeZero();
-
-    error ErrorGettingToken();
 
     error ErrorSendingETH();
 
@@ -27,6 +26,7 @@ interface WETH9 {
  * @dev Uniswap V3 strategy for ZetaTokenConsumer
  */
 contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Errors {
+    using SafeERC20 for IERC20;
     uint256 internal constant MAX_DEADLINE = 200;
 
     uint24 public immutable zetaPoolFee;
@@ -107,10 +107,8 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         if (destinationAddress == address(0) || inputToken == address(0)) revert InvalidAddress();
         if (inputTokenAmount == 0) revert InputCantBeZero();
 
-        bool success = IERC20(inputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
-        if (!success) revert ErrorGettingToken();
-        success = IERC20(inputToken).approve(address(uniswapV3Router), inputTokenAmount);
-        if (!success) revert ErrorGettingToken();
+        IERC20(inputToken).safeTransferFrom(msg.sender, address(this), inputTokenAmount);
+        IERC20(inputToken).safeApprove(address(uniswapV3Router), inputTokenAmount);
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
@@ -134,10 +132,8 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         if (destinationAddress == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
-        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
-        if (!success) revert ErrorGettingToken();
-        success = IERC20(zetaToken).approve(address(uniswapV3Router), zetaTokenAmount);
-        if (!success) revert ErrorGettingToken();
+        IERC20(zetaToken).safeTransferFrom(msg.sender, address(this), zetaTokenAmount);
+        IERC20(zetaToken).safeApprove(address(uniswapV3Router), zetaTokenAmount);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
             deadline: block.timestamp + MAX_DEADLINE,
@@ -171,10 +167,8 @@ contract ZetaTokenConsumerUniV3 is ZetaTokenConsumer, ZetaTokenConsumerUniV3Erro
         if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
-        bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), zetaTokenAmount);
-        if (!success) revert ErrorGettingToken();
-        success = IERC20(zetaToken).approve(address(uniswapV3Router), zetaTokenAmount);
-        if (!success) revert ErrorGettingToken();
+        IERC20(zetaToken).safeTransferFrom(msg.sender, address(this), zetaTokenAmount);
+        IERC20(zetaToken).safeApprove(address(uniswapV3Router), zetaTokenAmount);
 
         ISwapRouter.ExactInputParams memory params = ISwapRouter.ExactInputParams({
             deadline: block.timestamp + MAX_DEADLINE,
