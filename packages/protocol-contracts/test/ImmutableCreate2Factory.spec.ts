@@ -4,13 +4,18 @@ import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import {
+  buildBytecode,
+  buildCreate2Address,
+  deployContractToAddress,
+  isDeployed,
+  saltToHex,
+} from "../lib/ImmutableCreate2Factory/ImmutableCreate2Factory.helpers";
+import {
   IERC20__factory,
   ImmutableCreate2Factory,
   ImmutableCreate2Factory__factory,
   ZetaEth__factory,
 } from "../typechain-types";
-import { deployContract, isDeployed } from "./deterministicDeployment.index.utils";
-import { buildBytecode, buildCreate2Address, saltToHex } from "./deterministicDeployment.utils";
 
 chai.should();
 
@@ -39,7 +44,7 @@ describe("Deterministic deployment tests", () => {
       const expectedAddress = await immutableCreate2.findCreate2Address(salthex, bytecode);
 
       // Deploy contract
-      const { address } = await deployContract({
+      const { address } = await deployContractToAddress({
         constructorArgs: constructorArgs,
         constructorTypes: constructorTypes,
         contractBytecode: ZetaEth__factory.bytecode,
