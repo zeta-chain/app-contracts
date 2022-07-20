@@ -2,6 +2,8 @@ import { BaseContract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 
 import {
+  ImmutableCreate2Factory,
+  ImmutableCreate2Factory__factory,
   ZetaConnectorBase,
   ZetaConnectorBase__factory as ZetaConnectorBaseFactory,
   ZetaConnectorEth,
@@ -87,6 +89,16 @@ export const deployZetaNonEth = async ({ args }: { args: Parameters<ZetaNonEthFa
   await zetaNonEthContract.deployed();
 
   return zetaNonEthContract;
+};
+
+export const deployImmutableCreate2Factory = async () => {
+  const Factory = (await ethers.getContractFactory("ImmutableCreate2Factory")) as ImmutableCreate2Factory__factory;
+
+  const ImmutableCreate2FactoryContract = (await Factory.deploy()) as ImmutableCreate2Factory;
+
+  await ImmutableCreate2FactoryContract.deployed();
+
+  return ImmutableCreate2FactoryContract;
 };
 
 export const getZetaConnectorEth = async (params: GetContractParams<ZetaConnectorEthFactory>) =>
