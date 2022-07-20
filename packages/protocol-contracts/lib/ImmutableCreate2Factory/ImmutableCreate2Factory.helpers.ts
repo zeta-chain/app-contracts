@@ -78,7 +78,6 @@ export async function deployContractToAddress({
 }
 
 /**
- * Determine if a given contract is deployed.
  *
  * Determines if a given contract is deployed at the address provided.
  *
