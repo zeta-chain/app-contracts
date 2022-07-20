@@ -10,6 +10,7 @@ export type ZetaAddress =
   | "crossChainCounter"
   | "crossChainNft"
   | "dai"
+  | "immutableCreate2Factory"
   | "multiChainSwap"
   | "multiChainSwapZetaConnector"
   | "multiChainValue"
@@ -30,6 +31,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   crossChainCounter: true,
   crossChainNft: true,
   dai: true,
+  immutableCreate2Factory: true,
   multiChainSwap: true,
   multiChainSwapZetaConnector: true,
   multiChainValue: true,
