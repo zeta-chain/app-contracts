@@ -35,11 +35,6 @@ export const encodeParams = (dataTypes: any[], data: any[]) => {
   return abiCoder.encode(dataTypes, data);
 };
 
-export const isContract = async (address: string, provider: Provider) => {
-  const code = await provider.getCode(address);
-  return code.slice(2).length > 0;
-};
-
 export async function deployContractToAddress({
   factoryAddress,
   salt,
@@ -78,9 +73,7 @@ export async function deployContractToAddress({
 }
 
 /**
- *
- * Determines if a given contract is deployed at the address provided.
- *
+ * Determines if there's a contract deployed on the provided address.
  */
 export async function isDeployed(address: string, provider: Provider) {
   const code = await provider.getCode(address);
