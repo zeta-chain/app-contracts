@@ -1,6 +1,6 @@
 {
   "bsc-testnet": {
-    "connector": "0x202aed942eb71203741eced2913a29C695a7c7F6",
+    "connector": "0x00002f0ACBE0b07804A578bAf7B8AF85913d163c",
     "crossChainCounter": "",
     "crossChainNft": "0xa9016FB99846314E0f96f657E5271cFD7919a244",
     "dai": "",
@@ -14,12 +14,12 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0xad7d0795ffdf21f20c89240D540487B1445c7D03",
+    "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "goerli": {
-    "connector": "0x0B16Fc7e2D627d82255ba21e53Cf6c11B5186046",
+    "connector": "0x00004c4789D902C33dd5eacb100e76C394e0c7C5",
     "crossChainCounter": "",
     "crossChainNft": "0xe08f1d23a68231543a595391D82c39BbaFc22470",
     "dai": "",
@@ -33,12 +33,12 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0x011a76081989aDA18d0a16bf3fee2C6c3BD07B07",
+    "zetaToken": "0x00004570eabbf0b7264664c8a17a7fe05380a8c0",
     "zetaTokenConsumerUniV2": "",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "polygon-mumbai": {
-    "connector": "0xa5467B39Ad9f51DEb6b30Abfa9828531dCBA99A9",
+    "connector": "0x00002f0ACBE0b07804A578bAf7B8AF85913d163c",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
@@ -51,12 +51,12 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0x84383be9B3Eda50ABD5899936D4963505d449de2",
+    "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "ropsten": {
-    "connector": "0x91Ea4f79D39DA890B03E965111953d0494936072",
+    "connector": "0x00002f0ACBE0b07804A578bAf7B8AF85913d163c",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
@@ -69,7 +69,7 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
-    "zetaToken": "0x3357A3bd90A001282bA2152D6c0a2372c8E0e28E",
+    "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   }

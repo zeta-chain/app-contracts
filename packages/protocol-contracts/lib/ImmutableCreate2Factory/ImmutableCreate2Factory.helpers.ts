@@ -61,10 +61,6 @@ export async function deployContractToAddress({
   });
   const result = await tx.wait();
 
-  const addr = result.logs[0].address;
-
-  assert.strictEqual(addr, computedAddr);
-
   return {
     address: computedAddr as string,
     receipt: result as TransactionReceipt,
