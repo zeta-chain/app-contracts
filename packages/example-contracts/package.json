@@ -2,6 +2,12 @@
   "name": "@zetachain/example-contracts",
   "version": "0.0.1",
   "license": "MIT",
+  "private": "true",
+  "author": "zetachain",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
