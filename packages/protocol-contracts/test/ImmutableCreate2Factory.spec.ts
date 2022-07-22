@@ -3,6 +3,7 @@ import chai, { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
+import { MAX_ETH_ADDRESS } from "../lib/contracts.constants";
 import {
   buildBytecode,
   buildCreate2Address,
@@ -68,7 +69,7 @@ describe("Deterministic deployment tests", () => {
   it("Should deploy with leading zeros", async () => {
     let saltStr = "0";
 
-    let minAddress = "0xfffffffffff";
+    let minAddress = MAX_ETH_ADDRESS;
     let minAddressSalt = "";
     for (let i = 0; i < 300; i++) {
       const salthex = saltToHex(saltStr, signer.address);
