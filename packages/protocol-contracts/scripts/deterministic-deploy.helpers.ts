@@ -1,6 +1,7 @@
 import { getAddress } from "@zetachain/addresses";
 import { BigNumber } from "ethers";
 
+import { MAX_ETH_ADDRESS } from "../lib/contracts.constants";
 import {
   buildBytecode,
   buildCreate2Address,
@@ -16,7 +17,7 @@ export const calculateBestSalt = async (
 ) => {
   const immutableCreate2Factory = getAddress("immutableCreate2Factory");
 
-  let minAddress = "0xfffffffffff";
+  let minAddress = MAX_ETH_ADDRESS;
   let minAddressSalt = "";
   let minIndex = BigNumber.from(0);
 
