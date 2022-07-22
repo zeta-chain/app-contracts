@@ -4,16 +4,12 @@ import { network } from "hardhat";
 
 import { ZETA_INITIAL_SUPPLY } from "../lib/contracts.constants";
 import { isEthNetworkName } from "../lib/contracts.helpers";
-import {
-  ZetaConnectorEth__factory,
-  ZetaConnectorNonEth__factory,
-  ZetaEth__factory,
-  ZetaNonEth__factory,
-} from "../typechain-types";
+import { ZetaEth__factory, ZetaNonEth__factory } from "../typechain-types";
 import { calculateBestSalt } from "./deterministic-deploy.helpers";
 
+/// dev: this is not in constant file because this is and aux script to run locally and each dev should choose this number
 const MAX_ITERATIONS = BigNumber.from(100000);
-const DEPLOYER_ADDRESS = "0x25A92a5853702F199bb2d805Bba05d67025214A8";
+const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
 
 export async function deterministicDeployGetSaltZetaToken() {
   if (!isNetworkName(network.name)) {
