@@ -2,13 +2,12 @@ import { getAddress, isNetworkName, saveAddress } from "@zetachain/addresses";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
+import { ZETA_CONNECTOR_SALT_NUMBER_ETH, ZETA_CONNECTOR_SALT_NUMBER_NON_ETH } from "../lib/contracts.constants";
 import { isEthNetworkName } from "../lib/contracts.helpers";
 import { deployContractToAddress, saltToHex } from "../lib/ImmutableCreate2Factory/ImmutableCreate2Factory.helpers";
 import { ZetaConnectorEth__factory, ZetaConnectorNonEth__factory } from "../typechain-types";
 
-const DEPLOYER_ADDRESS = "0x25A92a5853702F199bb2d805Bba05d67025214A8";
-const SALT_NUMBER_ETH = "62735";
-const SALT_NUMBER_NON_ETH = "3024";
+const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
 
 export async function deterministicDeployZetaConnector() {
   if (!isNetworkName(network.name)) {
@@ -18,7 +17,9 @@ export async function deterministicDeployZetaConnector() {
   const accounts = await ethers.getSigners();
   const [signer] = accounts;
 
-  const saltNumber = isEthNetworkName(network.name) ? SALT_NUMBER_ETH : SALT_NUMBER_NON_ETH;
+  const saltNumber = isEthNetworkName(network.name)
+    ? ZETA_CONNECTOR_SALT_NUMBER_ETH
+    : ZETA_CONNECTOR_SALT_NUMBER_NON_ETH;
   const saltStr = BigNumber.from(saltNumber).toHexString();
 
   const zetaToken = getAddress("zetaToken");
