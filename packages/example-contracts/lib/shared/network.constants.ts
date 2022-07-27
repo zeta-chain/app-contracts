@@ -67,6 +67,8 @@ export const networkVariables: Record<NetworkName, NetworkVariables> = {
 };
 
 export const isNetworkName = (str: string): str is NetworkName => str in networkVariables;
+export const isEthNetworkName = (networkName: string) =>
+  networkName === "eth-localnet" || networkName === "goerli" || networkName === "eth-mainnet";
 
 export type AddressConstants = Partial<
   Record<

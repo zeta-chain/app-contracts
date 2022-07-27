@@ -25,7 +25,11 @@ const config: HardhatUserConfig = {
     ...getHardhatConfigNetworks(PRIVATE_KEYS),
   },
   solidity: {
-    compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.7" }],
+    compilers: [
+      { version: "0.5.10" /** For create2 factory */ },
+      { version: "0.6.6" /** For uniswap v2 */ },
+      { version: "0.8.7" },
+    ],
     settings: {
       /**
        * @see {@link https://smock.readthedocs.io/en/latest/getting-started.html}

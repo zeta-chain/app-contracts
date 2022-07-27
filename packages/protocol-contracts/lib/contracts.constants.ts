@@ -9,3 +9,5 @@ export const ZETA_TOKEN_SALT_NUMBER_NON_ETH = "29411";
 /// dev: this values should be calculated using get-salt script
 export const ZETA_CONNECTOR_SALT_NUMBER_ETH = "91340";
 export const ZETA_CONNECTOR_SALT_NUMBER_NON_ETH = "3024";
+
+export const ZETA_CONSUMER_SALT_NUMBER = "0";
