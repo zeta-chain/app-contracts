@@ -71,7 +71,7 @@ export const isZetaLocalnet = (networkName: string | undefined): networkName is 
   networkName === "troy";
 
 export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressGroup> => ({
-  troy: JSON.parse(readFileSync(join(dirname, "./addresses/addresses.troy.json"), "utf8")) as LocalnetAddressGroup,
+  troy: JSON.parse(readFileSync(join(dirname, "./addresses.troy.json"), "utf8")) as LocalnetAddressGroup,
 });
 
 /**
@@ -90,7 +90,7 @@ export const isZetaTestnet = (networkName: string | undefined): networkName is Z
   networkName === "athens";
 
 export const getTestnetList = (): Record<ZetaTestnetNetworkName, TestnetAddressGroup> => ({
-  athens: JSON.parse(readFileSync(join(dirname, "./addresses/addresses.athens.json"), "utf8")) as TestnetAddressGroup,
+  athens: JSON.parse(readFileSync(join(dirname, "./addresses.athens.json"), "utf8")) as TestnetAddressGroup,
 });
 
 /**
@@ -105,7 +105,7 @@ export const isZetaMainnet = (networkName: string | undefined): networkName is Z
   networkName === "mainnet";
 
 const getMainnetList: () => Record<ZetaMainnetNetworkName, MainnetAddressGroup> = () => ({
-  mainnet: JSON.parse(readFileSync(join(dirname, "./addresses/addresses.mainnet.json"), "utf8")) as MainnetAddressGroup,
+  mainnet: JSON.parse(readFileSync(join(dirname, "./addresses.mainnet.json"), "utf8")) as MainnetAddressGroup,
 });
 
 /**
@@ -221,7 +221,7 @@ export const saveAddress = (addressName: ZetaAddress, newAddress: string) => {
 
   console.log(`Updating ${addressName} address on ${ZETA_NETWORK}: ${networkName}.`);
 
-  const filename = join(dirname, `./../../addresses/src/addresses/addresses.${ZETA_NETWORK}.json`);
+  const filename = join(dirname, `./addresses.${ZETA_NETWORK}.json`);
 
   if (isZetaLocalnet(ZETA_NETWORK) && isLocalNetworkName(networkName)) {
     const newAddresses: LocalnetAddressGroup = JSON.parse(readFileSync(filename, "utf8"));
@@ -270,7 +270,7 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
   if (!addressName) throw new Error("Emtpy address name.");
   console.log("dir", dirname);
 
-  const addressesdirname = join(dirname, `./addresses`);
+  const addressesdirname = join(dirname, `./`);
   const addressesFiles = readdirSync(addressesdirname);
 
   addressesFiles.forEach((addressesFilename) => {
@@ -298,7 +298,7 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
 
 export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) => {
   if (!newNetworkName) throw new Error("Emtpy networkName name.");
-  const addressesdirname = join(dirname, `./addresses`);
+  const addressesdirname = join(dirname, `./`);
   const addressesFiles = readdirSync(addressesdirname);
 
   addressesFiles.forEach((addressFilename) => {
