@@ -5,6 +5,12 @@ import { join } from "path";
 
 import { deepCloneSerializable } from "./misc.helpers";
 
+const LOCAL_PKG = "addresses-node";
+const PUBLIC_PKG = "addresses";
+
+const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG);
+console.log("dirname", dirname);
+
 export type ZetaAddress =
   | "connector"
   | "crossChainCounter"
@@ -65,7 +71,7 @@ export const isZetaLocalnet = (networkName: string | undefined): networkName is 
   networkName === "troy";
 
 export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressGroup> => ({
-  troy: JSON.parse(readFileSync(join(__dirname, "./addresses/addresses.troy.json"), "utf8")) as LocalnetAddressGroup,
+  troy: JSON.parse(readFileSync(join(dirname, "./addresses/addresses.troy.json"), "utf8")) as LocalnetAddressGroup,
 });
 
 /**
@@ -84,7 +90,7 @@ export const isZetaTestnet = (networkName: string | undefined): networkName is Z
   networkName === "athens";
 
 export const getTestnetList = (): Record<ZetaTestnetNetworkName, TestnetAddressGroup> => ({
-  athens: JSON.parse(readFileSync(join(__dirname, "./addresses/addresses.athens.json"), "utf8")) as TestnetAddressGroup,
+  athens: JSON.parse(readFileSync(join(dirname, "./addresses/addresses.athens.json"), "utf8")) as TestnetAddressGroup,
 });
 
 /**
@@ -99,9 +105,7 @@ export const isZetaMainnet = (networkName: string | undefined): networkName is Z
   networkName === "mainnet";
 
 const getMainnetList: () => Record<ZetaMainnetNetworkName, MainnetAddressGroup> = () => ({
-  mainnet: JSON.parse(
-    readFileSync(join(__dirname, "./addresses/addresses.mainnet.json"), "utf8")
-  ) as MainnetAddressGroup,
+  mainnet: JSON.parse(readFileSync(join(dirname, "./addresses/addresses.mainnet.json"), "utf8")) as MainnetAddressGroup,
 });
 
 /**
@@ -217,7 +221,7 @@ export const saveAddress = (addressName: ZetaAddress, newAddress: string) => {
 
   console.log(`Updating ${addressName} address on ${ZETA_NETWORK}: ${networkName}.`);
 
-  const filename = join(__dirname, `./addresses/addresses.${ZETA_NETWORK}.json`);
+  const filename = join(dirname, `./../../addresses/src/addresses/addresses.${ZETA_NETWORK}.json`);
 
   if (isZetaLocalnet(ZETA_NETWORK) && isLocalNetworkName(networkName)) {
     const newAddresses: LocalnetAddressGroup = JSON.parse(readFileSync(filename, "utf8"));
@@ -262,13 +266,15 @@ export const saveAddress = (addressName: ZetaAddress, newAddress: string) => {
 };
 
 export const addNewAddress = (addressName: string, addressValue: string = "") => {
+  console.log("dir", dirname);
   if (!addressName) throw new Error("Emtpy address name.");
+  console.log("dir", dirname);
 
-  const addressesDirname = join(__dirname, `./addresses`);
-  const addressesFiles = readdirSync(addressesDirname);
+  const addressesdirname = join(dirname, `./addresses`);
+  const addressesFiles = readdirSync(addressesdirname);
 
   addressesFiles.forEach((addressesFilename) => {
-    const addressPath = join(addressesDirname, addressesFilename);
+    const addressPath = join(addressesdirname, addressesFilename);
 
     const addressesByNetwork = JSON.parse(readFileSync(addressPath, "utf8"));
 
@@ -292,12 +298,11 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
 
 export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) => {
   if (!newNetworkName) throw new Error("Emtpy networkName name.");
-
-  const addressesDirname = join(__dirname, `./addresses`);
-  const addressesFiles = readdirSync(addressesDirname);
+  const addressesdirname = join(dirname, `./addresses`);
+  const addressesFiles = readdirSync(addressesdirname);
 
   addressesFiles.forEach((addressFilename) => {
-    const addressesFilePath = join(addressesDirname, addressFilename);
+    const addressesFilePath = join(addressesdirname, addressFilename);
     /**
      * Gets the Zeta network name using the filename, e.g.: addresses.athens.json -> athens
      */
