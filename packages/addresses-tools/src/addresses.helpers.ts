@@ -5,7 +5,7 @@ import { join } from "path";
 
 import { deepCloneSerializable } from "./misc.helpers";
 
-const LOCAL_PKG = "addresses-node";
+const LOCAL_PKG = "addresses-tools";
 const PUBLIC_PKG = "addresses";
 
 const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG);

@@ -1,7 +1,8 @@
 {
-  "name": "@zetachain/addresses-node",
+  "name": "@zetachain/addresses-tools",
   "version": "0.0.1",
   "license": "MIT",
+  "private": true,
   "author": "zetachain",
   "publishConfig": {
     "access": "public",
