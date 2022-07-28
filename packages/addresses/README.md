@@ -1,3 +1,3 @@
 # ZetaChain addresses
 
-This package includes utilities to work with multiple addresses and networks.
+This package includes the addresses and networks to use Zetachain.

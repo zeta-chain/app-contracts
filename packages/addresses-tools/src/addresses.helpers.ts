@@ -9,7 +9,6 @@ const LOCAL_PKG = "addresses-tools";
 const PUBLIC_PKG = "addresses";
 
 const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG);
-console.log("dirname", dirname);
 
 export type ZetaAddress =
   | "connector"
@@ -266,9 +265,7 @@ export const saveAddress = (addressName: ZetaAddress, newAddress: string) => {
 };
 
 export const addNewAddress = (addressName: string, addressValue: string = "") => {
-  console.log("dir", dirname);
   if (!addressName) throw new Error("Emtpy address name.");
-  console.log("dir", dirname);
 
   const addressesdirname = join(dirname, `./`);
   const addressesFiles = readdirSync(addressesdirname);
