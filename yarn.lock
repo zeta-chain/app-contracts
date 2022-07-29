@@ -2429,9 +2429,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/addresses-node@workspace:packages/addresses-node":
+"@zetachain/addresses-tools@workspace:^, @zetachain/addresses-tools@workspace:packages/addresses-tools":
   version: 0.0.0-use.local
-  resolution: "@zetachain/addresses-node@workspace:packages/addresses-node"
+  resolution: "@zetachain/addresses-tools@workspace:packages/addresses-tools"
+  dependencies:
+    "@zetachain/addresses": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -2449,6 +2451,7 @@ __metadata:
     "@openzeppelin/contracts": 4.6.0
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/addresses": "workspace:^"
+    "@zetachain/addresses-tools": "workspace:^"
     "@zetachain/protocol-contracts": "workspace:^"
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
@@ -2464,6 +2467,8 @@ __metadata:
     "@openzeppelin/contracts": 4.6.0
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@uniswap/v3-periphery": 1.1.0
+    "@zetachain/addresses": "workspace:^"
+    "@zetachain/addresses-tools": "workspace:^"
     ethers: 5.6.8
     tsconfig-paths: ^3.14.1
   languageName: unknown

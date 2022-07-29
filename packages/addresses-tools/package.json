@@ -11,5 +11,8 @@
   "main": "src/index.ts",
   "scripts": {
     "tsc:watch": "npx tsc --watch"
+  },
+  "devDependencies": {
+    "@zetachain/addresses": "workspace:^"
   }
 }

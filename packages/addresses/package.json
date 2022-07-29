@@ -7,6 +7,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "main": "src/index.ts",
   "scripts": {
     "tsc:watch": "npx tsc --watch"
   }

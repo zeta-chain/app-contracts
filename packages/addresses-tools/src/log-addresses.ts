@@ -1,5 +1,6 @@
-import { getExplorerUrl, getTestnetList, isZetaNetworkName, ZetaTestnetNetworkName } from "./addresses.helpers";
+import { getTestnetList, isZetaNetworkName, ZetaTestnetNetworkName } from "@zetachain/addresses";
 
+import { getExplorerUrl } from "./addresses.helpers";
 const network = process.argv[2];
 
 const toFilter = process.argv[3].split(",").map((w) => w.toLowerCase());

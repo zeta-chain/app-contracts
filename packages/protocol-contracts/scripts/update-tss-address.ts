@@ -1,4 +1,5 @@
-import { getAddress, isNetworkName, saveAddress } from "@zetachain/addresses";
+import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { saveAddress } from "@zetachain/addresses-tools";
 import { ethers, network } from "hardhat";
 
 import { getZetaConnectorEth, getZetaConnectorNonEth, isEthNetworkName } from "../lib/contracts.helpers";
