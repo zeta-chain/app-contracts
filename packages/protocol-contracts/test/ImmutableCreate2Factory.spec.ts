@@ -1,4 +1,10 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import {
+  IERC20__factory,
+  ImmutableCreate2Factory,
+  ImmutableCreate2Factory__factory,
+  ZetaEth__factory,
+} from "@zetachain/interfaces/typechain-types";
 import chai, { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
@@ -10,12 +16,6 @@ import {
   isDeployed,
   saltToHex,
 } from "../lib/ImmutableCreate2Factory/ImmutableCreate2Factory.helpers";
-import {
-  IERC20__factory,
-  ImmutableCreate2Factory,
-  ImmutableCreate2Factory__factory,
-  ZetaEth__factory,
-} from "../typechain-types";
 
 chai.should();
 

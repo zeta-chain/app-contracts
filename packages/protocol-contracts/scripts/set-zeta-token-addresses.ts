@@ -1,7 +1,6 @@
 import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { ZetaNonEth__factory as ZetaNonEthFactory } from "@zetachain/interfaces/typechain-types";
 import { ethers, network } from "hardhat";
-
-import { ZetaNonEth__factory as ZetaNonEthFactory } from "../typechain-types";
 
 export async function setZetaAddresses() {
   if (!isNetworkName(network.name)) {

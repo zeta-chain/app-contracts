@@ -1,0 +1,22 @@
+[
+  {
+    "inputs": [],
+    "name": "ErrorSendingETH",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InputCantBeZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReentrancyError",
+    "type": "error"
+  }
+]
