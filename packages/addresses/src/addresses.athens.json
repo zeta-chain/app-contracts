@@ -2,10 +2,10 @@
   "bsc-testnet": {
     "connector": "0x00002f0ACBE0b07804A578bAf7B8AF85913d163c",
     "crossChainCounter": "",
-    "crossChainNft": "0xa9016FB99846314E0f96f657E5271cFD7919a244",
+    "crossChainNft": "0x5fb688006735f3Cf448ac69066d0f3151930171d",
     "dai": "",
-    "multiChainSwap": "0xD4fAa6BAbBb97E0BDF755D396af48CB66eBa736c",
-    "multiChainValue": "0x8f56b3e5b0D4bC33E7E52eC55271e73ece6024c6",
+    "multiChainSwap": "0x194b7036ee870fa71c7d9c4e27c54ad8c062e93d",
+    "multiChainValue": "0x8b685e9F6E341C409d3Fc5f4E007131AE2E5efbd",
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
@@ -15,16 +15,16 @@
     "usdc": "",
     "weth9": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
-    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV2": "0xa67b03930eb53d0462dCc0835e97964C062042fb",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "goerli": {
     "connector": "0x0000B8f5AF86c9B430e9693317017caa486Ba86F",
     "crossChainCounter": "",
-    "crossChainNft": "0xe08f1d23a68231543a595391D82c39BbaFc22470",
+    "crossChainNft": "0x2872E158627372044D892c98D25e5f203da4a8Fa",
     "dai": "",
-    "multiChainSwap": "0xDB6D960642ea523549Ad108F495c89cfE5E51668",
-    "multiChainValue": "0x0EaA929a2874183e2324Bb2745F812c942b00F60",
+    "multiChainSwap": "0xb4fe3ed46e65fc5eb176886b08ddf2ddcdf0c7bd",
+    "multiChainValue": "0x35adF4b84b807A3Dc3eF0Cee1523A2d3B5773016",
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
@@ -34,7 +34,7 @@
     "usdc": "",
     "weth9": "",
     "zetaToken": "0xCc7bb2D219A0FC08033E130629C2B854b7bA9195",
-    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV2": "0xDDB1C86c69f258F6d33377a8725404E4393326bB",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "polygon-mumbai": {
@@ -45,7 +45,7 @@
     "multiChainValue": "0xb3021F5603291895b0Df5fC6276cda33a0B90fa6",
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
-    "uniswapV2Router02": "",
+    "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
     "uniswapV3NftManager": "",
     "uniswapV3Quoter": "",
     "uniswapV3Router": "",
@@ -70,7 +70,7 @@
     "usdc": "",
     "weth9": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
-    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV2": "0x197bC8e7e813DfB95dEf0DAA44399648bC86f329",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   }
 }
