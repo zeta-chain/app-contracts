@@ -10,7 +10,7 @@ contract CrossChainMessageConnector is ZetaConnector {
         bytes memory zetaTxSenderAddress,
         uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaValueAndGas,
+        uint256 zetaValue,
         bytes calldata message
     ) public {
         return
@@ -19,7 +19,7 @@ contract CrossChainMessageConnector is ZetaConnector {
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
-                    zetaValueAndGas: zetaValueAndGas,
+                    zetaValue: zetaValue,
                     message: message
                 })
             );
@@ -30,7 +30,7 @@ contract CrossChainMessageConnector is ZetaConnector {
         uint256 sourceChainId,
         uint256 destinationChainId,
         bytes calldata destinationAddress,
-        uint256 zetaValueAndGas,
+        uint256 remainingZetaValue,
         uint256, // destinationGasLimit
         bytes calldata message
     ) public {
@@ -41,7 +41,7 @@ contract CrossChainMessageConnector is ZetaConnector {
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,
-                    zetaValueAndGas: zetaValueAndGas,
+                    remainingZetaValue: remainingZetaValue,
                     message: message
                 })
             );

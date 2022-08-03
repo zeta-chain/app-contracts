@@ -406,7 +406,7 @@ describe("MultiChainSwap tests", () => {
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
           sourceChainId: chainBId,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
-          zetaValueAndGas: 0,
+          zetaValue: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -431,9 +431,9 @@ describe("MultiChainSwap tests", () => {
           destinationAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]),
           destinationChainId: chainBId,
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
+          remainingZetaValue: 0,
           sourceChainId: chainAId,
           zetaTxSenderAddress: deployer.address,
-          zetaValueAndGas: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
