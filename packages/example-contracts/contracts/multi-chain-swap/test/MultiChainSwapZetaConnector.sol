@@ -16,7 +16,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         bytes memory zetaTxSenderAddress,
         uint256 sourceChainId,
         address destinationAddress,
-        uint256 zetaValueAndGas,
+        uint256 zetaValue,
         bytes calldata message
     ) public {
         return
@@ -25,7 +25,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
-                    zetaValue: zetaValueAndGas,
+                    zetaValue: zetaValue,
                     message: message
                 })
             );
@@ -36,7 +36,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         uint256 sourceChainId,
         uint256 destinationChainId,
         bytes calldata destinationAddress,
-        uint256 zetaValueAndGas,
+        uint256 remainingZetaValue,
         uint256, // destinationGasLimit
         bytes calldata message
     ) public {
@@ -47,7 +47,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,
-                    remainingZetaValue: zetaValueAndGas,
+                    remainingZetaValue: remainingZetaValue,
                     message: message
                 })
             );
