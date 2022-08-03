@@ -188,7 +188,7 @@ export const getAddress = (
   throw new Error(`Invalid ZETA_NETWORK + network combination ${ZETA_NETWORK} ${networkName}.`);
 };
 
-export const getAddressAsync = async (
+export const loadAddressFromFile = async (
   address: ZetaAddress,
   {
     customNetworkName,
