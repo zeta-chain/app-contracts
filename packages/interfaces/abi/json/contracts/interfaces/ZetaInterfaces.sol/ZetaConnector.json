@@ -1,0 +1,47 @@
+[
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "destinationChainId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "destinationAddress",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint256",
+            "name": "destinationGasLimit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "message",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint256",
+            "name": "zetaValueAndGas",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes",
+            "name": "zetaParams",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct ZetaInterfaces.SendInput",
+        "name": "input",
+        "type": "tuple"
+      }
+    ],
+    "name": "send",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

@@ -2,7 +2,6 @@ import { getAddress, isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
 import { getZetaFactoryEth, getZetaFactoryNonEth, isEthNetworkName } from "../lib/contracts.helpers";
-import { ZetaEth__factory as ZetaEthFactory, ZetaNonEth__factory as ZetaNonEthFactory } from "../typechain-types";
 
 const approvalAmount = ethers.utils.parseEther("10000000.0");
 

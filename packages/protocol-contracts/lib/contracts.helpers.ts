@@ -1,6 +1,3 @@
-import { BaseContract, ContractFactory } from "ethers";
-import { ethers } from "hardhat";
-
 import {
   ImmutableCreate2Factory,
   ImmutableCreate2Factory__factory,
@@ -22,7 +19,9 @@ import {
   ZetaTokenConsumerUniV2__factory as ZetaTokenConsumerUniV2Factory,
   ZetaTokenConsumerUniV3,
   ZetaTokenConsumerUniV3__factory as ZetaTokenConsumerUniV3Factory,
-} from "../typechain-types";
+} from "@zetachain/interfaces/typechain-types";
+import { BaseContract, ContractFactory } from "ethers";
+import { ethers } from "hardhat";
 
 export const isEthNetworkName = (networkName: string) =>
   networkName === "eth-localnet" || networkName === "goerli" || networkName === "eth-mainnet";

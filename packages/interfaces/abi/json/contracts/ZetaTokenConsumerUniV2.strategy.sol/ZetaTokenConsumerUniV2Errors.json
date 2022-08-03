@@ -1,0 +1,12 @@
+[
+  {
+    "inputs": [],
+    "name": "InputCantBeZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidAddress",
+    "type": "error"
+  }
+]
