@@ -27,7 +27,7 @@ interface ZetaInterfaces {
         bytes zetaTxSenderAddress;
         uint256 sourceChainId;
         address destinationAddress;
-        uint256 zetaValueAndGas;
+        uint256 zetaValue;
         bytes message;
     }
 
@@ -39,7 +39,7 @@ interface ZetaInterfaces {
         uint256 sourceChainId;
         bytes destinationAddress;
         uint256 destinationChainId;
-        uint256 zetaValueAndGas;
+        uint256 remainingZetaValue;
         bytes message;
     }
 }

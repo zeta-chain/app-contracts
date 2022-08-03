@@ -99,7 +99,7 @@ describe("CrossChainMessage tests", () => {
           message: encoder.encode(["address", "string"], [deployerAddress, SAMPLE_TEXT]),
           sourceChainId: 1,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainMessageContractChainA.address]),
-          zetaValueAndGas: 0,
+          zetaValue: 0,
         })
       ).to.be.revertedWith(`InvalidCaller("${deployer.address}")`);
     });

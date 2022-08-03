@@ -38,7 +38,7 @@ describe("ZetaInteractor tests", () => {
           message: encoder.encode(["address"], [zetaInteractorMock.address]),
           sourceChainId: chainBId,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          zetaValueAndGas: 0,
+          zetaValue: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -50,7 +50,7 @@ describe("ZetaInteractor tests", () => {
           message: encoder.encode(["address"], [crossChainContractB.address]),
           sourceChainId: chainBId,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          zetaValueAndGas: 0,
+          zetaValue: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidZetaMessageCall"));
     });
@@ -63,9 +63,9 @@ describe("ZetaInteractor tests", () => {
           destinationAddress: ethers.utils.solidityPack(["address"], [crossChainContractB.address]),
           destinationChainId: chainBId,
           message: encoder.encode(["address"], [zetaInteractorMock.address]),
+          remainingZetaValue: 0,
           sourceChainId: chainAId,
           zetaTxSenderAddress: deployer.address,
-          zetaValueAndGas: 0,
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });

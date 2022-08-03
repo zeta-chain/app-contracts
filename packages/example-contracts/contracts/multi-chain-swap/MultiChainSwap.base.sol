@@ -240,18 +240,18 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
 
         uint256 outTokenFinalAmount;
         if (destinationOutToken == zetaToken) {
-            if (zetaMessage.zetaValueAndGas < outTokenMinAmount) revert InsufficientOutToken();
+            if (zetaMessage.zetaValue < outTokenMinAmount) revert InsufficientOutToken();
 
-            bool success = IERC20(zetaToken).transfer(receiverAddress, zetaMessage.zetaValueAndGas);
+            bool success = IERC20(zetaToken).transfer(receiverAddress, zetaMessage.zetaValue);
             if (!success) revert ErrorTransferringTokens(zetaToken);
 
-            outTokenFinalAmount = zetaMessage.zetaValueAndGas;
+            outTokenFinalAmount = zetaMessage.zetaValue;
         } else {
             /**
              * @dev If the out token is not Zeta, get it using Uniswap
              */
             {
-                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaMessage.zetaValueAndGas);
+                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaMessage.zetaValue);
                 if (!success) revert ErrorApprovingTokens(zetaToken);
             }
 
@@ -270,7 +270,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             uint256[] memory amounts;
             if (isDestinationOutETH) {
                 amounts = uniswapV2Router.swapExactTokensForETH(
-                    zetaMessage.zetaValueAndGas,
+                    zetaMessage.zetaValue,
                     outTokenMinAmount,
                     path,
                     receiverAddress,
@@ -278,7 +278,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                 );
             } else {
                 amounts = uniswapV2Router.swapExactTokensForTokens(
-                    zetaMessage.zetaValueAndGas,
+                    zetaMessage.zetaValue,
                     outTokenMinAmount,
                     path,
                     receiverAddress,
@@ -323,16 +323,20 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
 
         uint256 inputTokenReturnedAmount;
         if (sourceInputToken == zetaToken) {
-            bool success1 = IERC20(zetaToken).approve(address(this), zetaRevert.zetaValueAndGas);
-            bool success2 = IERC20(zetaToken).transferFrom(address(this), sourceTxOrigin, zetaRevert.zetaValueAndGas);
+            bool success1 = IERC20(zetaToken).approve(address(this), zetaRevert.remainingZetaValue);
+            bool success2 = IERC20(zetaToken).transferFrom(
+                address(this),
+                sourceTxOrigin,
+                zetaRevert.remainingZetaValue
+            );
             if (!success1 || !success2) revert ErrorTransferringTokens(zetaToken);
-            inputTokenReturnedAmount = zetaRevert.zetaValueAndGas;
+            inputTokenReturnedAmount = zetaRevert.remainingZetaValue;
         } else {
             /**
              * @dev If the source input token is not Zeta, trade it using Uniswap
              */
             {
-                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaRevert.zetaValueAndGas);
+                bool success = IERC20(zetaToken).approve(uniswapV2RouterAddress, zetaRevert.remainingZetaValue);
                 if (!success) revert ErrorTransferringTokens(zetaToken);
             }
 
@@ -352,7 +356,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
 
                 if (inputTokenIsETH) {
                     amounts = uniswapV2Router.swapExactTokensForETH(
-                        zetaRevert.zetaValueAndGas,
+                        zetaRevert.remainingZetaValue,
                         0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
                         path,
                         sourceTxOrigin,
@@ -360,7 +364,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                     );
                 } else {
                     amounts = uniswapV2Router.swapExactTokensForTokens(
-                        zetaRevert.zetaValueAndGas,
+                        zetaRevert.remainingZetaValue,
                         0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
                         path,
                         sourceTxOrigin,

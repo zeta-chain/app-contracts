@@ -25,7 +25,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
-                    zetaValueAndGas: zetaValueAndGas,
+                    zetaValue: zetaValueAndGas,
                     message: message
                 })
             );
@@ -47,7 +47,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
                     sourceChainId: sourceChainId,
                     destinationAddress: destinationAddress,
                     destinationChainId: destinationChainId,
-                    zetaValueAndGas: zetaValueAndGas,
+                    remainingZetaValue: zetaValueAndGas,
                     message: message
                 })
             );
