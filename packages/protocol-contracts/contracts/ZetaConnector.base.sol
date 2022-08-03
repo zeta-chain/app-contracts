@@ -23,7 +23,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
         address sourceTxOriginAddress,
         address indexed zetaTxSenderAddress,
         uint256 indexed destinationChainId,
-        bytes indexed destinationAddress,
+        bytes destinationAddress,
         uint256 zetaValueAndGas,
         uint256 destinationGasLimit,
         bytes message,
