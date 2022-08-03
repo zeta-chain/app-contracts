@@ -2460,6 +2460,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@zetachain/interfaces@workspace:^, @zetachain/interfaces@workspace:packages/interfaces":
+  version: 0.0.0-use.local
+  resolution: "@zetachain/interfaces@workspace:packages/interfaces"
+  languageName: unknown
+  linkType: soft
+
 "@zetachain/protocol-contracts@workspace:^, @zetachain/protocol-contracts@workspace:packages/protocol-contracts":
   version: 0.0.0-use.local
   resolution: "@zetachain/protocol-contracts@workspace:packages/protocol-contracts"
@@ -2469,7 +2475,9 @@ __metadata:
     "@uniswap/v3-periphery": 1.1.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
+    "@zetachain/interfaces": "workspace:^"
     ethers: 5.6.8
+    hardhat-abi-exporter: ^2.10.0
     tsconfig-paths: ^3.14.1
   languageName: unknown
   linkType: soft
@@ -2703,7 +2711,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-colors@npm:^4.1.3":
+"ansi-colors@npm:^4.1.0, ansi-colors@npm:^4.1.3":
   version: 4.1.3
   resolution: "ansi-colors@npm:4.1.3"
   checksum: a9c2ec842038a1fabc7db9ece7d3177e2fe1c5dc6f0c51ecfbf5f39911427b89c00b5dc6b8bd95f82a26e9b16aaae2e83d45f060e98070ce4d1333038edceb0e
@@ -5290,6 +5298,20 @@ __metadata:
   version: 1.0.0
   resolution: "delegates@npm:1.0.0"
   checksum: a51744d9b53c164ba9c0492471a1a2ffa0b6727451bdc89e31627fdf4adda9d51277cfcbfb20f0a6f08ccb3c436f341df3e92631a3440226d93a8971724771fd
+  languageName: node
+  linkType: hard
+
+"delete-empty@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "delete-empty@npm:3.0.0"
+  dependencies:
+    ansi-colors: ^4.1.0
+    minimist: ^1.2.0
+    path-starts-with: ^2.0.0
+    rimraf: ^2.6.2
+  bin:
+    delete-empty: bin/cli.js
+  checksum: 1e2b030346683f49b12460b91d7e1793fc61e9aa0be152a1b31317363632e92426be270f8d635b89d3915ae7da753dcfa6e3bd200f62edf21eaa876ef4443fd2
   languageName: node
   linkType: hard
 
@@ -7890,6 +7912,18 @@ __metadata:
   version: 2.1.0
   resolution: "hard-rejection@npm:2.1.0"
   checksum: 7baaf80a0c7fff4ca79687b4060113f1529589852152fa935e6787a2bc96211e784ad4588fb3048136ff8ffc9dfcf3ae385314a5b24db32de20bea0d1597f9dc
+  languageName: node
+  linkType: hard
+
+"hardhat-abi-exporter@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "hardhat-abi-exporter@npm:2.10.0"
+  dependencies:
+    "@ethersproject/abi": ^5.5.0
+    delete-empty: ^3.0.0
+  peerDependencies:
+    hardhat: ^2.0.0
+  checksum: 9f32e097b256ea8308d9e738594c88895db387f17b6f92924bad7de2f3209ca26754a8519940578622f9e8df7e19bd1e4e47058c0cef8d100d4ad2977650f5e7
   languageName: node
   linkType: hard
 
@@ -11432,6 +11466,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-starts-with@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "path-starts-with@npm:2.0.0"
+  checksum: c780e5feb53f37a0cc78c446181aac2d1e4554e5693bbc4ad03c99157b9411ade26a3503dcd5b3b8f0fd56d36daa60ce5a8c24d66b54a400c812fe11eb5bcab9
+  languageName: node
+  linkType: hard
+
 "path-to-regexp@npm:0.1.7":
   version: 0.1.7
   resolution: "path-to-regexp@npm:0.1.7"
@@ -12446,7 +12487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^2.2.8, rimraf@npm:^2.6.3":
+"rimraf@npm:^2.2.8, rimraf@npm:^2.6.2, rimraf@npm:^2.6.3":
   version: 2.7.1
   resolution: "rimraf@npm:2.7.1"
   dependencies:

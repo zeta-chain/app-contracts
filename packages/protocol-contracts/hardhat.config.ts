@@ -2,8 +2,9 @@ import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import "@typechain/hardhat";
 import "tsconfig-paths/register";
+import "hardhat-abi-exporter";
 
-import { getHardhatConfigNetworks, getHardhatConfigScanners } from "@zetachain/addresses/networks";
+import { getHardhatConfigNetworks, getHardhatConfigScanners } from "@zetachain/addresses-tools/networks";
 import * as dotenv from "dotenv";
 import type { HardhatUserConfig } from "hardhat/types";
 
@@ -13,6 +14,13 @@ const PRIVATE_KEYS =
   process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`, `0x${process.env.TSS_PRIVATE_KEY}`] : [];
 
 const config: HardhatUserConfig = {
+  abiExporter: [
+    {
+      format: "json",
+      path: "../interfaces/abi/json",
+      runOnCompile: true,
+    },
+  ],
   etherscan: {
     ...getHardhatConfigScanners(),
   },
@@ -26,6 +34,10 @@ const config: HardhatUserConfig = {
       { version: "0.7.6" /** For uniswap v3 */ },
       { version: "0.8.7" },
     ],
+  },
+  typechain: {
+    alwaysGenerateOverloads: false,
+    outDir: "../interfaces/typechain-types",
   },
 };
 

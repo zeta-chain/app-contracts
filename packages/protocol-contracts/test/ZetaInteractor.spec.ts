@@ -1,9 +1,9 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { ZetaInteractorMock } from "@zetachain/interfaces/typechain-types";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { getZetaInteractorMock } from "../lib/contracts.helpers";
-import { ZetaInteractorMock } from "../typechain-types";
 import { getCustomErrorMessage } from "./test.helpers";
 
 chai.should();
