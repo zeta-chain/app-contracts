@@ -190,21 +190,21 @@ export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) 
   console.log(`To enable IntelliSense, add the network (${newNetworkName}) to the constants (addresses.helpers.ts).`);
 };
 
-export const getLocalnetListAsync = async (): Promise<Record<ZetaLocalNetworkName, LocalnetAddressGroup>> => {
+export const getLocalnetListFromFile = async (): Promise<Record<ZetaLocalNetworkName, LocalnetAddressGroup>> => {
   const troy = await require("./addresses.troy.json");
   return {
     troy: troy as LocalnetAddressGroup,
   };
 };
 
-export const getTestnetListAsync = async (): Promise<Record<ZetaTestnetNetworkName, TestnetAddressGroup>> => {
+export const getTestnetListFromFile = async (): Promise<Record<ZetaTestnetNetworkName, TestnetAddressGroup>> => {
   const athens = await require("./addresses.athens.json");
   return {
     athens: athens as TestnetAddressGroup,
   };
 };
 
-export const getMainnetListAsync = async (): Promise<Record<ZetaMainnetNetworkName, MainnetAddressGroup>> => {
+export const getMainnetListFromFile = async (): Promise<Record<ZetaMainnetNetworkName, MainnetAddressGroup>> => {
   const mainnet = await require("./addresses.mainnet.json");
   return {
     mainnet: mainnet as MainnetAddressGroup,
@@ -229,15 +229,15 @@ export const loadAddressFromFile = async (
   console.log(`Getting ${address} address from ${ZETA_NETWORK}: ${networkName}.`);
 
   if (isZetaLocalnet(ZETA_NETWORK) && isLocalNetworkName(networkName)) {
-    return (await getLocalnetListAsync())[ZETA_NETWORK][networkName][address];
+    return (await getLocalnetListFromFile())[ZETA_NETWORK][networkName][address];
   }
 
   if (isZetaTestnet(ZETA_NETWORK) && isTestnetNetworkName(networkName)) {
-    return (await getTestnetListAsync())[ZETA_NETWORK][networkName][address];
+    return (await getTestnetListFromFile())[ZETA_NETWORK][networkName][address];
   }
 
   if (isZetaMainnet(ZETA_NETWORK) && isMainnetNetworkName(networkName)) {
-    return (await getMainnetListAsync())[ZETA_NETWORK][networkName][address];
+    return (await getMainnetListFromFile())[ZETA_NETWORK][networkName][address];
   }
 
   throw new Error(`Invalid ZETA_NETWORK + network combination ${ZETA_NETWORK} ${networkName}.`);
