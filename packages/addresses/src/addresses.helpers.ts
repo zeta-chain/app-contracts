@@ -67,7 +67,7 @@ export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressG
   troy: troy as LocalnetAddressGroup,
 });
 
-export const getLocalnetListAsync = async (): Promise<Record<"troy", LocalnetAddressGroup>> => {
+export const getLocalnetListAsync = async (): Promise<Record<ZetaLocalNetworkName, LocalnetAddressGroup>> => {
   const troy = await require("./addresses.troy.json");
   return {
     troy: troy as LocalnetAddressGroup,
