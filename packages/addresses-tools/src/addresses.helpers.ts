@@ -33,6 +33,26 @@ const PUBLIC_PKG = "addresses";
 
 const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG);
 
+export const getScanVariable = ({ customNetworkName }: { customNetworkName?: string } = {}): string => {
+  const networkName = customNetworkName || network.name;
+  if (!isNetworkName(networkName)) throw new Error();
+  dotenv.config();
+
+  const v = {
+    "bsc-localnet": "",
+    "bsc-testnet": process.env.BSCSCAN_API_KEY || "",
+    "eth-localnet": "",
+    "eth-mainnet": process.env.ETHERSCAN_API_KEY || "",
+    goerli: process.env.ETHERSCAN_API_KEY || "",
+    hardhat: "",
+    "polygon-localnet": "",
+    "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || "",
+    ropsten: process.env.ETHERSCAN_API_KEY || "",
+  };
+
+  return v[networkName];
+};
+
 export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: string } = {}): string => {
   const networkName = customNetworkName || network.name;
   if (!isNetworkName(networkName)) throw new Error();

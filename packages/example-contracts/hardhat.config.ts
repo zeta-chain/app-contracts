@@ -5,7 +5,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "tsconfig-paths/register";
 
-import { getHardhatConfigNetworks, getHardhatConfigScanners } from "@zetachain/addresses/networks";
+import { getHardhatConfigNetworks, getHardhatConfigScanners } from "@zetachain/addresses-tools/src/networks";
 import * as dotenv from "dotenv";
 import type { HardhatUserConfig } from "hardhat/types";
 
