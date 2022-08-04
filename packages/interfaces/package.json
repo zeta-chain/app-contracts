@@ -1,0 +1,13 @@
+{
+  "name": "@zetachain/interfaces",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "zetachain",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "tsc:watch": "npx tsc --watch"
+  }
+}

@@ -1,4 +1,5 @@
-import { isNetworkName, saveAddress } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
+import { saveAddress } from "@zetachain/addresses-tools";
 import { ethers, network } from "hardhat";
 
 import { getCrossChainWarriors } from "../../lib/cross-chain-warriors/CrossChainWarriors.helpers";

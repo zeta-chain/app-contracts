@@ -2,15 +2,6 @@ import { MaxUint256 } from "@ethersproject/constants";
 import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress } from "@zetachain/addresses";
-import chai, { expect } from "chai";
-import { BigNumber } from "ethers";
-import { ethers } from "hardhat";
-
-import {
-  deployZetaNonEth,
-  getZetaTokenConsumerUniV2Strategy,
-  getZetaTokenConsumerUniV3Strategy,
-} from "../lib/contracts.helpers";
 import {
   IERC20,
   IERC20__factory,
@@ -21,7 +12,16 @@ import {
   ZetaTokenConsumer,
   ZetaTokenConsumerUniV2,
   ZetaTokenConsumerUniV3,
-} from "../typechain-types";
+} from "@zetachain/interfaces/typechain-types";
+import chai, { expect } from "chai";
+import { BigNumber } from "ethers";
+import { ethers } from "hardhat";
+
+import {
+  deployZetaNonEth,
+  getZetaTokenConsumerUniV2Strategy,
+  getZetaTokenConsumerUniV3Strategy,
+} from "../lib/contracts.helpers";
 import { parseZetaConsumerLog } from "./test.helpers";
 
 chai.should();

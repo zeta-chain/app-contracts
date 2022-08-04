@@ -1,4 +1,5 @@
-import { getAddress, isNetworkName, saveAddress } from "@zetachain/addresses";
+import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { saveAddress } from "@zetachain/addresses-tools";
 import { network } from "hardhat";
 
 import { getMultiChainSwapBase } from "../../lib/multi-chain-swap/MultiChainSwap.helpers";

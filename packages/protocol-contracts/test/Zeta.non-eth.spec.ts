@@ -1,10 +1,10 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { ZetaConnectorNonEth, ZetaNonEth, ZetaReceiverMock } from "@zetachain/interfaces/typechain-types";
 import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { deployZetaConnectorNonEth, deployZetaNonEth, deployZetaReceiverMock } from "../lib/contracts.helpers";
-import { ZetaConnectorNonEth, ZetaNonEth, ZetaReceiverMock } from "../typechain-types";
 
 describe("ZetaNonEth tests", () => {
   let zetaTokenNonEthContract: ZetaNonEth;

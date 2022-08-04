@@ -24,6 +24,10 @@
     "verify": "npx hardhat run scripts/verify-contracts.ts"
   },
   "devDependencies": {
+    "@zetachain/addresses": "workspace:^",
+    "@zetachain/addresses-tools": "workspace:^",
+    "@zetachain/interfaces": "workspace:^",
+    "hardhat-abi-exporter": "^2.10.0",
     "tsconfig-paths": "^3.14.1"
   },
   "dependencies": {

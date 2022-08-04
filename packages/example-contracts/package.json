@@ -2,6 +2,7 @@
   "name": "@zetachain/example-contracts",
   "version": "0.0.1",
   "license": "MIT",
+  "private": true,
   "author": "zetachain",
   "publishConfig": {
     "access": "public",
@@ -32,6 +33,7 @@
     "@openzeppelin/contracts": "4.6.0",
     "@uniswap/v2-periphery": "1.1.0-beta.0",
     "@zetachain/addresses": "workspace:^",
+    "@zetachain/addresses-tools": "workspace:^",
     "@zetachain/protocol-contracts": "workspace:^",
     "ethers": "5.6.8"
   }
