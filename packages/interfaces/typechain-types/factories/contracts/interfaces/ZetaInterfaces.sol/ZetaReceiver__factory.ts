@@ -31,7 +31,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "zetaValueAndGas",
+            name: "zetaValue",
             type: "uint256",
           },
           {
@@ -76,7 +76,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "zetaValueAndGas",
+            name: "remainingZetaValue",
             type: "uint256",
           },
           {
