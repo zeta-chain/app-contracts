@@ -1,9 +1,10 @@
-import { getAddress, isNetworkName, isZetaTestnet, saveAddress } from "@zetachain/addresses";
+import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { saveAddress } from "@zetachain/addresses-tools";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
-import { MultiChainValue__factory } from "../../typechain-types";
+import { MultiChainValue__factory } from "../typechain-types";
 
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
 const SALT_NUMBER = "0";

@@ -1,5 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress } from "@zetachain/addresses";
+import { CrossChainMessage, CrossChainMessageConnector, ZetaEthMock } from "@zetachain/interfaces/typechain-types";
+import { ZetaTokenConsumerUniV2 } from "@zetachain/interfaces/typechain-types/@zetachain/protocol-contracts/contracts/ZetaTokenConsumerUniV2.strategy.sol";
 import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
@@ -9,8 +11,6 @@ import {
   deployZetaConnectorMock,
 } from "../lib/cross-chain-message/CrossChainMessage.helpers";
 import { deployZetaTokenConsumerUniV2, getZetaMock } from "../lib/shared/deploy.helpers";
-import { CrossChainMessage, CrossChainMessageConnector, ZetaEthMock } from "../typechain-types";
-import { ZetaTokenConsumerUniV2 } from "../typechain-types/@zetachain/protocol-contracts/contracts/ZetaTokenConsumerUniV2.strategy.sol";
 import { addZetaEthLiquidityTest } from "./test.helpers";
 
 describe("CrossChainMessage tests", () => {

@@ -1,10 +1,10 @@
 import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { ZetaEth__factory, ZetaNonEth__factory } from "@zetachain/interfaces/typechain-types";
 import { BigNumber } from "ethers";
 import { network } from "hardhat";
 
 import { ZETA_INITIAL_SUPPLY } from "../lib/contracts.constants";
 import { isEthNetworkName } from "../lib/contracts.helpers";
-import { ZetaEth__factory, ZetaNonEth__factory } from "../typechain-types";
 import { calculateBestSalt } from "./deterministic-deploy.helpers";
 
 /// dev: this is not in constant file because this is and aux script to run locally and each dev should choose this number

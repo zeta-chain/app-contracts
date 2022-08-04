@@ -4,12 +4,12 @@ import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
+import { CrossChainWarriorsMock, CrossChainWarriorsZetaConnectorMock, ZetaEthMock } from ".../typechain-types";
 import {
   deployCrossChainWarriorsMock,
   deployZetaConnectorMock,
 } from "../lib/cross-chain-warriors/CrossChainWarriors.helpers";
 import { deployZetaTokenConsumerUniV2, getZetaMock } from "../lib/shared/deploy.helpers";
-import { CrossChainWarriorsMock, CrossChainWarriorsZetaConnectorMock, ZetaEthMock } from "../typechain-types";
 import { ZetaTokenConsumerUniV2 } from "../typechain-types/@zetachain/protocol-contracts/contracts/ZetaTokenConsumerUniV2.strategy.sol";
 import { addZetaEthLiquidityTest, getMintTokenId } from "./test.helpers";
 

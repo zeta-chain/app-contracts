@@ -4,7 +4,7 @@ import { ethers, network } from "hardhat";
 
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
 import { isEthNetworkName } from "../../lib/shared/network.constants";
-import { MultiChainSwapBase__factory } from "../../typechain-types";
+import { MultiChainSwapBase__factory } from "../@zetachain/interfaces/typechain-types";
 import { setMultiChainSwapCrossChainData } from "./set-cross-chain-data";
 
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";

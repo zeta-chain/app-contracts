@@ -1,10 +1,11 @@
-import { getAddress, isNetworkName, saveAddress } from "@zetachain/addresses";
+import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { saveAddress } from "@zetachain/addresses-tools";
+import { ZetaTokenConsumerUniV2__factory } from "@zetachain/interfaces/typechain-types";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
 import { ZETA_CONSUMER_SALT_NUMBER } from "../lib/contracts.constants";
 import { deployContractToAddress, saltToHex } from "../lib/ImmutableCreate2Factory/ImmutableCreate2Factory.helpers";
-import { ZetaTokenConsumerUniV2__factory } from "../typechain-types";
 
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
 
