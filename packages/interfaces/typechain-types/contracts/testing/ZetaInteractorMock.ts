@@ -31,7 +31,7 @@ export declare namespace ZetaInterfaces {
     zetaTxSenderAddress: BytesLike;
     sourceChainId: BigNumberish;
     destinationAddress: string;
-    zetaValueAndGas: BigNumberish;
+    zetaValue: BigNumberish;
     message: BytesLike;
   };
 
@@ -45,7 +45,7 @@ export declare namespace ZetaInterfaces {
     zetaTxSenderAddress: string;
     sourceChainId: BigNumber;
     destinationAddress: string;
-    zetaValueAndGas: BigNumber;
+    zetaValue: BigNumber;
     message: string;
   };
 
@@ -54,7 +54,7 @@ export declare namespace ZetaInterfaces {
     sourceChainId: BigNumberish;
     destinationAddress: BytesLike;
     destinationChainId: BigNumberish;
-    zetaValueAndGas: BigNumberish;
+    remainingZetaValue: BigNumberish;
     message: BytesLike;
   };
 
@@ -70,7 +70,7 @@ export declare namespace ZetaInterfaces {
     sourceChainId: BigNumber;
     destinationAddress: string;
     destinationChainId: BigNumber;
-    zetaValueAndGas: BigNumber;
+    remainingZetaValue: BigNumber;
     message: string;
   };
 }

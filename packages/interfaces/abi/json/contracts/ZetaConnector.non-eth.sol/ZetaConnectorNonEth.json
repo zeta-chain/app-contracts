@@ -178,7 +178,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "zetaValueAndGas",
+        "name": "zetaValue",
         "type": "uint256"
       },
       {
@@ -219,7 +219,7 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "bytes",
         "name": "destinationAddress",
         "type": "bytes"
@@ -227,7 +227,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "zetaValueAndGas",
+        "name": "remainingZetaValue",
         "type": "uint256"
       },
       {
@@ -268,7 +268,7 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "bytes",
         "name": "destinationAddress",
         "type": "bytes"
@@ -346,7 +346,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "zetaValueAndGas",
+        "name": "zetaValue",
         "type": "uint256"
       },
       {
@@ -389,7 +389,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "zetaValueAndGas",
+        "name": "remainingZetaValue",
         "type": "uint256"
       },
       {

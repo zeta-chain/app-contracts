@@ -257,7 +257,7 @@ export interface ZetaReceivedEventObject {
   zetaTxSenderAddress: string;
   sourceChainId: BigNumber;
   destinationAddress: string;
-  zetaValueAndGas: BigNumber;
+  zetaValue: BigNumber;
   message: string;
   internalSendHash: string;
 }
@@ -273,7 +273,7 @@ export interface ZetaRevertedEventObject {
   sourceChainId: BigNumber;
   destinationChainId: BigNumber;
   destinationAddress: string;
-  zetaValueAndGas: BigNumber;
+  remainingZetaValue: BigNumber;
   message: string;
   internalSendHash: string;
 }
@@ -336,7 +336,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress: BytesLike,
       sourceChainId: BigNumberish,
       destinationAddress: string,
-      zetaValueAndGas: BigNumberish,
+      zetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -347,7 +347,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       sourceChainId: BigNumberish,
       destinationAddress: BytesLike,
       destinationChainId: BigNumberish,
-      zetaValueAndGas: BigNumberish,
+      remainingZetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -404,7 +404,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
     zetaTxSenderAddress: BytesLike,
     sourceChainId: BigNumberish,
     destinationAddress: string,
-    zetaValueAndGas: BigNumberish,
+    zetaValue: BigNumberish,
     message: BytesLike,
     internalSendHash: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -415,7 +415,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
     sourceChainId: BigNumberish,
     destinationAddress: BytesLike,
     destinationChainId: BigNumberish,
-    zetaValueAndGas: BigNumberish,
+    remainingZetaValue: BigNumberish,
     message: BytesLike,
     internalSendHash: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -472,7 +472,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress: BytesLike,
       sourceChainId: BigNumberish,
       destinationAddress: string,
-      zetaValueAndGas: BigNumberish,
+      zetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: CallOverrides
@@ -483,7 +483,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       sourceChainId: BigNumberish,
       destinationAddress: BytesLike,
       destinationChainId: BigNumberish,
-      zetaValueAndGas: BigNumberish,
+      remainingZetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: CallOverrides
@@ -555,7 +555,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress?: null,
       sourceChainId?: BigNumberish | null,
       destinationAddress?: string | null,
-      zetaValueAndGas?: null,
+      zetaValue?: null,
       message?: null,
       internalSendHash?: BytesLike | null
     ): ZetaReceivedEventFilter;
@@ -563,7 +563,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress?: null,
       sourceChainId?: BigNumberish | null,
       destinationAddress?: string | null,
-      zetaValueAndGas?: null,
+      zetaValue?: null,
       message?: null,
       internalSendHash?: BytesLike | null
     ): ZetaReceivedEventFilter;
@@ -572,8 +572,8 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress?: null,
       sourceChainId?: null,
       destinationChainId?: BigNumberish | null,
-      destinationAddress?: BytesLike | null,
-      zetaValueAndGas?: null,
+      destinationAddress?: null,
+      remainingZetaValue?: null,
       message?: null,
       internalSendHash?: BytesLike | null
     ): ZetaRevertedEventFilter;
@@ -581,8 +581,8 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress?: null,
       sourceChainId?: null,
       destinationChainId?: BigNumberish | null,
-      destinationAddress?: BytesLike | null,
-      zetaValueAndGas?: null,
+      destinationAddress?: null,
+      remainingZetaValue?: null,
       message?: null,
       internalSendHash?: BytesLike | null
     ): ZetaRevertedEventFilter;
@@ -591,7 +591,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       sourceTxOriginAddress?: null,
       zetaTxSenderAddress?: string | null,
       destinationChainId?: BigNumberish | null,
-      destinationAddress?: BytesLike | null,
+      destinationAddress?: null,
       zetaValueAndGas?: null,
       destinationGasLimit?: null,
       message?: null,
@@ -601,7 +601,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       sourceTxOriginAddress?: null,
       zetaTxSenderAddress?: string | null,
       destinationChainId?: BigNumberish | null,
-      destinationAddress?: BytesLike | null,
+      destinationAddress?: null,
       zetaValueAndGas?: null,
       destinationGasLimit?: null,
       message?: null,
@@ -618,7 +618,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress: BytesLike,
       sourceChainId: BigNumberish,
       destinationAddress: string,
-      zetaValueAndGas: BigNumberish,
+      zetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -629,7 +629,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       sourceChainId: BigNumberish,
       destinationAddress: BytesLike,
       destinationChainId: BigNumberish,
-      zetaValueAndGas: BigNumberish,
+      remainingZetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -687,7 +687,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       zetaTxSenderAddress: BytesLike,
       sourceChainId: BigNumberish,
       destinationAddress: string,
-      zetaValueAndGas: BigNumberish,
+      zetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -698,7 +698,7 @@ export interface ZetaConnectorNonEth extends BaseContract {
       sourceChainId: BigNumberish,
       destinationAddress: BytesLike,
       destinationChainId: BigNumberish,
-      zetaValueAndGas: BigNumberish,
+      remainingZetaValue: BigNumberish,
       message: BytesLike,
       internalSendHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }

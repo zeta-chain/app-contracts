@@ -1,4 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { ZetaEth } from "@zetachain/interfaces/typechain-types";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -7,7 +8,7 @@ import {
   deployZetaConnectorMock,
   deployZetaEthMock,
 } from "../lib/multi-chain-value/MultiChainValue.helpers";
-import { MultiChainValueMock, ZetaConnectorMockValue, ZetaEth } from "../typechain-types";
+import { MultiChainValueMock, ZetaConnectorMockValue } from "../typechain-types";
 
 describe("MultiChainValue tests", () => {
   let multiChainValueContractA: MultiChainValueMock;

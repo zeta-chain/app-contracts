@@ -1,4 +1,5 @@
 import { getAddress } from "@zetachain/addresses";
+import { ZetaEth, ZetaEth__factory as ZetaEthFactory } from "@zetachain/interfaces/typechain-types";
 import assert from "assert";
 import { ethers, network } from "hardhat";
 
@@ -10,8 +11,6 @@ import {
   MultiChainValueMock__factory as MultiChainValueMockFactory,
   ZetaConnectorMockValue,
   ZetaConnectorMockValue__factory as ZetaConnectorMockValueFactory,
-  ZetaEth,
-  ZetaEth__factory as ZetaEthFactory,
 } from "../../typechain-types";
 
 /**

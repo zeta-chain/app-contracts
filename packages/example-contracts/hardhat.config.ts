@@ -5,7 +5,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "tsconfig-paths/register";
 
-import { getHardhatConfigNetworks, getHardhatConfigScanners } from "@zetachain/addresses/networks";
+import { getHardhatConfigNetworks, getHardhatConfigScanners } from "@zetachain/addresses-tools/src/networks";
 import * as dotenv from "dotenv";
 import type { HardhatUserConfig } from "hardhat/types";
 
@@ -25,7 +25,11 @@ const config: HardhatUserConfig = {
     ...getHardhatConfigNetworks(PRIVATE_KEYS),
   },
   solidity: {
-    compilers: [{ version: "0.6.6" /** For uniswap v2 */ }, { version: "0.8.7" }],
+    compilers: [
+      { version: "0.5.10" /** For create2 factory */ },
+      { version: "0.6.6" /** For uniswap v2 */ },
+      { version: "0.8.7" },
+    ],
     settings: {
       /**
        * @see {@link https://smock.readthedocs.io/en/latest/getting-started.html}
