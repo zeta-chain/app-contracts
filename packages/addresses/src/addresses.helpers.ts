@@ -93,7 +93,7 @@ export const getTestnetList = (): Record<ZetaTestnetNetworkName, TestnetAddressG
   athens: athens as TestnetAddressGroup,
 });
 
-export const getTestnetListAsync = async (): Promise<Record<"athens", TestnetAddressGroup>> => {
+export const getTestnetListAsync = async (): Promise<Record<ZetaTestnetNetworkName, TestnetAddressGroup>> => {
   const athens = await require("./addresses.athens.json");
   return {
     athens: athens as TestnetAddressGroup,
