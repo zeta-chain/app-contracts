@@ -1,6 +1,6 @@
 {
   "bsc-testnet": {
-    "connector": "0x00002f0ACBE0b07804A578bAf7B8AF85913d163c",
+    "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
     "crossChainCounter": "",
     "crossChainNft": "0x5fb688006735f3Cf448ac69066d0f3151930171d",
     "dai": "",
@@ -19,7 +19,7 @@
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "goerli": {
-    "connector": "0x0000B8f5AF86c9B430e9693317017caa486Ba86F",
+    "connector": "0x00007d0BA516a2bA02D77907d3a1348C1187Ae62",
     "crossChainCounter": "",
     "crossChainNft": "0x2872E158627372044D892c98D25e5f203da4a8Fa",
     "dai": "",
@@ -38,7 +38,7 @@
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "polygon-mumbai": {
-    "connector": "0x00002f0ACBE0b07804A578bAf7B8AF85913d163c",
+    "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
@@ -56,7 +56,7 @@
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   },
   "ropsten": {
-    "connector": "0x00002f0ACBE0b07804A578bAf7B8AF85913d163c",
+    "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
