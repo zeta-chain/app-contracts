@@ -116,7 +116,7 @@ export const getMainnetList = (): Record<ZetaMainnetNetworkName, MainnetAddressG
   mainnet: mainnet as MainnetAddressGroup,
 });
 
-export const getMainnetListAsync = async (): Promise<Record<"mainnet", MainnetAddressGroup>> => {
+export const getMainnetListAsync = async (): Promise<Record<ZetaMainnetNetworkName, MainnetAddressGroup>> => {
   const mainnet = await require("./addresses.mainnet.json");
   return {
     mainnet: mainnet as MainnetAddressGroup,
