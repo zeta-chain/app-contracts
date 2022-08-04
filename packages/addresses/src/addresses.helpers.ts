@@ -67,13 +67,6 @@ export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressG
   troy: troy as LocalnetAddressGroup,
 });
 
-export const getLocalnetListAsync = async (): Promise<Record<ZetaLocalNetworkName, LocalnetAddressGroup>> => {
-  const troy = await require("./addresses.troy.json");
-  return {
-    troy: troy as LocalnetAddressGroup,
-  };
-};
-
 /**
  * @description Testnet
  */
@@ -93,13 +86,6 @@ export const getTestnetList = (): Record<ZetaTestnetNetworkName, TestnetAddressG
   athens: athens as TestnetAddressGroup,
 });
 
-export const getTestnetListAsync = async (): Promise<Record<ZetaTestnetNetworkName, TestnetAddressGroup>> => {
-  const athens = await require("./addresses.athens.json");
-  return {
-    athens: athens as TestnetAddressGroup,
-  };
-};
-
 /**
  * @description Mainnet
  */
@@ -115,13 +101,6 @@ export const isZetaMainnet = (networkName: string | undefined): networkName is Z
 export const getMainnetList = (): Record<ZetaMainnetNetworkName, MainnetAddressGroup> => ({
   mainnet: mainnet as MainnetAddressGroup,
 });
-
-export const getMainnetListAsync = async (): Promise<Record<ZetaMainnetNetworkName, MainnetAddressGroup>> => {
-  const mainnet = await require("./addresses.mainnet.json");
-  return {
-    mainnet: mainnet as MainnetAddressGroup,
-  };
-};
 
 /**
  * @description Shared
@@ -183,38 +162,6 @@ export const getAddress = (
 
   if (isZetaMainnet(ZETA_NETWORK) && isMainnetNetworkName(networkName)) {
     return getMainnetList()[ZETA_NETWORK][networkName][address];
-  }
-
-  throw new Error(`Invalid ZETA_NETWORK + network combination ${ZETA_NETWORK} ${networkName}.`);
-};
-
-export const loadAddressFromFile = async (
-  address: ZetaAddress,
-  {
-    customNetworkName,
-    customZetaNetwork,
-  }: { customNetworkName?: NetworkName; customZetaNetwork?: ZetaNetworkName } = {}
-): Promise<string> => {
-  const { name: _networkName } = network;
-  const networkName = customNetworkName || _networkName;
-
-  const { ZETA_NETWORK: _ZETA_NETWORK } = process.env;
-  const ZETA_NETWORK = customZetaNetwork || _ZETA_NETWORK;
-
-  if (!ZETA_NETWORK) throw MissingZetaNetworkError;
-
-  console.log(`Getting ${address} address from ${ZETA_NETWORK}: ${networkName}.`);
-
-  if (isZetaLocalnet(ZETA_NETWORK) && isLocalNetworkName(networkName)) {
-    return (await getLocalnetListAsync())[ZETA_NETWORK][networkName][address];
-  }
-
-  if (isZetaTestnet(ZETA_NETWORK) && isTestnetNetworkName(networkName)) {
-    return (await getTestnetListAsync())[ZETA_NETWORK][networkName][address];
-  }
-
-  if (isZetaMainnet(ZETA_NETWORK) && isMainnetNetworkName(networkName)) {
-    return (await getMainnetListAsync())[ZETA_NETWORK][networkName][address];
   }
 
   throw new Error(`Invalid ZETA_NETWORK + network combination ${ZETA_NETWORK} ${networkName}.`);
