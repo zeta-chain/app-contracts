@@ -1,7 +1,6 @@
 import { Provider, TransactionReceipt } from "@ethersproject/providers";
+import { ImmutableCreate2Factory__factory } from "@zetachain/interfaces/typechain-types";
 import { ethers, Signer } from "ethers";
-
-import { ImmutableCreate2Factory__factory } from "../@zetachain/interfaces/typechain-types";
 
 export const buildBytecode = (constructorTypes: any[], constructorArgs: any[], contractBytecode: string) =>
   `${contractBytecode}${encodeParams(constructorTypes, constructorArgs).slice(2)}`;

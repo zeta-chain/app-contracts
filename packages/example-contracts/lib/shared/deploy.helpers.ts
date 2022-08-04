@@ -1,4 +1,5 @@
-import { getAddress, getScanVariable, NetworkName, ZetaAddress, ZetaNetworkName } from "@zetachain/addresses";
+import { getAddress, NetworkName, ZetaAddress, ZetaNetworkName } from "@zetachain/addresses";
+import { getScanVariable } from "@zetachain/addresses-tools";
 import { execSync } from "child_process";
 import { BaseContract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
