@@ -2,7 +2,7 @@ import { deployMultiChainSwap } from "./deploy-multi-chain-swap";
 import { setMultiChainSwapCrossChainData } from "./set-cross-chain-data";
 
 async function main() {
-  // await deployMultiChainSwap();
+  await deployMultiChainSwap();
   await setMultiChainSwapCrossChainData();
 }
 

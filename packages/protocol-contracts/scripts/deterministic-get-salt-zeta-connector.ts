@@ -6,7 +6,7 @@ import { network } from "hardhat";
 import { isEthNetworkName } from "../lib/contracts.helpers";
 import { calculateBestSalt } from "./deterministic-deploy.helpers";
 
-/// dev: this is not in constant file because this is and aux script to run locally and each dev should choose this number
+// dev: this is not in constant file because this is and aux script to run locally and each dev should choose this number
 const MAX_ITERATIONS = BigNumber.from(100000);
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
 
@@ -19,7 +19,7 @@ export async function deterministicDeployGetSaltZetaConnector() {
   const tss = getAddress("tss");
   const tssUpdater = getAddress("tssUpdater");
 
-  /// @todo: decide which address use as pauser
+  // @todo: decide which address use as pauser
   const constructorTypes = ["address", "address", "address", "address"];
   const constructorArgs = [zetaToken, tss, tssUpdater, tssUpdater];
 
