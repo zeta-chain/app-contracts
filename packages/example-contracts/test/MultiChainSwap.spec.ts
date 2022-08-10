@@ -7,15 +7,15 @@ import { getAddress } from "@zetachain/addresses";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { getMultiChainSwapBase, getMultiChainSwapZetaConnector } from "../lib/multi-chain-swap/MultiChainSwap.helpers";
+import { getMultiChainSwapUniV2, getMultiChainSwapZetaConnector } from "../lib/multi-chain-swap/MultiChainSwap.helpers";
 import { getNow, getZetaMock } from "../lib/shared/deploy.helpers";
 import {
   ERC20__factory,
   IERC20,
   IUniswapV2Router02,
-  MultiChainSwapBase,
+  MultiChainSwapUniV2,
   MultiChainSwapZetaConnector,
-  UniswapV2Router02__factory,
+  UniswapV2Router02__factory
 } from "../typechain-types";
 import { USDC_ADDR } from "./MultiChainSwap.constants";
 import { getCustomErrorMessage, parseUniswapLog, parseZetaLog } from "./test.helpers";
@@ -32,14 +32,14 @@ describe("MultiChainSwap tests", () => {
   let USDCTokenContract: IERC20;
   let zetaConnectorMock: MultiChainSwapZetaConnector;
 
-  let multiChainSwapContractA: MultiChainSwapBase;
+  let multiChainSwapContractA: MultiChainSwapUniV2;
   const chainAId = 1;
 
-  let multiChainSwapContractB: MultiChainSwapBase;
+  let multiChainSwapContractB: MultiChainSwapUniV2;
   const chainBId = 2;
 
   let zetaConnectorSmock: FakeContract<MultiChainSwapZetaConnector>;
-  let multiChainSwapContractWithSmock: MultiChainSwapBase;
+  let multiChainSwapContractWithSmock: MultiChainSwapUniV2;
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
@@ -85,7 +85,7 @@ describe("MultiChainSwap tests", () => {
   beforeEach(async () => {
     const uniswapRouterAddr = getAddress("uniswapV2Router02", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
     accounts = await ethers.getSigners();
     [deployer, account1] = accounts;
@@ -101,17 +101,17 @@ describe("MultiChainSwap tests", () => {
     const ERC20Factory = new ERC20__factory(deployer);
     USDCTokenContract = ERC20Factory.attach(USDC_ADDR);
 
-    multiChainSwapContractA = await getMultiChainSwapBase({
-      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr],
+    multiChainSwapContractA = await getMultiChainSwapUniV2({
+      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr]
     });
 
-    multiChainSwapContractB = await getMultiChainSwapBase({
-      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr],
+    multiChainSwapContractB = await getMultiChainSwapUniV2({
+      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr]
     });
 
     zetaConnectorSmock = await smock.fake("MultiChainSwapZetaConnector");
-    multiChainSwapContractWithSmock = await getMultiChainSwapBase({
-      deployParams: [zetaConnectorSmock.address, zetaTokenMock.address, uniswapRouterAddr],
+    multiChainSwapContractWithSmock = await getMultiChainSwapUniV2({
+      deployParams: [zetaConnectorSmock.address, zetaTokenMock.address, uniswapRouterAddr]
     });
 
     const encodedCrossChainAddressB = ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]);
@@ -136,7 +136,7 @@ describe("MultiChainSwap tests", () => {
           10,
           MaxUint256,
           {
-            value: parseUnits("1"),
+            value: parseUnits("1")
           }
         )
       ).to.be.revertedWith(getCustomErrorMessage("InvalidDestinationChainId"));
@@ -199,7 +199,7 @@ describe("MultiChainSwap tests", () => {
 
       const result = await tx2.wait();
       const eventNames = parseUniswapLog(result.logs);
-      expect(eventNames.filter((e) => e === "Swap")).to.have.lengthOf(0);
+      expect(eventNames.filter(e => e === "Swap")).to.have.lengthOf(0);
     });
 
     it("Should trade the input token for Zeta", async () => {
@@ -229,7 +229,7 @@ describe("MultiChainSwap tests", () => {
 
       const result = await tx2.wait();
       const eventNames = parseUniswapLog(result.logs);
-      expect(eventNames.filter((e) => e === "Swap")).to.have.lengthOf(2);
+      expect(eventNames.filter(e => e === "Swap")).to.have.lengthOf(2);
     });
 
     it("Should trade zeta for the output token", async () => {
@@ -259,7 +259,7 @@ describe("MultiChainSwap tests", () => {
 
       const result = await tx2.wait();
       const eventNames = parseUniswapLog(result.logs);
-      expect(eventNames.filter((e) => e === "Swap")).to.have.lengthOf(2);
+      expect(eventNames.filter(e => e === "Swap")).to.have.lengthOf(2);
     });
 
     it("Should trade input token for zeta and zeta for the output token", async () => {
@@ -289,7 +289,7 @@ describe("MultiChainSwap tests", () => {
 
       const result = await tx2.wait();
       const eventNames = parseUniswapLog(result.logs);
-      expect(eventNames.filter((e) => e === "Swap")).to.have.lengthOf(4);
+      expect(eventNames.filter(e => e === "Swap")).to.have.lengthOf(4);
     });
 
     it("Should call connector.send", async () => {
@@ -349,7 +349,7 @@ describe("MultiChainSwap tests", () => {
       const result = await tx2.wait();
       const eventNames = parseZetaLog(result.logs);
 
-      expect(eventNames.filter((e) => e === "Swapped")).to.have.lengthOf(1);
+      expect(eventNames.filter(e => e === "Swapped")).to.have.lengthOf(1);
     });
 
     it("Should revert if the destinationChainId is not in the storage", async () => {
@@ -406,7 +406,7 @@ describe("MultiChainSwap tests", () => {
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
           sourceChainId: chainBId,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
-          zetaValue: 0,
+          zetaValue: 0
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -433,7 +433,7 @@ describe("MultiChainSwap tests", () => {
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
           remainingZetaValue: 0,
           sourceChainId: chainAId,
-          zetaTxSenderAddress: deployer.address,
+          zetaTxSenderAddress: deployer.address
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -458,7 +458,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          false,
+          false
         ]
       );
 
@@ -498,7 +498,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          false,
+          false
         ]
       );
 
@@ -517,7 +517,10 @@ describe("MultiChainSwap tests", () => {
       const originAddressFinalUSDCBalance = await USDCTokenContract.balanceOf(deployer.address);
       expect(originAddressFinalUSDCBalance).to.be.lt(originAddressInitialUSDCBalance.add(ZETA_USDC_PRICE));
       expect(originAddressFinalUSDCBalance).to.be.gt(
-        originAddressInitialUSDCBalance.add(ZETA_USDC_PRICE).mul(995).div(1000)
+        originAddressInitialUSDCBalance
+          .add(ZETA_USDC_PRICE)
+          .mul(995)
+          .div(1000)
       );
     });
 
@@ -541,7 +544,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          true,
+          true
         ]
       );
 
@@ -559,7 +562,12 @@ describe("MultiChainSwap tests", () => {
 
       const originAddressFinalETHBalance = await ethers.provider.getBalance(deployer.address);
       expect(originAddressFinalETHBalance).to.be.gt(originAddressInitialETHBalance.add("1"));
-      expect(originAddressFinalETHBalance).to.be.lt(originAddressInitialETHBalance.add("1").mul(1005).div(1000));
+      expect(originAddressFinalETHBalance).to.be.lt(
+        originAddressInitialETHBalance
+          .add("1")
+          .mul(1005)
+          .div(1000)
+      );
     });
 
     it("Should emit a RevertedSwap event", async () => {
@@ -582,7 +590,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          true,
+          true
         ]
       );
 
@@ -598,7 +606,7 @@ describe("MultiChainSwap tests", () => {
 
       const result = await tx2.wait();
       const eventNames = parseZetaLog(result.logs);
-      expect(eventNames.filter((e) => e === "RevertedSwap")).to.have.lengthOf(1);
+      expect(eventNames.filter(e => e === "RevertedSwap")).to.have.lengthOf(1);
     });
   });
 });

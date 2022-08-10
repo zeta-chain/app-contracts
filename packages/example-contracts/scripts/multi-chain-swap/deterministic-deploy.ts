@@ -5,7 +5,7 @@ import { ethers, network } from "hardhat";
 
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
 import { isEthNetworkName } from "../../lib/shared/network.constants";
-import { MultiChainSwapBase__factory } from "../../typechain-types";
+import { MultiChainSwapUniV2__factory } from "../../typechain-types";
 import { setMultiChainSwapCrossChainData } from "./set-cross-chain-data";
 
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
@@ -33,7 +33,7 @@ export async function deterministicDeployMultiChainSwap() {
   const constructorTypes = ["address", "address", "address"];
   const constructorArgs = [connector, zetaToken, uniswapV2Router02];
 
-  const contractBytecode = MultiChainSwapBase__factory.bytecode;
+  const contractBytecode = MultiChainSwapUniV2__factory.bytecode;
 
   const { address } = await deployContractToAddress({
     constructorArgs,
@@ -41,7 +41,7 @@ export async function deterministicDeployMultiChainSwap() {
     contractBytecode,
     factoryAddress: immutableCreate2Factory,
     salt: salthex,
-    signer,
+    signer
   });
 
   saveAddress("multiChainSwap", address);
@@ -51,7 +51,7 @@ export async function deterministicDeployMultiChainSwap() {
 if (!process.env.EXECUTE_PROGRAMMATICALLY) {
   deterministicDeployMultiChainSwap()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exit(1);
     });

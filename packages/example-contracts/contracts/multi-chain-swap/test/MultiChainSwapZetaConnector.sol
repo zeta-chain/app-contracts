@@ -3,7 +3,7 @@ pragma solidity 0.8.7;
 
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
-import "../MultiChainSwap.base.sol";
+import "../MultiChainSwapUniV2.strategy.sol";
 
 contract MultiChainSwapZetaConnector is ZetaConnector {
     address public zetaToken;
@@ -20,7 +20,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         bytes calldata message
     ) public {
         return
-            MultiChainSwapBase(payable(destinationAddress)).onZetaMessage(
+            MultiChainSwapUniV2(payable(destinationAddress)).onZetaMessage(
                 ZetaInterfaces.ZetaMessage({
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
@@ -41,7 +41,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         bytes calldata message
     ) public {
         return
-            MultiChainSwapBase(payable(zetaTxSenderAddress)).onZetaRevert(
+            MultiChainSwapUniV2(payable(zetaTxSenderAddress)).onZetaRevert(
                 ZetaInterfaces.ZetaRevert({
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
