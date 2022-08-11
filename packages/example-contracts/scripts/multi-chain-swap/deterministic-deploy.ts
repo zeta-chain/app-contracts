@@ -41,7 +41,7 @@ export async function deterministicDeployMultiChainSwap() {
     contractBytecode,
     factoryAddress: immutableCreate2Factory,
     salt: salthex,
-    signer
+    signer,
   });
 
   saveAddress("multiChainSwap", address);

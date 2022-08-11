@@ -13,7 +13,7 @@ export async function doCrossChainSwap() {
   if (!_networkVariables.crossChainName) throw new Error("Invalid crossChainName");
 
   const multiChainSwapContract = await getMultiChainSwapUniV2({
-    existingContractAddress: getAddress("multiChainSwap")
+    existingContractAddress: getAddress("multiChainSwap"),
   });
 
   const [account1] = await ethers.getSigners();
@@ -27,7 +27,7 @@ export async function doCrossChainSwap() {
       _networkVariables.crossChainId,
       1_000_000,
       {
-        value: parseUnits("1")
+        value: parseUnits("1"),
       }
     )
   ).wait();

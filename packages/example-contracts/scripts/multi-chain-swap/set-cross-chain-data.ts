@@ -14,11 +14,11 @@ export async function setMultiChainSwapCrossChainData() {
   const crossChainMultiChainSwapAddress = getAddress("multiChainSwap");
 
   const crossChainMultiChainSwapContract = await getMultiChainSwapUniV2({
-    existingContractAddress: crossChainMultiChainSwapAddress
+    existingContractAddress: crossChainMultiChainSwapAddress,
   });
 
   const crossChainAddress = getAddress("multiChainSwap", {
-    customNetworkName: _networkVariables.crossChainName
+    customNetworkName: _networkVariables.crossChainName,
   });
 
   const encodedCrossChainAddress = ethers.utils.solidityPack(["address"], [crossChainAddress]);
