@@ -49,7 +49,7 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
             (destinationOutToken == address(0) && !isDestinationOutETH)
         ) revert OutTokenInvariant();
 
-        uint256 zetaValueAndGas = this.getZetaFromEth(
+        uint256 zetaValueAndGas = this.getZetaFromEth{value: msg.value}(
             address(this),
             0 /// @dev Output can't be validated here, it's validated after the next swap
         );
@@ -103,12 +103,12 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
 
         uint256 zetaValueAndGas;
 
-        if (sourceInputToken == zetaToken) {
-            IERC20(zetaToken).safeTransferFrom(msg.sender, address(this), inputTokenAmount);
-            IERC20(zetaToken).safeApprove(address(connector), inputTokenAmount);
+        IERC20(sourceInputToken).safeTransferFrom(msg.sender, address(this), inputTokenAmount);
 
+        if (sourceInputToken == zetaToken) {
             zetaValueAndGas = inputTokenAmount;
         } else {
+            IERC20(sourceInputToken).safeApprove(address(this), inputTokenAmount);
             zetaValueAndGas = this.getZetaFromToken(
                 address(this),
                 0, /// @dev Output can't be validated here, it's validated after the next swap
@@ -159,34 +159,30 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
             uint256 outTokenMinAmount,
 
         ) = abi.decode(zetaMessage.message, (bytes32, address, address, uint256, bytes, address, bool, uint256, bool));
-
-        address receiverAddress = address(uint160(bytes20(receiverAddressEncoded)));
-
         if (messageType != CROSS_CHAIN_SWAP_MESSAGE) revert InvalidMessageType();
 
         uint256 outTokenFinalAmount;
         if (destinationOutToken == zetaToken) {
             if (zetaMessage.zetaValue < outTokenMinAmount) revert InsufficientOutToken();
 
-            IERC20(zetaToken).safeTransfer(receiverAddress, zetaMessage.zetaValue);
+            IERC20(zetaToken).safeTransfer(address(uint160(bytes20(receiverAddressEncoded))), zetaMessage.zetaValue);
 
             outTokenFinalAmount = zetaMessage.zetaValue;
         } else {
             /**
              * @dev If the out token is not Zeta, get it using Uniswap
              */
-            IERC20(zetaToken).safeApprove(address(uniswapV3Router), zetaMessage.zetaValue);
+            IERC20(zetaToken).safeApprove(address(this), zetaMessage.zetaValue);
 
             if (isDestinationOutETH) {
-                outTokenFinalAmount = this.getEthFromZeta(address(this), outTokenMinAmount, zetaMessage.zetaValue);
-
-                WETH9(WETH9Address).withdraw(outTokenFinalAmount);
-
-                (bool sent, ) = receiverAddress.call{value: outTokenFinalAmount}("");
-                if (!sent) revert ErrorSendingETH();
+                outTokenFinalAmount = this.getEthFromZeta(
+                    address(uint160(bytes20(receiverAddressEncoded))),
+                    outTokenMinAmount,
+                    zetaMessage.zetaValue
+                );
             } else {
                 outTokenFinalAmount = this.getTokenFromZeta(
-                    receiverAddress,
+                    address(uint160(bytes20(receiverAddressEncoded))),
                     outTokenMinAmount,
                     destinationOutToken,
                     zetaMessage.zetaValue
@@ -203,7 +199,7 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
             inputTokenAmount,
             destinationOutToken,
             outTokenFinalAmount,
-            receiverAddress
+            address(uint160(bytes20(receiverAddressEncoded)))
         );
     }
 
@@ -229,31 +225,21 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
 
         uint256 inputTokenReturnedAmount;
         if (sourceInputToken == zetaToken) {
-            bool success1 = IERC20(zetaToken).approve(address(this), zetaRevert.remainingZetaValue);
-            bool success2 = IERC20(zetaToken).transferFrom(
-                address(this),
-                sourceTxOrigin,
-                zetaRevert.remainingZetaValue
-            );
-            if (!success1 || !success2) revert ErrorTransferringTokens(zetaToken);
+            IERC20(zetaToken).safeApprove(address(this), zetaRevert.remainingZetaValue);
+            IERC20(zetaToken).safeTransferFrom(address(this), sourceTxOrigin, zetaRevert.remainingZetaValue);
             inputTokenReturnedAmount = zetaRevert.remainingZetaValue;
         } else {
             /**
              * @dev If the source input token is not Zeta, trade it using Uniswap
              */
-            IERC20(zetaToken).safeApprove(address(uniswapV3Router), zetaRevert.remainingZetaValue);
+            IERC20(zetaToken).safeApprove(address(this), zetaRevert.remainingZetaValue);
 
             if (inputTokenIsETH) {
                 inputTokenReturnedAmount = this.getEthFromZeta(
-                    address(this),
+                    sourceTxOrigin,
                     0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
                     zetaRevert.remainingZetaValue
                 );
-
-                WETH9(WETH9Address).withdraw(inputTokenReturnedAmount);
-
-                (bool sent, ) = sourceTxOrigin.call{value: inputTokenReturnedAmount}("");
-                if (!sent) revert ErrorSendingETH();
             } else {
                 inputTokenReturnedAmount = this.getTokenFromZeta(
                     sourceTxOrigin,

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
-import "../MultiChainSwapUniV2.strategy.sol";
+import "../MultiChainSwap.sol";
 
 contract MultiChainSwapZetaConnector is ZetaConnector {
     address public zetaToken;
@@ -20,7 +21,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         bytes calldata message
     ) public {
         return
-            MultiChainSwapUniV2(payable(destinationAddress)).onZetaMessage(
+            MultiChainSwap(payable(destinationAddress)).onZetaMessage(
                 ZetaInterfaces.ZetaMessage({
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,
@@ -41,7 +42,7 @@ contract MultiChainSwapZetaConnector is ZetaConnector {
         bytes calldata message
     ) public {
         return
-            MultiChainSwapUniV2(payable(zetaTxSenderAddress)).onZetaRevert(
+            MultiChainSwap(payable(zetaTxSenderAddress)).onZetaRevert(
                 ZetaInterfaces.ZetaRevert({
                     zetaTxSenderAddress: zetaTxSenderAddress,
                     sourceChainId: sourceChainId,

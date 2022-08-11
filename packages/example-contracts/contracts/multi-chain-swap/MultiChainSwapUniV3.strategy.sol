@@ -21,7 +21,7 @@ interface MultiChainSwapUniV3Errors {
     error ErrorSendingETH();
 }
 
-contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapErrors, MultiChainSwapUniV3Errors {
+contract MultiChainSwapPlainUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapErrors, MultiChainSwapUniV3Errors {
     using SafeERC20 for IERC20;
     uint256 internal constant MAX_DEADLINE = 200;
 

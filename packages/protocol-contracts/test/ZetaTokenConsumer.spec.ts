@@ -180,7 +180,7 @@ describe("ZetaTokenConsumer tests", () => {
 
       const result = await tx.wait();
       const eventNames = parseZetaConsumerLog(result.logs);
-      expect(eventNames.filter((e) => e === "EthExchangedForZeta")).to.have.lengthOf(1);
+      expect(eventNames.filter(e => e === "EthExchangedForZeta")).to.have.lengthOf(1);
 
       const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
       expect(finalZetaBalance).to.be.gt(initialZetaBalance);
@@ -210,7 +210,7 @@ describe("ZetaTokenConsumer tests", () => {
       const result = await tx2.wait();
 
       const eventNames = parseZetaConsumerLog(result.logs);
-      expect(eventNames.filter((e) => e === "TokenExchangedForZeta")).to.have.lengthOf(1);
+      expect(eventNames.filter(e => e === "TokenExchangedForZeta")).to.have.lengthOf(1);
 
       const finalZetaBalance = await zetaTokenNonEth.balanceOf(randomSigner.address);
       expect(finalZetaBalance).to.be.gt(initialZetaBalance);
@@ -237,7 +237,7 @@ describe("ZetaTokenConsumer tests", () => {
       const result = await tx2.wait();
 
       const eventNames = parseZetaConsumerLog(result.logs);
-      expect(eventNames.filter((e) => e === "ZetaExchangedForEth")).to.have.lengthOf(1);
+      expect(eventNames.filter(e => e === "ZetaExchangedForEth")).to.have.lengthOf(1);
 
       const finalEthBalance = await ethers.provider.getBalance(randomSigner.address);
       expect(finalEthBalance).to.be.gt(initialEthBalance);
@@ -267,7 +267,7 @@ describe("ZetaTokenConsumer tests", () => {
       const result = await tx2.wait();
 
       const eventNames = parseZetaConsumerLog(result.logs);
-      expect(eventNames.filter((e) => e === "ZetaExchangedForToken")).to.have.lengthOf(1);
+      expect(eventNames.filter(e => e === "ZetaExchangedForToken")).to.have.lengthOf(1);
 
       const finalTokenBalance = await USDCContract.balanceOf(randomSigner.address);
       expect(finalTokenBalance).to.be.gt(initialTokenBalance);

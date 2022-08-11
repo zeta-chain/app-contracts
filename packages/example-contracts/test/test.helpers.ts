@@ -1,6 +1,7 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress } from "@zetachain/addresses";
+import { ZetaTokenConsumerUniV3__factory } from "@zetachain/interfaces/typechain-types";
 import { BigNumber, ContractReceipt } from "ethers";
 
 import { getNow } from "../lib/shared/deploy.helpers";
@@ -8,7 +9,7 @@ import {
   ERC20__factory,
   IUniswapV2Pair__factory,
   MultiChainSwapUniV2__factory,
-  UniswapV2Router02__factory
+  UniswapV2Router02__factory,
 } from "../typechain-types";
 
 export const getMintTokenId = (mintTx: ContractReceipt) => mintTx.events?.[0].args?.tokenId;
@@ -31,6 +32,22 @@ export const parseUniswapLog = (logs: ContractReceipt["logs"]) => {
 
 export const parseZetaLog = (logs: ContractReceipt["logs"]) => {
   const iface = MultiChainSwapUniV2__factory.createInterface();
+
+  const eventNames = logs.map(log => {
+    try {
+      const parsedLog = iface.parseLog(log);
+
+      return parsedLog.name;
+    } catch (e) {
+      return "NO_ZETA_LOG";
+    }
+  });
+
+  return eventNames;
+};
+
+export const parseInteractorLog = (logs: ContractReceipt["logs"]) => {
+  const iface = ZetaTokenConsumerUniV3__factory.createInterface();
 
   const eventNames = logs.map(log => {
     try {
@@ -69,7 +86,7 @@ export const addZetaEthLiquidityTest = async (
 ) => {
   const uniswapRouterAddr = getAddress("uniswapV2Router02", {
     customNetworkName: "eth-mainnet",
-    customZetaNetwork: "mainnet"
+    customZetaNetwork: "mainnet",
   });
   const uniswapRouter = UniswapV2Router02__factory.connect(uniswapRouterAddr, deployer);
 
