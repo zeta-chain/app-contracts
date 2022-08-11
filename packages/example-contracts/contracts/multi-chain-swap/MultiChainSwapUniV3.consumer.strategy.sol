@@ -14,7 +14,7 @@ import "./MultiChainSwap.sol";
 
 contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapErrors, ZetaTokenConsumerUniV3 {
     using SafeERC20 for IERC20;
-    bytes32 public constant CROSS_CHAIN_SWAP_MESSAGE_V3 = keccak256("CROSS_CHAIN_SWAP_V3");
+    bytes32 public constant CROSS_CHAIN_SWAP_MESSAGE = keccak256("CROSS_CHAIN_SWAP");
 
     constructor(
         address zetaConnector_,
@@ -63,7 +63,7 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
                 destinationAddress: interactorsByChainId[destinationChainId],
                 destinationGasLimit: crossChaindestinationGasLimit,
                 message: abi.encode(
-                    CROSS_CHAIN_SWAP_MESSAGE_V3,
+                    CROSS_CHAIN_SWAP_MESSAGE,
                     msg.sender,
                     WETH9Address,
                     msg.value,
@@ -127,7 +127,7 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
                 destinationAddress: interactorsByChainId[destinationChainId],
                 destinationGasLimit: crossChaindestinationGasLimit,
                 message: abi.encode(
-                    CROSS_CHAIN_SWAP_MESSAGE_V3,
+                    CROSS_CHAIN_SWAP_MESSAGE,
                     msg.sender,
                     sourceInputToken,
                     inputTokenAmount,
@@ -162,7 +162,7 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
 
         address receiverAddress = address(uint160(bytes20(receiverAddressEncoded)));
 
-        if (messageType != CROSS_CHAIN_SWAP_MESSAGE_V3) revert InvalidMessageType();
+        if (messageType != CROSS_CHAIN_SWAP_MESSAGE) revert InvalidMessageType();
 
         uint256 outTokenFinalAmount;
         if (destinationOutToken == zetaToken) {
