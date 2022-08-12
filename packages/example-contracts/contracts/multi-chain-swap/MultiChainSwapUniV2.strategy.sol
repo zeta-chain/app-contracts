@@ -3,8 +3,6 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 import "./MultiChainSwapErrors.sol";
 import "./MultiChainSwap.sol";

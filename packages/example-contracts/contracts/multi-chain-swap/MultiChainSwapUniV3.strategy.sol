@@ -3,8 +3,6 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 import "@zetachain/protocol-contracts/contracts/ZetaTokenConsumerUniV3.strategy.sol";
 
 import "./MultiChainSwapErrors.sol";
