@@ -323,7 +323,7 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
                 if (inputTokenIsETH) {
                     amounts = uniswapV2Router.swapExactTokensForETH(
                         zetaRevert.remainingZetaValue,
-                        0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
+                        0, /// @todo Add min amount
                         path,
                         sourceTxOrigin,
                         block.timestamp + MAX_DEADLINE
@@ -331,7 +331,7 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
                 } else {
                     amounts = uniswapV2Router.swapExactTokensForTokens(
                         zetaRevert.remainingZetaValue,
-                        0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
+                        0, /// @todo Add min amount
                         path,
                         sourceTxOrigin,
                         block.timestamp + MAX_DEADLINE

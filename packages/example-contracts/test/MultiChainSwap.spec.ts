@@ -199,7 +199,7 @@ describe("MultiChainSwap tests", () => {
 
       const result = await tx2.wait();
       const eventNames = parseUniswapLog(result.logs);
-      expect(eventNames.filter(e => e === "Swap")).to.have.lengthOf(0);
+      expect(eventNames.filter((e) => e === "Swap")).to.have.lengthOf(0);
     });
 
     it("Should trade the input token for Zeta", async () => {

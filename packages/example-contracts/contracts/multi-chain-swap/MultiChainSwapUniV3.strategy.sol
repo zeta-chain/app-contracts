@@ -233,13 +233,13 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
             if (inputTokenIsETH) {
                 inputTokenReturnedAmount = this.getEthFromZeta(
                     sourceTxOrigin,
-                    0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
+                    0, /// @todo Add min amount
                     zetaRevert.remainingZetaValue
                 );
             } else {
                 inputTokenReturnedAmount = this.getTokenFromZeta(
                     sourceTxOrigin,
-                    0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
+                    0, /// @todo Add min amount
                     sourceInputToken,
                     zetaRevert.remainingZetaValue
                 );
