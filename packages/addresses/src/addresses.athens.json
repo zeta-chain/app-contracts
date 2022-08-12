@@ -54,7 +54,7 @@
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
-    "multiChainSwap": "0x81B2C98ae57605f3dE224c4F9C2dF987c1297650"
+    "multiChainSwap": "0xaf28cb0d9E045170E1642321B964740784E7dC64"
   },
   "ropsten": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
