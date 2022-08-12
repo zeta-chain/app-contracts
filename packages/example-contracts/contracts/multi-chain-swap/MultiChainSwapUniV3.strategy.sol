@@ -47,7 +47,7 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
 
         uint256 zetaValueAndGas = this.getZetaFromEth{value: msg.value}(
             address(this),
-            0 /// @dev Output can't be validated here, it's validated after the next swap
+            0 /// @todo Add min amount
         );
         if (zetaValueAndGas == 0) revert ErrorSwappingTokens();
 
@@ -107,7 +107,7 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
             IERC20(sourceInputToken).safeApprove(address(this), inputTokenAmount);
             zetaValueAndGas = this.getZetaFromToken(
                 address(this),
-                0, /// @dev Output can't be validated here, it's validated after the next swap
+                0, /// @todo Add min amount
                 sourceInputToken,
                 inputTokenAmount
             );

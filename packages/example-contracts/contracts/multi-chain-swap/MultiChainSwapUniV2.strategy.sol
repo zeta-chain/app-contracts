@@ -55,7 +55,7 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
             path[1] = zetaToken;
 
             uint256[] memory amounts = uniswapV2Router.swapExactETHForTokens{value: msg.value}(
-                0, /// @dev Output can't be validated here, it's validated after the next swap
+                0, /// @todo Add min amount
                 path,
                 address(this),
                 block.timestamp + MAX_DEADLINE
@@ -146,7 +146,7 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
 
             uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
                 inputTokenAmount,
-                0, /// @dev Output can't be validated here, it's validated after the next swap
+                0, /// @todo Add min amount
                 path,
                 address(this),
                 block.timestamp + MAX_DEADLINE
