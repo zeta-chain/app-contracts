@@ -27,13 +27,13 @@ contract CrossChainWarriors is
 
     bytes32 public constant CROSS_CHAIN_TRANSFER_MESSAGE = keccak256("CROSS_CHAIN_TRANSFER");
 
-    IERC20 internal _zetaToken;
+    IERC20 internal immutable _zetaToken;
 
     string public baseURI;
 
     Counters.Counter public tokenIds;
 
-    ZetaTokenConsumer private _zetaConsumer;
+    ZetaTokenConsumer private immutable _zetaConsumer;
 
     constructor(
         address connectorAddress,
@@ -56,13 +56,8 @@ contract CrossChainWarriors is
         baseURI = baseURIParam;
     }
 
-    function _baseURI() internal view virtual override returns (string memory) {
-        return baseURI;
-    }
-
     function mint(address to) public returns (uint256) {
         uint256 newWarriorId = tokenIds.current();
-        _safeMint(to, newWarriorId);
 
         /**
          * @dev Always increment by two to keep ids even/odd (depending on the chain)
@@ -71,6 +66,7 @@ contract CrossChainWarriors is
         tokenIds.increment();
         tokenIds.increment();
 
+        _safeMint(to, newWarriorId);
         return newWarriorId;
     }
 
