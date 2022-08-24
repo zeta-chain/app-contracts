@@ -69,6 +69,22 @@ contract CrossChainLendingPool is
         return q * risk;
     }
 
+    function lockCollateral(
+        address debtAsset,
+        uint256 amount,
+        address collateralAsset,
+        address caller
+    ) internal returns (uint256) {
+        uint256 collateralNeeded = collateralNeededForCoverDebt(debtAsset, amount, collateralAsset);
+        uint256 collateralBalance = _deposits[caller][collateralAsset];
+        // @todo validate collateralAmount > collateralBalance
+        if (collateralNeeded > collateralBalance) revert NotEnoughCollateral();
+        // if ok then lock it
+        _deposits[caller][collateralAsset] -= collateralNeeded;
+        _depositsLocked[caller][collateralAsset] += collateralNeeded;
+        return collateralNeeded;
+    }
+
     /// dev: if collateralChainId == current chainId => check if the pool has the needed deposit for the current user
     /// dev: if collateralChainId != current chainId => make a crosschain call to validate collateral
     function borrow(
@@ -78,14 +94,7 @@ contract CrossChainLendingPool is
         uint256 collateralChainId
     ) external {
         if (currentChainId == collateralChainId) {
-            uint256 collateralNeeded = collateralNeededForCoverDebt(debtAsset, amount, collateralAsset);
-            uint256 collateralBalance = _deposits[msg.sender][collateralAsset];
-
-            if (collateralNeeded > collateralBalance) revert NotEnoughCollateral();
-
-            _deposits[msg.sender][collateralAsset] -= collateralNeeded;
-            _depositsLocked[msg.sender][collateralAsset] += collateralNeeded;
-
+            uint256 collateralNeeded = lockCollateral(debtAsset, amount, collateralAsset, msg.sender);
             IERC20(debtAsset).safeTransferFrom(address(this), msg.sender, amount);
             emit Borrow(debtAsset, amount, collateralAsset, collateralNeeded);
             return;
@@ -201,13 +210,7 @@ contract CrossChainLendingPool is
          * @dev Setting a message type is a useful pattern to distinguish between different messages.
          */
         if (messageType == ACTION_VALIDATE_COLLATERAL) {
-            uint256 collateralNeeded = collateralNeededForCoverDebt(debtAsset, amount, collateralAsset);
-            uint256 collateralBalance = _deposits[caller][collateralAsset];
-            // @todo validate collateralAmount > collateralBalance
-            if (collateralNeeded > collateralBalance) revert NotEnoughCollateral();
-            // if ok then lock it
-            _deposits[caller][collateralAsset] -= collateralNeeded;
-            _depositsLocked[caller][collateralAsset] += collateralNeeded;
+            lockCollateral(debtAsset, amount, collateralAsset, msg.sender);
 
             // crosschain validation
             uint256 zetaValueAndGas = 2500000;
