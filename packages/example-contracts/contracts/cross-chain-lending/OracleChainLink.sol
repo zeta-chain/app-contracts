@@ -10,7 +10,6 @@ interface OracleErrors {
 }
 
 contract OracleChainLink is OracleInterface, OracleErrors {
-    uint256 private constant CHAINLINK_DECIMALS = 8;
     mapping(address => mapping(address => address)) internal _aggregators;
 
     function setAggregator(
@@ -39,7 +38,8 @@ contract OracleChainLink is OracleInterface, OracleErrors {
             ,
 
         ) = AggregatorV3Interface(aggregatorAddress).latestRoundData();
+        uint8 decimals = AggregatorV3Interface(aggregatorAddress).decimals();
 
-        return (amount * uint256(price)) / (10**CHAINLINK_DECIMALS);
+        return (amount * uint256(price)) / (10**decimals);
     }
 }
