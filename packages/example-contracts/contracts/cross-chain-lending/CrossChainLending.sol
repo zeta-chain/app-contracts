@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
-import "./CrossChainLendingOracle.sol";
+import "./OracleInterface.sol";
 import "./CrossChainLendingStorage.sol";
 
 interface CrossChainLendingPoolErrors {
@@ -15,16 +15,12 @@ interface CrossChainLendingPoolErrors {
 
     error CantBeLiquidated();
 
+    error InvalidAddress();
+
     error InvalidMessageType();
 }
 
-contract CrossChainLendingPool is
-    ZetaInteractor,
-    ZetaReceiver,
-    CrossChainLendingStorage,
-    CrossChainLendingOracle,
-    CrossChainLendingPoolErrors
-{
+contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendingStorage, CrossChainLendingPoolErrors {
     using SafeERC20 for IERC20;
 
     bytes32 public constant ACTION_VALIDATE_COLLATERAL = keccak256("ACTION_VALIDATE_COLLATERAL");
@@ -39,6 +35,11 @@ contract CrossChainLendingPool is
 
     constructor(address connectorAddress, address zetaTokenAddress) ZetaInteractor(connectorAddress) {
         _zetaToken = IERC20(zetaTokenAddress);
+    }
+
+    function setOracle(address oracleAddress) external {
+        if (oracleAddress == address(0)) revert InvalidAddress();
+        _oracleAddress = oracleAddress;
     }
 
     // dev: all the deposits are in the current chain
@@ -64,7 +65,7 @@ contract CrossChainLendingPool is
         uint256 amount,
         address collateralAsset
     ) internal view returns (uint256) {
-        uint256 q = this.quote(debtAsset, amount, collateralAsset);
+        uint256 q = OracleInterface(_oracleAddress).quote(debtAsset, amount, collateralAsset);
         uint256 risk = _riskTable[collateralAsset];
         return q * risk;
     }
@@ -120,7 +121,7 @@ contract CrossChainLendingPool is
         uint256 amount,
         address collateralAsset
     ) internal view returns (uint256) {
-        uint256 q = this.quote(debtAsset, amount, collateralAsset);
+        uint256 q = OracleInterface(_oracleAddress).quote(debtAsset, amount, collateralAsset);
         return (q * (_feePerThousand + 1000)) / 1000;
     }
 

@@ -8,6 +8,10 @@ contract CrossChainLendingStorage {
     // loan to value table
     mapping(address => uint256) _riskTable;
 
+    mapping(address => bool) _allowedTokens;
+
     mapping(address => mapping(address => uint256)) _deposits;
     mapping(address => mapping(address => uint256)) _depositsLocked;
+
+    address _oracleAddress;
 }
