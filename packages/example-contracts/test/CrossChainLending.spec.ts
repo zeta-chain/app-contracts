@@ -1,17 +1,11 @@
 import { FakeContract, smock } from "@defi-wonderland/smock";
-import { BigNumber } from "@ethersproject/bignumber";
-import { AddressZero, MaxUint256 } from "@ethersproject/constants";
 import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import chai, { expect } from "chai";
 import { formatUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { getNow, getZetaMock } from "../lib/shared/deploy.helpers";
-import { ERC20__factory, IERC20, OracleChainLink, OracleChainLink__factory } from "../typechain-types";
-import { USDC_ADDR } from "./MultiChainSwap.constants";
-import { getCustomErrorMessage, parseUniswapLog, parseZetaLog } from "./test.helpers";
+import { IERC20, OracleChainLink, OracleChainLink__factory } from "../typechain-types";
 
 chai.should();
 chai.use(smock.matchers);
@@ -27,7 +21,6 @@ const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 
 describe("CrossChainLending tests", () => {
   let oracleChainLink: OracleChainLink;
-  let USDCTokenContract: IERC20;
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
@@ -40,9 +33,9 @@ describe("CrossChainLending tests", () => {
     const oracleChainLinkFactory = new OracleChainLink__factory(deployer);
     oracleChainLink = await oracleChainLinkFactory.deploy();
 
-    await oracleChainLink.setAggregator(WETH_ADDRESS, 0, ETH_USD_DATA_FEED);
-    await oracleChainLink.setAggregator(WBTC_ADDRESS, 0, BTC_USD_DATA_FEED);
-    await oracleChainLink.setAggregator(USDC_ADDRESS, 0, USDC_USD_DATA_FEED);
+    await oracleChainLink.setAggregator(WETH_ADDRESS, ETH_USD_DATA_FEED);
+    await oracleChainLink.setAggregator(WBTC_ADDRESS, BTC_USD_DATA_FEED);
+    await oracleChainLink.setAggregator(USDC_ADDRESS, USDC_USD_DATA_FEED);
   });
 
   describe("ChainLinkOracle", () => {
