@@ -8,7 +8,9 @@ import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 import "./OracleInterface.sol";
 import "./CrossChainLendingStorage.sol";
 
-interface CrossChainLendingPoolErrors {
+import "hardhat/console.sol";
+
+interface CrossChainLendingErrors {
     error NotEnoughBalance();
 
     error NotEnoughCollateral();
@@ -20,7 +22,7 @@ interface CrossChainLendingPoolErrors {
     error InvalidMessageType();
 }
 
-contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendingStorage, CrossChainLendingPoolErrors {
+contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingStorage, CrossChainLendingErrors {
     using SafeERC20 for IERC20;
 
     bytes32 public constant ACTION_VALIDATE_COLLATERAL = keccak256("ACTION_VALIDATE_COLLATERAL");
@@ -35,9 +37,10 @@ contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendin
 
     constructor(address connectorAddress, address zetaTokenAddress) ZetaInteractor(connectorAddress) {
         _zetaToken = IERC20(zetaTokenAddress);
+        IERC20(zetaTokenAddress).approve(connectorAddress, 2**256 - 1);
     }
 
-    function setOracle(address oracleAddress) external {
+    function setOracle(address oracleAddress) external onlyRole(ADMIN_ROLE) {
         if (oracleAddress == address(0)) revert InvalidAddress();
         _oracleAddress = oracleAddress;
     }
@@ -54,6 +57,7 @@ contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendin
         uint256 amount,
         address to
     ) external {
+        // @todo: check if there's balance in the contract, maybe was borrow to someone
         if (_deposits[msg.sender][asset] < amount) revert NotEnoughBalance();
 
         _deposits[msg.sender][asset] -= amount;
@@ -94,6 +98,7 @@ contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendin
         address collateralAsset,
         uint256 collateralChainId
     ) external {
+        // @todo: check if we have enoght debtAsset to send
         if (currentChainId == collateralChainId) {
             uint256 collateralNeeded = lockCollateral(debtAsset, amount, collateralAsset, msg.sender);
             IERC20(debtAsset).safeTransferFrom(address(this), msg.sender, amount);
@@ -104,6 +109,7 @@ contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendin
         // crosschain validation
         /// @todo: for this version we topup zeta to pay gas from the contract
         uint256 zetaValueAndGas = 2500000;
+
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: collateralChainId,
@@ -211,7 +217,7 @@ contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendin
          * @dev Setting a message type is a useful pattern to distinguish between different messages.
          */
         if (messageType == ACTION_VALIDATE_COLLATERAL) {
-            lockCollateral(debtAsset, amount, collateralAsset, msg.sender);
+            lockCollateral(debtAsset, amount, collateralAsset, caller);
 
             // crosschain validation
             uint256 zetaValueAndGas = 2500000;
@@ -230,9 +236,8 @@ contract CrossChainLendingPool is ZetaInteractor, ZetaReceiver, CrossChainLendin
 
         if (messageType == ACTION_COLLATERAL_VALIDATED) {
             uint256 collateralNeeded = collateralNeededForCoverDebt(debtAsset, amount, collateralAsset);
-
+            IERC20(debtAsset).safeApprove(address(this), amount);
             IERC20(debtAsset).safeTransferFrom(address(this), caller, amount);
-
             emit Borrow(debtAsset, amount, collateralAsset, collateralNeeded);
             return;
         }
