@@ -1,11 +1,11 @@
-import { FakeContract, smock } from "@defi-wonderland/smock";
+import { smock } from "@defi-wonderland/smock";
 import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import chai, { expect } from "chai";
 import { formatUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { IERC20, OracleChainLink, OracleChainLink__factory } from "../typechain-types";
+import { OracleChainLink, OracleChainLink__factory } from "../typechain-types";
 
 chai.should();
 chai.use(smock.matchers);
@@ -44,7 +44,6 @@ describe("CrossChainLending tests", () => {
       // BTC 39699.93878572;
       // USDC 1.0
       let ret = await oracleChainLink.quote(WETH_ADDRESS, parseUnits("13.55377"), WBTC_ADDRESS);
-      console.log();
       await expect(formatUnits(ret, 8)).to.be.eq("1.00023313");
 
       ret = await oracleChainLink.quote(WETH_ADDRESS, parseUnits("1"), USDC_ADDRESS);
