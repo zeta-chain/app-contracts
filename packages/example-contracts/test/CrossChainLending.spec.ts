@@ -6,14 +6,12 @@ import chai, { expect } from "chai";
 import { formatUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { getMultiChainSwapZetaConnector } from "../lib/multi-chain-swap/MultiChainSwap.helpers";
 import { getZetaMock } from "../lib/shared/deploy.helpers";
 import {
   CrossChainLending,
   CrossChainLending__factory,
   CrossChainLendingZetaConnector__factory,
   ERC20,
-  ERC20__factory,
   FakeERC20__factory,
   MultiChainSwapZetaConnector,
   OracleChainLink,
@@ -53,6 +51,7 @@ describe("CrossChainLending tests", () => {
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
+  let feeWallet: SignerWithAddress;
   let account1: SignerWithAddress;
 
   const deployTokensAndOracle = async () => {
@@ -60,6 +59,7 @@ describe("CrossChainLending tests", () => {
     fakeWETH = await ERC20Factory.deploy("WETH", "WETH");
     fakeWBTC = await ERC20Factory.deploy("WBTC", "WBTC");
     fakeUSDC = await ERC20Factory.deploy("USDC", "USDC");
+
     const oracleChainLinkFactory = new OracleChainLink__factory(deployer);
     oracleChainLink = await oracleChainLinkFactory.deploy();
     await oracleChainLink.setAggregator(WETH_ADDRESS, ETH_USD_DATA_FEED);
@@ -72,24 +72,25 @@ describe("CrossChainLending tests", () => {
 
   const deployCrossChainLending = async () => {
     const crossChainLendingFactory = new CrossChainLending__factory(deployer);
-    const crossChainLendingChain = await crossChainLendingFactory.deploy(
+    const crossChainLendingContract = await crossChainLendingFactory.deploy(
       zetaConnectorMock.address,
       zetaTokenMock.address
     );
-    await crossChainLendingChain.setOracle(oracleChainLink.address);
-    await crossChainLendingChain.setAllowedToken(fakeWETH.address, true);
-    await crossChainLendingChain.setRiskTable(fakeWETH.address, 2);
-    await crossChainLendingChain.setAllowedToken(fakeWBTC.address, true);
-    await crossChainLendingChain.setRiskTable(fakeWBTC.address, 2);
-    await crossChainLendingChain.setAllowedToken(fakeUSDC.address, true);
-    await crossChainLendingChain.setRiskTable(fakeUSDC.address, 2);
+    await crossChainLendingContract.setOracle(oracleChainLink.address);
+    await crossChainLendingContract.setAllowedToken(fakeWETH.address, true);
+    await crossChainLendingContract.setRiskTable(fakeWETH.address, 2);
+    await crossChainLendingContract.setAllowedToken(fakeWBTC.address, true);
+    await crossChainLendingContract.setRiskTable(fakeWBTC.address, 2);
+    await crossChainLendingContract.setAllowedToken(fakeUSDC.address, true);
+    await crossChainLendingContract.setRiskTable(fakeUSDC.address, 2);
 
-    return crossChainLendingChain;
+    await crossChainLendingContract.setFeeWallet(feeWallet.address);
+    return crossChainLendingContract;
   };
 
   beforeEach(async () => {
     accounts = await ethers.getSigners();
-    [deployer, account1] = accounts;
+    [deployer, account1, feeWallet] = accounts;
 
     zetaTokenMock = await getZetaMock();
     const zetaConnectorFactory = new CrossChainLendingZetaConnector__factory(deployer);
@@ -128,17 +129,26 @@ describe("CrossChainLending tests", () => {
       // ETH  2929.75270932;
       // BTC 39699.93878572;
       // USDC 1.0
-      let ret = await oracleChainLink.quote(WETH_ADDRESS, parseUnits("13.55377"), WBTC_ADDRESS);
-      await expect(formatUnits(ret, 8)).to.be.eq("1.00023313");
+      let ret = await oracleChainLink.tokenPerUsd(parseUnits("39699.93878572", 8), WBTC_ADDRESS);
+      await expect(formatUnits(ret, 8)).to.be.eq("1.0");
 
-      ret = await oracleChainLink.quote(WETH_ADDRESS, parseUnits("1"), USDC_ADDRESS);
-      await expect(formatUnits(ret, 6)).to.be.eq("2929.752709");
+      ret = await oracleChainLink.tokenPerUsd(parseUnits("1", 8), USDC_ADDRESS);
+      await expect(formatUnits(ret, 6)).to.be.eq("1.0");
 
-      ret = await oracleChainLink.quote(USDC_ADDRESS, parseUnits("2929.75270932"), WETH_ADDRESS);
+      ret = await oracleChainLink.tokenPerUsd(parseUnits("2929.75270932", 8), WETH_ADDRESS);
       await expect(formatUnits(ret, 18)).to.be.eq("1.0");
 
-      ret = await oracleChainLink.quote(USDC_ADDRESS, parseUnits("2929.75270932").div(2), WETH_ADDRESS);
+      ret = await oracleChainLink.tokenPerUsd(parseUnits("2929.75270932", 8).div(2), WETH_ADDRESS);
       await expect(formatUnits(ret, 18)).to.be.eq("0.5");
+
+      ret = await oracleChainLink.usdPerToken(parseUnits("1", 8), WBTC_ADDRESS);
+      await expect(formatUnits(ret, 8)).to.be.eq("39699.93878572");
+
+      ret = await oracleChainLink.usdPerToken(parseUnits("1", 18), WETH_ADDRESS);
+      await expect(formatUnits(ret, 8)).to.be.eq("2929.75270932");
+
+      ret = await oracleChainLink.usdPerToken(parseUnits("1", 6), USDC_ADDRESS);
+      await expect(formatUnits(ret, 8)).to.be.eq("1.0");
     });
   });
 
@@ -147,26 +157,101 @@ describe("CrossChainLending tests", () => {
       // ETH  2929.75270932;
       // BTC 39699.93878572;
       // USDC 1.0
-
       await fakeWETH.connect(account1).approve(crossChainLendingChainA.address, parseUnits("1"));
       await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
+
       const initialUSDCBalance = await fakeUSDC.balanceOf(account1.address);
+      const status1 = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status1[0]).to.be.eq(parseUnits("1"));
+      await expect(status1[1]).to.be.eq(parseUnits("0"));
 
       await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
       const finalUSDCBalance = await fakeUSDC.balanceOf(account1.address);
       await expect(finalUSDCBalance.sub(initialUSDCBalance)).to.be.eq(parseUnits("1000"));
+
+      const status2 = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status2[0]).to.be.eq(parseUnits("0.317348527868004600"));
+      await expect(status2[1]).to.be.eq(parseUnits("0.682651472131995400"));
     });
 
     it("Should fail if not enoght collateral", async () => {
       // ETH  2929.75270932;
       // BTC 39699.93878572;
       // USDC 1.0
-
       await fakeWETH.connect(account1).approve(crossChainLendingChainA.address, parseUnits("1"));
       await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
 
       const call = userConnectionB.borrow(fakeUSDC.address, parseUnits("1500"), fakeWETH.address, chainAId);
       await expect(call).to.be.revertedWith(getCustomErrorMessage("NotEnoughCollateral"));
+    });
+
+    it("Should repay and unlock", async () => {
+      // ETH  2929.75270932;
+      // BTC 39699.93878572;
+      // USDC 1.0
+      await fakeWETH.connect(account1).approve(crossChainLendingChainA.address, parseUnits("1"));
+      await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
+
+      const initialUSDCBalance = await fakeUSDC.balanceOf(account1.address);
+      let status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status[0]).to.be.eq(parseUnits("1"));
+      await expect(status[1]).to.be.eq(parseUnits("0"));
+      await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
+
+      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
+      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status[0]).to.be.eq(parseUnits("0.317348527868004600"));
+      await expect(status[1]).to.be.eq(parseUnits("0.682651472131995400"));
+      await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
+
+      await fakeUSDC.connect(account1).approve(crossChainLendingChainB.address, parseUnits("500"));
+      await userConnectionB.repay(fakeUSDC.address, parseUnits("500"), fakeWETH.address, chainAId);
+      const finalUSDCBalance = await fakeUSDC.balanceOf(account1.address);
+      await expect(finalUSDCBalance.sub(initialUSDCBalance)).to.be.eq(parseUnits("500"));
+
+      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status[0]).to.be.eq(parseUnits("0.655261006573342323"));
+      await expect(status[1]).to.be.eq(parseUnits("0.341325736065997700"));
+      await expect(status[0].add(status[1])).to.be.eq(parseUnits("0.996586742639340023"));
+
+      const feeWalletWETHBalance = await fakeWETH.balanceOf(feeWallet.address);
+      await expect(feeWalletWETHBalance).to.be.eq(parseUnits("0.003413257360659977"));
+      await expect(feeWalletWETHBalance.add(status[0]).add(status[1])).to.be.eq(parseUnits("1"));
+    });
+
+    it("Should repay the full debt and unlock everything", async () => {
+      // ETH  2929.75270932;
+      // BTC 39699.93878572;
+      // USDC 1.0
+      await fakeWETH.connect(account1).approve(crossChainLendingChainA.address, parseUnits("1"));
+      await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
+
+      const initialUSDCBalance = await fakeUSDC.balanceOf(account1.address);
+      let status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status[0]).to.be.eq(parseUnits("1"));
+      await expect(status[1]).to.be.eq(parseUnits("0"));
+      await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
+
+      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
+      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status[0]).to.be.eq(parseUnits("0.317348527868004600"));
+      await expect(status[1]).to.be.eq(parseUnits("0.682651472131995400"));
+      await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
+
+      await fakeUSDC.connect(account1).approve(crossChainLendingChainB.address, parseUnits("1000"));
+      await userConnectionB.repay(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
+
+      const finalUSDCBalance = await fakeUSDC.balanceOf(account1.address);
+      await expect(finalUSDCBalance.sub(initialUSDCBalance)).to.be.eq(parseUnits("0"));
+
+      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await expect(status[0]).to.be.eq(parseUnits("0.993173485278680046"));
+      await expect(status[1]).to.be.eq(parseUnits("0"));
+      await expect(status[0].add(status[1])).to.be.eq(parseUnits("0.993173485278680046"));
+      const feeWalletWETHBalance = await fakeWETH.balanceOf(feeWallet.address);
+      await expect(feeWalletWETHBalance).to.be.eq(parseUnits("0.006826514721319954"));
+
+      await expect(feeWalletWETHBalance.add(status[0]).add(status[1])).to.be.eq(parseUnits("1"));
     });
   });
 });

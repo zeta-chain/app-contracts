@@ -18,40 +18,39 @@ contract OracleChainLink is OracleInterface, OracleErrors {
         _aggregators[tokenAddress] = aggregator;
     }
 
-    function quote(
-        address debtAsset,
-        uint256 amount,
-        address collateralAsset
-    ) external view override returns (uint256) {
-        address debtAggregator = _aggregators[debtAsset];
-        if (debtAggregator == address(0)) revert InvalidPair();
+    function tokenPerUsd(uint256 usdAmount, address token) external view override returns (uint256) {
+        address aggregator = _aggregators[token];
+        if (aggregator == address(0)) revert InvalidPair();
 
         (
             ,
             /*uint80 roundID*/
-            int256 debtPrice, /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/
+            int256 price, /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/
             ,
             ,
 
-        ) = AggregatorV3Interface(debtAggregator).latestRoundData();
+        ) = AggregatorV3Interface(aggregator).latestRoundData();
 
-        address collateralAggregator = _aggregators[collateralAsset];
-        if (collateralAggregator == address(0)) revert InvalidPair();
+        uint256 decimals = ERC20(token).decimals();
+
+        return (usdAmount * 10**decimals) / uint256(price);
+    }
+
+    function usdPerToken(uint256 tokenAmount, address token) external view override returns (uint256) {
+        address aggregator = _aggregators[token];
+        if (aggregator == address(0)) revert InvalidPair();
 
         (
             ,
             /*uint80 roundID*/
-            int256 collateralPrice, /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/
+            int256 price, /*uint startedAt*/ /*uint timeStamp*/ /*uint80 answeredInRound*/
             ,
             ,
 
-        ) = AggregatorV3Interface(collateralAggregator).latestRoundData();
+        ) = AggregatorV3Interface(aggregator).latestRoundData();
 
-        uint256 debtDecimals = ERC20(debtAsset).decimals();
-        uint256 collateralDecimals = ERC20(collateralAsset).decimals();
-        uint256 ret = (amount * uint256(debtPrice)) / uint256(collateralPrice);
-        if (debtDecimals > collateralDecimals) return ret / 10**(debtDecimals - collateralDecimals);
+        uint256 decimals = ERC20(token).decimals();
 
-        return ret;
+        return (tokenAmount * uint256(price)) / 10**decimals;
     }
 }

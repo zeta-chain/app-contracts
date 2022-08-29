@@ -6,6 +6,9 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract CrossChainLendingStorage is AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
+    //@todo: move to setter
+    uint256 internal constant _feePerThousand = 10;
+
     // https://docs.aave.com/risk/v/aave-v2/asset-risk/amm
     // loan to value table
     mapping(address => uint256) _riskTable;
@@ -17,6 +20,8 @@ contract CrossChainLendingStorage is AccessControl {
 
     address _oracleAddress;
 
+    address _feeWallet;
+
     constructor() {
         _grantRole(ADMIN_ROLE, msg.sender);
     }
@@ -27,5 +32,9 @@ contract CrossChainLendingStorage is AccessControl {
 
     function setAllowedToken(address token, bool isAllow) external onlyRole(ADMIN_ROLE) {
         _allowedTokens[token] = isAllow;
+    }
+
+    function setFeeWallet(address feeWallet) external onlyRole(ADMIN_ROLE) {
+        _feeWallet = feeWallet;
     }
 }

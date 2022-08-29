@@ -2,9 +2,7 @@
 pragma solidity 0.8.7;
 
 interface OracleInterface {
-    function quote(
-        address debtAsset,
-        uint256 amount,
-        address collateralAsset
-    ) external view returns (uint256);
+    function tokenPerUsd(uint256 usdAmount, address token) external view returns (uint256);
+
+    function usdPerToken(uint256 tokenAmount, address token) external view returns (uint256);
 }

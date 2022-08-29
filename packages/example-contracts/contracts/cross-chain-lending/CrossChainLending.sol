@@ -8,12 +8,15 @@ import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 import "./OracleInterface.sol";
 import "./CrossChainLendingStorage.sol";
 
+/// @todo: remove when is stable
 import "hardhat/console.sol";
 
 interface CrossChainLendingErrors {
     error NotEnoughBalance();
 
     error NotEnoughCollateral();
+
+    error NotEnoughLiquidity();
 
     error CantBeLiquidated();
 
@@ -30,8 +33,6 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
     bytes32 public constant ACTION_REPAY = keccak256("ACTION_REPAY");
 
     IERC20 internal immutable _zetaToken;
-
-    uint256 internal constant _feePerThousand = 10;
 
     event Borrow(address debtAsset, uint256 debtAmount, address collateralAsset, uint256 collateralAmount);
 
@@ -64,27 +65,22 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         IERC20(asset).safeTransferFrom(address(this), to, amount);
     }
 
-    function collateralNeededForCoverDebt(
-        address debtAsset,
-        uint256 amount,
-        address collateralAsset
-    ) internal view returns (uint256) {
-        uint256 q = OracleInterface(_oracleAddress).quote(debtAsset, amount, collateralAsset);
+    function collateralNeededForCoverDebt(uint256 usdDebt, address collateralAsset) internal view returns (uint256) {
+        uint256 q = OracleInterface(_oracleAddress).tokenPerUsd(usdDebt, collateralAsset);
         uint256 risk = _riskTable[collateralAsset];
         return q * risk;
     }
 
     function lockCollateral(
-        address debtAsset,
-        uint256 amount,
+        uint256 usdDebt,
         address collateralAsset,
         address caller
     ) internal returns (uint256) {
-        uint256 collateralNeeded = collateralNeededForCoverDebt(debtAsset, amount, collateralAsset);
+        uint256 collateralNeeded = collateralNeededForCoverDebt(usdDebt, collateralAsset);
         uint256 collateralBalance = _deposits[caller][collateralAsset];
-        // @todo validate collateralAmount > collateralBalance
+
         if (collateralNeeded > collateralBalance) revert NotEnoughCollateral();
-        // if ok then lock it
+
         _deposits[caller][collateralAsset] -= collateralNeeded;
         _depositsLocked[caller][collateralAsset] += collateralNeeded;
         return collateralNeeded;
@@ -98,11 +94,13 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         address collateralAsset,
         uint256 collateralChainId
     ) external {
-        // @todo: check if we have enoght debtAsset to send
+        if (IERC20(debtAsset).balanceOf(address(this)) < amount) revert NotEnoughLiquidity();
+        uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount, debtAsset);
+
         if (currentChainId == collateralChainId) {
-            uint256 collateralNeeded = lockCollateral(debtAsset, amount, collateralAsset, msg.sender);
+            lockCollateral(usdDebt, collateralAsset, msg.sender);
             IERC20(debtAsset).safeTransferFrom(address(this), msg.sender, amount);
-            emit Borrow(debtAsset, amount, collateralAsset, collateralNeeded);
+            emit Borrow(debtAsset, amount, collateralAsset, usdDebt);
             return;
         }
 
@@ -115,20 +113,46 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
                 destinationChainId: collateralChainId,
                 destinationAddress: interactorsByChainId[collateralChainId],
                 destinationGasLimit: zetaValueAndGas,
-                message: abi.encode(ACTION_VALIDATE_COLLATERAL, debtAsset, amount, collateralAsset, msg.sender),
+                message: abi.encode(
+                    ACTION_VALIDATE_COLLATERAL,
+                    debtAsset,
+                    amount,
+                    usdDebt,
+                    collateralAsset,
+                    msg.sender
+                ),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );
     }
 
-    function calculateCollateralToRepay(
-        address debtAsset,
-        uint256 amount,
-        address collateralAsset
-    ) internal view returns (uint256) {
-        uint256 q = OracleInterface(_oracleAddress).quote(debtAsset, amount, collateralAsset);
-        return (q * (_feePerThousand + 1000)) / 1000;
+    function debtRepayFee(uint256 amount) internal pure returns (uint256) {
+        return (amount * _feePerThousand) / 1000;
+    }
+
+    function repayUsdDebt(
+        uint256 usdDebt,
+        address collateralAsset,
+        address caller
+    ) internal {
+        // @todo: should take fee only from the repay, no repay * risk
+        uint256 collateralCanBePay = OracleInterface(_oracleAddress).tokenPerUsd(usdDebt, collateralAsset);
+        uint256 collateralCanBeUnlock = collateralCanBePay * _riskTable[collateralAsset];
+
+        uint256 collateralLocked = _depositsLocked[caller][collateralAsset];
+
+        if (collateralCanBeUnlock > collateralLocked) {
+            collateralCanBeUnlock = collateralLocked;
+        }
+
+        uint256 repayFee = debtRepayFee(collateralCanBeUnlock);
+
+        IERC20(collateralAsset).safeApprove(address(this), repayFee);
+        IERC20(collateralAsset).safeTransferFrom(address(this), _feeWallet, repayFee);
+
+        _deposits[caller][collateralAsset] += (collateralCanBeUnlock - repayFee);
+        _depositsLocked[caller][collateralAsset] -= collateralCanBeUnlock;
     }
 
     function repay(
@@ -137,24 +161,18 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         address collateralAsset,
         uint256 collateralChainId
     ) external {
+        uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount, debtAsset);
+
         if (currentChainId == collateralChainId) {
-            uint256 collateralCanBePay = calculateCollateralToRepay(debtAsset, amount, collateralAsset);
-            uint256 collateralToPay = _depositsLocked[msg.sender][collateralAsset];
+            repayUsdDebt(usdDebt, collateralAsset, msg.sender);
+        }
 
-            if (collateralCanBePay > collateralToPay) {
-                collateralCanBePay = collateralToPay;
-                // @todo: check to only transfer the needed amount? don't think so...
-            }
+        IERC20(debtAsset).safeTransferFrom(msg.sender, address(this), amount);
 
-            IERC20(debtAsset).safeTransferFrom(msg.sender, address(this), amount);
-
-            _deposits[msg.sender][collateralAsset] += collateralCanBePay;
-            _depositsLocked[msg.sender][collateralAsset] -= collateralCanBePay;
+        if (currentChainId == collateralChainId) {
             return;
         }
 
-        ///@todo: transfer and validate or validate and transfer? mmm...
-        IERC20(debtAsset).safeTransferFrom(msg.sender, address(this), amount);
         // crosschain validation
         /// @todo: for this version we topup zeta to pay gas from the contract
         uint256 zetaValueAndGas = 2500000;
@@ -163,7 +181,7 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
                 destinationChainId: collateralChainId,
                 destinationAddress: interactorsByChainId[collateralChainId],
                 destinationGasLimit: zetaValueAndGas,
-                message: abi.encode(ACTION_REPAY, debtAsset, amount, collateralAsset, msg.sender),
+                message: abi.encode(ACTION_REPAY, debtAsset, amount, usdDebt, collateralAsset, msg.sender),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
@@ -172,33 +190,34 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
 
     /// dev: public view that check if a particular user can be liquidated
     // if debtToCover * oraclePrice(debtAsset) * (1 + _riskTable) < collateralAsset user balance then true
-    function toBeliquidated(
-        address collateralAsset,
-        address debtAsset,
-        address user,
-        uint256 debtToCover
-    ) external view returns (bool) {
-        uint256 collateralNeeded = collateralNeededForCoverDebt(debtAsset, debtToCover, collateralAsset);
-        uint256 collateralLocked = _depositsLocked[user][collateralAsset];
+    // function toBeliquidated(
+    //     address collateralAsset,
+    //     address debtAsset,
+    //     address user,
+    //     uint256 debtToCover
+    // ) external view returns (bool) {
+    //     uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(debtToCover, debtAsset);
+    //     uint256 collateralNeeded = collateralNeededForCoverDebt(usdDebt, collateralAsset);
+    //     uint256 collateralLocked = _depositsLocked[user][collateralAsset];
 
-        return collateralNeeded > collateralLocked;
-    }
+    //     return collateralNeeded > collateralLocked;
+    // }
 
-    /// dev: actual implementation of toBeLiquidated that execute the liquidation
-    function liquidationCall(
-        address collateralAsset,
-        address debtAsset,
-        address user,
-        uint256 debtToCover
-    ) external {
-        bool canBeLiquidated = this.toBeliquidated(collateralAsset, debtAsset, user, debtToCover);
-        if (!canBeLiquidated) revert CantBeLiquidated();
+    // /// dev: actual implementation of toBeLiquidated that execute the liquidation
+    // function liquidationCall(
+    //     address collateralAsset,
+    //     address debtAsset,
+    //     address user,
+    //     uint256 debtToCover
+    // ) external {
+    //     bool canBeLiquidated = this.toBeliquidated(collateralAsset, debtAsset, user, debtToCover);
+    //     if (!canBeLiquidated) revert CantBeLiquidated();
 
-        uint256 collateralLocked = _depositsLocked[user][collateralAsset];
-        _depositsLocked[user][collateralAsset] = 0;
-        // @todo: all for the caller or a % per zeta??
-        IERC20(collateralAsset).safeTransferFrom(address(this), msg.sender, collateralLocked);
-    }
+    //     uint256 collateralLocked = _depositsLocked[user][collateralAsset];
+    //     _depositsLocked[user][collateralAsset] = 0;
+    //     // @todo: all for the caller or a % per zeta??
+    //     IERC20(collateralAsset).safeTransferFrom(address(this), msg.sender, collateralLocked);
+    // }
 
     function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
         external
@@ -208,16 +227,20 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         /**
          * @dev Decode should follow the signature of the message provided to zeta.send.
          */
-        (bytes32 messageType, address debtAsset, uint256 amount, address collateralAsset, address caller) = abi.decode(
-            zetaMessage.message,
-            (bytes32, address, uint256, address, address)
-        );
+        (
+            bytes32 messageType,
+            address debtAsset,
+            uint256 amount,
+            uint256 usdDebt,
+            address collateralAsset,
+            address caller
+        ) = abi.decode(zetaMessage.message, (bytes32, address, uint256, uint256, address, address));
 
         /**
          * @dev Setting a message type is a useful pattern to distinguish between different messages.
          */
         if (messageType == ACTION_VALIDATE_COLLATERAL) {
-            lockCollateral(debtAsset, amount, collateralAsset, caller);
+            lockCollateral(usdDebt, collateralAsset, caller);
 
             // crosschain validation
             uint256 zetaValueAndGas = 2500000;
@@ -226,7 +249,14 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
                     destinationChainId: zetaMessage.sourceChainId,
                     destinationAddress: interactorsByChainId[zetaMessage.sourceChainId],
                     destinationGasLimit: zetaValueAndGas,
-                    message: abi.encode(ACTION_COLLATERAL_VALIDATED, debtAsset, amount, collateralAsset, caller),
+                    message: abi.encode(
+                        ACTION_COLLATERAL_VALIDATED,
+                        debtAsset,
+                        amount,
+                        usdDebt,
+                        collateralAsset,
+                        caller
+                    ),
                     zetaValueAndGas: zetaValueAndGas,
                     zetaParams: abi.encode("")
                 })
@@ -235,23 +265,14 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         }
 
         if (messageType == ACTION_COLLATERAL_VALIDATED) {
-            uint256 collateralNeeded = collateralNeededForCoverDebt(debtAsset, amount, collateralAsset);
             IERC20(debtAsset).safeApprove(address(this), amount);
             IERC20(debtAsset).safeTransferFrom(address(this), caller, amount);
-            emit Borrow(debtAsset, amount, collateralAsset, collateralNeeded);
+            emit Borrow(debtAsset, amount, collateralAsset, usdDebt);
             return;
         }
 
         if (messageType == ACTION_REPAY) {
-            uint256 collateralCanBePay = calculateCollateralToRepay(debtAsset, amount, collateralAsset);
-            uint256 collateralToPay = _depositsLocked[caller][collateralAsset];
-            if (collateralCanBePay > collateralToPay) {
-                collateralCanBePay = collateralToPay;
-                // @todo: check to only transfer the needed amount, it's more complicated if comes from other chain...
-            }
-
-            _deposits[caller][collateralAsset] += collateralCanBePay;
-            _depositsLocked[caller][collateralAsset] -= collateralCanBePay;
+            repayUsdDebt(usdDebt, collateralAsset, caller);
             return;
         }
 
@@ -268,4 +289,8 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         override
         isValidRevertCall(zetaRevert)
     {}
+
+    function getUserStatus(address user, address token) external view returns (uint256, uint256) {
+        return (_deposits[user][token], _depositsLocked[user][token]);
+    }
 }

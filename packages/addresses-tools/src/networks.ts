@@ -10,7 +10,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `https://data-seed-prebsc-2-s3.binance.org:8545`,
+    url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
   },
   "eth-localnet": {
     gas: 2100000,
@@ -55,9 +55,9 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
 
 export const getHardhatConfigScanners = () => ({
   apiKey: {
-    bscTestnet: process.env.BSCSCAN_API_KEY,
-    goerli: process.env.ETHERSCAN_API_KEY,
-    polygonMumbai: process.env.POYLGONSCAN_API_KEY,
-    ropsten: process.env.ETHERSCAN_API_KEY,
+    bscTestnet: process.env.BSCSCAN_API_KEY!,
+    goerli: process.env.ETHERSCAN_API_KEY!,
+    polygonMumbai: process.env.POYLGONSCAN_API_KEY!,
+    ropsten: process.env.ETHERSCAN_API_KEY!,
   },
 });
