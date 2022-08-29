@@ -1,4 +1,6 @@
-import { addNewNetwork, isZetaNetworkName } from "./addresses.helpers";
+import { isZetaNetworkName, ZetaNetworkName } from "@zetachain/addresses";
+
+import { addNewNetwork } from "./addresses.helpers";
 
 const name = process.argv[2];
 const parsedAddTo = process.argv[3].split(",");

@@ -1,6 +1,7 @@
 import { network } from "hardhat";
 
 import athens from "./addresses.athens.json";
+import dev from "./addresses.dev.json";
 import mainnet from "./addresses.mainnet.json";
 import troy from "./addresses.troy.json";
 
@@ -43,7 +44,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   usdc: true,
   weth9: true,
   zetaToken: true,
-  zetaTokenConsumerUniV2: true,
+  zetaTokenConsumerUniV2: true
 };
 
 export const isZetaAddress = (a: string | undefined): a is ZetaAddress => Boolean(zetaAddresses[a as ZetaAddress]);
@@ -64,7 +65,28 @@ export const isZetaLocalnet = (networkName: string | undefined): networkName is 
   networkName === "troy";
 
 export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressGroup> => ({
-  troy: troy as LocalnetAddressGroup,
+  troy: troy as LocalnetAddressGroup
+});
+
+/**
+ * @description Devnet
+ */
+
+export type DevnetNetworkName = "bsc-testnet" | "goerli" | "polygon-mumbai" | "ropsten";
+export type ZetaDevnetNetworkName = "dev";
+export type DevnetAddressGroup = Record<DevnetNetworkName, NetworkAddresses>;
+export const isDevnetNetworkName = (networkName: string): networkName is DevnetNetworkName =>
+  networkName === "goerli" ||
+  networkName === "bsc-testnet" ||
+  networkName === "polygon-mumbai" ||
+  networkName === "ropsten" ||
+  networkName === "dev";
+
+export const isZetaDevnet = (networkName: string | undefined): networkName is ZetaDevnetNetworkName =>
+  networkName === "dev";
+
+export const getDevnetList = (): Record<ZetaDevnetNetworkName, DevnetAddressGroup> => ({
+  dev: dev as DevnetAddressGroup
 });
 
 /**
@@ -78,12 +100,14 @@ export const isTestnetNetworkName = (networkName: string): networkName is Testne
   networkName === "goerli" ||
   networkName === "bsc-testnet" ||
   networkName === "polygon-mumbai" ||
-  networkName === "ropsten";
+  networkName === "ropsten" ||
+  networkName === "athens";
+
 export const isZetaTestnet = (networkName: string | undefined): networkName is ZetaTestnetNetworkName =>
   networkName === "athens";
 
 export const getTestnetList = (): Record<ZetaTestnetNetworkName, TestnetAddressGroup> => ({
-  athens: athens as TestnetAddressGroup,
+  athens: athens as TestnetAddressGroup
 });
 
 /**
@@ -99,7 +123,7 @@ export const isZetaMainnet = (networkName: string | undefined): networkName is Z
   networkName === "mainnet";
 
 export const getMainnetList = (): Record<ZetaMainnetNetworkName, MainnetAddressGroup> => ({
-  mainnet: mainnet as MainnetAddressGroup,
+  mainnet: mainnet as MainnetAddressGroup
 });
 
 /**
@@ -119,7 +143,7 @@ export const getChainId = (networkName: NetworkName) => {
     hardhat: 1337,
     "polygon-localnet": 80001,
     "polygon-mumbai": 80001,
-    ropsten: 3,
+    ropsten: 3
   };
 
   return chainIds[networkName];
@@ -139,7 +163,7 @@ export const getAddress = (
   address: ZetaAddress,
   {
     customNetworkName,
-    customZetaNetwork,
+    customZetaNetwork
   }: { customNetworkName?: NetworkName; customZetaNetwork?: ZetaNetworkName } = {}
 ): string => {
   const { name: _networkName } = network;
