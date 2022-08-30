@@ -7,6 +7,8 @@ import troy from "./addresses.troy.json";
 export type ZetaAddress =
   | "connector"
   | "crossChainCounter"
+  | "crossChainLending"
+  | "crossChainLendingOracle"
   | "crossChainNft"
   | "dai"
   | "immutableCreate2Factory"
@@ -28,6 +30,8 @@ export type NetworkAddresses = Record<ZetaAddress, string>;
 const zetaAddresses: Record<ZetaAddress, boolean> = {
   connector: true,
   crossChainCounter: true,
+  crossChainLending: true,
+  crossChainLendingOracle: true,
   crossChainNft: true,
   dai: true,
   immutableCreate2Factory: true,
@@ -43,7 +47,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   usdc: true,
   weth9: true,
   zetaToken: true,
-  zetaTokenConsumerUniV2: true,
+  zetaTokenConsumerUniV2: true
 };
 
 export const isZetaAddress = (a: string | undefined): a is ZetaAddress => Boolean(zetaAddresses[a as ZetaAddress]);
@@ -64,7 +68,7 @@ export const isZetaLocalnet = (networkName: string | undefined): networkName is 
   networkName === "troy";
 
 export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressGroup> => ({
-  troy: troy as LocalnetAddressGroup,
+  troy: troy as LocalnetAddressGroup
 });
 
 /**
@@ -83,7 +87,7 @@ export const isZetaTestnet = (networkName: string | undefined): networkName is Z
   networkName === "athens";
 
 export const getTestnetList = (): Record<ZetaTestnetNetworkName, TestnetAddressGroup> => ({
-  athens: athens as TestnetAddressGroup,
+  athens: athens as TestnetAddressGroup
 });
 
 /**
@@ -99,7 +103,7 @@ export const isZetaMainnet = (networkName: string | undefined): networkName is Z
   networkName === "mainnet";
 
 export const getMainnetList = (): Record<ZetaMainnetNetworkName, MainnetAddressGroup> => ({
-  mainnet: mainnet as MainnetAddressGroup,
+  mainnet: mainnet as MainnetAddressGroup
 });
 
 /**
@@ -119,7 +123,7 @@ export const getChainId = (networkName: NetworkName) => {
     hardhat: 1337,
     "polygon-localnet": 80001,
     "polygon-mumbai": 80001,
-    ropsten: 3,
+    ropsten: 3
   };
 
   return chainIds[networkName];
@@ -139,7 +143,7 @@ export const getAddress = (
   address: ZetaAddress,
   {
     customNetworkName,
-    customZetaNetwork,
+    customZetaNetwork
   }: { customNetworkName?: NetworkName; customZetaNetwork?: ZetaNetworkName } = {}
 ): string => {
   const { name: _networkName } = network;
