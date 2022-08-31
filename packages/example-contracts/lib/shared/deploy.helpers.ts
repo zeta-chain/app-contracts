@@ -1,5 +1,7 @@
+import { JsonRpcProvider } from "@ethersproject/providers";
 import { getAddress, NetworkName, ZetaAddress, ZetaNetworkName } from "@zetachain/addresses";
 import { getScanVariable } from "@zetachain/addresses-tools";
+import { getHardhatConfigNetworks } from "@zetachain/addresses-tools/src/networks";
 import { execSync } from "child_process";
 import { BaseContract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
@@ -12,7 +14,7 @@ import {
   ZetaEthMock,
   ZetaEthMock__factory as ZetaEthMockFactory,
   ZetaTokenConsumerUniV2,
-  ZetaTokenConsumerUniV2__factory,
+  ZetaTokenConsumerUniV2__factory
 } from "../../typechain-types";
 
 export type GetContractParams<Factory extends ContractFactory> =
@@ -28,7 +30,7 @@ export type GetContractParams<Factory extends ContractFactory> =
 export const getContract = async <Factory extends ContractFactory, Contract extends BaseContract>({
   contractName,
   deployParams,
-  existingContractAddress,
+  existingContractAddress
 }: GetContractParams<Factory> & { contractName: string }): Promise<Contract> => {
   const ContractFactory = (await ethers.getContractFactory(contractName)) as Factory;
 
@@ -47,13 +49,13 @@ export const getContract = async <Factory extends ContractFactory, Contract exte
 export const getErc20 = async (existingContractAddress?: string) =>
   getContract<ERC20Factory, ERC20>({
     contractName: "ERC20",
-    ...(existingContractAddress ? { existingContractAddress } : { deployParams: ["ERC20Mock", "ERC20Mock"] }),
+    ...(existingContractAddress ? { existingContractAddress } : { deployParams: ["ERC20Mock", "ERC20Mock"] })
   });
 
 export const getZetaMock = async () =>
   getContract<ZetaEthMockFactory, ZetaEthMock>({
     contractName: "ZetaEthMock",
-    deployParams: ["10000000"],
+    deployParams: ["10000000"]
   });
 
 export const getNow = async () => {
@@ -66,15 +68,15 @@ export const getUniswapV2Router02 = async () =>
     contractName: "UniswapV2Router02",
     existingContractAddress: getAddress("uniswapV2Router02", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
-    }),
+      customZetaNetwork: "mainnet"
+    })
   });
 
 export const verifyContract = (
   addressName: ZetaAddress,
   {
     customNetworkName,
-    customZetaNetwork,
+    customZetaNetwork
   }: { customNetworkName?: NetworkName; customZetaNetwork?: ZetaNetworkName } = {}
 ) => {
   const ZETA_NETWORK = process.env.ZETA_NETWORK || customZetaNetwork;
@@ -91,5 +93,71 @@ export const verifyContract = (
 export const deployZetaTokenConsumerUniV2 = async (zetaToken_: string, uniswapV2Router_: string) =>
   getContract<ZetaTokenConsumerUniV2__factory, ZetaTokenConsumerUniV2>({
     contractName: "ZetaTokenConsumerUniV2",
-    ...{ deployParams: [zetaToken_, uniswapV2Router_] },
+    ...{ deployParams: [zetaToken_, uniswapV2Router_] }
   });
+
+const getProviderConfig = (networkName: NetworkName) => {
+  const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [];
+  const networks = getHardhatConfigNetworks(PRIVATE_KEYS);
+  return networks[networkName];
+};
+
+const getProvider = (networkName: NetworkName) => {
+  // @ts-ignore
+  const url = getProviderConfig(networkName).url;
+  return new JsonRpcProvider(url);
+};
+
+export type GetContractForNetworkParams<Factory extends ContractFactory> =
+  | {
+      deployParams: Parameters<Factory["deploy"]>;
+      existingContractAddress?: null;
+      zetaAddress?: null;
+    }
+  | {
+      deployParams?: null;
+      existingContractAddress: string;
+      zetaAddress?: null;
+    }
+  | {
+      deployParams?: null;
+      existingContractAddress?: null;
+      zetaAddress: ZetaAddress;
+    };
+
+export const getContractForNetwork = async <Factory extends ContractFactory, Contract extends BaseContract>({
+  contractName,
+  deployParams,
+  existingContractAddress,
+  zetaAddress,
+  networkName
+}: GetContractForNetworkParams<Factory> & {
+  contractName: string;
+  networkName: NetworkName;
+}): Promise<Contract> => {
+  const contractAddress = Boolean(existingContractAddress)
+    ? existingContractAddress
+    : getAddress(zetaAddress!, {
+        customNetworkName: networkName
+      });
+
+  const ContractFactory = (await ethers.getContractFactory(contractName)) as Factory;
+
+  const provider = getProvider(networkName);
+
+  const signer = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
+
+  const factoryConnection = ContractFactory.connect(signer);
+
+  const isGetExistingContract = !Boolean(deployParams);
+  if (isGetExistingContract) {
+    console.log("Getting existing contract from address:", contractAddress);
+    return factoryConnection.attach(contractAddress!) as Contract;
+  }
+
+  const contract = (await factoryConnection.deploy(...deployParams!, {
+    gasLimit: getProviderConfig(networkName)?.gas
+  })) as Contract;
+
+  return contract;
+};

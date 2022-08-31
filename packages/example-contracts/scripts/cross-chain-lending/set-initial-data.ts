@@ -1,10 +1,8 @@
 // eslint-disable-next-line no-unused-vars
-import { getAddress, isNetworkName } from "@zetachain/addresses";
-import { saveAddress } from "@zetachain/addresses-tools";
+import { isNetworkName, NetworkName } from "@zetachain/addresses";
 import { parseUnits } from "ethers/lib/utils";
-import { ethers, network } from "hardhat";
 
-import { getContract } from "../../lib/shared/deploy.helpers";
+import { getContractForNetwork } from "../../lib/shared/deploy.helpers";
 import {
   CrossChainLending,
   CrossChainLending__factory,
@@ -58,60 +56,91 @@ const getFakeTokensByNetwork = (network: string): FakeTokens | undefined => {
   }
 };
 
-export const setInitialData = async () => {
-  console.log(`Deploying CrossChainLending...`);
-  const dataFeeds = getDataFeedsByNetwork(network.name);
-  const fakeTokens = getFakeTokensByNetwork(network.name);
+export const setInitialData = async (networkName: NetworkName) => {
+  console.log(`CrossChainLending: Setting initial data...`);
+  const dataFeeds = getDataFeedsByNetwork(networkName);
+  const fakeTokens = getFakeTokensByNetwork(networkName);
 
-  if (!isNetworkName(network.name)) throw new Error("Invalid network name");
+  if (!isNetworkName(networkName)) throw new Error("Invalid network name");
   if (!dataFeeds || !fakeTokens) throw new Error("Invalid network name");
 
-  const crossChainLending = await getContract<CrossChainLending__factory, CrossChainLending>({
+  const crossChainLending = await getContractForNetwork<CrossChainLending__factory, CrossChainLending>({
     contractName: "CrossChainLending",
-    deployParams: undefined,
-    existingContractAddress: getAddress("crossChainLending")
+    networkName,
+    zetaAddress: "crossChainLending"
   });
 
-  const oracleChainLink = await getContract<OracleChainLink__factory, OracleChainLink>({
+  const oracleChainLink = await getContractForNetwork<OracleChainLink__factory, OracleChainLink>({
     contractName: "OracleChainLink",
-    deployParams: undefined,
-    existingContractAddress: getAddress("crossChainLendingOracle")
+    networkName,
+    zetaAddress: "crossChainLendingOracle"
   });
 
-  const fakeWETH = await getContract<FakeERC20__factory, FakeERC20>({
+  const fakeWETH = await getContractForNetwork<FakeERC20__factory, FakeERC20>({
     contractName: "FakeERC20",
-    existingContractAddress: fakeTokens.WETH
+    existingContractAddress: fakeTokens.WETH,
+    networkName
   });
 
-  const fakeWBTC = await getContract<FakeERC20__factory, FakeERC20>({
+  const fakeWBTC = await getContractForNetwork<FakeERC20__factory, FakeERC20>({
     contractName: "FakeERC20",
-    existingContractAddress: fakeTokens.WBTC
+    existingContractAddress: fakeTokens.WBTC,
+    networkName
   });
 
-  const fakeUSDC = await getContract<FakeERC20__factory, FakeERC20>({
+  const fakeUSDC = await getContractForNetwork<FakeERC20__factory, FakeERC20>({
     contractName: "FakeERC20",
-    existingContractAddress: fakeTokens.USDC
+    existingContractAddress: fakeTokens.USDC,
+    networkName
   });
 
-  await oracleChainLink.setAggregator(fakeWETH.address, dataFeeds.ETH_USD_DATA_FEED, { gasLimit: 2000000 });
-  await oracleChainLink.setAggregator(fakeWBTC.address, dataFeeds.BTC_USD_DATA_FEED, { gasLimit: 2000000 });
-  await oracleChainLink.setAggregator(fakeUSDC.address, dataFeeds.USDC_USD_DATA_FEED, { gasLimit: 2000000 });
+  await oracleChainLink.setAggregator(fakeWETH.address, dataFeeds.ETH_USD_DATA_FEED);
+  await oracleChainLink.setAggregator(fakeWBTC.address, dataFeeds.BTC_USD_DATA_FEED);
+  await oracleChainLink.setAggregator(fakeUSDC.address, dataFeeds.USDC_USD_DATA_FEED);
 
-  await crossChainLending.setOracle(oracleChainLink.address, { gasLimit: 2000000 });
-  await crossChainLending.setAllowedToken(fakeWETH.address, true, { gasLimit: 2000000 });
-  await crossChainLending.setRiskTable(fakeWETH.address, 2, { gasLimit: 2000000 });
-  await crossChainLending.setAllowedToken(fakeWBTC.address, true, { gasLimit: 2000000 });
-  await crossChainLending.setRiskTable(fakeWBTC.address, 2, { gasLimit: 2000000 });
-  await crossChainLending.setAllowedToken(fakeUSDC.address, true, { gasLimit: 2000000 });
-  await crossChainLending.setRiskTable(fakeUSDC.address, 2, { gasLimit: 2000000 });
+  await crossChainLending.setOracle(oracleChainLink.address);
+  await crossChainLending.setAllowedToken(fakeWETH.address, true);
+  await crossChainLending.setRiskTable(fakeWETH.address, 2);
+  await crossChainLending.setAllowedToken(fakeWBTC.address, true);
+  await crossChainLending.setRiskTable(fakeWBTC.address, 2);
+  await crossChainLending.setAllowedToken(fakeUSDC.address, true);
+  await crossChainLending.setRiskTable(fakeUSDC.address, 2);
 
   // let's create the initial USDC pool
-  await fakeWETH.approve(crossChainLending.address, parseUnits("500"), { gasLimit: 2000000 });
-  await crossChainLending.deposit(fakeWETH.address, parseUnits("500"), { gasLimit: 2000000 });
+  await fakeWETH.mint(parseUnits("500000"));
+  await fakeWETH.approve(crossChainLending.address, parseUnits("500000"));
+  await crossChainLending.deposit(fakeWETH.address, parseUnits("500000"));
 
-  await fakeWBTC.approve(crossChainLending.address, parseUnits("500"), { gasLimit: 2000000 });
-  await crossChainLending.deposit(fakeWBTC.address, parseUnits("500"), { gasLimit: 2000000 });
+  await fakeWBTC.mint(parseUnits("500000"));
+  await fakeWBTC.approve(crossChainLending.address, parseUnits("500000"));
+  await crossChainLending.deposit(fakeWBTC.address, parseUnits("500000"));
 
-  await fakeUSDC.approve(crossChainLending.address, parseUnits("500"), { gasLimit: 2000000 });
-  await crossChainLending.deposit(fakeUSDC.address, parseUnits("500"), { gasLimit: 2000000 });
+  await fakeUSDC.mint(parseUnits("500000"));
+  await fakeUSDC.approve(crossChainLending.address, parseUnits("500000"));
+  await crossChainLending.deposit(fakeUSDC.address, parseUnits("500000"));
+
+  // await (await oracleChainLink.setAggregator(fakeWETH.address, dataFeeds.ETH_USD_DATA_FEED)).wait();
+  // await (await oracleChainLink.setAggregator(fakeWBTC.address, dataFeeds.BTC_USD_DATA_FEED)).wait();
+  // await (await oracleChainLink.setAggregator(fakeUSDC.address, dataFeeds.USDC_USD_DATA_FEED)).wait();
+
+  // await (await crossChainLending.setOracle(oracleChainLink.address)).wait();
+  // await (await crossChainLending.setAllowedToken(fakeWETH.address, true)).wait();
+  // await (await crossChainLending.setRiskTable(fakeWETH.address, 2)).wait();
+  // await (await crossChainLending.setAllowedToken(fakeWBTC.address, true)).wait();
+  // await (await crossChainLending.setRiskTable(fakeWBTC.address, 2)).wait();
+  // await (await crossChainLending.setAllowedToken(fakeUSDC.address, true)).wait();
+  // await (await crossChainLending.setRiskTable(fakeUSDC.address, 2)).wait();
+
+  // // let's create the initial USDC pool
+  // await (await fakeWETH.mint(parseUnits("500000"))).wait();
+  // await (await fakeWETH.approve(crossChainLending.address, parseUnits("500000"))).wait();
+  // await (await crossChainLending.deposit(fakeWETH.address, parseUnits("500000"))).wait();
+
+  // await (await fakeWBTC.mint(parseUnits("500000"))).wait();
+  // await (await fakeWBTC.approve(crossChainLending.address, parseUnits("500000"))).wait();
+  // await (await crossChainLending.deposit(fakeWBTC.address, parseUnits("500000"))).wait();
+
+  // await (await fakeUSDC.mint(parseUnits("500000"))).wait();
+  // await (await fakeUSDC.approve(crossChainLending.address, parseUnits("500000"))).wait();
+  // await (await crossChainLending.deposit(fakeUSDC.address, parseUnits("500000"))).wait();
 };

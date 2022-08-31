@@ -1,23 +1,23 @@
 // eslint-disable-next-line no-unused-vars
-import { getAddress, isNetworkName } from "@zetachain/addresses";
-import { ethers, network } from "hardhat";
+import { getAddress, isNetworkName, NetworkName } from "@zetachain/addresses";
+import { ethers } from "hardhat";
 
-import { getContract } from "../../lib/shared/deploy.helpers";
+import { getContractForNetwork } from "../../lib/shared/deploy.helpers";
 import { networkVariables } from "../../lib/shared/network.constants";
 import { CrossChainLending, CrossChainLending__factory } from "../../typechain-types";
 
-export const setCrossChainData = async () => {
-  console.log(`Deploying CrossChainLending...`);
+export const setCrossChainData = async (networkName: NetworkName) => {
+  console.log(`CrossChainLending: Setting cross chain data...`);
 
-  if (!isNetworkName(network.name)) throw new Error("Invalid network name");
+  if (!isNetworkName(networkName)) throw new Error("Invalid network name");
 
-  const crossChainLending = await getContract<CrossChainLending__factory, CrossChainLending>({
+  const crossChainLending = await getContractForNetwork<CrossChainLending__factory, CrossChainLending>({
     contractName: "CrossChainLending",
-    deployParams: undefined,
-    existingContractAddress: getAddress("crossChainLending")
+    networkName,
+    zetaAddress: "crossChainLending"
   });
 
-  const _networkVariables = networkVariables[network.name];
+  const _networkVariables = networkVariables[networkName];
 
   if (!_networkVariables.crossChainName) throw new Error("Invalid crossChainName");
 
@@ -33,7 +33,5 @@ export const setCrossChainData = async () => {
     _networkVariables.crossChainId
   );
 
-  await (
-    await crossChainLending.setInteractorByChainId(_networkVariables.crossChainId, encodedCrossChainAddress)
-  ).wait();
+  await crossChainLending.setInteractorByChainId(_networkVariables.crossChainId, encodedCrossChainAddress);
 };
