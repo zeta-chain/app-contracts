@@ -8,7 +8,7 @@ import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 import "./OracleInterface.sol";
 import "./CrossChainLendingStorage.sol";
 
-/// @todo: remove when is stable
+// @todo: remove when is stable
 import "hardhat/console.sol";
 
 interface CrossChainLendingErrors {
@@ -92,7 +92,9 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         address debtAsset,
         uint256 amount,
         address collateralAsset,
-        uint256 collateralChainId
+        uint256 collateralChainId,
+        uint256 zetaValueAndGas,
+        uint256 crossChaindestinationGasLimit
     ) external {
         if (IERC20(debtAsset).balanceOf(address(this)) < amount) revert NotEnoughLiquidity();
         uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount, debtAsset);
@@ -104,22 +106,20 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             return;
         }
 
-        // crosschain validation
-        /// @todo: for this version we topup zeta to pay gas from the contract
-        uint256 zetaValueAndGas = 2500000;
-
+        IERC20(_zetaToken).safeTransferFrom(msg.sender, address(this), zetaValueAndGas);
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: collateralChainId,
                 destinationAddress: interactorsByChainId[collateralChainId],
-                destinationGasLimit: zetaValueAndGas,
+                destinationGasLimit: crossChaindestinationGasLimit,
                 message: abi.encode(
                     ACTION_VALIDATE_COLLATERAL,
                     debtAsset,
                     amount,
                     usdDebt,
                     collateralAsset,
-                    msg.sender
+                    msg.sender,
+                    crossChaindestinationGasLimit
                 ),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
@@ -159,7 +159,8 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         address debtAsset,
         uint256 amount,
         address collateralAsset,
-        uint256 collateralChainId
+        uint256 collateralChainId,
+        uint256 crossChaindestinationGasLimit
     ) external {
         uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount, debtAsset);
 
@@ -174,14 +175,22 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         }
 
         // crosschain validation
-        /// @todo: for this version we topup zeta to pay gas from the contract
-        uint256 zetaValueAndGas = 2500000;
+        // @todo: for this version we topup zeta to pay gas from the contract
+        uint256 zetaValueAndGas = 10000000000000000;
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: collateralChainId,
                 destinationAddress: interactorsByChainId[collateralChainId],
                 destinationGasLimit: zetaValueAndGas,
-                message: abi.encode(ACTION_REPAY, debtAsset, amount, usdDebt, collateralAsset, msg.sender),
+                message: abi.encode(
+                    ACTION_REPAY,
+                    debtAsset,
+                    amount,
+                    usdDebt,
+                    collateralAsset,
+                    msg.sender,
+                    crossChaindestinationGasLimit
+                ),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
@@ -215,7 +224,6 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
 
     //     uint256 collateralLocked = _depositsLocked[user][collateralAsset];
     //     _depositsLocked[user][collateralAsset] = 0;
-    //     // @todo: all for the caller or a % per zeta??
     //     IERC20(collateralAsset).safeTransferFrom(address(this), msg.sender, collateralLocked);
     // }
 
@@ -233,8 +241,9 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             uint256 amount,
             uint256 usdDebt,
             address collateralAsset,
-            address caller
-        ) = abi.decode(zetaMessage.message, (bytes32, address, uint256, uint256, address, address));
+            address caller,
+            uint256 crossChaindestinationGasLimit
+        ) = abi.decode(zetaMessage.message, (bytes32, address, uint256, uint256, address, address, uint256));
 
         /**
          * @dev Setting a message type is a useful pattern to distinguish between different messages.
@@ -243,12 +252,11 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             lockCollateral(usdDebt, collateralAsset, caller);
 
             // crosschain validation
-            uint256 zetaValueAndGas = 2500000;
             connector.send(
                 ZetaInterfaces.SendInput({
                     destinationChainId: zetaMessage.sourceChainId,
                     destinationAddress: interactorsByChainId[zetaMessage.sourceChainId],
-                    destinationGasLimit: zetaValueAndGas,
+                    destinationGasLimit: crossChaindestinationGasLimit,
                     message: abi.encode(
                         ACTION_COLLATERAL_VALIDATED,
                         debtAsset,
@@ -257,7 +265,7 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
                         collateralAsset,
                         caller
                     ),
-                    zetaValueAndGas: zetaValueAndGas,
+                    zetaValueAndGas: zetaMessage.zetaValue,
                     zetaParams: abi.encode("")
                 })
             );

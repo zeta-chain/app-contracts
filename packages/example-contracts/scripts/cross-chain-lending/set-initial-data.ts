@@ -118,29 +118,4 @@ export const setInitialData = async (networkName: NetworkName) => {
   await fakeUSDC.mint(parseUnits("500000"));
   await fakeUSDC.approve(crossChainLending.address, parseUnits("500000"));
   await crossChainLending.deposit(fakeUSDC.address, parseUnits("500000"));
-
-  // await (await oracleChainLink.setAggregator(fakeWETH.address, dataFeeds.ETH_USD_DATA_FEED)).wait();
-  // await (await oracleChainLink.setAggregator(fakeWBTC.address, dataFeeds.BTC_USD_DATA_FEED)).wait();
-  // await (await oracleChainLink.setAggregator(fakeUSDC.address, dataFeeds.USDC_USD_DATA_FEED)).wait();
-
-  // await (await crossChainLending.setOracle(oracleChainLink.address)).wait();
-  // await (await crossChainLending.setAllowedToken(fakeWETH.address, true)).wait();
-  // await (await crossChainLending.setRiskTable(fakeWETH.address, 2)).wait();
-  // await (await crossChainLending.setAllowedToken(fakeWBTC.address, true)).wait();
-  // await (await crossChainLending.setRiskTable(fakeWBTC.address, 2)).wait();
-  // await (await crossChainLending.setAllowedToken(fakeUSDC.address, true)).wait();
-  // await (await crossChainLending.setRiskTable(fakeUSDC.address, 2)).wait();
-
-  // // let's create the initial USDC pool
-  // await (await fakeWETH.mint(parseUnits("500000"))).wait();
-  // await (await fakeWETH.approve(crossChainLending.address, parseUnits("500000"))).wait();
-  // await (await crossChainLending.deposit(fakeWETH.address, parseUnits("500000"))).wait();
-
-  // await (await fakeWBTC.mint(parseUnits("500000"))).wait();
-  // await (await fakeWBTC.approve(crossChainLending.address, parseUnits("500000"))).wait();
-  // await (await crossChainLending.deposit(fakeWBTC.address, parseUnits("500000"))).wait();
-
-  // await (await fakeUSDC.mint(parseUnits("500000"))).wait();
-  // await (await fakeUSDC.approve(crossChainLending.address, parseUnits("500000"))).wait();
-  // await (await crossChainLending.deposit(fakeUSDC.address, parseUnits("500000"))).wait();
 };

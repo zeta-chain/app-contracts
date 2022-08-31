@@ -3,8 +3,9 @@ import { getAddress, isNetworkName, NetworkName } from "@zetachain/addresses";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
+import { getContractForNetwork } from "../../lib/shared/deploy.helpers";
 import { networkVariables } from "../../lib/shared/network.constants";
-import { CrossChainLending__factory, FakeERC20__factory } from "../../typechain-types";
+import { CrossChainLending, CrossChainLending__factory, FakeERC20, FakeERC20__factory } from "../../typechain-types";
 
 interface FakeTokens {
   USDC: string;
@@ -28,63 +29,71 @@ const getFakeTokensByNetwork = (network: string): FakeTokens | undefined => {
   }
 };
 
-export const action1 = async (networkName: NetworkName, networkName2: NetworkName) => {
+export const action1 = async (networkName: NetworkName, destinationNetworkName: NetworkName) => {
   const fakeTokens = getFakeTokensByNetwork(networkName);
-  const fakeTokensOther = getFakeTokensByNetwork(networkName2);
 
   if (!isNetworkName(network.name)) throw new Error("Invalid network name");
-  if (!fakeTokens || !fakeTokensOther) throw new Error("Invalid network name");
+  if (!fakeTokens) throw new Error("Invalid network name");
 
-  const provider = ethers.getDefaultProvider(networkName);
+  const crossChainLending = await getContractForNetwork<CrossChainLending__factory, CrossChainLending>({
+    contractName: "CrossChainLending",
+    networkName,
+    zetaAddress: "crossChainLending"
+  });
 
-  const signer = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
+  const fakeWBTC = await getContractForNetwork<FakeERC20__factory, FakeERC20>({
+    contractName: "FakeERC20",
+    existingContractAddress: fakeTokens.WBTC,
+    networkName
+  });
 
-  const crossChainLending = CrossChainLending__factory.connect(
-    getAddress("crossChainLending", {
-      customNetworkName: networkName
-    }),
-    signer
-  );
+  await fakeWBTC.mint(parseUnits("1"));
 
-  const fakeWBTC = FakeERC20__factory.connect(fakeTokens.WBTC, signer);
+  await fakeWBTC.approve(crossChainLending.address, parseUnits("1"));
 
-  let tx = await fakeWBTC.mint(parseUnits("1"), { gasLimit: 2000000 });
-  await tx.wait();
-  tx = await fakeWBTC.approve(crossChainLending.address, parseUnits("1"), { gasLimit: 2000000 });
-  await tx.wait();
-  tx = await crossChainLending.deposit(fakeWBTC.address, parseUnits("1"), { gasLimit: 2000000 });
-  await tx.wait();
+  await crossChainLending.deposit(fakeWBTC.address, parseUnits("1"));
 };
 
-export const action2 = async (networkName: NetworkName, networkName2: NetworkName) => {
+export const action2 = async (networkName: NetworkName, destinationNetworkName: NetworkName) => {
   const fakeTokens = getFakeTokensByNetwork(networkName);
-  const fakeTokensOther = getFakeTokensByNetwork(networkName2);
+  const fakeTokensDestinationChain = getFakeTokensByNetwork(destinationNetworkName);
 
-  if (!isNetworkName(network.name)) throw new Error("Invalid network name");
-  if (!fakeTokens || !fakeTokensOther) throw new Error("Invalid network name");
+  if (!isNetworkName(networkName)) throw new Error("Invalid network name");
+  if (!fakeTokens || !fakeTokensDestinationChain) throw new Error("Invalid network name");
 
-  const provider = ethers.getDefaultProvider(networkName);
+  const crossChainLending = await getContractForNetwork<CrossChainLending__factory, CrossChainLending>({
+    contractName: "CrossChainLending",
+    networkName,
+    zetaAddress: "crossChainLending"
+  });
 
-  const signer = new ethers.Wallet(process.env.PRIVATE_KEY || "", provider);
+  const zetaToken = await getContractForNetwork<FakeERC20__factory, FakeERC20>({
+    contractName: "FakeERC20",
+    networkName,
+    zetaAddress: "zetaToken"
+  });
 
-  const crossChainLending = CrossChainLending__factory.connect(
-    getAddress("crossChainLending", {
-      customNetworkName: networkName
-    }),
-    signer
-  );
+  const zetaValueAndGas = parseUnits("100");
+  const crossChaindestinationGasLimit = parseUnits("100");
 
-  const _networkVariables = networkVariables[network.name];
-  await crossChainLending.borrow(
-    fakeTokensOther.USDC,
+  await zetaToken.approve(crossChainLending.address, zetaValueAndGas);
+
+  const _networkVariables = networkVariables[networkName];
+  console.log(
+    fakeTokens.USDC,
     parseUnits("10000"),
-    fakeTokensOther.WBTC,
+    fakeTokensDestinationChain.WBTC,
     _networkVariables.crossChainId,
-    parseUnits("1"),
-    parseUnits("1"),
-    {
-      gasLimit: 2000000
-    }
+    zetaValueAndGas,
+    crossChaindestinationGasLimit
+  );
+  await crossChainLending.borrow(
+    fakeTokens.USDC,
+    parseUnits("10000"),
+    fakeTokensDestinationChain.WBTC,
+    _networkVariables.crossChainId,
+    zetaValueAndGas,
+    crossChaindestinationGasLimit
   );
 };
 
@@ -93,7 +102,7 @@ export const main = async () => {
 
   if (!isNetworkName(network.name)) throw new Error("Invalid network name");
 
-  await action1("goerli", "bsc-testnet");
+  // await action1("goerli", "bsc-testnet");
   await action2("bsc-testnet", "goerli");
 };
 
