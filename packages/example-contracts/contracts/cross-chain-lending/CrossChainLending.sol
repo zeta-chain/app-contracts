@@ -310,7 +310,7 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         isValidRevertCall(zetaRevert)
     {}
 
-    function getUserStatus(address user, address token) external view returns (uint256, uint256) {
+    function getUserBalances(address user, address token) external view returns (uint256, uint256) {
         return (_deposits[user][token], _depositsLocked[user][token]);
     }
 
