@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { getAddress, isNetworkName, NetworkName } from "@zetachain/addresses";
+import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
@@ -73,19 +74,19 @@ export const action2 = async (networkName: NetworkName, destinationNetworkName: 
     zetaAddress: "zetaToken"
   });
 
-  const zetaValueAndGas = parseUnits("100");
-  const crossChaindestinationGasLimit = parseUnits("100");
+  const zetaValueAndGas = parseUnits("5");
+  const crossChaindestinationGasLimit = BigNumber.from(500000);
 
   await zetaToken.approve(crossChainLending.address, zetaValueAndGas);
 
   const _networkVariables = networkVariables[networkName];
   console.log(
     fakeTokens.USDC,
-    parseUnits("10000"),
+    parseUnits("10000").toString(),
     fakeTokensDestinationChain.WBTC,
     _networkVariables.crossChainId,
-    zetaValueAndGas,
-    crossChaindestinationGasLimit
+    zetaValueAndGas.toString(),
+    crossChaindestinationGasLimit.toString()
   );
   await crossChainLending.borrow(
     fakeTokens.USDC,
@@ -102,7 +103,7 @@ export const main = async () => {
 
   if (!isNetworkName(network.name)) throw new Error("Invalid network name");
 
-  // await action1("goerli", "bsc-testnet");
+  await action1("goerli", "bsc-testnet");
   await action2("bsc-testnet", "goerli");
 };
 

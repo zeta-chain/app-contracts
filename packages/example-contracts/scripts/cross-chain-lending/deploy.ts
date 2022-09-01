@@ -6,10 +6,10 @@ import { setInitialData } from "./set-initial-data";
 async function main() {
   await deployContracts("goerli");
   await deployContracts("bsc-testnet");
-  await setInitialData("goerli");
   await setCrossChainData("goerli");
-  await setInitialData("bsc-testnet");
+  await setInitialData("goerli");
   await setCrossChainData("bsc-testnet");
+  await setInitialData("bsc-testnet");
 }
 
 main().catch(error => {

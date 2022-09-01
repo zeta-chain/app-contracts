@@ -9,6 +9,9 @@ contract CrossChainLendingStorage is AccessControl {
     //@todo: move to setter
     uint256 internal constant _feePerThousand = 10;
 
+    uint256 internal _zetaValueAndGas;
+    uint256 internal _crossChaindestinationGasLimit;
+
     // https://docs.aave.com/risk/v/aave-v2/asset-risk/amm
     // loan to value table
     mapping(address => uint256) _riskTable;
@@ -36,5 +39,13 @@ contract CrossChainLendingStorage is AccessControl {
 
     function setFeeWallet(address feeWallet) external onlyRole(ADMIN_ROLE) {
         _feeWallet = feeWallet;
+    }
+
+    function setGasValues(uint256 zetaValueAndGas, uint256 crossChaindestinationGasLimit)
+        external
+        onlyRole(ADMIN_ROLE)
+    {
+        _zetaValueAndGas = zetaValueAndGas;
+        _crossChaindestinationGasLimit = crossChaindestinationGasLimit;
     }
 }

@@ -155,8 +155,9 @@ export const getContractForNetwork = async <Factory extends ContractFactory, Con
     return factoryConnection.attach(contractAddress!) as Contract;
   }
 
+  const gasLimitGuaranteeToDeploy = 6000000;
   const contract = (await factoryConnection.deploy(...deployParams!, {
-    gasLimit: getProviderConfig(networkName)?.gas
+    gasLimit: gasLimitGuaranteeToDeploy
   })) as Contract;
 
   return contract;

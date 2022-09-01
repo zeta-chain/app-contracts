@@ -106,7 +106,13 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             return;
         }
 
-        IERC20(_zetaToken).safeTransferFrom(msg.sender, address(this), zetaValueAndGas);
+        if (zetaValueAndGas == 0 && crossChaindestinationGasLimit == 0) {
+            zetaValueAndGas = _zetaValueAndGas;
+            crossChaindestinationGasLimit = _crossChaindestinationGasLimit;
+        } else {
+            IERC20(_zetaToken).safeTransferFrom(msg.sender, address(this), zetaValueAndGas);
+        }
+
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: collateralChainId,
@@ -160,6 +166,7 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         uint256 amount,
         address collateralAsset,
         uint256 collateralChainId,
+        uint256 zetaValueAndGas,
         uint256 crossChaindestinationGasLimit
     ) external {
         uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount, debtAsset);
@@ -174,9 +181,14 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             return;
         }
 
+        if (zetaValueAndGas == 0 && crossChaindestinationGasLimit == 0) {
+            zetaValueAndGas = _zetaValueAndGas;
+            crossChaindestinationGasLimit = _crossChaindestinationGasLimit;
+        } else {
+            IERC20(_zetaToken).safeTransferFrom(msg.sender, address(this), zetaValueAndGas);
+        }
+
         // crosschain validation
-        // @todo: for this version we topup zeta to pay gas from the contract
-        uint256 zetaValueAndGas = 10000000000000000;
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: collateralChainId,
@@ -273,7 +285,7 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         }
 
         if (messageType == ACTION_COLLATERAL_VALIDATED) {
-            IERC20(debtAsset).safeApprove(address(this), amount);
+            IERC20(debtAsset).safeIncreaseAllowance(address(this), amount);
             IERC20(debtAsset).safeTransferFrom(address(this), caller, amount);
             emit Borrow(debtAsset, amount, collateralAsset, usdDebt);
             return;
@@ -300,5 +312,10 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
 
     function getUserStatus(address user, address token) external view returns (uint256, uint256) {
         return (_deposits[user][token], _depositsLocked[user][token]);
+    }
+
+    function withdrawZeta(uint256 amount) external onlyRole(ADMIN_ROLE) {
+        IERC20(_zetaToken).safeIncreaseAllowance(address(this), amount);
+        IERC20(_zetaToken).safeTransferFrom(address(this), msg.sender, amount);
     }
 }

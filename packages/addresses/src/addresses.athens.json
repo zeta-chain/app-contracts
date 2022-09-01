@@ -2,7 +2,7 @@
   "bsc-testnet": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
     "crossChainCounter": "",
-    "crossChainLending": "0xe2be2e1ee405ef359eacd93dd08b7fd1d32ff46d",
+    "crossChainLending": "0x3cEFA33b610c09ebAfff08c82A7365Df373CBF1D",
     "crossChainLendingOracle": "0x8Bdf4937816708dEED343506140fFE89d39f3a24",
     "crossChainNft": "0xF7f6534C8f70f6001Fc267b55abfAA8B8a41Ea2e",
     "dai": "",
@@ -23,7 +23,7 @@
   "goerli": {
     "connector": "0x00007d0BA516a2bA02D77907d3a1348C1187Ae62",
     "crossChainCounter": "",
-    "crossChainLending": "0xF8F758EF50c6332FC1A3B8F6dBB035CDD18e844E",
+    "crossChainLending": "0xe6572C2C5900621Ba44cf5D41ff7D641e5619A98",
     "crossChainLendingOracle": "0x426a0773a48674622474ec6e73d9667e44b22104",
     "crossChainNft": "0xfE9eb065cab82421D06C8eD41c31Beb473a5Fa7e",
     "dai": "",
