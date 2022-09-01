@@ -19,7 +19,7 @@ import {
   ZetaLocalNetworkName,
   ZetaMainnetNetworkName,
   ZetaNetworkName,
-  ZetaTestnetNetworkName,
+  ZetaTestnetNetworkName
 } from "@zetachain/addresses";
 import dotenv from "dotenv";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
@@ -45,9 +45,11 @@ export const getScanVariable = ({ customNetworkName }: { customNetworkName?: str
     "eth-mainnet": process.env.ETHERSCAN_API_KEY || "",
     goerli: process.env.ETHERSCAN_API_KEY || "",
     hardhat: "",
+    "klaytn-baobab": "",
+    "klaytn-cypress": "",
     "polygon-localnet": "",
     "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || "",
-    ropsten: process.env.ETHERSCAN_API_KEY || "",
+    ropsten: process.env.ETHERSCAN_API_KEY || ""
   };
 
   return v[networkName];
@@ -65,9 +67,11 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
     "eth-mainnet": "https://etherscan.io/",
     goerli: "https://goerli.etherscan.io/",
     hardhat: "",
+    "klaytn-baobab": "https://baobab.scope.klaytn.com/",
+    "klaytn-cypress": "https://scope.klaytn.com/",
     "polygon-localnet": "",
     "polygon-mumbai": "https://mumbai.polygonscan.com/",
-    ropsten: "https://ropsten.etherscan.io/",
+    ropsten: "https://ropsten.etherscan.io/"
   };
 
   return v[networkName];
@@ -135,12 +139,12 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
   const addressesDirname = join(dirname, `./`);
   const addressesFiles = readdirSync(addressesDirname);
 
-  addressesFiles.forEach((addressesFilename) => {
+  addressesFiles.forEach(addressesFilename => {
     const addressPath = join(addressesDirname, addressesFilename);
 
     const addressesByNetwork = JSON.parse(readFileSync(addressPath, "utf8"));
 
-    Object.keys(addressesByNetwork).forEach((network) => {
+    Object.keys(addressesByNetwork).forEach(network => {
       if (!isNetworkName(network)) return;
 
       addressesByNetwork[network][addressName] = addressValue;
@@ -163,7 +167,7 @@ export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) 
   const addressesDirname = join(dirname, `./`);
   const addressesFiles = readdirSync(addressesDirname);
 
-  addressesFiles.forEach((addressFilename) => {
+  addressesFiles.forEach(addressFilename => {
     const addressesFilePath = join(addressesDirname, addressFilename);
     /**
      * Gets the Zeta network name using the filename, e.g.: addresses.athens.json -> athens
@@ -188,7 +192,7 @@ export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) 
     fileNetworks[newNetworkName] = deepCloneSerializable(fileNetworks[randomNetworkName]);
 
     const emptyNewNetworkAddresses = () => {
-      Object.keys(fileNetworks[newNetworkName]).forEach((addressName) => {
+      Object.keys(fileNetworks[newNetworkName]).forEach(addressName => {
         fileNetworks[newNetworkName][addressName] = "";
       });
     };
@@ -213,21 +217,21 @@ export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) 
 export const getLocalnetListFromFile = async (): Promise<Record<ZetaLocalNetworkName, LocalnetAddressGroup>> => {
   const troy = await require("./addresses.troy.json");
   return {
-    troy: troy as LocalnetAddressGroup,
+    troy: troy as LocalnetAddressGroup
   };
 };
 
 export const getTestnetListFromFile = async (): Promise<Record<ZetaTestnetNetworkName, TestnetAddressGroup>> => {
   const athens = await require("./addresses.athens.json");
   return {
-    athens: athens as TestnetAddressGroup,
+    athens: athens as TestnetAddressGroup
   };
 };
 
 export const getMainnetListFromFile = async (): Promise<Record<ZetaMainnetNetworkName, MainnetAddressGroup>> => {
   const mainnet = await require("./addresses.mainnet.json");
   return {
-    mainnet: mainnet as MainnetAddressGroup,
+    mainnet: mainnet as MainnetAddressGroup
   };
 };
 
@@ -235,7 +239,7 @@ export const loadAddressFromFile = async (
   address: ZetaAddress,
   {
     customNetworkName,
-    customZetaNetwork,
+    customZetaNetwork
   }: { customNetworkName?: NetworkName; customZetaNetwork?: ZetaNetworkName } = {}
 ): Promise<string> => {
   const { name: _networkName } = network;
