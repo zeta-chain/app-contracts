@@ -239,16 +239,9 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
     //     IERC20(collateralAsset).safeTransferFrom(address(this), msg.sender, collateralLocked);
     // }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
-        external
-        override
-        isValidMessageCall(zetaMessage)
-    {
-        /**
-         * @dev Decode should follow the signature of the message provided to zeta.send.
-         */
+    function onZetaMessageValidateCollateral(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal {
         (
-            bytes32 messageType,
+            ,
             address debtAsset,
             uint256 amount,
             uint256 usdDebt,
@@ -257,42 +250,74 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             uint256 crossChaindestinationGasLimit
         ) = abi.decode(zetaMessage.message, (bytes32, address, uint256, uint256, address, address, uint256));
 
+        lockCollateral(usdDebt, collateralAsset, caller);
+
+        // crosschain validation
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: zetaMessage.sourceChainId,
+                destinationAddress: interactorsByChainId[zetaMessage.sourceChainId],
+                destinationGasLimit: crossChaindestinationGasLimit,
+                message: abi.encode(
+                    ACTION_COLLATERAL_VALIDATED,
+                    debtAsset,
+                    amount,
+                    usdDebt,
+                    collateralAsset,
+                    caller,
+                    crossChaindestinationGasLimit
+                ),
+                zetaValueAndGas: zetaMessage.zetaValue,
+                zetaParams: abi.encode("")
+            })
+        );
+    }
+
+    function onZetaMessageCollateralValidated(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal {
+        (, address debtAsset, uint256 amount, uint256 usdDebt, address collateralAsset, address caller, ) = abi.decode(
+            zetaMessage.message,
+            (bytes32, address, uint256, uint256, address, address, uint256)
+        );
+
+        IERC20(debtAsset).safeIncreaseAllowance(address(this), amount);
+        IERC20(debtAsset).safeTransferFrom(address(this), caller, amount);
+        emit Borrow(debtAsset, amount, collateralAsset, usdDebt);
+    }
+
+    function onZetaMessageRepay(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal {
+        (, , , uint256 usdDebt, address collateralAsset, address caller, ) = abi.decode(
+            zetaMessage.message,
+            (bytes32, address, uint256, uint256, address, address, uint256)
+        );
+
+        repayUsdDebt(usdDebt, collateralAsset, caller);
+    }
+
+    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
+        external
+        override
+        isValidMessageCall(zetaMessage)
+    {
+        (bytes32 messageType, , , , , , ) = abi.decode(
+            zetaMessage.message,
+            (bytes32, address, uint256, uint256, address, address, uint256)
+        );
+
         /**
          * @dev Setting a message type is a useful pattern to distinguish between different messages.
          */
         if (messageType == ACTION_VALIDATE_COLLATERAL) {
-            lockCollateral(usdDebt, collateralAsset, caller);
-
-            // crosschain validation
-            connector.send(
-                ZetaInterfaces.SendInput({
-                    destinationChainId: zetaMessage.sourceChainId,
-                    destinationAddress: interactorsByChainId[zetaMessage.sourceChainId],
-                    destinationGasLimit: crossChaindestinationGasLimit,
-                    message: abi.encode(
-                        ACTION_COLLATERAL_VALIDATED,
-                        debtAsset,
-                        amount,
-                        usdDebt,
-                        collateralAsset,
-                        caller
-                    ),
-                    zetaValueAndGas: zetaMessage.zetaValue,
-                    zetaParams: abi.encode("")
-                })
-            );
+            onZetaMessageValidateCollateral(zetaMessage);
             return;
         }
 
         if (messageType == ACTION_COLLATERAL_VALIDATED) {
-            IERC20(debtAsset).safeIncreaseAllowance(address(this), amount);
-            IERC20(debtAsset).safeTransferFrom(address(this), caller, amount);
-            emit Borrow(debtAsset, amount, collateralAsset, usdDebt);
+            onZetaMessageCollateralValidated(zetaMessage);
             return;
         }
 
         if (messageType == ACTION_REPAY) {
-            repayUsdDebt(usdDebt, collateralAsset, caller);
+            onZetaMessageRepay(zetaMessage);
             return;
         }
 

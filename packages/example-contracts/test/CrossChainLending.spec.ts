@@ -161,15 +161,15 @@ describe("CrossChainLending tests", () => {
       await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
 
       const initialUSDCBalance = await fakeUSDC.balanceOf(account1.address);
-      const status1 = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      const status1 = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status1[0]).to.be.eq(parseUnits("1"));
       await expect(status1[1]).to.be.eq(parseUnits("0"));
 
-      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
+      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId, 0, 0);
       const finalUSDCBalance = await fakeUSDC.balanceOf(account1.address);
       await expect(finalUSDCBalance.sub(initialUSDCBalance)).to.be.eq(parseUnits("1000"));
 
-      const status2 = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      const status2 = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status2[0]).to.be.eq(parseUnits("0.317348527868004600"));
       await expect(status2[1]).to.be.eq(parseUnits("0.682651472131995400"));
     });
@@ -181,7 +181,7 @@ describe("CrossChainLending tests", () => {
       await fakeWETH.connect(account1).approve(crossChainLendingChainA.address, parseUnits("1"));
       await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
 
-      const call = userConnectionB.borrow(fakeUSDC.address, parseUnits("1500"), fakeWETH.address, chainAId);
+      const call = userConnectionB.borrow(fakeUSDC.address, parseUnits("1500"), fakeWETH.address, chainAId, 0, 0);
       await expect(call).to.be.revertedWith(getCustomErrorMessage("NotEnoughCollateral"));
     });
 
@@ -193,23 +193,23 @@ describe("CrossChainLending tests", () => {
       await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
 
       const initialUSDCBalance = await fakeUSDC.balanceOf(account1.address);
-      let status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      let status = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status[0]).to.be.eq(parseUnits("1"));
       await expect(status[1]).to.be.eq(parseUnits("0"));
       await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
 
-      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
-      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId, 0, 0);
+      status = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status[0]).to.be.eq(parseUnits("0.317348527868004600"));
       await expect(status[1]).to.be.eq(parseUnits("0.682651472131995400"));
       await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
 
       await fakeUSDC.connect(account1).approve(crossChainLendingChainB.address, parseUnits("500"));
-      await userConnectionB.repay(fakeUSDC.address, parseUnits("500"), fakeWETH.address, chainAId);
+      await userConnectionB.repay(fakeUSDC.address, parseUnits("500"), fakeWETH.address, chainAId, 0, 0);
       const finalUSDCBalance = await fakeUSDC.balanceOf(account1.address);
       await expect(finalUSDCBalance.sub(initialUSDCBalance)).to.be.eq(parseUnits("500"));
 
-      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      status = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status[0]).to.be.eq(parseUnits("0.655261006573342323"));
       await expect(status[1]).to.be.eq(parseUnits("0.341325736065997700"));
       await expect(status[0].add(status[1])).to.be.eq(parseUnits("0.996586742639340023"));
@@ -227,24 +227,24 @@ describe("CrossChainLending tests", () => {
       await userConnectionA.deposit(fakeWETH.address, parseUnits("1"));
 
       const initialUSDCBalance = await fakeUSDC.balanceOf(account1.address);
-      let status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      let status = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status[0]).to.be.eq(parseUnits("1"));
       await expect(status[1]).to.be.eq(parseUnits("0"));
       await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
 
-      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
-      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      await userConnectionB.borrow(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId, 0, 0);
+      status = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status[0]).to.be.eq(parseUnits("0.317348527868004600"));
       await expect(status[1]).to.be.eq(parseUnits("0.682651472131995400"));
       await expect(status[0].add(status[1])).to.be.eq(parseUnits("1"));
 
       await fakeUSDC.connect(account1).approve(crossChainLendingChainB.address, parseUnits("1000"));
-      await userConnectionB.repay(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId);
+      await userConnectionB.repay(fakeUSDC.address, parseUnits("1000"), fakeWETH.address, chainAId, 0, 0);
 
       const finalUSDCBalance = await fakeUSDC.balanceOf(account1.address);
       await expect(finalUSDCBalance.sub(initialUSDCBalance)).to.be.eq(parseUnits("0"));
 
-      status = await userConnectionA.getUserStatus(account1.address, fakeWETH.address);
+      status = await userConnectionA.getUserBalances(account1.address, fakeWETH.address);
       await expect(status[0]).to.be.eq(parseUnits("0.993173485278680046"));
       await expect(status[1]).to.be.eq(parseUnits("0"));
       await expect(status[0].add(status[1])).to.be.eq(parseUnits("0.993173485278680046"));

@@ -1,12 +1,21 @@
 // eslint-disable-next-line no-unused-vars
-import { getAddress, isNetworkName, NetworkName } from "@zetachain/addresses";
+import { isNetworkName, NetworkName } from "@zetachain/addresses";
 import { BigNumber } from "ethers";
-import { parseUnits } from "ethers/lib/utils";
+import { parseUnits, toUtf8String } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
 import { getContractForNetwork } from "../../lib/shared/deploy.helpers";
 import { networkVariables } from "../../lib/shared/network.constants";
 import { CrossChainLending, CrossChainLending__factory, FakeERC20, FakeERC20__factory } from "../../typechain-types";
+
+interface BorrowParams {
+  amount: BigNumber;
+  collateralAsset: string;
+  collateralChainId: number;
+  crossChaindestinationGasLimit: BigNumber;
+  debtAsset: string;
+  zetaValueAndGas: BigNumber;
+}
 
 interface FakeTokens {
   USDC: string;
@@ -30,7 +39,7 @@ const getFakeTokensByNetwork = (network: string): FakeTokens | undefined => {
   }
 };
 
-export const action1 = async (networkName: NetworkName, destinationNetworkName: NetworkName) => {
+export const addCollateral = async (networkName: NetworkName) => {
   const fakeTokens = getFakeTokensByNetwork(networkName);
 
   if (!isNetworkName(network.name)) throw new Error("Invalid network name");
@@ -48,14 +57,14 @@ export const action1 = async (networkName: NetworkName, destinationNetworkName: 
     networkName
   });
 
-  await fakeWBTC.mint(parseUnits("1"));
+  await fakeWBTC.mint(parseUnits("1000"));
 
-  await fakeWBTC.approve(crossChainLending.address, parseUnits("1"));
+  await fakeWBTC.approve(crossChainLending.address, parseUnits("1000"));
 
-  await crossChainLending.deposit(fakeWBTC.address, parseUnits("1"));
+  await crossChainLending.deposit(fakeWBTC.address, parseUnits("1000"));
 };
 
-export const action2 = async (networkName: NetworkName, destinationNetworkName: NetworkName) => {
+export const borrowUSDC = async (networkName: NetworkName, destinationNetworkName: NetworkName) => {
   const fakeTokens = getFakeTokensByNetwork(networkName);
   const fakeTokensDestinationChain = getFakeTokensByNetwork(destinationNetworkName);
 
@@ -74,27 +83,37 @@ export const action2 = async (networkName: NetworkName, destinationNetworkName: 
     zetaAddress: "zetaToken"
   });
 
-  const zetaValueAndGas = parseUnits("5");
+  const zetaValueAndGas = parseUnits("50");
   const crossChaindestinationGasLimit = BigNumber.from(500000);
 
   await zetaToken.approve(crossChainLending.address, zetaValueAndGas);
 
   const _networkVariables = networkVariables[networkName];
+
+  const params: BorrowParams = {
+    amount: parseUnits("5000"),
+    collateralAsset: fakeTokensDestinationChain.WBTC,
+    collateralChainId: _networkVariables.crossChainId,
+    crossChaindestinationGasLimit: crossChaindestinationGasLimit,
+    debtAsset: fakeTokens.USDC,
+    zetaValueAndGas: crossChaindestinationGasLimit
+  };
+
   console.log(
-    fakeTokens.USDC,
-    parseUnits("10000").toString(),
-    fakeTokensDestinationChain.WBTC,
-    _networkVariables.crossChainId,
-    zetaValueAndGas.toString(),
-    crossChaindestinationGasLimit.toString()
+    params.debtAsset,
+    params.amount.toString(),
+    params.collateralAsset,
+    params.collateralChainId,
+    params.zetaValueAndGas.toString(),
+    params.crossChaindestinationGasLimit.toString()
   );
   await crossChainLending.borrow(
-    fakeTokens.USDC,
-    parseUnits("10000"),
-    fakeTokensDestinationChain.WBTC,
-    _networkVariables.crossChainId,
-    zetaValueAndGas,
-    crossChaindestinationGasLimit
+    params.debtAsset,
+    params.amount.toString(),
+    params.collateralAsset,
+    params.collateralChainId,
+    params.zetaValueAndGas.toString(),
+    params.crossChaindestinationGasLimit.toString()
   );
 };
 
@@ -103,8 +122,10 @@ export const main = async () => {
 
   if (!isNetworkName(network.name)) throw new Error("Invalid network name");
 
-  await action1("goerli", "bsc-testnet");
-  await action2("bsc-testnet", "goerli");
+  await addCollateral("goerli");
+  await borrowUSDC("bsc-testnet", "goerli");
+  // await addCollateral("bsc-testnet");
+  // await borrowUSDC("goerli", "bsc-testnet");
 };
 
 main().catch(error => {
