@@ -21,6 +21,6 @@ const address = getAddress({address: "zetaToken", networkName: "goerli", zetaNet
 | isNetworkName = (networkName: string) | Returns true if is a valid network name |
 | isZetaNetworkName = (networkName: string) | Returns true if is a valid Zeta network name |
 | type ZetaAddress | Valid values for ZetaAddress |
-| getAddress = ({address: ZetaAddress; networkName: string; zetaNetwork: string; }): string  | Returns the address of a valid ZetaAddress |
+| getAddress = ({ address: ZetaAddress; networkName: string; zetaNetwork: string; }): string  | Returns the address of a valid ZetaAddress |
 
 ```
