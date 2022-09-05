@@ -15,11 +15,11 @@ const address = getAddress({ address: "zetaToken", networkName: "goerli", zetaNe
 
 | Method | Description |
 | :---- | ------ |
-| isTestnetNetworkName = (networkName: string) | Returns true if is a valid Testnet name |
-| isZetaTestnet = (networkName: string) | Returns true if is a valid ZetaTestnet name |
-| isMainnetNetworkName = (networkName: string) | Returns true if is a valid Mainnet name |
-| isNetworkName = (networkName: string) | Returns true if is a valid network name |
-| isZetaNetworkName = (networkName: string) | Returns true if is a valid Zeta network name |
+| isTestnetNetworkName = (networkName: string): networkName is TestnetNetworkName | Returns true if it's a valid Testnet name |
+| isZetaTestnet = (networkName: string): networkName is ZetaTestnetNetworkName | Returns true if it's a valid ZetaTestnet name |
+| isMainnetNetworkName = (networkName: string): networkName is MainnetNetworkName | Returns true if it's a valid Mainnet name |
+| isNetworkName = (networkName: string): networkName is NetworkName | Returns true if it's a valid network name |
+| isZetaNetworkName = (networkName: string): networkName is ZetaNetworkName | Returns true if it's a valid Zeta network name |
 | type ZetaAddress | Valid values for ZetaAddress |
 | getAddress = ({ address: ZetaAddress; networkName: string; zetaNetwork: string; }): string  | Returns the address of a valid ZetaAddress |
 
