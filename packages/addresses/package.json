@@ -1,14 +1,27 @@
 {
   "name": "@zetachain/addresses",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "license": "MIT",
   "author": "zetachain",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "main": "src/index.ts",
+  "main": "./dist/zetachain-addresses.js",
+  "types": "./dist/zetachain-addresses.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "tsc:watch": "npx tsc --watch"
+    "tsc:watch": "npx tsc --watch",
+    "prepublishOnly": "webpack --mode=production"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.13",
+    "babel-loader": "^8.2.5",
+    "clean-webpack-plugin": "^4.0.0",
+    "ts-loader": "^9.3.1",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
   }
 }

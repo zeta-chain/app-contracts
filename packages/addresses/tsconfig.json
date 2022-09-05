@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["@types", "./node_modules/@types"],
+    "target": "es5",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "declaration": true,
+    "module": "commonjs",
+    "resolveJsonModule": true,
+  }
+}
