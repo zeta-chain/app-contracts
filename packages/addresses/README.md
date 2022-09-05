@@ -7,7 +7,7 @@ This package includes the addresses and networks to use Zetachain.
 ```js
 import { getAddress } from "@zetachain/addresses";
 
-const address = getAddress({address: "zetaToken", networkName: "goerli", zetaNetwork:"athens"});
+const address = getAddress({ address: "zetaToken", networkName: "goerli", zetaNetwork:"athens" });
 ```
 
 ## API
