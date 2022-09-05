@@ -1,7 +1,7 @@
-import { getAddress } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
 import { getCrossChainWarriors } from "../../lib/cross-chain-warriors/CrossChainWarriors.helpers";
+import { getAddress } from "../../lib/shared/address.helpers";
 import { isNetworkName, networkVariables } from "../../lib/shared/network.constants";
 
 async function main() {
@@ -16,7 +16,7 @@ async function main() {
   if (_networkVariables.crossChainName === "") throw new Error("Invalid crossChainName");
 
   const crossChainAddress = getAddress("crossChainNft", {
-    customNetworkName: _networkVariables.crossChainName,
+    customNetworkName: _networkVariables.crossChainName
   });
 
   const encodedCrossChainAddress = ethers.utils.solidityPack(["address"], [crossChainAddress]);
@@ -28,7 +28,7 @@ async function main() {
   ).wait();
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error(error);
   process.exit(1);
 });

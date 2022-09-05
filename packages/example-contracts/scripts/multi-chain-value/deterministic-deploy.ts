@@ -1,8 +1,9 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { saveAddress } from "@zetachain/addresses-tools";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
+import { getAddress } from "../../lib/shared/address.helpers";
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
 import { MultiChainValue__factory } from "../typechain-types";
 
@@ -38,7 +39,7 @@ export async function deterministicDeployMultiChainValue() {
     contractBytecode,
     factoryAddress: immutableCreate2Factory,
     salt: salthex,
-    signer,
+    signer
   });
 
   saveAddress("multiChainValue", address);
@@ -48,7 +49,7 @@ export async function deterministicDeployMultiChainValue() {
 if (!process.env.EXECUTE_PROGRAMMATICALLY) {
   deterministicDeployMultiChainValue()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exit(1);
     });

@@ -1,5 +1,3 @@
-import { network } from "hardhat";
-
 import athens from "./addresses.athens.json";
 import mainnet from "./addresses.mainnet.json";
 import troy from "./addresses.troy.json";
@@ -134,38 +132,35 @@ export const isNetworkName = (str: string): str is NetworkName =>
 export const isZetaNetworkName = (str: string): str is ZetaNetworkName =>
   isZetaLocalnet(str) || isZetaTestnet(str) || isZetaMainnet(str);
 
-const MissingZetaNetworkError = new Error(
-  "ZETA_NETWORK is not defined, please set the environment variable (e.g.: ZETA_NETWORK=athens <command>)"
-);
+const InvalidNetworkError = new Error("NETWORK is invalid, please provide a valid value");
 
-export const getAddress = (
-  address: ZetaAddress,
-  {
-    customNetworkName,
-    customZetaNetwork
-  }: { customNetworkName?: NetworkName; customZetaNetwork?: ZetaNetworkName } = {}
-): string => {
-  const { name: _networkName } = network;
-  const networkName = customNetworkName || _networkName;
+const InvalidZetaNetworkError = new Error("ZETA_NETWORK is invalid, please provide a valid value");
 
-  const { ZETA_NETWORK: _ZETA_NETWORK } = process.env;
-  const ZETA_NETWORK = customZetaNetwork || _ZETA_NETWORK;
+export const getAddress = ({
+  address,
+  networkName,
+  zetaNetwork
+}: {
+  address: ZetaAddress;
+  networkName: string;
+  zetaNetwork: string;
+}): string => {
+  if (!isNetworkName(networkName)) throw InvalidNetworkError;
+  if (!isZetaNetworkName(zetaNetwork)) throw InvalidZetaNetworkError;
 
-  if (!ZETA_NETWORK) throw MissingZetaNetworkError;
+  console.log(`Getting ${address} address from ${zetaNetwork}: ${networkName}.`);
 
-  console.log(`Getting ${address} address from ${ZETA_NETWORK}: ${networkName}.`);
-
-  if (isZetaLocalnet(ZETA_NETWORK) && isLocalNetworkName(networkName)) {
-    return getLocalnetList()[ZETA_NETWORK][networkName][address];
+  if (isZetaLocalnet(zetaNetwork) && isLocalNetworkName(networkName)) {
+    return getLocalnetList()[zetaNetwork][networkName][address];
   }
 
-  if (isZetaTestnet(ZETA_NETWORK) && isTestnetNetworkName(networkName)) {
-    return getTestnetList()[ZETA_NETWORK][networkName][address];
+  if (isZetaTestnet(zetaNetwork) && isTestnetNetworkName(networkName)) {
+    return getTestnetList()[zetaNetwork][networkName][address];
   }
 
-  if (isZetaMainnet(ZETA_NETWORK) && isMainnetNetworkName(networkName)) {
-    return getMainnetList()[ZETA_NETWORK][networkName][address];
+  if (isZetaMainnet(zetaNetwork) && isMainnetNetworkName(networkName)) {
+    return getMainnetList()[zetaNetwork][networkName][address];
   }
 
-  throw new Error(`Invalid ZETA_NETWORK + network combination ${ZETA_NETWORK} ${networkName}.`);
+  throw new Error(`Invalid ZETA_NETWORK + network combination ${zetaNetwork} ${networkName}.`);
 };

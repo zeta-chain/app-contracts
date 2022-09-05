@@ -1,4 +1,3 @@
-import { getAddress } from "@zetachain/addresses";
 import assert from "assert";
 import { ContractFactory } from "ethers";
 import { ethers, network } from "hardhat";
@@ -9,8 +8,9 @@ import {
   CrossChainWarriorsMock,
   CrossChainWarriorsMock__factory as CrossChainWarriorsMockFactory,
   CrossChainWarriorsZetaConnectorMock,
-  CrossChainWarriorsZetaConnectorMock__factory as CrossChainWarriorsZetaConnectorMockFactory,
+  CrossChainWarriorsZetaConnectorMock__factory as CrossChainWarriorsZetaConnectorMockFactory
 } from "../../typechain-types";
+import { getAddress } from "../shared/address.helpers";
 import { isNetworkName } from "../shared/network.constants";
 
 export type GetContractParams<Factory extends ContractFactory> =
@@ -30,7 +30,7 @@ export const deployCrossChainWarriorsMock = async ({
   customUseEven,
   zetaConnectorMockAddress,
   zetaTokenMockAddress,
-  zetaTokenConsumerAddress,
+  zetaTokenConsumerAddress
 }: {
   customUseEven: boolean;
   zetaConnectorMockAddress: string;
@@ -61,7 +61,7 @@ export const getCrossChainWarriorsArgs = (): [string, string, string, boolean] =
   getAddress("connector"),
   getAddress("zetaToken"),
   getAddress("zetaTokenConsumerUniV2"),
-  network.name === "goerli",
+  network.name === "goerli"
 ];
 
 export const getCrossChainWarriors = async (existingContractAddress?: string) => {

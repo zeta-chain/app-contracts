@@ -1,11 +1,11 @@
-import { getAddress } from "@zetachain/addresses";
 import { BigNumber } from "ethers";
 
+import { getAddress } from "../lib/address.helpers";
 import { MAX_ETH_ADDRESS } from "../lib/contracts.constants";
 import {
   buildBytecode,
   buildCreate2Address,
-  saltToHex,
+  saltToHex
 } from "../lib/ImmutableCreate2Factory/ImmutableCreate2Factory.helpers";
 
 export const calculateBestSalt = async (
