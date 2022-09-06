@@ -12,9 +12,6 @@ cypress.json
 
 # tests
 test
-jest.config.js
-setupJest.ts
-coverage
 
 #  lint
 .eslintrc.js
