@@ -132,9 +132,8 @@ export const isNetworkName = (str: string): str is NetworkName =>
 export const isZetaNetworkName = (str: string): str is ZetaNetworkName =>
   isZetaLocalnet(str) || isZetaTestnet(str) || isZetaMainnet(str);
 
-const InvalidNetworkError = new Error("NETWORK is invalid, please provide a valid value");
-
-const InvalidZetaNetworkError = new Error("ZETA_NETWORK is invalid, please provide a valid value");
+const getInvalidNetworkError = (network: string, isZeta: boolean) =>
+  new Error(`Network: ${network} is invalid${isZeta ? " ZetaNetwork" : ""}, please provide a valid value`);
 
 export const getAddress = ({
   address,
@@ -145,8 +144,8 @@ export const getAddress = ({
   networkName: string;
   zetaNetwork: string;
 }): string => {
-  if (!isNetworkName(networkName)) throw InvalidNetworkError;
-  if (!isZetaNetworkName(zetaNetwork)) throw InvalidZetaNetworkError;
+  if (!isNetworkName(networkName)) throw getInvalidNetworkError(networkName, false);
+  if (!isZetaNetworkName(zetaNetwork)) throw getInvalidNetworkError(networkName, true);
 
   console.log(`Getting ${address} address from ${zetaNetwork}: ${networkName}.`);
 
