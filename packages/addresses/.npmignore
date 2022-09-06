@@ -4,8 +4,6 @@ index.html
 
 # compiler
 tsconfig.json
-webpack.config.js
-postcss.config.js
 
 # files
 *.log
