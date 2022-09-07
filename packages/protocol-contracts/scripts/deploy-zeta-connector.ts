@@ -1,8 +1,9 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { saveAddress } from "@zetachain/addresses-tools";
 import { Contract } from "ethers";
 import { network } from "hardhat";
 
+import { getAddress } from "../lib/address.helpers";
 import { deployZetaConnectorEth, deployZetaConnectorNonEth, isEthNetworkName } from "../lib/contracts.helpers";
 
 export async function deployZetaConnector() {
@@ -15,11 +16,11 @@ export async function deployZetaConnector() {
 
   if (isEthNetworkName(network.name)) {
     contract = await deployZetaConnectorEth({
-      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")],
+      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")]
     });
   } else {
     contract = await deployZetaConnectorNonEth({
-      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")],
+      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")]
     });
   }
 
@@ -30,7 +31,7 @@ export async function deployZetaConnector() {
 if (!process.env.EXECUTE_PROGRAMMATICALLY) {
   deployZetaConnector()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exit(1);
     });

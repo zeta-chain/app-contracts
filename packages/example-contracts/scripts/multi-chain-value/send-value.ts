@@ -1,8 +1,9 @@
-import { getAddress, getChainId, isNetworkName, isZetaTestnet } from "@zetachain/addresses";
+import { getChainId, isNetworkName, isZetaTestnet } from "@zetachain/addresses";
 import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
 import { getMultiChainValue } from "../../lib/multi-chain-value/MultiChainValue.helpers";
+import { getAddress } from "../../lib/shared/address.helpers";
 import { getErc20 } from "../../lib/shared/deploy.helpers";
 
 const networkName = network.name;
@@ -57,7 +58,7 @@ async function main() {
   }
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error(error);
   process.exit(1);
 });

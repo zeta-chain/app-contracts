@@ -1,6 +1,8 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { ZetaNonEth__factory as ZetaNonEthFactory } from "@zetachain/interfaces/typechain-types";
 import { ethers, network } from "hardhat";
+
+import { getAddress } from "../lib/address.helpers";
 
 export async function setZetaAddresses() {
   if (!isNetworkName(network.name)) {
@@ -21,7 +23,7 @@ export async function setZetaAddresses() {
 if (!process.env.EXECUTE_PROGRAMMATICALLY) {
   setZetaAddresses()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exit(1);
     });

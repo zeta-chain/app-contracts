@@ -1,14 +1,14 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import { BigNumber, ContractReceipt } from "ethers";
 
+import { getAddress } from "../lib/shared/address.helpers";
 import { getNow } from "../lib/shared/deploy.helpers";
 import {
   ERC20__factory,
   IUniswapV2Pair__factory,
   MultiChainSwapBase__factory,
-  UniswapV2Router02__factory,
+  UniswapV2Router02__factory
 } from "../typechain-types";
 
 export const getMintTokenId = (mintTx: ContractReceipt) => mintTx.events?.[0].args?.tokenId;
@@ -16,12 +16,12 @@ export const getMintTokenId = (mintTx: ContractReceipt) => mintTx.events?.[0].ar
 export const parseUniswapLog = (logs: ContractReceipt["logs"]) => {
   const iface = IUniswapV2Pair__factory.createInterface();
 
-  const eventNames = logs.map((log) => {
+  const eventNames = logs.map(log => {
     try {
       const parsedLog = iface.parseLog(log);
 
       return parsedLog.name;
-    } catch (e: any) {
+    } catch (e) {
       return "NO_UNI_LOG";
     }
   });
@@ -32,12 +32,12 @@ export const parseUniswapLog = (logs: ContractReceipt["logs"]) => {
 export const parseZetaLog = (logs: ContractReceipt["logs"]) => {
   const iface = MultiChainSwapBase__factory.createInterface();
 
-  const eventNames = logs.map((log) => {
+  const eventNames = logs.map(log => {
     try {
       const parsedLog = iface.parseLog(log);
 
       return parsedLog.name;
-    } catch (e: any) {
+    } catch (e) {
       return "NO_ZETA_LOG";
     }
   });
@@ -69,7 +69,7 @@ export const addZetaEthLiquidityTest = async (
 ) => {
   const uniswapRouterAddr = getAddress("uniswapV2Router02", {
     customNetworkName: "eth-mainnet",
-    customZetaNetwork: "mainnet",
+    customZetaNetwork: "mainnet"
   });
   const uniswapRouter = UniswapV2Router02__factory.connect(uniswapRouterAddr, deployer);
 

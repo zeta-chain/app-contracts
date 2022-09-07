@@ -1,7 +1,8 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
 import { getMultiChainSwapBase } from "../../lib/multi-chain-swap/MultiChainSwap.helpers";
+import { getAddress } from "../../lib/shared/address.helpers";
 import { networkVariables } from "../../lib/shared/network.constants";
 
 export async function setMultiChainSwapCrossChainData() {
@@ -14,11 +15,11 @@ export async function setMultiChainSwapCrossChainData() {
   const crossChainMultiChainSwapAddress = getAddress("multiChainSwap");
 
   const crossChainMultiChainSwapContract = await getMultiChainSwapBase({
-    existingContractAddress: crossChainMultiChainSwapAddress,
+    existingContractAddress: crossChainMultiChainSwapAddress
   });
 
   const crossChainAddress = getAddress("multiChainSwap", {
-    customNetworkName: _networkVariables.crossChainName,
+    customNetworkName: _networkVariables.crossChainName
   });
 
   const encodedCrossChainAddress = ethers.utils.solidityPack(["address"], [crossChainAddress]);
@@ -39,7 +40,7 @@ export async function setMultiChainSwapCrossChainData() {
 }
 
 if (!process.env.EXECUTE_PROGRAMMATICALLY) {
-  setMultiChainSwapCrossChainData().catch((error) => {
+  setMultiChainSwapCrossChainData().catch(error => {
     console.error(error);
     process.exit(1);
   });

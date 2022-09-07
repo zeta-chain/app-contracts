@@ -1,14 +1,30 @@
 {
   "name": "@zetachain/addresses",
-  "version": "0.0.4",
+  "version": "0.0.8",
   "license": "MIT",
   "author": "zetachain",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "main": "src/index.ts",
+  "main": "./dist/zetachain-addresses.umd.js",
+  "module": "./dist/zetachain-addresses.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/zetachain-addresses.mjs",
+      "require": "./dist/zetachain-addresses.umd.js"
+    }
+  },
   "scripts": {
-    "tsc:watch": "npx tsc --watch"
+    "tsc:watch": "npx tsc --watch",
+    "prepublishOnly": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^3.1.0",
+    "vite-plugin-dts": "^1.4.1"
   }
 }

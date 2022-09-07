@@ -1,10 +1,10 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
+import { getAddress } from "../lib/shared/address.helpers";
 import { getContract } from "../lib/shared/deploy.helpers";
 import {
   ERC20__factory,
@@ -12,7 +12,7 @@ import {
   IUniswapV2Pair__factory,
   IUniswapV2Router02,
   UniswapV2Router02,
-  UniswapV2Router02__factory,
+  UniswapV2Router02__factory
 } from "../typechain-types";
 
 const UNISWAP_FACTORY_ADDRESS = "0xb7926c0430afb07aa7defde6da862ae0bde767bc";
@@ -88,7 +88,7 @@ const estimateEthForZeta = async (
 export const getUniswapV2Router02 = async () =>
   getContract<UniswapV2Router02__factory, UniswapV2Router02>({
     contractName: "UniswapV2Router02",
-    existingContractAddress: getAddress("uniswapV2Router02"),
+    existingContractAddress: getAddress("uniswapV2Router02")
   });
 
 async function main() {
@@ -108,7 +108,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });

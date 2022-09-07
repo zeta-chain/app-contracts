@@ -1,7 +1,8 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { saveAddress } from "@zetachain/addresses-tools";
 import { ethers, network } from "hardhat";
 
+import { getAddress } from "../lib/address.helpers";
 import { getZetaConnectorEth, getZetaConnectorNonEth, isEthNetworkName } from "../lib/contracts.helpers";
 
 async function sendGas() {
@@ -34,7 +35,7 @@ async function sendGas() {
 
 sendGas()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });
