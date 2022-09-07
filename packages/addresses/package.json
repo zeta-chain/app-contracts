@@ -16,7 +16,7 @@
   "exports": {
     ".": {
       "import": "./dist/zetachain-addresses.mjs",
-      "require": "./dist/zetachain-addresses.umd.cjs"
+      "require": "./dist/zetachain-addresses.umd.js"
     }
   },
   "scripts": {
