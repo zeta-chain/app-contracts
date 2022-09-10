@@ -4,9 +4,16 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract CrossChainLendingStorage is AccessControl {
+    struct Borrow {
+        uint256 usdDebt;
+        address collateralAsset;
+        uint256 collateralAmount;
+    }
+
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     //@todo: move to setter
+    uint256 internal constant _riskTableScale = 1000;
     uint256 internal constant _feePerThousand = 10;
 
     uint256 internal _zetaValueAndGas;
@@ -20,6 +27,9 @@ contract CrossChainLendingStorage is AccessControl {
 
     mapping(address => mapping(address => uint256)) _deposits;
     mapping(address => mapping(address => uint256)) _depositsLocked;
+    mapping(address => uint256) _treasureLocked;
+
+    mapping(bytes32 => Borrow) public _borrows;
 
     address _oracleAddress;
 
