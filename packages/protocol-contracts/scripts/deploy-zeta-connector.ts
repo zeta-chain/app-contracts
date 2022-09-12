@@ -16,11 +16,11 @@ export async function deployZetaConnector() {
 
   if (isEthNetworkName(network.name)) {
     contract = await deployZetaConnectorEth({
-      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")]
+      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater"), getAddress("tssUpdater")]
     });
   } else {
     contract = await deployZetaConnectorNonEth({
-      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater")]
+      args: [getAddress("zetaToken"), getAddress("tss"), getAddress("tssUpdater"), getAddress("tssUpdater")]
     });
   }
 
