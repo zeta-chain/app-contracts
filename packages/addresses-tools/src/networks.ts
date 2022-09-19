@@ -37,8 +37,8 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
   "klaytn-baobab": {
     accounts: PRIVATE_KEYS,
     chainId: 1001,
-    gas: 2100000,
-    gasPrice: 8000000000,
+    gas: 6000000,
+    gasPrice: 54250000000,
     url: "https://api.baobab.klaytn.net:8651"
   },
   "klaytn-cypress": {

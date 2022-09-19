@@ -29,6 +29,15 @@ async function main() {
         )
       ).wait());
 
+    networkName !== "klaytn-baobab" &&
+      (await (
+        await multiChainValueContract.send(
+          getChainId("klaytn-baobab"),
+          ethers.utils.solidityPack(["address"], [process.env.PUBLIC_KEY_1]),
+          amount
+        )
+      ).wait());
+
     networkName !== "polygon-mumbai" &&
       (await (
         await multiChainValueContract.send(

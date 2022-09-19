@@ -78,7 +78,7 @@
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
-    "multiChainValue": "",
+    "multiChainValue": "0x4f97Bc7ed459111296583e92a62f17D20B20825d",
     "tss": "0x61141Bce5352fC9b5Ff648468676e356518D86AB",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "",
