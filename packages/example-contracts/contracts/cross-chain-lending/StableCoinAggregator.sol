@@ -5,8 +5,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./OracleInterface.sol";
 
 contract StableCoinAggregator is AggregatorV3Interface {
+    uint8 private _decimals;
+    int256 private _price;
+
+    constructor(uint8 decimals_, int256 price) {
+        _decimals = decimals_;
+        _price = price;
+    }
+
     function decimals() external view override returns (uint8) {
-        return 8;
+        return _decimals;
     }
 
     function latestRoundData()
@@ -21,7 +29,7 @@ contract StableCoinAggregator is AggregatorV3Interface {
             uint80 answeredInRound
         )
     {
-        return (0, 100000000, 0, 0, 0);
+        return (0, _price, 0, 0, 0);
     }
 
     function description() external view override returns (string memory) {}

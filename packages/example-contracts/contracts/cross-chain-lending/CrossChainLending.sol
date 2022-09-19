@@ -49,6 +49,7 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
     // dev: all the deposits are in the current chain
     function deposit(address asset, uint256 amount) external {
         IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20(asset).safeIncreaseAllowance(address(this), amount);
         _deposits[msg.sender][asset] = amount;
     }
 
@@ -69,10 +70,14 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         return keccak256(abi.encodePacked(user, collateralAsset, currentChainId));
     }
 
+    function _applyRisk(uint256 amount, address collateralAsset) internal view returns (uint256) {
+        uint256 risk = _riskTable[collateralAsset];
+        return (amount * risk) / _generalScale;
+    }
+
     function collateralNeededForCoverDebt(uint256 usdDebt, address collateralAsset) internal view returns (uint256) {
         uint256 q = OracleInterface(_oracleAddress).tokenPerUsd(usdDebt, collateralAsset);
-        uint256 risk = _riskTable[collateralAsset];
-        return (q * risk) / _riskTableScale;
+        return _applyRisk(q, collateralAsset);
     }
 
     function lockCollateral(
@@ -104,8 +109,9 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             revert NotEnoughLiquidity();
 
         uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount, debtAsset);
+
         if (currentChainId == collateralChainId) {
-            uint256 collateralLocked = lockCollateral(usdDebt, collateralAsset, msg.sender);
+            lockCollateral(usdDebt, collateralAsset, msg.sender);
             IERC20(debtAsset).safeTransferFrom(address(this), msg.sender, amount);
             emit Borrow(debtAsset, amount, collateralAsset, usdDebt);
             return;
@@ -140,17 +146,17 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         );
     }
 
-    function debtRepayFee(uint256 amount) internal pure returns (uint256) {
-        return (amount * _feePerThousand) / 1000;
+    function _debtRepayFee(uint256 amount) internal pure returns (uint256) {
+        return (amount * _feePerScale) / _generalScale;
     }
 
-    function repayUsdDebt(
+    function _repayUsdDebt(
         uint256 usdDebt,
         address collateralAsset,
         address caller
     ) internal {
         uint256 collateralCanBePay = OracleInterface(_oracleAddress).tokenPerUsd(usdDebt, collateralAsset);
-        uint256 collateralCanBeUnlock = collateralCanBePay * _riskTable[collateralAsset];
+        uint256 collateralCanBeUnlock = _applyRisk(collateralCanBePay, collateralAsset);
 
         uint256 collateralLocked = _depositsLocked[caller][collateralAsset];
 
@@ -158,14 +164,22 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             collateralCanBeUnlock = collateralLocked;
         }
 
-        _deposits[caller][collateralAsset] += (collateralCanBeUnlock - repayFee);
+        _deposits[caller][collateralAsset] += (collateralCanBeUnlock);
         _depositsLocked[caller][collateralAsset] -= collateralCanBeUnlock;
 
-        uint256 usdLeftDebt = OracleInterface(_oracleAddress).usdPerToken(amount, collateralAsset) /
-            _riskTable[collateralAsset];
+        collateralLocked = _depositsLocked[caller][collateralAsset];
+        uint256 usdLeftDebt = 0;
+        if (collateralLocked > 0) {
+            usdLeftDebt =
+                (OracleInterface(_oracleAddress).usdPerToken(collateralLocked, collateralAsset) * _generalScale) /
+                _riskTable[collateralAsset];
+        }
 
         bytes32 borrowId = getBorrowId(caller, collateralAsset);
-        _borrows[borrowId] = Borrow(usdLeftDebt, collateralAsset, _depositsLocked[caller][collateralAsset]);
+
+        _borrows[borrowId].usdDebt = usdLeftDebt;
+        _borrows[borrowId].collateralAsset = collateralAsset;
+        _borrows[borrowId].collateralAmount = collateralLocked;
     }
 
     function repay(
@@ -176,13 +190,15 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
         uint256 zetaValueAndGas,
         uint256 crossChaindestinationGasLimit
     ) external {
-        uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount, debtAsset);
+        uint256 fee = _debtRepayFee(amount);
+        uint256 usdDebt = OracleInterface(_oracleAddress).usdPerToken(amount - fee, debtAsset);
 
         if (currentChainId == collateralChainId) {
-            repayUsdDebt(usdDebt, collateralAsset, msg.sender);
+            _repayUsdDebt(usdDebt, collateralAsset, msg.sender);
         }
 
-        IERC20(debtAsset).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20(debtAsset).safeTransferFrom(msg.sender, address(this), amount - fee);
+        IERC20(debtAsset).safeTransferFrom(msg.sender, _feeWallet, fee);
 
         if (currentChainId == collateralChainId) {
             return;
@@ -220,25 +236,37 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
     // if debtToCover * oraclePrice(debtAsset) * (1 + _riskTable) < collateralAsset user balance then true
     function canBeLiquidated(address collateralAsset, address user) external view returns (bool) {
         bytes32 borrowId = getBorrowId(user, collateralAsset);
-        (usdDebt, , collateralLeftLoked) = _borrows[borrowId];
+        uint256 usdDebt = _borrows[borrowId].usdDebt;
+        uint256 collateralLeftLoked = _borrows[borrowId].collateralAmount;
 
         uint256 collateralCanBePay = OracleInterface(_oracleAddress).tokenPerUsd(usdDebt, collateralAsset);
-        uint256 collateralCanBeUnlock = collateralCanBePay * _riskTable[collateralAsset];
+        uint256 collateralCanBeUnlock = _applyRisk(collateralCanBePay, collateralAsset);
 
-        // todo: define liquidation ratio
-        return collateralLeftLoked < (collateralCanBeUnlock * 9) / 10;
+        return collateralLeftLoked < (collateralCanBeUnlock * _liquidationRatio) / _generalScale;
     }
 
     // dev: actual implementation of toBeLiquidated that execute the liquidation
     function liquidate(address collateralAsset, address user) external {
-        bool canBeLiquidated = this.canBeLiquidated(collateralAsset, user);
-        if (!canBeLiquidated) revert CantBeLiquidated();
+        bool canBeLiquidatedResult = this.canBeLiquidated(collateralAsset, user);
+        if (!canBeLiquidatedResult) revert CantBeLiquidated();
 
         uint256 collateralLocked = _depositsLocked[user][collateralAsset];
         _depositsLocked[user][collateralAsset] = 0;
         bytes32 borrowId = getBorrowId(user, collateralAsset);
-        _borrows[borrowId] = Borrow(0, collateralAsset, 0);
-        IERC20(collateralAsset).safeTransferFrom(address(this), msg.sender, collateralLocked);
+
+        _borrows[borrowId].usdDebt = 0;
+        _borrows[borrowId].collateralAsset = collateralAsset;
+        _borrows[borrowId].collateralAmount = 0;
+        IERC20(collateralAsset).safeTransferFrom(
+            address(this),
+            msg.sender,
+            (collateralLocked * _liquidationReward) / _generalScale
+        );
+        IERC20(collateralAsset).safeTransferFrom(
+            address(this),
+            _feeWallet,
+            (collateralLocked * (_generalScale - _liquidationReward)) / _generalScale
+        );
     }
 
     function onZetaMessageValidateCollateral(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal {
@@ -254,7 +282,10 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
 
         uint256 collateralLocked = lockCollateral(usdDebt, collateralAsset, caller);
         bytes32 borrowId = getBorrowId(caller, collateralAsset);
-        _borrows[borrowId] = Borrow(usdDebt, collateralAsset, collateralLocked);
+
+        _borrows[borrowId].usdDebt = usdDebt;
+        _borrows[borrowId].collateralAsset = collateralAsset;
+        _borrows[borrowId].collateralAmount = collateralLocked;
 
         // crosschain validation
         connector.send(
@@ -295,7 +326,7 @@ contract CrossChainLending is ZetaInteractor, ZetaReceiver, CrossChainLendingSto
             (bytes32, address, uint256, uint256, address, address, uint256)
         );
 
-        repayUsdDebt(usdDebt, collateralAsset, caller);
+        _repayUsdDebt(usdDebt, collateralAsset, caller);
     }
 
     function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
