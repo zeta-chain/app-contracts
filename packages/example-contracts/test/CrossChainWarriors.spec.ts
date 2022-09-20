@@ -1,13 +1,13 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import {
   deployCrossChainWarriorsMock,
-  deployZetaConnectorMock,
+  deployZetaConnectorMock
 } from "../lib/cross-chain-warriors/CrossChainWarriors.helpers";
+import { getAddress } from "../lib/shared/address.helpers";
 import { deployZetaTokenConsumerUniV2, getZetaMock } from "../lib/shared/deploy.helpers";
 import { CrossChainWarriorsMock, CrossChainWarriorsZetaConnectorMock, ZetaEthMock } from "../typechain-types";
 import { ZetaTokenConsumerUniV2 } from "../typechain-types/@zetachain/protocol-contracts/contracts/ZetaTokenConsumerUniV2.strategy.sol";
@@ -42,7 +42,7 @@ describe("CrossChainWarriors tests", () => {
 
     const uniswapRouterAddr = getAddress("uniswapV2Router02", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     await addZetaEthLiquidityTest(zetaEthTokenMockContract.address, parseEther("200000"), parseEther("100"), deployer);
@@ -56,14 +56,14 @@ describe("CrossChainWarriors tests", () => {
       customUseEven: false,
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
-      zetaTokenMockAddress: zetaEthTokenMockContract.address,
+      zetaTokenMockAddress: zetaEthTokenMockContract.address
     });
 
     crossChainWarriorsContractChainB = await deployCrossChainWarriorsMock({
       customUseEven: true,
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
-      zetaTokenMockAddress: zetaEthTokenMockContract.address,
+      zetaTokenMockAddress: zetaEthTokenMockContract.address
     });
 
     await crossChainWarriorsContractChainB.setInteractorByChainId(
@@ -138,7 +138,7 @@ describe("CrossChainWarriors tests", () => {
 
       await (
         await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id, {
-          value: parseEther("1"),
+          value: parseEther("1")
         })
       ).wait();
 
@@ -154,7 +154,7 @@ describe("CrossChainWarriors tests", () => {
 
       await (
         await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, account1Address, id, {
-          value: parseEther("1"),
+          value: parseEther("1")
         })
       ).wait();
 
@@ -170,7 +170,7 @@ describe("CrossChainWarriors tests", () => {
           message: encoder.encode(["address"], [deployerAddress]),
           sourceChainId: 1,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
-          zetaValue: 0,
+          zetaValue: 0
         })
       ).to.be.revertedWith(`InvalidCaller("${deployer.address}")`);
     });
@@ -274,7 +274,7 @@ describe("CrossChainWarriors tests", () => {
 
       await (
         await crossChainWarriorsContractChainA.crossChainTransfer(chainBId, deployerAddress, nftId, {
-          value: parseEther("1"),
+          value: parseEther("1")
         })
       ).wait();
 

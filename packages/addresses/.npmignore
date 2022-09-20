@@ -1,0 +1,24 @@
+# source code
+src
+index.html
+
+# compiler
+tsconfig.json
+
+# files
+*.log
+cypress.json
+*.code-workspace
+
+# tests
+test
+
+#  lint
+.eslintrc.js
+.prettierrc
+
+# IDE - VSCode
+.vscode
+
+# git
+.git

@@ -1,4 +1,4 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
@@ -27,7 +27,7 @@ export async function doCrossChainSwap() {
       _networkVariables.crossChainId,
       1_000_000,
       {
-        value: parseUnits("1"),
+        value: parseUnits("1")
       }
     )
   ).wait();

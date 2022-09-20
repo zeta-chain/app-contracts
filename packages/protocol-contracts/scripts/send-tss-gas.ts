@@ -1,5 +1,7 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
+
+import { getAddress } from "../lib/address.helpers";
 
 async function sendGas() {
   if (!isNetworkName(network.name)) {
@@ -10,7 +12,7 @@ async function sendGas() {
   const sendGasTx = {
     from: signer.address,
     to: getAddress("tss"),
-    value: ethers.utils.parseEther("1.0"),
+    value: ethers.utils.parseEther("1.0")
   };
   await signer.sendTransaction(sendGasTx);
   console.log(`Sent 1.0 Ether from ${signer.address} to TSS address (${getAddress("tss")}).`);
@@ -18,7 +20,7 @@ async function sendGas() {
 
 sendGas()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });

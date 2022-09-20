@@ -1,4 +1,3 @@
-import { getAddress } from "@zetachain/addresses";
 import { ZetaEth, ZetaEth__factory as ZetaEthFactory } from "@zetachain/interfaces/typechain-types";
 import assert from "assert";
 import { ethers, network } from "hardhat";
@@ -10,15 +9,16 @@ import {
   MultiChainValueMock,
   MultiChainValueMock__factory as MultiChainValueMockFactory,
   ZetaConnectorMockValue,
-  ZetaConnectorMockValue__factory as ZetaConnectorMockValueFactory,
+  ZetaConnectorMockValue__factory as ZetaConnectorMockValueFactory
 } from "../../typechain-types";
+import { getAddress } from "../shared/address.helpers";
 
 /**
  * @description only for testing or local environment
  */
 export const deployMultiChainValueMock = async ({
   zetaConnectorMockAddress,
-  zetaTokenMockAddress,
+  zetaTokenMockAddress
 }: {
   zetaConnectorMockAddress: string;
   zetaTokenMockAddress: string;
@@ -44,7 +44,7 @@ export const getMultiChainValue = (existingContractAddress?: string) =>
     contractName: "MultiChainValue",
     ...(existingContractAddress
       ? { existingContractAddress }
-      : { deployParams: [getAddress("connector"), getAddress("zetaToken")] }),
+      : { deployParams: [getAddress("connector"), getAddress("zetaToken")] })
   });
 
 export const deployZetaConnectorMock = async () => {

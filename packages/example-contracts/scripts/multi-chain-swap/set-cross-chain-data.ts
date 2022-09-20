@@ -1,4 +1,4 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
 import { getMultiChainSwapUniV2 } from "../../lib/multi-chain-swap/MultiChainSwap.helpers";
@@ -18,7 +18,7 @@ export async function setMultiChainSwapCrossChainData() {
   });
 
   const crossChainAddress = getAddress("multiChainSwap", {
-    customNetworkName: _networkVariables.crossChainName,
+    customNetworkName: _networkVariables.crossChainName
   });
 
   const encodedCrossChainAddress = ethers.utils.solidityPack(["address"], [crossChainAddress]);

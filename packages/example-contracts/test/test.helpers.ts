@@ -4,6 +4,7 @@ import { getAddress } from "@zetachain/addresses";
 import { ZetaTokenConsumerUniV3__factory } from "@zetachain/interfaces/typechain-types";
 import { BigNumber, ContractReceipt } from "ethers";
 
+import { getAddress } from "../lib/shared/address.helpers";
 import { getNow } from "../lib/shared/deploy.helpers";
 import {
   ERC20__factory,
@@ -86,7 +87,7 @@ export const addZetaEthLiquidityTest = async (
 ) => {
   const uniswapRouterAddr = getAddress("uniswapV2Router02", {
     customNetworkName: "eth-mainnet",
-    customZetaNetwork: "mainnet",
+    customZetaNetwork: "mainnet"
   });
   const uniswapRouter = UniswapV2Router02__factory.connect(uniswapRouterAddr, deployer);
 

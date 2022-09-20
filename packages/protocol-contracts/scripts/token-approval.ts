@@ -1,6 +1,7 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
+import { getAddress } from "../lib/address.helpers";
 import { getZetaFactoryEth, getZetaFactoryNonEth, isEthNetworkName } from "../lib/contracts.helpers";
 
 const approvalAmount = ethers.utils.parseEther("10000000.0");
@@ -25,7 +26,7 @@ export async function setTokenApproval() {
 
 setTokenApproval()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });
