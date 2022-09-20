@@ -2576,6 +2576,7 @@ __metadata:
     "@defi-wonderland/smock": ^2.0.7
     "@openzeppelin/contracts": 4.6.0
     "@uniswap/v2-periphery": 1.1.0-beta.0
+    "@uniswap/v3-periphery": 1.1.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
     "@zetachain/interfaces": "workspace:^"

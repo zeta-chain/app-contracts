@@ -3,12 +3,11 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 
 import "./MultiChainSwapErrors.sol";
+import "./MultiChainSwap.sol";
 
-contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapErrors {
+contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapErrors {
     uint16 internal constant MAX_DEADLINE = 200;
     bytes32 public constant CROSS_CHAIN_SWAP_MESSAGE = keccak256("CROSS_CHAIN_SWAP");
 
@@ -17,39 +16,6 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
     address public zetaToken;
 
     IUniswapV2Router02 internal uniswapV2Router;
-
-    event SentTokenSwap(
-        address sourceTxOrigin,
-        address sourceInputToken,
-        uint256 inputTokenAmount,
-        address destinationOutToken,
-        uint256 outTokenMinAmount,
-        address receiverAddress
-    );
-
-    event SentEthSwap(
-        address sourceTxOrigin,
-        uint256 inputEthAmount,
-        address destinationOutToken,
-        uint256 outTokenMinAmount,
-        address receiverAddress
-    );
-
-    event Swapped(
-        address sourceTxOrigin,
-        address sourceInputToken,
-        uint256 inputTokenAmount,
-        address destinationOutToken,
-        uint256 outTokenFinalAmount,
-        address receiverAddress
-    );
-
-    event RevertedSwap(
-        address sourceTxOrigin,
-        address sourceInputToken,
-        uint256 inputTokenAmount,
-        uint256 inputTokenReturnedAmount
-    );
 
     constructor(
         address zetaConnector_,
@@ -73,7 +39,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
         uint256 crossChaindestinationGasLimit
-    ) external payable {
+    ) external payable override {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (msg.value == 0) revert ValueShouldBeGreaterThanZero();
@@ -89,7 +55,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
             path[1] = zetaToken;
 
             uint256[] memory amounts = uniswapV2Router.swapExactETHForTokens{value: msg.value}(
-                0, /// @dev Output can't be validated here, it's validated after the next swap
+                0, /// @todo Add min amount
                 path,
                 address(this),
                 block.timestamp + MAX_DEADLINE
@@ -139,7 +105,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
         uint256 crossChaindestinationGasLimit
-    ) external {
+    ) external override {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (sourceInputToken == address(0)) revert MissingSourceInputTokenAddress();
@@ -180,7 +146,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
 
             uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
                 inputTokenAmount,
-                0, /// @dev Output can't be validated here, it's validated after the next swap
+                0, /// @todo Add min amount
                 path,
                 address(this),
                 block.timestamp + MAX_DEADLINE
@@ -357,7 +323,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                 if (inputTokenIsETH) {
                     amounts = uniswapV2Router.swapExactTokensForETH(
                         zetaRevert.remainingZetaValue,
-                        0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
+                        0, /// @todo Add min amount
                         path,
                         sourceTxOrigin,
                         block.timestamp + MAX_DEADLINE
@@ -365,7 +331,7 @@ contract MultiChainSwapBase is ZetaInteractor, ZetaReceiver, MultiChainSwapError
                 } else {
                     amounts = uniswapV2Router.swapExactTokensForTokens(
                         zetaRevert.remainingZetaValue,
-                        0, /// @dev Any output is fine, otherwise the value will be stuck in the contract
+                        0, /// @todo Add min amount
                         path,
                         sourceTxOrigin,
                         block.timestamp + MAX_DEADLINE

@@ -6,7 +6,7 @@ import { ethers, network } from "hardhat";
 import { getAddress } from "../../lib/shared/address.helpers";
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
 import { isEthNetworkName } from "../../lib/shared/network.constants";
-import { MultiChainSwapBase__factory } from "../../typechain-types";
+import { MultiChainSwapUniV2__factory } from "../../typechain-types";
 import { setMultiChainSwapCrossChainData } from "./set-cross-chain-data";
 
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
@@ -34,7 +34,7 @@ export async function deterministicDeployMultiChainSwap() {
   const constructorTypes = ["address", "address", "address"];
   const constructorArgs = [connector, zetaToken, uniswapV2Router02];
 
-  const contractBytecode = MultiChainSwapBase__factory.bytecode;
+  const contractBytecode = MultiChainSwapUniV2__factory.bytecode;
 
   const { address } = await deployContractToAddress({
     constructorArgs,

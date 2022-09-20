@@ -6,14 +6,13 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { getMultiChainSwapBase, getMultiChainSwapZetaConnector } from "../lib/multi-chain-swap/MultiChainSwap.helpers";
-import { getAddress } from "../lib/shared/address.helpers";
+import { getMultiChainSwapUniV2, getMultiChainSwapZetaConnector } from "../lib/multi-chain-swap/MultiChainSwap.helpers";
 import { getNow, getZetaMock } from "../lib/shared/deploy.helpers";
 import {
   ERC20__factory,
   IERC20,
   IUniswapV2Router02,
-  MultiChainSwapBase,
+  MultiChainSwapUniV2,
   MultiChainSwapZetaConnector,
   UniswapV2Router02__factory
 } from "../typechain-types";
@@ -32,14 +31,14 @@ describe("MultiChainSwap tests", () => {
   let USDCTokenContract: IERC20;
   let zetaConnectorMock: MultiChainSwapZetaConnector;
 
-  let multiChainSwapContractA: MultiChainSwapBase;
+  let multiChainSwapContractA: MultiChainSwapUniV2;
   const chainAId = 1;
 
-  let multiChainSwapContractB: MultiChainSwapBase;
+  let multiChainSwapContractB: MultiChainSwapUniV2;
   const chainBId = 2;
 
   let zetaConnectorSmock: FakeContract<MultiChainSwapZetaConnector>;
-  let multiChainSwapContractWithSmock: MultiChainSwapBase;
+  let multiChainSwapContractWithSmock: MultiChainSwapUniV2;
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
@@ -101,17 +100,17 @@ describe("MultiChainSwap tests", () => {
     const ERC20Factory = new ERC20__factory(deployer);
     USDCTokenContract = ERC20Factory.attach(USDC_ADDR);
 
-    multiChainSwapContractA = await getMultiChainSwapBase({
-      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr]
+    multiChainSwapContractA = await getMultiChainSwapUniV2({
+      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr],
     });
 
-    multiChainSwapContractB = await getMultiChainSwapBase({
-      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr]
+    multiChainSwapContractB = await getMultiChainSwapUniV2({
+      deployParams: [zetaConnectorMock.address, zetaTokenMock.address, uniswapRouterAddr],
     });
 
     zetaConnectorSmock = await smock.fake("MultiChainSwapZetaConnector");
-    multiChainSwapContractWithSmock = await getMultiChainSwapBase({
-      deployParams: [zetaConnectorSmock.address, zetaTokenMock.address, uniswapRouterAddr]
+    multiChainSwapContractWithSmock = await getMultiChainSwapUniV2({
+      deployParams: [zetaConnectorSmock.address, zetaTokenMock.address, uniswapRouterAddr],
     });
 
     const encodedCrossChainAddressB = ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]);

@@ -2,8 +2,7 @@ import { isNetworkName } from "@zetachain/addresses";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
-import { getMultiChainSwapBase } from "../../lib/multi-chain-swap/MultiChainSwap.helpers";
-import { getAddress } from "../../lib/shared/address.helpers";
+import { getMultiChainSwapUniV2 } from "../../lib/multi-chain-swap/MultiChainSwap.helpers";
 import { networkVariables } from "../../lib/shared/network.constants";
 
 export async function doCrossChainSwap() {
@@ -13,8 +12,8 @@ export async function doCrossChainSwap() {
 
   if (!_networkVariables.crossChainName) throw new Error("Invalid crossChainName");
 
-  const multiChainSwapContract = await getMultiChainSwapBase({
-    existingContractAddress: getAddress("multiChainSwap")
+  const multiChainSwapContract = await getMultiChainSwapUniV2({
+    existingContractAddress: getAddress("multiChainSwap"),
   });
 
   const [account1] = await ethers.getSigners();
