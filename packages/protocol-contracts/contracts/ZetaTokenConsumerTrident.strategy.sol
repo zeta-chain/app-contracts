@@ -30,7 +30,7 @@ interface WETH9 {
 }
 
 /**
- * @dev Uniswap V3 strategy for ZetaTokenConsumer
+ * @dev Trident strategy for ZetaTokenConsumer
  */
 contract ZetaTokenConsumerTrident is ZetaTokenConsumer, ZetaTokenConsumerTridentErrors {
     using SafeERC20 for IERC20;
