@@ -4,8 +4,10 @@
     "crossChainCounter": "",
     "crossChainNft": "0xF7f6534C8f70f6001Fc267b55abfAA8B8a41Ea2e",
     "dai": "",
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
     "multiChainSwap": "0xa0b5cbdc4d14c4f4d36483ec0de310919f3b2d90",
     "multiChainValue": "0x54284C0b4948FE2F93D3a0Dc17fA3587b16eE19F",
+    "tridentPoolFactory": "",
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
@@ -15,16 +17,17 @@
     "usdc": "",
     "weth9": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
-    "zetaTokenConsumerUniV2": "0xa67b03930eb53d0462dCc0835e97964C062042fb",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "zetaTokenConsumerUniV2": "0xa67b03930eb53d0462dCc0835e97964C062042fb"
   },
   "goerli": {
     "connector": "0x00007d0BA516a2bA02D77907d3a1348C1187Ae62",
     "crossChainCounter": "",
     "crossChainNft": "0xfE9eb065cab82421D06C8eD41c31Beb473a5Fa7e",
     "dai": "",
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
     "multiChainSwap": "0x805fE47D1FE7d86496753bB4B36206953c1ae660",
     "multiChainValue": "0x31F884940B3876290A16B183b841bbE7E4965743",
+    "tridentPoolFactory": "",
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
@@ -34,15 +37,17 @@
     "usdc": "",
     "weth9": "",
     "zetaToken": "0xCc7bb2D219A0FC08033E130629C2B854b7bA9195",
-    "zetaTokenConsumerUniV2": "0xDDB1C86c69f258F6d33377a8725404E4393326bB",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "zetaTokenConsumerUniV2": "0xDDB1C86c69f258F6d33377a8725404E4393326bB"
   },
   "polygon-mumbai": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
+    "multiChainSwap": "0xaf28cb0d9E045170E1642321B964740784E7dC64",
     "multiChainValue": "0xb3021F5603291895b0Df5fC6276cda33a0B90fa6",
+    "tridentPoolFactory": "",
     "tss": "0x61141bce5352fc9b5ff648468676e356518d86ab",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
@@ -52,16 +57,16 @@
     "usdc": "",
     "weth9": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
-    "zetaTokenConsumerUniV2": "",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
-    "multiChainSwap": "0xaf28cb0d9E045170E1642321B964740784E7dC64"
+    "zetaTokenConsumerUniV2": ""
   },
   "ropsten": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
     "multiChainValue": "0x4740f4051eA6D896C694303228D86Ba3141065ca",
+    "tridentPoolFactory": "",
     "tss": "0x61141Bce5352fC9b5Ff648468676e356518D86AB",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
@@ -71,25 +76,26 @@
     "usdc": "",
     "weth9": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
-    "zetaTokenConsumerUniV2": "0x197bC8e7e813DfB95dEf0DAA44399648bC86f329",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "zetaTokenConsumerUniV2": "0x197bC8e7e813DfB95dEf0DAA44399648bC86f329"
   },
   "klaytn-baobab": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
+    "multiChainSwap": "0xf254632444601120166809AB7B0A4fC59a3d8A61",
     "multiChainValue": "0x4f97Bc7ed459111296583e92a62f17D20B20825d",
+    "tridentPoolFactory": "0x2be2C91cCA2df52b41a9e42723c46fD029359c95",
     "tss": "0x61141Bce5352fC9b5Ff648468676e356518D86AB",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Router02": "",
     "uniswapV3NftManager": "",
-    "uniswapV3Quoter": "",
-    "uniswapV3Router": "",
+    "uniswapV3Quoter": "0x42271971dbF42fbfEaF7F428604a86760300cB5B",
+    "uniswapV3Router": "0x42271971dbF42fbfEaF7F428604a86760300cB5B",
     "usdc": "",
-    "weth9": "",
+    "weth9": "0x0339d5Eb6D195Ba90B13ed1BCeAa97EbD198b106",
     "zetaToken": "0x000080383847bD75F91c168269Aa74004877592f",
-    "zetaTokenConsumerUniV2": "",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "zetaTokenConsumerUniV2": ""
   }
 }
