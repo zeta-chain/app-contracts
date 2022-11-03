@@ -57,7 +57,7 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         if (gasFee >= amount) revert NotEnoughToPayGasFee();
 
         IZRC4(targetZRC4).approve(targetZRC4, gasFee);
-        IZRC4(targetZRC4).withdraw(receipient, amount - gasFee);
+        IZRC4(targetZRC4).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
     function onCrossChainCall(
@@ -65,10 +65,7 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         uint256 amount,
         bytes calldata message
     ) external override {
-        (address targetZRC4, bytes32 receipient, uint256 minAmountOut) = abi.decode(
-            message,
-            (address, bytes32, uint256)
-        );
+        (address targetZRC4, bytes32 receipient, ) = abi.decode(message, (address, bytes32, uint256));
 
         address[] memory path = new address[](2);
         path[0] = zrc4;

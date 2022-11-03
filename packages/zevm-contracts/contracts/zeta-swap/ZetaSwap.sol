@@ -41,7 +41,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         if (gasFee >= amount) revert NotEnoughToPayGasFee();
 
         IZRC4(targetZRC4).approve(targetZRC4, gasFee);
-        IZRC4(targetZRC4).withdraw(receipient, amount - gasFee);
+        IZRC4(targetZRC4).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
     function onCrossChainCall(
@@ -57,8 +57,8 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         path[0] = zrc4;
         path[1] = targetZRC4;
 
-        IZRC4(zrc4).approve(address(uniswapV2Router_), amount);
-        uint256[] memory amounts = IUniswapV2Router01(uniswapV2Router_).swapExactTokensForTokens(
+        IZRC4(zrc4).approve(address(uniswapV2Router), amount);
+        uint256[] memory amounts = IUniswapV2Router01(uniswapV2Router).swapExactTokensForTokens(
             amount,
             minAmountOut,
             path,
