@@ -1,13 +1,14 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { saveAddress } from "@zetachain/addresses-tools";
 import { ZetaEth__factory, ZetaNonEth__factory } from "@zetachain/interfaces/typechain-types";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
+import { getAddress } from "../lib/address.helpers";
 import {
   ZETA_INITIAL_SUPPLY,
   ZETA_TOKEN_SALT_NUMBER_ETH,
-  ZETA_TOKEN_SALT_NUMBER_NON_ETH,
+  ZETA_TOKEN_SALT_NUMBER_NON_ETH
 } from "../lib/contracts.constants";
 import { isEthNetworkName } from "../lib/contracts.helpers";
 import { deployContractToAddress, saltToHex } from "../lib/ImmutableCreate2Factory/ImmutableCreate2Factory.helpers";
@@ -51,7 +52,7 @@ export async function deterministicDeployZetaToken() {
     contractBytecode,
     factoryAddress: immutableCreate2Factory,
     salt: salthex,
-    signer,
+    signer
   });
 
   saveAddress("zetaToken", address);
@@ -61,7 +62,7 @@ export async function deterministicDeployZetaToken() {
 if (!process.env.EXECUTE_PROGRAMMATICALLY) {
   deterministicDeployZetaToken()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
       console.error(error);
       process.exit(1);
     });

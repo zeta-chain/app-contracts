@@ -34,6 +34,20 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
       url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
     },
   },
+  "klaytn-baobab": {
+    accounts: PRIVATE_KEYS,
+    chainId: 1001,
+    gas: 6000000,
+    gasPrice: 54250000000,
+    url: "https://api.baobab.klaytn.net:8651"
+  },
+  "klaytn-cypress": {
+    accounts: PRIVATE_KEYS,
+    chainId: 8217,
+    gas: 2100000,
+    gasPrice: 8000000000,
+    url: "https://scope.klaytn.com/"
+  },
   "polygon-localnet": {
     gas: 5000000,
     gasPrice: 80000000000,

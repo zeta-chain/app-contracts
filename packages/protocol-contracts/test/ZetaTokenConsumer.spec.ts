@@ -1,7 +1,6 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import {
   IERC20,
   IERC20__factory,
@@ -11,16 +10,17 @@ import {
   UniswapV2Router02__factory,
   ZetaTokenConsumer,
   ZetaTokenConsumerUniV2,
-  ZetaTokenConsumerUniV3,
+  ZetaTokenConsumerUniV3
 } from "@zetachain/interfaces/typechain-types";
 import chai, { expect } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
+import { getAddress } from "../lib/address.helpers";
 import {
   deployZetaNonEth,
   getZetaTokenConsumerUniV2Strategy,
-  getZetaTokenConsumerUniV3Strategy,
+  getZetaTokenConsumerUniV3Strategy
 } from "../lib/contracts.helpers";
 import { parseZetaConsumerLog } from "./test.helpers";
 
@@ -64,17 +64,17 @@ describe("ZetaTokenConsumer tests", () => {
   const createPoolV3 = async (signer: SignerWithAddress, tokenAddress: string) => {
     const DAI = getAddress("dai", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const UNI_NFT_MANAGER_V3 = getAddress("uniswapV3NftManager", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const USDC = getAddress("usdc", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     await swapToken(signer, DAI, parseUnits("10000", 18));
@@ -109,7 +109,7 @@ describe("ZetaTokenConsumer tests", () => {
       tickLower: 193,
       tickUpper: 194,
       token0: USDC,
-      token1: DAI,
+      token1: DAI
     };
 
     const tx4 = await uniswapRouter.mint(params);
@@ -121,37 +121,37 @@ describe("ZetaTokenConsumer tests", () => {
     [tssUpdater, tssSigner, randomSigner] = accounts;
 
     zetaTokenNonEth = await deployZetaNonEth({
-      args: [tssSigner.address, tssUpdater.address],
+      args: [tssSigner.address, tssUpdater.address]
     });
 
     uniswapV2RouterAddr = getAddress("uniswapV2Router02", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const DAI = getAddress("dai", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const UNI_QUOTER_V3 = getAddress("uniswapV3Quoter", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const UNI_ROUTER_V3 = getAddress("uniswapV3Router", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const WETH9 = getAddress("weth9", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     USDCAddr = getAddress("usdc", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     // For testing purposes we use an existing uni v3 pool
@@ -164,12 +164,12 @@ describe("ZetaTokenConsumer tests", () => {
     zetaTokenNonEth = IERC20__factory.connect(zetaTokenNonEthAddress, tssSigner);
 
     zetaTokenConsumerUniV2 = await getZetaTokenConsumerUniV2Strategy({
-      deployParams: [zetaTokenNonEthAddress, uniswapV2RouterAddr],
+      deployParams: [zetaTokenNonEthAddress, uniswapV2RouterAddr]
     });
 
     uniswapV3RouterAddr = UNI_ROUTER_V3;
     zetaTokenConsumerUniV3 = await getZetaTokenConsumerUniV3Strategy({
-      deployParams: [zetaTokenNonEthAddress, uniswapV3RouterAddr, UNI_QUOTER_V3, WETH9, 3000, 3000],
+      deployParams: [zetaTokenNonEthAddress, uniswapV3RouterAddr, UNI_QUOTER_V3, WETH9, 3000, 3000]
     });
   });
 

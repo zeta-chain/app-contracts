@@ -73,5 +73,23 @@
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "0x197bC8e7e813DfB95dEf0DAA44399648bC86f329",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+  },
+  "klaytn-baobab": {
+    "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
+    "crossChainCounter": "",
+    "crossChainNft": "",
+    "dai": "",
+    "multiChainValue": "0x4f97Bc7ed459111296583e92a62f17D20B20825d",
+    "tss": "0x61141Bce5352fC9b5Ff648468676e356518D86AB",
+    "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
+    "uniswapV2Router02": "",
+    "uniswapV3NftManager": "",
+    "uniswapV3Quoter": "",
+    "uniswapV3Router": "",
+    "usdc": "",
+    "weth9": "",
+    "zetaToken": "0x000080383847bD75F91c168269Aa74004877592f",
+    "zetaTokenConsumerUniV2": "",
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
   }
 }

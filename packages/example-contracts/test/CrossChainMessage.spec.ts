@@ -1,5 +1,4 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import { ZetaTokenConsumerUniV2 } from "@zetachain/interfaces/typechain-types";
 import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
@@ -7,8 +6,9 @@ import { ethers } from "hardhat";
 
 import {
   deployCrossChainMessageMock,
-  deployZetaConnectorMock,
+  deployZetaConnectorMock
 } from "../lib/cross-chain-message/CrossChainMessage.helpers";
+import { getAddress } from "../lib/shared/address.helpers";
 import { deployZetaTokenConsumerUniV2, getZetaMock } from "../lib/shared/deploy.helpers";
 import { CrossChainMessage, CrossChainMessageConnector, ZetaEthMock } from "../typechain-types";
 import { addZetaEthLiquidityTest } from "./test.helpers";
@@ -41,7 +41,7 @@ describe("CrossChainMessage tests", () => {
 
     const uniswapRouterAddr = getAddress("uniswapV2Router02", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     await addZetaEthLiquidityTest(zetaEthTokenMockContract.address, parseEther("200000"), parseEther("100"), deployer);
@@ -54,13 +54,13 @@ describe("CrossChainMessage tests", () => {
     crossChainMessageContractChainA = await deployCrossChainMessageMock({
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
-      zetaTokenMockAddress: zetaEthTokenMockContract.address,
+      zetaTokenMockAddress: zetaEthTokenMockContract.address
     });
 
     crossChainMessageContractChainB = await deployCrossChainMessageMock({
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
       zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
-      zetaTokenMockAddress: zetaEthTokenMockContract.address,
+      zetaTokenMockAddress: zetaEthTokenMockContract.address
     });
 
     await crossChainMessageContractChainB.setInteractorByChainId(
@@ -79,7 +79,7 @@ describe("CrossChainMessage tests", () => {
       const unsetContract = await deployCrossChainMessageMock({
         zetaConnectorMockAddress: zetaConnectorMockContract.address,
         zetaTokenConsumerAddress: zetaTokenConsumerUniV2.address,
-        zetaTokenMockAddress: zetaEthTokenMockContract.address,
+        zetaTokenMockAddress: zetaEthTokenMockContract.address
       });
 
       await expect(unsetContract.sendHelloWorld(chainAId)).to.be.revertedWith("InvalidDestinationChainId()");
@@ -99,7 +99,7 @@ describe("CrossChainMessage tests", () => {
           message: encoder.encode(["address", "string"], [deployerAddress, SAMPLE_TEXT]),
           sourceChainId: 1,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainMessageContractChainA.address]),
-          zetaValue: 0,
+          zetaValue: 0
         })
       ).to.be.revertedWith(`InvalidCaller("${deployer.address}")`);
     });

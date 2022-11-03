@@ -3,7 +3,6 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero, MaxUint256 } from "@ethersproject/constants";
 import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -15,7 +14,7 @@ import {
   IUniswapV2Router02,
   MultiChainSwapUniV2,
   MultiChainSwapZetaConnector,
-  UniswapV2Router02__factory,
+  UniswapV2Router02__factory
 } from "../typechain-types";
 import { USDC_ADDR } from "./MultiChainSwap.constants";
 import { getCustomErrorMessage, parseUniswapLog, parseZetaLog } from "./test.helpers";
@@ -85,7 +84,7 @@ describe("MultiChainSwap tests", () => {
   beforeEach(async () => {
     const uniswapRouterAddr = getAddress("uniswapV2Router02", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
     accounts = await ethers.getSigners();
     [deployer, account1] = accounts;
@@ -136,7 +135,7 @@ describe("MultiChainSwap tests", () => {
           10,
           MaxUint256,
           {
-            value: parseUnits("1"),
+            value: parseUnits("1")
           }
         )
       ).to.be.revertedWith(getCustomErrorMessage("InvalidDestinationChainId"));
@@ -199,7 +198,7 @@ describe("MultiChainSwap tests", () => {
 
       const result = await tx2.wait();
       const eventNames = parseUniswapLog(result.logs);
-      expect(eventNames.filter((e) => e === "Swap")).to.have.lengthOf(0);
+      expect(eventNames.filter(e => e === "Swap")).to.have.lengthOf(0);
     });
 
     it("Should trade the input token for Zeta", async () => {
@@ -406,7 +405,7 @@ describe("MultiChainSwap tests", () => {
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
           sourceChainId: chainBId,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
-          zetaValue: 0,
+          zetaValue: 0
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -433,7 +432,7 @@ describe("MultiChainSwap tests", () => {
           message: encoder.encode(["address"], [multiChainSwapContractA.address]),
           remainingZetaValue: 0,
           sourceChainId: chainAId,
-          zetaTxSenderAddress: deployer.address,
+          zetaTxSenderAddress: deployer.address
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -458,7 +457,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          false,
+          false
         ]
       );
 
@@ -498,7 +497,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          false,
+          false
         ]
       );
 
@@ -544,7 +543,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          true,
+          true
         ]
       );
 
@@ -590,7 +589,7 @@ describe("MultiChainSwap tests", () => {
           multiChainSwapContractA.address,
           true,
           0,
-          true,
+          true
         ]
       );
 

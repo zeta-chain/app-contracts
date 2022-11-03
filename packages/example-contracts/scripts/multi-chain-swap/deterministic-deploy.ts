@@ -1,8 +1,9 @@
-import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { isNetworkName } from "@zetachain/addresses";
 import { saveAddress } from "@zetachain/addresses-tools";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
+import { getAddress } from "../../lib/shared/address.helpers";
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
 import { isEthNetworkName } from "../../lib/shared/network.constants";
 import { MultiChainSwapUniV2__factory } from "../../typechain-types";
@@ -41,7 +42,7 @@ export async function deterministicDeployMultiChainSwap() {
     contractBytecode,
     factoryAddress: immutableCreate2Factory,
     salt: salthex,
-    signer,
+    signer
   });
 
   saveAddress("multiChainSwap", address);
