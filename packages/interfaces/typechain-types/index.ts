@@ -38,8 +38,8 @@ export type { IQuoter } from "./@uniswap/v3-periphery/contracts/interfaces/IQuot
 export { IQuoter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/IQuoter__factory";
 export type { ISwapRouter } from "./@uniswap/v3-periphery/contracts/interfaces/ISwapRouter";
 export { ISwapRouter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter__factory";
-export type { ImmutableCreate2Factory } from "./contracts/ImmutableCreate2Factory";
-export { ImmutableCreate2Factory__factory } from "./factories/contracts/ImmutableCreate2Factory__factory";
+export type { ImmutableCreate2Factory } from "./contracts/ImmutableCreate2Factory.sol/ImmutableCreate2Factory";
+export { ImmutableCreate2Factory__factory } from "./factories/contracts/ImmutableCreate2Factory.sol/ImmutableCreate2Factory__factory";
 export type { ConnectorErrors } from "./contracts/interfaces/ConnectorErrors";
 export { ConnectorErrors__factory } from "./factories/contracts/interfaces/ConnectorErrors__factory";
 export type { ZetaErrors } from "./contracts/interfaces/ZetaErrors";
