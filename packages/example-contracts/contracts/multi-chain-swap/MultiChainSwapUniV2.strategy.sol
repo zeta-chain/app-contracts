@@ -2,18 +2,20 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 
 import "./MultiChainSwapErrors.sol";
 import "./MultiChainSwap.sol";
 
 contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapErrors {
+    using SafeERC20 for IERC20;
     uint16 internal constant MAX_DEADLINE = 200;
     bytes32 public constant CROSS_CHAIN_SWAP_MESSAGE = keccak256("CROSS_CHAIN_SWAP");
 
-    address public uniswapV2RouterAddress;
+    address public immutable uniswapV2RouterAddress;
     address internal immutable wETH;
-    address public zetaToken;
+    address public immutable zetaToken;
 
     IUniswapV2Router02 internal uniswapV2Router;
 
@@ -127,9 +129,8 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
              * @dev If the input token is not Zeta, trade it using Uniswap
              */
             {
-                bool success1 = IERC20(sourceInputToken).transferFrom(msg.sender, address(this), inputTokenAmount);
-                bool success2 = IERC20(sourceInputToken).approve(uniswapV2RouterAddress, inputTokenAmount);
-                if (!success1 || !success2) revert ErrorTransferringTokens(sourceInputToken);
+                IERC20(sourceInputToken).safeTransferFrom(msg.sender, address(this), inputTokenAmount);
+                IERC20(sourceInputToken).safeApprove(uniswapV2RouterAddress, inputTokenAmount);
             }
 
             address[] memory path;

@@ -21,6 +21,7 @@ contract CrossChainCounter is ZetaInteractor, ZetaReceiver, CrossChainCounterErr
     function crossChainCount(uint256 destinationChainId) external {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
+        counter[msg.sender]++;
         connector.send(
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,

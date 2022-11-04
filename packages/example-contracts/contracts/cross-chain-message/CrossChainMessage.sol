@@ -21,8 +21,8 @@ contract CrossChainMessage is ZetaInteractor, ZetaReceiver, CrossChainMessageErr
     event HelloWorldEvent(string messageData);
     event RevertedHelloWorldEvent(string messageData);
 
-    ZetaTokenConsumer private _zetaConsumer;
-    IERC20 internal _zetaToken;
+    ZetaTokenConsumer private immutable _zetaConsumer;
+    IERC20 internal immutable _zetaToken;
 
     constructor(
         address connectorAddress,
