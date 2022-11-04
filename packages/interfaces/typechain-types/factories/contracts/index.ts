@@ -9,6 +9,7 @@ export * as zetaConnectorNonEthSol from "./ZetaConnector.non-eth.sol";
 export * as zetaTokenConsumerUniV2StrategySol from "./ZetaTokenConsumerUniV2.strategy.sol";
 export * as zetaTokenConsumerUniV3StrategySol from "./ZetaTokenConsumerUniV3.strategy.sol";
 export * as interfaces from "./interfaces";
+export * as openzeppelin from "./openzeppelin";
 export * as testing from "./testing";
 export { ImmutableCreate2Factory__factory } from "./ImmutableCreate2Factory__factory";
 export { ZetaInteractor__factory } from "./ZetaInteractor__factory";

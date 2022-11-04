@@ -1,5 +1,9 @@
 pragma solidity 0.5.10; // optimization enabled, 99999 runs, evm: petersburg
 
+interface Ownable {
+    function transferOwnership(address newOwner) external;
+}
+
 /**
  * @title Immutable Create2 Contract Factory
  * @author 0age
@@ -190,5 +194,15 @@ contract ImmutableCreate2Factory {
             "Invalid salt - first 20 bytes of the salt must match calling address."
         );
         _;
+    }
+
+    function safeCreate2AndTransfer(bytes32 salt, bytes calldata initializationCode)
+        external
+        payable
+        containsCaller(salt)
+        returns (address deploymentAddress)
+    {
+        deploymentAddress = this.safeCreate2(salt, initializationCode);
+        Ownable(deploymentAddress).transferOwnership(msg.sender);
     }
 }

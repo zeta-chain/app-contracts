@@ -109,6 +109,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ZetaNonEthInterface__factory>;
     getContractFactory(
+      name: "Ownable2Step",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable2Step__factory>;
+    getContractFactory(
       name: "INonfungiblePositionManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.INonfungiblePositionManager__factory>;
@@ -289,6 +293,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ZetaNonEthInterface>;
+    getContractAt(
+      name: "Ownable2Step",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable2Step>;
     getContractAt(
       name: "INonfungiblePositionManager",
       address: string,

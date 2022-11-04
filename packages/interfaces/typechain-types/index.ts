@@ -54,6 +54,8 @@ export type { ZetaTokenConsumer } from "./contracts/interfaces/ZetaInterfaces.so
 export { ZetaTokenConsumer__factory } from "./factories/contracts/interfaces/ZetaInterfaces.sol/ZetaTokenConsumer__factory";
 export type { ZetaNonEthInterface } from "./contracts/interfaces/ZetaNonEthInterface";
 export { ZetaNonEthInterface__factory } from "./factories/contracts/interfaces/ZetaNonEthInterface__factory";
+export type { Ownable2Step } from "./contracts/openzeppelin/Ownable2Step";
+export { Ownable2Step__factory } from "./factories/contracts/openzeppelin/Ownable2Step__factory";
 export type { INonfungiblePositionManager } from "./contracts/testing/TestUniswapV3Contracts.sol/INonfungiblePositionManager";
 export { INonfungiblePositionManager__factory } from "./factories/contracts/testing/TestUniswapV3Contracts.sol/INonfungiblePositionManager__factory";
 export type { IPoolInitializer } from "./contracts/testing/TestUniswapV3Contracts.sol/IPoolInitializer";

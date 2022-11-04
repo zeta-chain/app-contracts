@@ -1,31 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "caller",
-        "type": "address"
-      }
-    ],
-    "name": "InvalidCaller",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InvalidDestinationChainId",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InvalidZetaMessageCall",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InvalidZetaRevertCall",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -72,38 +46,6 @@
   },
   {
     "inputs": [],
-    "name": "connector",
-    "outputs": [
-      {
-        "internalType": "contract ZetaConnector",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "interactorsByChainId",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -131,24 +73,6 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "destinationChainId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "contractAddress",
-        "type": "bytes"
-      }
-    ],
-    "name": "setInteractorByChainId",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

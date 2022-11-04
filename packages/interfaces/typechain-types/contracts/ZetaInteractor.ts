@@ -28,9 +28,11 @@ import type {
 
 export interface ZetaInteractorInterface extends utils.Interface {
   functions: {
+    "acceptOwnership()": FunctionFragment;
     "connector()": FunctionFragment;
     "interactorsByChainId(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "pendingOwner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setInteractorByChainId(uint256,bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -38,20 +40,30 @@ export interface ZetaInteractorInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "acceptOwnership"
       | "connector"
       | "interactorsByChainId"
       | "owner"
+      | "pendingOwner"
       | "renounceOwnership"
       | "setInteractorByChainId"
       | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "acceptOwnership",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "connector", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "interactorsByChainId",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "pendingOwner",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -65,12 +77,20 @@ export interface ZetaInteractorInterface extends utils.Interface {
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "connector", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "interactorsByChainId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingOwner",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -85,11 +105,25 @@ export interface ZetaInteractorInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "OwnershipTransferStarted(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface OwnershipTransferStartedEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferStartedEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferStartedEventObject
+>;
+
+export type OwnershipTransferStartedEventFilter =
+  TypedEventFilter<OwnershipTransferStartedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -130,6 +164,10 @@ export interface ZetaInteractor extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    acceptOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     connector(overrides?: CallOverrides): Promise<[string]>;
 
     interactorsByChainId(
@@ -138,6 +176,8 @@ export interface ZetaInteractor extends BaseContract {
     ): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -155,6 +195,10 @@ export interface ZetaInteractor extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  acceptOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   connector(overrides?: CallOverrides): Promise<string>;
 
   interactorsByChainId(
@@ -163,6 +207,8 @@ export interface ZetaInteractor extends BaseContract {
   ): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
+
+  pendingOwner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -180,6 +226,8 @@ export interface ZetaInteractor extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+
     connector(overrides?: CallOverrides): Promise<string>;
 
     interactorsByChainId(
@@ -188,6 +236,8 @@ export interface ZetaInteractor extends BaseContract {
     ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -204,6 +254,15 @@ export interface ZetaInteractor extends BaseContract {
   };
 
   filters: {
+    "OwnershipTransferStarted(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+    OwnershipTransferStarted(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -215,6 +274,10 @@ export interface ZetaInteractor extends BaseContract {
   };
 
   estimateGas: {
+    acceptOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     connector(overrides?: CallOverrides): Promise<BigNumber>;
 
     interactorsByChainId(
@@ -223,6 +286,8 @@ export interface ZetaInteractor extends BaseContract {
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -241,6 +306,10 @@ export interface ZetaInteractor extends BaseContract {
   };
 
   populateTransaction: {
+    acceptOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     connector(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     interactorsByChainId(
@@ -249,6 +318,8 @@ export interface ZetaInteractor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }

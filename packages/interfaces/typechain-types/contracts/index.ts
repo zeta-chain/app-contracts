@@ -17,6 +17,8 @@ import type * as zetaTokenConsumerUniV3StrategySol from "./ZetaTokenConsumerUniV
 export type { zetaTokenConsumerUniV3StrategySol };
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+import type * as openzeppelin from "./openzeppelin";
+export type { openzeppelin };
 import type * as testing from "./testing";
 export type { testing };
 export type { ImmutableCreate2Factory } from "./ImmutableCreate2Factory";

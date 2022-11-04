@@ -4,7 +4,6 @@
 import type {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -26,99 +25,27 @@ import type {
   OnEvent,
 } from "../../common";
 
-export declare namespace ZetaInterfaces {
-  export type ZetaMessageStruct = {
-    zetaTxSenderAddress: BytesLike;
-    sourceChainId: BigNumberish;
-    destinationAddress: string;
-    zetaValue: BigNumberish;
-    message: BytesLike;
-  };
-
-  export type ZetaMessageStructOutput = [
-    string,
-    BigNumber,
-    string,
-    BigNumber,
-    string
-  ] & {
-    zetaTxSenderAddress: string;
-    sourceChainId: BigNumber;
-    destinationAddress: string;
-    zetaValue: BigNumber;
-    message: string;
-  };
-
-  export type ZetaRevertStruct = {
-    zetaTxSenderAddress: string;
-    sourceChainId: BigNumberish;
-    destinationAddress: BytesLike;
-    destinationChainId: BigNumberish;
-    remainingZetaValue: BigNumberish;
-    message: BytesLike;
-  };
-
-  export type ZetaRevertStructOutput = [
-    string,
-    BigNumber,
-    string,
-    BigNumber,
-    BigNumber,
-    string
-  ] & {
-    zetaTxSenderAddress: string;
-    sourceChainId: BigNumber;
-    destinationAddress: string;
-    destinationChainId: BigNumber;
-    remainingZetaValue: BigNumber;
-    message: string;
-  };
-}
-
-export interface ZetaInteractorMockInterface extends utils.Interface {
+export interface Ownable2StepInterface extends utils.Interface {
   functions: {
     "acceptOwnership()": FunctionFragment;
-    "connector()": FunctionFragment;
-    "interactorsByChainId(uint256)": FunctionFragment;
-    "onZetaMessage((bytes,uint256,address,uint256,bytes))": FunctionFragment;
-    "onZetaRevert((address,uint256,bytes,uint256,uint256,bytes))": FunctionFragment;
     "owner()": FunctionFragment;
     "pendingOwner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setInteractorByChainId(uint256,bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "acceptOwnership"
-      | "connector"
-      | "interactorsByChainId"
-      | "onZetaMessage"
-      | "onZetaRevert"
       | "owner"
       | "pendingOwner"
       | "renounceOwnership"
-      | "setInteractorByChainId"
       | "transferOwnership"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "acceptOwnership",
     values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "connector", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "interactorsByChainId",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "onZetaMessage",
-    values: [ZetaInterfaces.ZetaMessageStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "onZetaRevert",
-    values: [ZetaInterfaces.ZetaRevertStruct]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -130,29 +57,12 @@ export interface ZetaInteractorMockInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setInteractorByChainId",
-    values: [BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
 
   decodeFunctionResult(
     functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "connector", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "interactorsByChainId",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "onZetaMessage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "onZetaRevert",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -162,10 +72,6 @@ export interface ZetaInteractorMockInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setInteractorByChainId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -206,12 +112,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface ZetaInteractorMock extends BaseContract {
+export interface Ownable2Step extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ZetaInteractorMockInterface;
+  interface: Ownable2StepInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -237,34 +143,11 @@ export interface ZetaInteractorMock extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    connector(overrides?: CallOverrides): Promise<[string]>;
-
-    interactorsByChainId(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    onZetaMessage(
-      zetaMessage: ZetaInterfaces.ZetaMessageStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    onZetaRevert(
-      zetaRevert: ZetaInterfaces.ZetaRevertStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pendingOwner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setInteractorByChainId(
-      destinationChainId: BigNumberish,
-      contractAddress: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -278,34 +161,11 @@ export interface ZetaInteractorMock extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  connector(overrides?: CallOverrides): Promise<string>;
-
-  interactorsByChainId(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  onZetaMessage(
-    zetaMessage: ZetaInterfaces.ZetaMessageStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  onZetaRevert(
-    zetaRevert: ZetaInterfaces.ZetaRevertStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
   pendingOwner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setInteractorByChainId(
-    destinationChainId: BigNumberish,
-    contractAddress: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -317,34 +177,11 @@ export interface ZetaInteractorMock extends BaseContract {
   callStatic: {
     acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
-    connector(overrides?: CallOverrides): Promise<string>;
-
-    interactorsByChainId(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    onZetaMessage(
-      zetaMessage: ZetaInterfaces.ZetaMessageStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    onZetaRevert(
-      zetaRevert: ZetaInterfaces.ZetaRevertStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
     pendingOwner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    setInteractorByChainId(
-      destinationChainId: BigNumberish,
-      contractAddress: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -377,34 +214,11 @@ export interface ZetaInteractorMock extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    connector(overrides?: CallOverrides): Promise<BigNumber>;
-
-    interactorsByChainId(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    onZetaMessage(
-      zetaMessage: ZetaInterfaces.ZetaMessageStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    onZetaRevert(
-      zetaRevert: ZetaInterfaces.ZetaRevertStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setInteractorByChainId(
-      destinationChainId: BigNumberish,
-      contractAddress: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -419,34 +233,11 @@ export interface ZetaInteractorMock extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    connector(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    interactorsByChainId(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    onZetaMessage(
-      zetaMessage: ZetaInterfaces.ZetaMessageStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    onZetaRevert(
-      zetaRevert: ZetaInterfaces.ZetaRevertStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setInteractorByChainId(
-      destinationChainId: BigNumberish,
-      contractAddress: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
