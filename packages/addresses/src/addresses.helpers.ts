@@ -19,6 +19,7 @@ export type ZetaAddress =
   | "uniswapV3Router"
   | "usdc"
   | "weth9"
+  | "zetaSwap"
   | "zetaToken"
   | "zetaTokenConsumerUniV2";
 
@@ -40,6 +41,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   uniswapV3Router: true,
   usdc: true,
   weth9: true,
+  zetaSwap: true,
   zetaToken: true,
   zetaTokenConsumerUniV2: true
 };
@@ -69,7 +71,13 @@ export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressG
  * @description Testnet
  */
 
-export type TestnetNetworkName = "bsc-testnet" | "goerli" | "klaytn-baobab" | "polygon-mumbai" | "ropsten";
+export type TestnetNetworkName =
+  | "athens-v2"
+  | "bsc-testnet"
+  | "goerli"
+  | "klaytn-baobab"
+  | "polygon-mumbai"
+  | "ropsten";
 export type ZetaTestnetNetworkName = "athens";
 export type TestnetAddressGroup = Record<TestnetNetworkName, NetworkAddresses>;
 export const isTestnetNetworkName = (networkName: string): networkName is TestnetNetworkName =>
@@ -77,7 +85,8 @@ export const isTestnetNetworkName = (networkName: string): networkName is Testne
   networkName === "bsc-testnet" ||
   networkName === "polygon-mumbai" ||
   networkName === "ropsten" ||
-  networkName === "klaytn-baobab";
+  networkName === "klaytn-baobab" ||
+  networkName === "athens-v2";
 export const isZetaTestnet = (networkName: string | undefined): networkName is ZetaTestnetNetworkName =>
   networkName === "athens";
 
@@ -110,6 +119,7 @@ export type ZetaNetworkName = ZetaLocalNetworkName | ZetaMainnetNetworkName | Ze
 
 export const getChainId = (networkName: NetworkName) => {
   const chainIds: Record<NetworkName, number> = {
+    "athens-v2": 101,
     "bsc-localnet": 97,
     "bsc-testnet": 97,
     "eth-localnet": 5,
