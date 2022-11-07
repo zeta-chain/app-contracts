@@ -66,7 +66,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         return abi.encode(zrc4, recipient, minAmountOut);
     }
 
-    function doWithdrawal(
+    function _doWithdrawal(
         address targetZRC4,
         uint256 amount,
         bytes32 receipient
@@ -114,6 +114,6 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
             block.timestamp + MAX_DEADLINE
         );
 
-        doWithdrawal(targetZRC4, amounts[1], receipient);
+        _doWithdrawal(targetZRC4, amounts[1], receipient);
     }
 }

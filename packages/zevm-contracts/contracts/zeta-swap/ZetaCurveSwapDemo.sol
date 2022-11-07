@@ -46,7 +46,7 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         return 18;
     }
 
-    function doWithdrawal(
+    function _doWithdrawal(
         address targetZRC4,
         uint256 amount,
         bytes32 receipient
@@ -78,6 +78,6 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
 
         uint256 outAmount = ICRV3(crv3pool).exchange(i, j, amount, 0, false);
 
-        doWithdrawal(targetZRC4, outAmount, receipient);
+        _doWithdrawal(targetZRC4, outAmount, receipient);
     }
 }
