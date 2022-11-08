@@ -1,6 +1,13 @@
 import type { NetworksUserConfig } from "hardhat/types";
 
 export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserConfig => ({
+  "athens-v2": {
+    accounts: PRIVATE_KEYS,
+    // chainId: 8666,
+    gas: 5000000,
+    gasPrice: 80000000000,
+    url: `http://3.132.197.22:8545`,
+  },
   "bsc-localnet": {
     gas: 5000000,
     gasPrice: 80000000000,
@@ -10,7 +17,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `https://data-seed-prebsc-2-s3.binance.org:8545`,
+    url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
   },
   "eth-localnet": {
     gas: 2100000,

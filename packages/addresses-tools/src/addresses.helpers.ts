@@ -39,6 +39,7 @@ export const getScanVariable = ({ customNetworkName }: { customNetworkName?: str
   dotenv.config();
 
   const v = {
+    "athens-v2": "",
     "bsc-localnet": "",
     "bsc-testnet": process.env.BSCSCAN_API_KEY || "",
     "eth-localnet": "",
@@ -61,6 +62,7 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
   dotenv.config();
 
   const v = {
+    "athens-v2": "",
     "bsc-localnet": "",
     "bsc-testnet": "https://testnet.bscscan.com/",
     "eth-localnet": "",

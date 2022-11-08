@@ -16,7 +16,8 @@
     "weth9": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "0xa67b03930eb53d0462dCc0835e97964C062042fb",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
+    "zetaSwap": ""
   },
   "goerli": {
     "connector": "0x00007d0BA516a2bA02D77907d3a1348C1187Ae62",
@@ -35,7 +36,8 @@
     "weth9": "",
     "zetaToken": "0xCc7bb2D219A0FC08033E130629C2B854b7bA9195",
     "zetaTokenConsumerUniV2": "0xDDB1C86c69f258F6d33377a8725404E4393326bB",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
+    "zetaSwap": ""
   },
   "polygon-mumbai": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
@@ -54,7 +56,8 @@
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "",
     "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
-    "multiChainSwap": "0xaf28cb0d9E045170E1642321B964740784E7dC64"
+    "multiChainSwap": "0xaf28cb0d9E045170E1642321B964740784E7dC64",
+    "zetaSwap": ""
   },
   "ropsten": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
@@ -72,7 +75,8 @@
     "weth9": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "0x197bC8e7e813DfB95dEf0DAA44399648bC86f329",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
+    "zetaSwap": ""
   },
   "klaytn-baobab": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
@@ -90,6 +94,27 @@
     "weth9": "",
     "zetaToken": "0x000080383847bD75F91c168269Aa74004877592f",
     "zetaTokenConsumerUniV2": "",
-    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d"
+    "immutableCreate2Factory": "0x095a03c6a68137fE9a566bBc3e552F299d8b886d",
+    "zetaSwap": ""
+  },
+  "athens-v2": {
+    "connector": "",
+    "crossChainCounter": "",
+    "crossChainNft": "",
+    "dai": "",
+    "multiChainSwap": "",
+    "multiChainValue": "",
+    "tss": "",
+    "tssUpdater": "",
+    "uniswapV2Router02": "",
+    "uniswapV3NftManager": "",
+    "uniswapV3Quoter": "",
+    "uniswapV3Router": "",
+    "usdc": "",
+    "weth9": "",
+    "zetaToken": "",
+    "zetaTokenConsumerUniV2": "",
+    "immutableCreate2Factory": "",
+    "zetaSwap": "0x8FeAf1BD718E4e6f82d0FE808f44f431B24b47DF"
   }
 }
