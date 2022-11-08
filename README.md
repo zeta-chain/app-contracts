@@ -40,6 +40,8 @@ ZetaChain is a public, decentralized blockchain and smart contract platform buil
 
 #### [Protocol contracts](packages/example-contracts)
 
+#### [ZEVM contracts](packages/zevm-contracts)
+
 ### Cross-repo commands
 
 #### Package-specific commands
