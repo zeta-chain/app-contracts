@@ -15,12 +15,12 @@ interface SystemContractErrors {
 }
 
 contract SystemContract is SystemContractErrors {
-    mapping(uint256 => uint256) public gasPrice; // chainid => gas price
-    mapping(uint256 => address) public gasCoinZRC4; // chainid => gas coin zrc4
-    mapping(uint256 => address) public gasZetaPool; // chainid => zeta/gas uniswap v2 pool
+    mapping(uint256 => uint256) public gasPriceByChainId;
+    mapping(uint256 => address) public gasCoinZRC4ByChainId;
+    mapping(uint256 => address) public gasZetaPoolByChainId;
 
     address public constant FUNGIBLE_MODULE_ADDRESS = 0x735b14BB79463307AAcBED86DAf3322B1e6226aB;
-    address public wzetaContractAddress;
+    address public wZetaContractAddress;
     address public uniswapv2FactoryAddress;
     address public uniswapv2Router02Address;
 
@@ -36,14 +36,14 @@ contract SystemContract is SystemContractErrors {
         address uniswapv2Router02_
     ) {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
-        wzetaContractAddress = wzeta_;
+        wZetaContractAddress = wzeta_;
         uniswapv2FactoryAddress = uniswapv2Factory_;
         uniswapv2Router02Address = uniswapv2Router02_;
         emit SystemContractDeployed();
     }
 
     // deposit foreign coins into ZRC4 and call user specified contract on zEVM
-    function DepositAndCall(
+    function depositAndCall(
         address zrc4,
         uint256 amount,
         address target,
@@ -89,27 +89,27 @@ contract SystemContract is SystemContractErrors {
     // fungible module updates the gas price oracle periodically
     function setGasPrice(uint256 chainID, uint256 price) external {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
-        gasPrice[chainID] = price;
+        gasPriceByChainId[chainID] = price;
         emit SetGasPrice(chainID, price);
     }
 
     function setGasCoinZRC4(uint256 chainID, address zrc4) external {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
-        gasCoinZRC4[chainID] = zrc4;
+        gasCoinZRC4ByChainId[chainID] = zrc4;
         emit SetGasCoin(chainID, zrc4);
     }
 
     // set the pool wzeta/erc20 address
     function setGasZetaPool(uint256 chainID, address erc20) external {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
-        address pool = uniswapv2PairFor(uniswapv2FactoryAddress, wzetaContractAddress, erc20);
-        gasZetaPool[chainID] = pool;
+        address pool = uniswapv2PairFor(uniswapv2FactoryAddress, wZetaContractAddress, erc20);
+        gasZetaPoolByChainId[chainID] = pool;
         emit SetGasZetaPool(chainID, pool);
     }
 
     function setWZETAContractAddress(address addr) external {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
-        wzetaContractAddress = addr;
-        emit SetWZeta(wzetaContractAddress);
+        wZetaContractAddress = addr;
+        emit SetWZeta(wZetaContractAddress);
     }
 }
