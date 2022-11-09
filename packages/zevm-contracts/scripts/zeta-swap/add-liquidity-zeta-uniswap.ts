@@ -2,6 +2,7 @@ import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getChainId } from "@zetachain/addresses";
+import { getAddress } from "@zetachain/addresses";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
@@ -14,7 +15,7 @@ import {
   UniswapV2Router02,
   UniswapV2Router02__factory
 } from "../../typechain-types";
-import { SYSTEM_CONTRACT, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS, WZETA_ADDRESS } from "../systemConstants";
+import { SYSTEM_CONTRACT } from "../systemConstants";
 
 const TOKEN_TO_ADD = parseUnits("99.9");
 const ZETA_TO_ADD = parseUnits("0");
@@ -66,6 +67,18 @@ const estimateEthForZeta = async (
   uniswapRouter: IUniswapV2Router02,
   deployer: SignerWithAddress
 ) => {
+  const WZETA_ADDRESS = getAddress({
+    address: "weth9",
+    networkName: "athens-v2",
+    zetaNetwork: "athens"
+  });
+
+  const UNISWAP_FACTORY_ADDRESS = getAddress({
+    address: "uniswapV2Factory",
+    networkName: "athens-v2",
+    zetaNetwork: "athens"
+  });
+
   const uniswapV2Factory = IUniswapV2Factory__factory.connect(UNISWAP_FACTORY_ADDRESS, deployer);
 
   const pair = sortPair(tokenAddress, WZETA_ADDRESS);
@@ -89,6 +102,12 @@ async function main() {
   const network = "polygon-mumbai";
 
   const [deployer] = await ethers.getSigners();
+
+  const UNISWAP_ROUTER_ADDRESS = getAddress({
+    address: "uniswapV2Router02",
+    networkName: "athens-v2",
+    zetaNetwork: "athens"
+  });
 
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
 
