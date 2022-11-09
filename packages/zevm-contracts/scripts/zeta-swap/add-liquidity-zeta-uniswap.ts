@@ -92,7 +92,7 @@ async function main() {
 
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
 
-  const tokenAddress = await systemContract.gasCoinZRC4(getChainId(network));
+  const tokenAddress = await systemContract.gasCoinZRC20(getChainId(network));
 
   const uniswapRouter = await UniswapV2Router02__factory.connect(UNISWAP_ROUTER_ADDRESS, deployer);
 

@@ -4,7 +4,7 @@ pragma solidity 0.8.7;
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol";
 
-import "../interfaces/IZRC4.sol";
+import "../interfaces/IZRC20.sol";
 import "../interfaces/zContract.sol";
 
 interface ZetaSwapErrors {
@@ -59,53 +59,53 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
     }
 
     function encode(
-        address zrc4,
+        address ZRC20,
         address recipient,
         uint256 minAmountOut
     ) public pure returns (bytes memory) {
-        return abi.encode(zrc4, recipient, minAmountOut);
+        return abi.encode(ZRC20, recipient, minAmountOut);
     }
 
     function _doWithdrawal(
-        address targetZRC4,
+        address targetZRC20,
         uint256 amount,
         bytes32 receipient
     ) private {
-        (address gasZRC4, uint256 gasFee) = IZRC4(targetZRC4).withdrawGasFee();
+        (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
 
-        if (gasZRC4 != targetZRC4) revert WrongGasContract();
+        if (gasZRC20 != targetZRC20) revert WrongGasContract();
         if (gasFee >= amount) revert NotEnoughToPayGasFee();
 
-        IZRC4(targetZRC4).approve(targetZRC4, gasFee);
-        IZRC4(targetZRC4).withdraw(abi.encodePacked(receipient), amount - gasFee);
+        IZRC20(targetZRC20).approve(targetZRC20, gasFee);
+        IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
     function onCrossChainCall(
-        address zrc4,
+        address ZRC20,
         uint256 amount,
         bytes calldata message
     ) external override {
-        (address targetZRC4, bytes32 receipient, uint256 minAmountOut) = abi.decode(
+        (address targetZRC20, bytes32 receipient, uint256 minAmountOut) = abi.decode(
             message,
             (address, bytes32, uint256)
         );
 
-        address uniswapPool = uniswapv2PairFor(uniswapV2Router, zrc4, targetZRC4);
-        bool existsPairPool = IZRC4(zrc4).balanceOf(uniswapPool) > 0 && IZRC4(zrc4).balanceOf(zetaToken) > 0;
+        address uniswapPool = uniswapv2PairFor(uniswapV2Router, ZRC20, targetZRC20);
+        bool existsPairPool = IZRC20(ZRC20).balanceOf(uniswapPool) > 0 && IZRC20(ZRC20).balanceOf(zetaToken) > 0;
 
         address[] memory path;
         if (existsPairPool) {
             path = new address[](2);
-            path[0] = zrc4;
-            path[1] = targetZRC4;
+            path[0] = ZRC20;
+            path[1] = targetZRC20;
         } else {
             path = new address[](3);
-            path[0] = zrc4;
+            path[0] = ZRC20;
             path[1] = zetaToken;
-            path[2] = targetZRC4;
+            path[2] = targetZRC20;
         }
 
-        IZRC4(zrc4).approve(address(uniswapV2Router), amount);
+        IZRC20(ZRC20).approve(address(uniswapV2Router), amount);
         uint256[] memory amounts = IUniswapV2Router01(uniswapV2Router).swapExactTokensForTokens(
             amount,
             minAmountOut,
@@ -114,6 +114,6 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
             block.timestamp + MAX_DEADLINE
         );
 
-        _doWithdrawal(targetZRC4, amounts[1], receipient);
+        _doWithdrawal(targetZRC20, amounts[1], receipient);
     }
 }
