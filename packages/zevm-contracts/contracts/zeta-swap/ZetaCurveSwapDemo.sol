@@ -30,16 +30,16 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
     }
 
     function encode(
-        address ZRC20,
+        address zrc20,
         address recipient,
         uint256 minAmountOut
     ) public pure returns (bytes memory) {
-        return abi.encode(ZRC20, recipient, minAmountOut);
+        return abi.encode(zrc20, recipient, minAmountOut);
     }
 
-    function addr2idx(address ZRC20) public view returns (uint256) {
+    function addr2idx(address zrc20) public view returns (uint256) {
         for (uint256 i = 0; i < 3; i++) {
-            if (crvZRC20s[i] == ZRC20) {
+            if (crvZRC20s[i] == zrc20) {
                 return i;
             }
         }
@@ -61,18 +61,18 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
     }
 
     function onCrossChainCall(
-        address ZRC20,
+        address zrc20,
         uint256 amount,
         bytes calldata message
     ) external override {
         (address targetZRC20, bytes32 receipient, ) = abi.decode(message, (address, bytes32, uint256));
 
         address[] memory path = new address[](2);
-        path[0] = ZRC20;
+        path[0] = zrc20;
         path[1] = targetZRC20;
-        IZRC20(ZRC20).approve(address(crv3pool), amount);
+        IZRC20(zrc20).approve(address(crv3pool), amount);
 
-        uint256 i = addr2idx(ZRC20);
+        uint256 i = addr2idx(zrc20);
         uint256 j = addr2idx(targetZRC20);
         require(i >= 0 && i < 3 && j >= 0 && j < 3 && i != j, "i,j error");
 

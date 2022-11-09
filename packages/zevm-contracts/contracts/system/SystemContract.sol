@@ -44,7 +44,7 @@ contract SystemContract is SystemContractErrors {
 
     // deposit foreign coins into ZRC20 and call user specified contract on zEVM
     function depositAndCall(
-        address ZRC20,
+        address zrc20,
         uint256 amount,
         address target,
         bytes calldata message
@@ -52,8 +52,8 @@ contract SystemContract is SystemContractErrors {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
         if (target == FUNGIBLE_MODULE_ADDRESS || target == address(this)) revert InvalidTarget();
 
-        IZRC20(ZRC20).deposit(target, amount);
-        zContract(target).onCrossChainCall(ZRC20, amount, message);
+        IZRC20(zrc20).deposit(target, amount);
+        zContract(target).onCrossChainCall(zrc20, amount, message);
     }
 
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
@@ -93,10 +93,10 @@ contract SystemContract is SystemContractErrors {
         emit SetGasPrice(chainID, price);
     }
 
-    function setGasCoinZRC20(uint256 chainID, address ZRC20) external {
+    function setGasCoinZRC20(uint256 chainID, address zrc20) external {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
-        gasCoinZRC20ByChainId[chainID] = ZRC20;
-        emit SetGasCoin(chainID, ZRC20);
+        gasCoinZRC20ByChainId[chainID] = zrc20;
+        emit SetGasCoin(chainID, zrc20);
     }
 
     // set the pool wzeta/erc20 address
