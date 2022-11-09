@@ -114,6 +114,6 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
             block.timestamp + MAX_DEADLINE
         );
 
-        _doWithdrawal(targetZRC20, amounts[1], receipient);
+        _doWithdrawal(targetZRC20, amounts[path.length - 1], receipient);
     }
 }
