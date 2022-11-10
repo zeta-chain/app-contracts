@@ -80,16 +80,13 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
-    function onCrossChainCall(
+    function _doSwap(
         address zrc20,
         uint256 amount,
-        bytes calldata message
-    ) external override {
-        (address targetZRC20, bytes32 receipient, uint256 minAmountOut) = abi.decode(
-            message,
-            (address, bytes32, uint256)
-        );
-
+        address targetZRC20,
+        bytes32 receipient,
+        uint256 minAmountOut
+    ) internal {
         address uniswapPool = uniswapv2PairFor(uniswapV2Router, zrc20, targetZRC20);
         bool existsPairPool = IZRC20(zrc20).balanceOf(uniswapPool) > 0 && IZRC20(zrc20).balanceOf(zetaToken) > 0;
 
@@ -115,5 +112,17 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         );
 
         _doWithdrawal(targetZRC20, amounts[path.length - 1], receipient);
+    }
+
+    function onCrossChainCall(
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override {
+        (address targetZRC20, bytes32 receipient, uint256 minAmountOut) = abi.decode(
+            message,
+            (address, bytes32, uint256)
+        );
+        _doSwap(zrc20, amount, targetZRC20, receipient, minAmountOut);
     }
 }
