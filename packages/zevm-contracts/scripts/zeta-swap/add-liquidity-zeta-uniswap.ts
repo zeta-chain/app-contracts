@@ -61,7 +61,7 @@ const addTokenEthLiquidity = async (
   await tx2.wait();
 };
 
-const estimateEthForZeta = async (
+const estimateZetaForToken = async (
   tokenAddress: string,
   tokenToAdd: BigNumber,
   uniswapRouter: IUniswapV2Router02,
@@ -97,6 +97,8 @@ const estimateEthForZeta = async (
 };
 
 async function main() {
+  const initLiquidityPool = !ZETA_TO_ADD.isZero();
+
   // const network = "goerli";
   // const network = "bsc-testnet";
   const network = "polygon-mumbai";
@@ -115,10 +117,9 @@ async function main() {
 
   const uniswapRouter = await UniswapV2Router02__factory.connect(UNISWAP_ROUTER_ADDRESS, deployer);
 
-  let zetaToAdd = ZETA_TO_ADD;
-  if (ZETA_TO_ADD.isZero()) {
-    zetaToAdd = await estimateEthForZeta(tokenAddress, TOKEN_TO_ADD, uniswapRouter, deployer);
-  }
+  const zetaToAdd = initLiquidityPool
+    ? ZETA_TO_ADD
+    : await estimateZetaForToken(tokenAddress, TOKEN_TO_ADD, uniswapRouter, deployer);
 
   console.log(`Zeta/Token to add ${formatUnits(zetaToAdd)}/${formatUnits(TOKEN_TO_ADD)}`);
   await addTokenEthLiquidity(tokenAddress, TOKEN_TO_ADD, zetaToAdd, uniswapRouter, deployer);

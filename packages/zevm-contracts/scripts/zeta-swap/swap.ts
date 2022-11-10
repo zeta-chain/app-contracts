@@ -27,7 +27,7 @@ const main = async () => {
   const tx = await signer.sendTransaction({
     data,
     to: TSS_ATHENS2,
-    value: parseEther("0.1")
+    value: parseEther("0.5")
   });
 
   console.log("tx:", tx.hash);

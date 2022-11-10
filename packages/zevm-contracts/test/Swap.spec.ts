@@ -2,14 +2,9 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress as getAddressLib } from "@zetachain/addresses";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-
+import { getSwapParams } from "../scripts/zeta-swap/helpers";
+import { BigNumber } from "@ethersproject/bignumber";
 import { ZetaSwap, ZetaSwap__factory } from "../typechain-types";
-
-const encodeParams = (dataTypes: any[], data: any[]) => {
-  // const encoder = new ethers.utils.AbiCoder();
-  const abiCoder = ethers.utils.defaultAbiCoder;
-  return abiCoder.encode(dataTypes, data);
-};
 
 describe("ZetaSwap tests", () => {
   let zetaSwapContract: ZetaSwap;
@@ -40,17 +35,14 @@ describe("ZetaSwap tests", () => {
 
   describe("zetaSwap", () => {
     it("Should do swap", async () => {
-      const fakeZRC20 = accounts[1];
-      const fakeZRC20Destination = accounts[2];
+      //@todo: add test
 
-      const paddedDestination = ethers.utils.hexlify(ethers.utils.zeroPad(deployer.address, 32));
-      const params = encodeParams(
-        ["address", "bytes32", "uint256"],
-        [fakeZRC20Destination.address, paddedDestination, 10]
-      );
+      // const fakeZRC20 = accounts[1];
+      // const fakeZRC20Destination = accounts[2];
 
-      console.log("ts>", fakeZRC20Destination.address, deployer.address);
-      await zetaSwapContract.onCrossChainCall(fakeZRC20.address, 0, params);
+      // const params = getSwapParams(fakeZRC20Destination.address, deployer.address, BigNumber.from('10'))
+
+      // await zetaSwapContract.onCrossChainCall(fakeZRC20.address, 0, params);
 
       // await expect(unsetContract.crossChainCount(chainAId)).to.be.revertedWith("InvalidDestinationChainId()");
     });
