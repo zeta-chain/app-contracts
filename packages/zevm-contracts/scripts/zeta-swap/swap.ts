@@ -18,7 +18,7 @@ const main = async () => {
 
   const zetaSwap = getAddress({
     address: "zetaSwap",
-    networkName: "athens-v2",
+    networkName: "athens",
     zetaNetwork: "athens"
   });
 

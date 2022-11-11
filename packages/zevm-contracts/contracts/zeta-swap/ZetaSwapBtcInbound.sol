@@ -3,7 +3,7 @@ pragma solidity 0.8.7;
 
 import "./ZetaSwap.sol";
 
-contract ZetaSwapBTC is ZetaSwap {
+contract ZetaSwapBtcInbound is ZetaSwap {
     constructor(address zetaToken_, address uniswapV2Router_) ZetaSwap(zetaToken_, uniswapV2Router_) {}
 
     function bytesToAddress(

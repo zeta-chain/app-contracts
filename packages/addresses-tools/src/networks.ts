@@ -1,7 +1,7 @@
 import type { NetworksUserConfig } from "hardhat/types";
 
 export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserConfig => ({
-  "athens-v2": {
+  "athens": {
     accounts: PRIVATE_KEYS,
     // chainId: 8666,
     gas: 5000000,

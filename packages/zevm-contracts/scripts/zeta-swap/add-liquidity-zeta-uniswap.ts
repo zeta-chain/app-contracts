@@ -69,13 +69,13 @@ const estimateZetaForToken = async (
 ) => {
   const WZETA_ADDRESS = getAddress({
     address: "weth9",
-    networkName: "athens-v2",
+    networkName: "athens",
     zetaNetwork: "athens"
   });
 
   const UNISWAP_FACTORY_ADDRESS = getAddress({
     address: "uniswapV2Factory",
-    networkName: "athens-v2",
+    networkName: "athens",
     zetaNetwork: "athens"
   });
 
@@ -107,7 +107,7 @@ async function main() {
 
   const UNISWAP_ROUTER_ADDRESS = getAddress({
     address: "uniswapV2Router02",
-    networkName: "athens-v2",
+    networkName: "athens",
     zetaNetwork: "athens"
   });
 

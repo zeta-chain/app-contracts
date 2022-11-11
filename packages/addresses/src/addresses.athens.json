@@ -17,6 +17,7 @@
     "usdc": "",
     "weth9": "",
     "zetaSwap": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "0xa67b03930eb53d0462dCc0835e97964C062042fb"
   },
@@ -38,6 +39,7 @@
     "usdc": "",
     "weth9": "",
     "zetaSwap": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0xCc7bb2D219A0FC08033E130629C2B854b7bA9195",
     "zetaTokenConsumerUniV2": "0xDDB1C86c69f258F6d33377a8725404E4393326bB"
   },
@@ -59,6 +61,7 @@
     "usdc": "",
     "weth9": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
     "zetaSwap": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": ""
   },
@@ -79,6 +82,7 @@
     "usdc": "",
     "weth9": "",
     "zetaSwap": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
     "zetaTokenConsumerUniV2": "0x197bC8e7e813DfB95dEf0DAA44399648bC86f329"
   },
@@ -99,14 +103,16 @@
     "usdc": "",
     "weth9": "",
     "zetaSwap": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0x000080383847bD75F91c168269Aa74004877592f",
     "zetaTokenConsumerUniV2": ""
   },
-  "athens-v2": {
+  "athens": {
     "connector": "",
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
+    "immutableCreate2Factory": "",
     "multiChainSwap": "",
     "multiChainValue": "",
     "tss": "",
@@ -118,9 +124,9 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf",
+    "zetaSwap": "0xE52987DC957ab816aD8812Aa3dB19649f1b5F3E7",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "",
-    "zetaTokenConsumerUniV2": "",
-    "immutableCreate2Factory": "",
-    "zetaSwap": "0xE52987DC957ab816aD8812Aa3dB19649f1b5F3E7"
+    "zetaTokenConsumerUniV2": ""
   }
 }

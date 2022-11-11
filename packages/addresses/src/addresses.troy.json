@@ -14,6 +14,7 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf",
     "zetaTokenConsumerUniV2": ""
   },
@@ -31,6 +32,7 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0xaEF27C0E302005dB3b442edF762EB070Dc2DB9b5",
     "zetaTokenConsumerUniV2": ""
   },
@@ -48,6 +50,7 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0x0CF6e5aA211A4b7da5d04e93dC40Ee18202a5f84",
     "zetaTokenConsumerUniV2": ""
   },
@@ -65,6 +68,7 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "",
+    "zetaSwapBtcInbound": "",
     "zetaToken": "0xD443E93f689a7E1d517Fef799b1d2Fd2FA536d3A",
     "zetaTokenConsumerUniV2": ""
   }
