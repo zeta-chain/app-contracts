@@ -18,3 +18,15 @@ export const getSwapData = (zetaSwap: string, destination: string, destinationTo
 
   return `${zetaSwap}${params.slice(2)}`;
 };
+
+const encodeAddressArray = (addresses: string[]) => {
+  let hex = "0x";
+  hex += addresses.map(address => address.substr(2, 40)).join("");
+
+  return ethers.utils.arrayify(hex);
+}
+
+
+export const getSwapBTCInboundData = (destination: string, destinationToken: string) => {
+  return  encodeAddressArray([destination, destinationToken])
+};
