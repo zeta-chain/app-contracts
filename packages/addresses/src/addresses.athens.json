@@ -132,10 +132,10 @@
     "uniswapV3Router": "",
     "usdc": "",
     "weth9": "0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf",
-    "zetaSwap": "0xE52987DC957ab816aD8812Aa3dB19649f1b5F3E7",
-    "zetaSwapBtcInbound": "",
+    "zetaSwap": "0x71Ec5c05Aa669c4922569c1D33F7a81aaa218138",
+    "zetaSwapBtcInbound": "0x79c73Ba355f84feFFcDA2D2Cd4D61b9c795919Cc",
     "zetaToken": "",
-    "zetaTokenConsumerUniV2": ""    
+    "zetaTokenConsumerUniV2": ""
   },
   "bitcoin-test": {
     "connector": "",

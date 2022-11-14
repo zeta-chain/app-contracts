@@ -21,6 +21,7 @@ export type ZetaAddress =
   | "usdc"
   | "weth9"
   | "zetaSwap"
+  | "zetaSwapBtcInbound"
   | "zetaToken"
   | "zetaTokenConsumerUniV2";
 
@@ -44,6 +45,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   usdc: true,
   weth9: true,
   zetaSwap: true,
+  zetaSwapBtcInbound: true,
   zetaToken: true,
   zetaTokenConsumerUniV2: true
 };

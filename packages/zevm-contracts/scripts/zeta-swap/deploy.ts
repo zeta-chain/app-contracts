@@ -2,7 +2,7 @@ import { getAddress } from "@zetachain/addresses";
 import { saveAddress } from "@zetachain/addresses-tools";
 import { ethers } from "hardhat";
 
-import { ZetaSwap, ZetaSwap__factory } from "../../typechain-types";
+import { ZetaSwap, ZetaSwap__factory, ZetaSwapBtcInbound, ZetaSwapBtcInbound__factory } from "../../typechain-types";
 
 const main = async () => {
   console.log(`Deploying ZetaSwap...`);
@@ -20,13 +20,18 @@ const main = async () => {
   });
 
   const Factory = (await ethers.getContractFactory("ZetaSwap")) as ZetaSwap__factory;
-
   const contract = (await Factory.deploy(WZETA_ADDRESS, UNISWAP_ROUTER_ADDRESS)) as ZetaSwap;
-
   await contract.deployed();
 
   console.log("Deployed ZetaSwap. Address:", contract.address);
   saveAddress("zetaSwap", contract.address);
+
+  const FactoryBTC = (await ethers.getContractFactory("ZetaSwapBtcInbound")) as ZetaSwapBtcInbound__factory;
+  const contractBTC = (await FactoryBTC.deploy(WZETA_ADDRESS, UNISWAP_ROUTER_ADDRESS)) as ZetaSwapBtcInbound;
+  await contractBTC.deployed();
+
+  console.log("Deployed ZetaSwap. Address:", contractBTC.address);
+  saveAddress("zetaSwapBtcInbound", contractBTC.address);
 };
 
 main().catch(error => {

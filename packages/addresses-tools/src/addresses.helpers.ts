@@ -40,6 +40,7 @@ export const getScanVariable = ({ customNetworkName }: { customNetworkName?: str
 
   const v = {
     athens: "",
+    "bitcoin-test": "",
     "bsc-localnet": "",
     "bsc-testnet": process.env.BSCSCAN_API_KEY || "",
     "eth-localnet": "",
@@ -63,6 +64,7 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
 
   const v = {
     athens: "",
+    "bitcoin-test": "",
     "bsc-localnet": "",
     "bsc-testnet": "https://testnet.bscscan.com/",
     "eth-localnet": "",
