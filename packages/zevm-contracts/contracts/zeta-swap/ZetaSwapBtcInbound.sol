@@ -11,7 +11,7 @@ contract ZetaSwapBtcInbound is ZetaSwap {
         uint256 offset,
         uint256 size
     ) private pure returns (address addr) {
-        bytes memory b = message[offset:size];
+        bytes memory b = data[offset:size];
         assembly {
             addr := mload(add(b, size))
         }

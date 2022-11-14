@@ -73,7 +73,14 @@ export const getLocalnetList = (): Record<ZetaLocalNetworkName, LocalnetAddressG
  * @description Testnet
  */
 
-export type TestnetNetworkName = "athens" | "bsc-testnet" | "goerli" | "klaytn-baobab" | "polygon-mumbai" | "ropsten";
+export type TestnetNetworkName =
+  | "athens"
+  | "bitcoin-test"
+  | "bsc-testnet"
+  | "goerli"
+  | "klaytn-baobab"
+  | "polygon-mumbai"
+  | "ropsten";
 export type ZetaTestnetNetworkName = "athens";
 export type TestnetAddressGroup = Record<TestnetNetworkName, NetworkAddresses>;
 export const isTestnetNetworkName = (networkName: string): networkName is TestnetNetworkName =>
@@ -116,6 +123,7 @@ export type ZetaNetworkName = ZetaLocalNetworkName | ZetaMainnetNetworkName | Ze
 export const getChainId = (networkName: NetworkName) => {
   const chainIds: Record<NetworkName, number> = {
     athens: 101,
+    "bitcoin-test": 18332,
     "bsc-localnet": 97,
     "bsc-testnet": 97,
     "eth-localnet": 5,

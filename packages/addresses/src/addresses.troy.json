@@ -16,6 +16,10 @@
     "weth9": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0xddE78e6202518FF4936b5302cC2891ec180E8bFf",
+    "immutableCreate2Factory": "",
+    "multiChainSwapZetaConnector": "",
+    "uniswapV2Factory": "",
+    "zetaSwap": "",
     "zetaTokenConsumerUniV2": ""
   },
   "eth-localnet": {
@@ -23,6 +27,7 @@
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
+    "multiChainSwap":"",
     "multiChainValue": "",
     "tss": "0x8C001e2204000D8ED10cAcf0F68106b68e036A26",
     "tssUpdater": "0xfBec4048e09749515110c89D881EcDcA4460D377",
@@ -34,6 +39,10 @@
     "weth9": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0xaEF27C0E302005dB3b442edF762EB070Dc2DB9b5",
+    "immutableCreate2Factory": "",
+    "multiChainSwapZetaConnector": "",
+    "uniswapV2Factory": "",
+    "zetaSwap": "",
     "zetaTokenConsumerUniV2": ""
   },
   "bsc-localnet": {
@@ -41,6 +50,7 @@
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
+    "multiChainSwap":"",
     "multiChainValue": "",
     "tss": "0x8C001e2204000D8ED10cAcf0F68106b68e036A26",
     "tssUpdater": "0x12Dc2227AA4b98b00Ff8148fDA9Ef750929B0F68",
@@ -52,6 +62,10 @@
     "weth9": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0x0CF6e5aA211A4b7da5d04e93dC40Ee18202a5f84",
+    "immutableCreate2Factory": "",
+    "multiChainSwapZetaConnector": "",
+    "uniswapV2Factory": "",
+    "zetaSwap": "",
     "zetaTokenConsumerUniV2": ""
   },
   "polygon-localnet": {
@@ -59,6 +73,7 @@
     "crossChainCounter": "",
     "crossChainNft": "",
     "dai": "",
+    "multiChainSwap":"",
     "multiChainValue": "",
     "tss": "0x8C001e2204000D8ED10cAcf0F68106b68e036A26",
     "tssUpdater": "0x78C18E214174A08Fc32e174fb203Aba05B016789",
@@ -70,6 +85,10 @@
     "weth9": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0xD443E93f689a7E1d517Fef799b1d2Fd2FA536d3A",
+    "immutableCreate2Factory": "",
+    "multiChainSwapZetaConnector": "",
+    "uniswapV2Factory": "",
+    "zetaSwap": "",
     "zetaTokenConsumerUniV2": ""
   }
 }
