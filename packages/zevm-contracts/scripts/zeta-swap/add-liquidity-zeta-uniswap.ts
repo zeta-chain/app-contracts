@@ -2,6 +2,7 @@ import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getChainId } from "@zetachain/addresses";
+import { NetworkName } from "@zetachain/addresses";
 import { getAddress } from "@zetachain/addresses";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
@@ -17,7 +18,6 @@ import {
 } from "../../typechain-types";
 import { SYSTEM_CONTRACT } from "../systemConstants";
 
-const TOKEN_TO_ADD = parseUnits("99.9");
 const ZETA_TO_ADD = parseUnits("0");
 
 interface Pair {
@@ -96,12 +96,8 @@ const estimateZetaForToken = async (
   return ZETAValue;
 };
 
-async function main() {
+async function addLiquidity(network: NetworkName, tokenAmountToAdd: BigNumber) {
   const initLiquidityPool = !ZETA_TO_ADD.isZero();
-
-  // const network = "goerli";
-  // const network = "bsc-testnet";
-  const network = "polygon-mumbai";
 
   const [deployer] = await ethers.getSigners();
 
@@ -113,16 +109,22 @@ async function main() {
 
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
 
-  const tokenAddress = await systemContract.gasCoinZRC20(getChainId(network));
+  const tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId(network));
 
   const uniswapRouter = await UniswapV2Router02__factory.connect(UNISWAP_ROUTER_ADDRESS, deployer);
 
   const zetaToAdd = initLiquidityPool
     ? ZETA_TO_ADD
-    : await estimateZetaForToken(tokenAddress, TOKEN_TO_ADD, uniswapRouter, deployer);
+    : await estimateZetaForToken(tokenAddress, tokenAmountToAdd, uniswapRouter, deployer);
 
-  console.log(`Zeta/Token to add ${formatUnits(zetaToAdd)}/${formatUnits(TOKEN_TO_ADD)}`);
-  await addTokenEthLiquidity(tokenAddress, TOKEN_TO_ADD, zetaToAdd, uniswapRouter, deployer);
+  console.log(`Zeta/Token to add ${formatUnits(zetaToAdd)}/${formatUnits(tokenAmountToAdd)}`);
+  await addTokenEthLiquidity(tokenAddress, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
+}
+async function main() {
+  await addLiquidity("goerli", parseUnits("20", 18));
+  await addLiquidity("polygon-mumbai", parseUnits("20", 18));
+  await addLiquidity("bsc-testnet", parseUnits("20", 18));
+  // await addLiquidity("bitcoin-test", parseUnits("0.002", 8));
 }
 
 main()

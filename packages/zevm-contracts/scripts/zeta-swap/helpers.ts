@@ -19,14 +19,11 @@ export const getSwapData = (zetaSwap: string, destination: string, destinationTo
   return `${zetaSwap}${params.slice(2)}`;
 };
 
-const encodeAddressArray = (addresses: string[]) => {
-  let hex = "0x";
-  hex += addresses.map(address => address.substr(2, 40)).join("");
-
-  return ethers.utils.arrayify(hex);
-}
-
-
-export const getSwapBTCInboundData = (destination: string, destinationToken: string) => {
-  return  encodeAddressArray([destination, destinationToken])
+export const getBitcoinTxMemo = (zetaSwapAddress: string, destinationAddress: string, chainId: string) => {
+  const paddedHexChainId = ethers.utils
+    .hexlify(Number(chainId))
+    .slice(2)
+    .padStart(8, "0");
+  const rawMemo = `${zetaSwapAddress}${destinationAddress.slice(2)}${paddedHexChainId}`;
+  return ethers.utils.base64.encode(rawMemo);
 };

@@ -10,7 +10,7 @@ const main = async () => {
 
   const tx = await signer.sendTransaction({
     to: TSS_ATHENS2,
-    value: parseEther("100")
+    value: parseEther("30")
   });
 
   console.log("Token sent. tx:", tx.hash);

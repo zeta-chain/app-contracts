@@ -80,6 +80,11 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
+    function _existsPairPool(address zrc20A, address zrc20B) private view returns (bool) {
+        address uniswapPool = uniswapv2PairFor(uniswapV2Router, zrc20A, zrc20B);
+        return IZRC20(zrc20A).balanceOf(uniswapPool) > 0 && IZRC20(zrc20B).balanceOf(uniswapPool) > 0;
+    }
+
     function _doSwap(
         address zrc20,
         uint256 amount,
@@ -87,8 +92,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         bytes32 receipient,
         uint256 minAmountOut
     ) internal {
-        address uniswapPool = uniswapv2PairFor(uniswapV2Router, zrc20, targetZRC20);
-        bool existsPairPool = IZRC20(zrc20).balanceOf(uniswapPool) > 0 && IZRC20(zrc20).balanceOf(zetaToken) > 0;
+        bool existsPairPool = _existsPairPool(zrc20, zetaToken);
 
         address[] memory path;
         if (existsPairPool) {
@@ -110,7 +114,6 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
             address(this),
             block.timestamp + MAX_DEADLINE
         );
-
         _doWithdrawal(targetZRC20, amounts[path.length - 1], receipient);
     }
 

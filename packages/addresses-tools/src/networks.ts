@@ -31,7 +31,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
   goerli: {
     accounts: PRIVATE_KEYS,
     gas: 2100000,
-    gasPrice: 8000000000,
+    gasPrice: 38000000000,
     url: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
   },
   hardhat: {
