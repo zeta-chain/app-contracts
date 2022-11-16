@@ -9,7 +9,7 @@ import { ZRC20Addresses } from "../systemConstants";
 import { getSwapParams } from "./helpers";
 
 const USE_BTC_SWAP = true;
-const SAMPLE_MEMO = "0x25A92a5853702F199bb2d805Bba05d67025214A80005"; // 0xADDRESS + FFFF chain id (05 for goerli)
+const SAMPLE_MEMO = "0x25A92a5853702F199bb2d805Bba05d67025214A800000005"; // 0xADDRESS + FFFF chain id (05 for goerli)
 
 const main = async () => {
   if (!isZetaNetworkName(network.name) || !network.name) throw new Error("Invalid network name");
