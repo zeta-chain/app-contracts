@@ -9,6 +9,7 @@ import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
 import {
+  ERC20,
   ERC20__factory,
   IUniswapV2Factory__factory,
   IUniswapV2Pair__factory,
@@ -38,20 +39,18 @@ export const sortPair = (token1: string, token2: string): Pair => {
 };
 
 const addTokenEthLiquidity = async (
-  tokenAddress: string,
-  tokenToAdd: BigNumber,
+  tokenContract: ERC20,
+  tokenAmountToAdd: BigNumber,
   ETHToAdd: BigNumber,
   uniswapRouter: IUniswapV2Router02,
   deployer: SignerWithAddress
 ) => {
-  const TokenContract = ERC20__factory.connect(tokenAddress, deployer);
-
-  const tx1 = await TokenContract.approve(uniswapRouter.address, MaxUint256);
+  const tx1 = await tokenContract.approve(uniswapRouter.address, MaxUint256);
   await tx1.wait();
 
   const tx2 = await uniswapRouter.addLiquidityETH(
-    TokenContract.address,
-    tokenToAdd,
+    tokenContract.address,
+    tokenAmountToAdd,
     0,
     0,
     deployer.address,
@@ -65,14 +64,13 @@ const estimateZetaForToken = async (
   network: NetworkName,
   WZETAAddress: string,
   uniswapFactoryAddress: string,
-  tokenAddress: string,
-  tokenToAdd: BigNumber,
-  uniswapRouter: IUniswapV2Router02,
+  tokenContract: ERC20,
+  tokenAmountToAdd: BigNumber,
   deployer: SignerWithAddress
 ) => {
   const uniswapV2Factory = IUniswapV2Factory__factory.connect(uniswapFactoryAddress, deployer);
 
-  const pair = sortPair(tokenAddress, WZETAAddress);
+  const pair = sortPair(tokenContract.address, WZETAAddress);
 
   const poolAddress = await uniswapV2Factory.getPair(pair.TokenA, pair.TokenB);
 
@@ -80,11 +78,17 @@ const estimateZetaForToken = async (
 
   const reserves = await pool.getReserves();
 
-  const reservesZETA = WZETAAddress < tokenAddress ? reserves.reserve0 : reserves.reserve1;
-  const reservesToken = WZETAAddress > tokenAddress ? reserves.reserve0 : reserves.reserve1;
-  const ZETAValue = await uniswapRouter.quote(tokenToAdd, reservesZETA, reservesToken);
+  const reservesZETA = WZETAAddress < tokenContract.address ? reserves.reserve0 : reserves.reserve1;
+  const reservesToken = WZETAAddress > tokenContract.address ? reserves.reserve0 : reserves.reserve1;
+
+  const ZETAValue = reservesZETA.mul(tokenAmountToAdd).div(reservesToken);
+
+  const tokenDecimals = await tokenContract.decimals();
   console.log(
-    `Zeta/${getGasSymbolByNetwork(network)} reserves ${formatUnits(reservesZETA)}/${formatUnits(reservesToken)}`
+    `Zeta/${getGasSymbolByNetwork(network)} reserves ${formatUnits(reservesZETA)}/${formatUnits(
+      reservesToken,
+      tokenDecimals
+    )}`
   );
   return ZETAValue;
 };
@@ -102,10 +106,11 @@ async function addLiquidity(
   const [deployer] = await ethers.getSigners();
 
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
+  const uniswapRouter = await UniswapV2Router02__factory.connect(uniswapRouterAddress, deployer);
 
   const tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId(network));
-
-  const uniswapRouter = await UniswapV2Router02__factory.connect(uniswapRouterAddress, deployer);
+  const tokenContract = ERC20__factory.connect(tokenAddress, deployer);
+  const tokenDecimals = await tokenContract.decimals();
 
   const zetaToAdd = initLiquidityPool
     ? ZETA_TO_ADD
@@ -113,16 +118,19 @@ async function addLiquidity(
         network,
         WZETAAddress,
         uniswapFactoryAddress,
-        tokenAddress,
+        tokenContract,
         tokenAmountToAdd,
-        uniswapRouter,
         deployer
       );
 
   console.log(
-    `Zeta/${getGasSymbolByNetwork(network)} to add ${formatUnits(zetaToAdd)}/${formatUnits(tokenAmountToAdd)}`
+    `Zeta/${getGasSymbolByNetwork(network)} to add ${formatUnits(zetaToAdd)}/${formatUnits(
+      tokenAmountToAdd,
+      tokenDecimals
+    )}`
   );
-  // await addTokenEthLiquidity(tokenAddress, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
+
+  // await addTokenEthLiquidity(tokenContract, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
 }
 async function main() {
   const WZETA_ADDRESS = getAddress({
@@ -143,24 +151,24 @@ async function main() {
     zetaNetwork: "athens"
   });
 
-  await addLiquidity("goerli", parseUnits("30", 18), WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  await addLiquidity("goerli", parseUnits("100", 18), WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
   await addLiquidity(
     "polygon-mumbai",
-    parseUnits("30", 18),
+    parseUnits("100", 18),
     WZETA_ADDRESS,
     UNISWAP_FACTORY_ADDRESS,
     UNISWAP_ROUTER_ADDRESS
   );
   await addLiquidity(
     "bsc-testnet",
-    parseUnits("30", 18),
+    parseUnits("100", 18),
     WZETA_ADDRESS,
     UNISWAP_FACTORY_ADDRESS,
     UNISWAP_ROUTER_ADDRESS
   );
   await addLiquidity(
     "bitcoin-test",
-    parseUnits("0.002", 8),
+    parseUnits("0.01", 8),
     WZETA_ADDRESS,
     UNISWAP_FACTORY_ADDRESS,
     UNISWAP_ROUTER_ADDRESS
