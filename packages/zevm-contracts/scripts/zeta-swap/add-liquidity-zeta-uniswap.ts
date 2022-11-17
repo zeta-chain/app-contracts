@@ -4,6 +4,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getChainId } from "@zetachain/addresses";
 import { NetworkName } from "@zetachain/addresses";
 import { getAddress } from "@zetachain/addresses";
+import { getGasSymbolByNetwork } from "@zetachain/addresses-tools";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
@@ -13,7 +14,6 @@ import {
   IUniswapV2Pair__factory,
   IUniswapV2Router02,
   SystemContract__factory,
-  UniswapV2Router02,
   UniswapV2Router02__factory
 } from "../../typechain-types";
 import { SYSTEM_CONTRACT } from "../systemConstants";
@@ -62,6 +62,7 @@ const addTokenEthLiquidity = async (
 };
 
 const estimateZetaForToken = async (
+  network: NetworkName,
   tokenAddress: string,
   tokenToAdd: BigNumber,
   uniswapRouter: IUniswapV2Router02,
@@ -92,11 +93,14 @@ const estimateZetaForToken = async (
   const reservesZETA = WZETA_ADDRESS < tokenAddress ? reserves.reserve0 : reserves.reserve1;
   const reservesToken = WZETA_ADDRESS > tokenAddress ? reserves.reserve0 : reserves.reserve1;
   const ZETAValue = await uniswapRouter.quote(tokenToAdd, reservesZETA, reservesToken);
-  console.log(`Zeta/Token reserves ${formatUnits(reservesZETA)}/${formatUnits(reservesToken)}`);
+  console.log(
+    `Zeta/${getGasSymbolByNetwork(network)} reserves ${formatUnits(reservesZETA)}/${formatUnits(reservesToken)}`
+  );
   return ZETAValue;
 };
 
 async function addLiquidity(network: NetworkName, tokenAmountToAdd: BigNumber) {
+  console.log(`Adding liquidity for: ${network}`);
   const initLiquidityPool = !ZETA_TO_ADD.isZero();
 
   const [deployer] = await ethers.getSigners();
@@ -115,16 +119,18 @@ async function addLiquidity(network: NetworkName, tokenAmountToAdd: BigNumber) {
 
   const zetaToAdd = initLiquidityPool
     ? ZETA_TO_ADD
-    : await estimateZetaForToken(tokenAddress, tokenAmountToAdd, uniswapRouter, deployer);
+    : await estimateZetaForToken(network, tokenAddress, tokenAmountToAdd, uniswapRouter, deployer);
 
-  console.log(`Zeta/Token to add ${formatUnits(zetaToAdd)}/${formatUnits(tokenAmountToAdd)}`);
-  await addTokenEthLiquidity(tokenAddress, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
+  console.log(
+    `Zeta/${getGasSymbolByNetwork(network)} to add ${formatUnits(zetaToAdd)}/${formatUnits(tokenAmountToAdd)}`
+  );
+  // await addTokenEthLiquidity(tokenAddress, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
 }
 async function main() {
-  await addLiquidity("goerli", parseUnits("20", 18));
-  await addLiquidity("polygon-mumbai", parseUnits("20", 18));
-  await addLiquidity("bsc-testnet", parseUnits("20", 18));
-  // await addLiquidity("bitcoin-test", parseUnits("0.002", 8));
+  await addLiquidity("goerli", parseUnits("30", 18));
+  await addLiquidity("polygon-mumbai", parseUnits("30", 18));
+  await addLiquidity("bsc-testnet", parseUnits("30", 18));
+  await addLiquidity("bitcoin-test", parseUnits("0.002", 8));
 }
 
 main()

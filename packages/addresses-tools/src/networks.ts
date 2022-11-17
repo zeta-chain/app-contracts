@@ -3,10 +3,10 @@ import type { NetworksUserConfig } from "hardhat/types";
 export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserConfig => ({
   "athens": {
     accounts: PRIVATE_KEYS,
-    // chainId: 8666,
+    // chainId: 7001,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `http://3.132.197.22:8545`,
+    url: `https://archive.athens2.zetachain.com/evm`,
   },
   "bsc-localnet": {
     gas: 5000000,

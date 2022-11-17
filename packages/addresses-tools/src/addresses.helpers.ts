@@ -81,6 +81,26 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
   return v[networkName];
 };
 
+export const getGasSymbolByNetwork = (networkName: NetworkName): string => {
+  const v = {
+    athens: "ZETA",
+    "bitcoin-test": "BTC",
+    "bsc-localnet": "BNB",
+    "bsc-testnet": "BNB",
+    "eth-localnet": "ETH",
+    "eth-mainnet": "ETH",
+    goerli: "ETH",
+    hardhat: "ETH",
+    "klaytn-baobab": "KLAY",
+    "klaytn-cypress": "KLAY",
+    "polygon-localnet": "MATIC",
+    "polygon-mumbai": "MATIC",
+    ropsten: "BYEBYE"
+  };
+
+  return v[networkName];
+};
+
 const MissingZetaNetworkError = new Error(
   "ZETA_NETWORK is not defined, please set the environment variable (e.g.: ZETA_NETWORK=athens <command>)"
 );

@@ -1,32 +1,32 @@
 import { getChainId } from "@zetachain/addresses";
+import { NetworkName } from "@zetachain/addresses";
+import { getGasSymbolByNetwork } from "@zetachain/addresses-tools";
 import { ethers } from "hardhat";
 
-import { SystemContract__factory } from "../../typechain-types";
+import { SystemContract, SystemContract__factory } from "../../typechain-types";
 import { SYSTEM_CONTRACT } from "../systemConstants";
+
+const getZRC20Address = async (systemContract: SystemContract, network: NetworkName) => {
+  const tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId(network));
+  console.log(`${getGasSymbolByNetwork(network)}`, tokenAddress);
+};
 
 async function main() {
   const [deployer] = await ethers.getSigners();
 
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
-  let tokenAddress;
-  tokenAddress = await systemContract.wZetaContractAddress();
-  console.log(`wzetaContractAddress:`, tokenAddress);
+  const uniswapFactoryAddress = await systemContract.uniswapv2FactoryAddress();
+  console.log(`uniswapv2Factory:`, uniswapFactoryAddress);
+  const uniswapRouterAddress = await systemContract.uniswapv2Router02Address();
+  console.log(`uniswapv2Router02:`, uniswapRouterAddress);
 
-  tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId("bitcoin-test"));
-  console.log(`tBTC:`, tokenAddress);
-  tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId("goerli"));
-  console.log(`gETH:`, tokenAddress);
-  tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId("klaytn-baobab"));
-  console.log(`tKLAY:`, tokenAddress);
-  tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId("bsc-testnet"));
-  console.log(`tBNB:`, tokenAddress);
-  tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId("polygon-mumbai"));
-  console.log(`tMATIC:`, tokenAddress);
-
-  tokenAddress = await systemContract.uniswapv2FactoryAddress();
-  console.log(`uniswapv2FactoryAddress:`, tokenAddress);
-  tokenAddress = await systemContract.uniswapv2Router02Address();
-  console.log(`uniswapv2Router02Address:`, tokenAddress);
+  const WZETAAddress = await systemContract.wZetaContractAddress();
+  console.log(`WZETA:`, WZETAAddress);
+  await getZRC20Address(systemContract, "bitcoin-test");
+  await getZRC20Address(systemContract, "goerli");
+  await getZRC20Address(systemContract, "klaytn-baobab");
+  await getZRC20Address(systemContract, "bsc-testnet");
+  await getZRC20Address(systemContract, "polygon-mumbai");
 }
 
 main()

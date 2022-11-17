@@ -124,7 +124,7 @@ export type ZetaNetworkName = ZetaLocalNetworkName | ZetaMainnetNetworkName | Ze
 
 export const getChainId = (networkName: NetworkName) => {
   const chainIds: Record<NetworkName, number> = {
-    athens: 101,
+    athens: 7001,
     "bitcoin-test": 18332,
     "bsc-localnet": 97,
     "bsc-testnet": 97,
