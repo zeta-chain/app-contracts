@@ -12,7 +12,7 @@ async function sendGas() {
 
   const [, tssUpdaterSigner] = await ethers.getSigners();
 
-  const newTssAddress = "0x7c125C1d515b8945841b3d5144a060115C58725F";
+  const newTssAddress = "0x0000000000000000000000000000000000000000";
 
   if (isEthNetworkName(network.name)) {
     const contract = (
