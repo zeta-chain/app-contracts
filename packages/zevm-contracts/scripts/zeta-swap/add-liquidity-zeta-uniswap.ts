@@ -19,6 +19,11 @@ import {
 } from "../../typechain-types";
 import { SYSTEM_CONTRACT } from "../systemConstants";
 
+const BTC_TO_ADD = parseUnits("0", 8);
+const ETH_TO_ADD = parseUnits("1500");
+const MATIC_TO_ADD = parseUnits("1500");
+const BNB_TO_ADD = parseUnits("100");
+
 const ZETA_TO_ADD = parseUnits("0");
 
 interface Pair {
@@ -151,28 +156,18 @@ async function main() {
     zetaNetwork: "athens"
   });
 
-  await addLiquidity("goerli", parseUnits("100", 18), WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
-  await addLiquidity(
-    "polygon-mumbai",
-    parseUnits("100", 18),
-    WZETA_ADDRESS,
-    UNISWAP_FACTORY_ADDRESS,
-    UNISWAP_ROUTER_ADDRESS
-  );
-  await addLiquidity(
-    "bsc-testnet",
-    parseUnits("100", 18),
-    WZETA_ADDRESS,
-    UNISWAP_FACTORY_ADDRESS,
-    UNISWAP_ROUTER_ADDRESS
-  );
-  await addLiquidity(
-    "bitcoin-test",
-    parseUnits("0.01", 8),
-    WZETA_ADDRESS,
-    UNISWAP_FACTORY_ADDRESS,
-    UNISWAP_ROUTER_ADDRESS
-  );
+  if (!ETH_TO_ADD.isZero()) {
+    await addLiquidity("goerli", ETH_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  }
+  if (!MATIC_TO_ADD.isZero()) {
+    await addLiquidity("polygon-mumbai", MATIC_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  }
+  if (!BNB_TO_ADD.isZero()) {
+    await addLiquidity("bsc-testnet", BNB_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  }
+  if (!BTC_TO_ADD.isZero()) {
+    await addLiquidity("bitcoin-test", BTC_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  }
 }
 
 main()

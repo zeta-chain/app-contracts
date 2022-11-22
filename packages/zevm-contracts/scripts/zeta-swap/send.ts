@@ -1,15 +1,21 @@
 import { parseEther } from "@ethersproject/units";
+import { getAddress } from "@zetachain/addresses";
 import { ethers } from "hardhat";
-
-import { TSS_ATHENS2 } from "../systemConstants";
+import { network } from "hardhat";
 
 const main = async () => {
   console.log(`Sending native token...`);
 
   const [signer] = await ethers.getSigners();
 
+  const tssAddress = getAddress({
+    address: "tss",
+    networkName: network.name,
+    zetaNetwork: "athens"
+  });
+
   const tx = await signer.sendTransaction({
-    to: TSS_ATHENS2,
+    to: tssAddress,
     value: parseEther("30")
   });
 

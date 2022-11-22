@@ -4,7 +4,7 @@ import { getAddress, isNetworkName } from "@zetachain/addresses";
 import { ethers } from "hardhat";
 import { network } from "hardhat";
 
-import { TSS_ATHENS2, ZRC20Addresses } from "../systemConstants";
+import { ZRC20Addresses } from "../systemConstants";
 import { getSwapData } from "./helpers";
 
 const main = async () => {
@@ -16,17 +16,23 @@ const main = async () => {
 
   const [signer] = await ethers.getSigners();
 
-  const zetaSwap = getAddress({
+  const zetaSwapAddress = getAddress({
     address: "zetaSwap",
     networkName: "athens",
     zetaNetwork: "athens"
   });
 
-  const data = getSwapData(zetaSwap, signer.address, destinationToken, BigNumber.from("0"));
+  const tssAddress = getAddress({
+    address: "tss",
+    networkName: network.name,
+    zetaNetwork: "athens"
+  });
+
+  const data = getSwapData(zetaSwapAddress, signer.address, destinationToken, BigNumber.from("0"));
 
   const tx = await signer.sendTransaction({
     data,
-    to: TSS_ATHENS2,
+    to: tssAddress,
     value: parseEther("0.005")
   });
 
