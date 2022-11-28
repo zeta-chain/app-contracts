@@ -2,7 +2,7 @@
 pragma solidity 0.8.7;
 
 import "../interfaces/zContract.sol";
-import "../interfaces/IZRC4.sol";
+import "../interfaces/IZRC20.sol";
 
 interface SystemContractErrors {
     error CallerIsNotFungibleModule();
@@ -16,7 +16,7 @@ interface SystemContractErrors {
 
 contract SystemContract is SystemContractErrors {
     mapping(uint256 => uint256) public gasPriceByChainId;
-    mapping(uint256 => address) public gasCoinZRC4ByChainId;
+    mapping(uint256 => address) public gasCoinZRC20ByChainId;
     mapping(uint256 => address) public gasZetaPoolByChainId;
 
     address public constant FUNGIBLE_MODULE_ADDRESS = 0x735b14BB79463307AAcBED86DAf3322B1e6226aB;
@@ -42,9 +42,9 @@ contract SystemContract is SystemContractErrors {
         emit SystemContractDeployed();
     }
 
-    // deposit foreign coins into ZRC4 and call user specified contract on zEVM
+    // deposit foreign coins into ZRC20 and call user specified contract on zEVM
     function depositAndCall(
-        address zrc4,
+        address zrc20,
         uint256 amount,
         address target,
         bytes calldata message
@@ -52,8 +52,8 @@ contract SystemContract is SystemContractErrors {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
         if (target == FUNGIBLE_MODULE_ADDRESS || target == address(this)) revert InvalidTarget();
 
-        IZRC4(zrc4).deposit(target, amount);
-        zContract(target).onCrossChainCall(zrc4, amount, message);
+        IZRC20(zrc20).deposit(target, amount);
+        zContract(target).onCrossChainCall(zrc20, amount, message);
     }
 
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
@@ -93,10 +93,10 @@ contract SystemContract is SystemContractErrors {
         emit SetGasPrice(chainID, price);
     }
 
-    function setGasCoinZRC4(uint256 chainID, address zrc4) external {
+    function setGasCoinZRC20(uint256 chainID, address zrc20) external {
         if (msg.sender != FUNGIBLE_MODULE_ADDRESS) revert CallerIsNotFungibleModule();
-        gasCoinZRC4ByChainId[chainID] = zrc4;
-        emit SetGasCoin(chainID, zrc4);
+        gasCoinZRC20ByChainId[chainID] = zrc20;
+        emit SetGasCoin(chainID, zrc20);
     }
 
     // set the pool wzeta/erc20 address

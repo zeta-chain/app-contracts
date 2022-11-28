@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "../interfaces/IZRC4.sol";
+import "../interfaces/IZRC20.sol";
 import "../interfaces/zContract.sol";
 
 interface ICRV3 {
@@ -22,24 +22,24 @@ interface ZetaCurveSwapErrors {
 
 contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
     address public crv3pool; // gETH/tBNB/tMATIC pool
-    address[3] public crvZrc4s;
+    address[3] public crvZRC20s;
 
-    constructor(address crv3pool_, address[3] memory zrc4s_) {
+    constructor(address crv3pool_, address[3] memory ZRC20s_) {
         crv3pool = crv3pool_;
-        crvZrc4s = zrc4s_;
+        crvZRC20s = ZRC20s_;
     }
 
     function encode(
-        address zrc4,
+        address zrc20,
         address recipient,
         uint256 minAmountOut
     ) public pure returns (bytes memory) {
-        return abi.encode(zrc4, recipient, minAmountOut);
+        return abi.encode(zrc20, recipient, minAmountOut);
     }
 
-    function addr2idx(address zrc4) public view returns (uint256) {
+    function addr2idx(address zrc20) public view returns (uint256) {
         for (uint256 i = 0; i < 3; i++) {
-            if (crvZrc4s[i] == zrc4) {
+            if (crvZRC20s[i] == zrc20) {
                 return i;
             }
         }
@@ -47,37 +47,37 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
     }
 
     function _doWithdrawal(
-        address targetZRC4,
+        address targetZRC20,
         uint256 amount,
         bytes32 receipient
     ) private {
-        (address gasZRC4, uint256 gasFee) = IZRC4(targetZRC4).withdrawGasFee();
+        (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
 
-        if (gasZRC4 != targetZRC4) revert WrongGasContract();
+        if (gasZRC20 != targetZRC20) revert WrongGasContract();
         if (gasFee >= amount) revert NotEnoughToPayGasFee();
 
-        IZRC4(targetZRC4).approve(targetZRC4, gasFee);
-        IZRC4(targetZRC4).withdraw(abi.encodePacked(receipient), amount - gasFee);
+        IZRC20(targetZRC20).approve(targetZRC20, gasFee);
+        IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
     function onCrossChainCall(
-        address zrc4,
+        address zrc20,
         uint256 amount,
         bytes calldata message
     ) external override {
-        (address targetZRC4, bytes32 receipient, ) = abi.decode(message, (address, bytes32, uint256));
+        (address targetZRC20, bytes32 receipient, ) = abi.decode(message, (address, bytes32, uint256));
 
         address[] memory path = new address[](2);
-        path[0] = zrc4;
-        path[1] = targetZRC4;
-        IZRC4(zrc4).approve(address(crv3pool), amount);
+        path[0] = zrc20;
+        path[1] = targetZRC20;
+        IZRC20(zrc20).approve(address(crv3pool), amount);
 
-        uint256 i = addr2idx(zrc4);
-        uint256 j = addr2idx(targetZRC4);
+        uint256 i = addr2idx(zrc20);
+        uint256 j = addr2idx(targetZRC20);
         require(i >= 0 && i < 3 && j >= 0 && j < 3 && i != j, "i,j error");
 
         uint256 outAmount = ICRV3(crv3pool).exchange(i, j, amount, 0, false);
 
-        _doWithdrawal(targetZRC4, outAmount, receipient);
+        _doWithdrawal(targetZRC20, outAmount, receipient);
     }
 }

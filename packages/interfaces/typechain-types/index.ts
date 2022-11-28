@@ -38,8 +38,8 @@ export type { IQuoter } from "./@uniswap/v3-periphery/contracts/interfaces/IQuot
 export { IQuoter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/IQuoter__factory";
 export type { ISwapRouter } from "./@uniswap/v3-periphery/contracts/interfaces/ISwapRouter";
 export { ISwapRouter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter__factory";
-export type { ImmutableCreate2Factory } from "./contracts/ImmutableCreate2Factory";
-export { ImmutableCreate2Factory__factory } from "./factories/contracts/ImmutableCreate2Factory__factory";
+export type { ImmutableCreate2Factory } from "./contracts/ImmutableCreate2Factory.sol/ImmutableCreate2Factory";
+export { ImmutableCreate2Factory__factory } from "./factories/contracts/ImmutableCreate2Factory.sol/ImmutableCreate2Factory__factory";
 export type { ConnectorErrors } from "./contracts/interfaces/ConnectorErrors";
 export { ConnectorErrors__factory } from "./factories/contracts/interfaces/ConnectorErrors__factory";
 export type { ZetaErrors } from "./contracts/interfaces/ZetaErrors";
@@ -54,6 +54,8 @@ export type { ZetaTokenConsumer } from "./contracts/interfaces/ZetaInterfaces.so
 export { ZetaTokenConsumer__factory } from "./factories/contracts/interfaces/ZetaInterfaces.sol/ZetaTokenConsumer__factory";
 export type { ZetaNonEthInterface } from "./contracts/interfaces/ZetaNonEthInterface";
 export { ZetaNonEthInterface__factory } from "./factories/contracts/interfaces/ZetaNonEthInterface__factory";
+export type { Ownable2Step } from "./contracts/openzeppelin/Ownable2Step";
+export { Ownable2Step__factory } from "./factories/contracts/openzeppelin/Ownable2Step__factory";
 export type { INonfungiblePositionManager } from "./contracts/testing/TestUniswapV3Contracts.sol/INonfungiblePositionManager";
 export { INonfungiblePositionManager__factory } from "./factories/contracts/testing/TestUniswapV3Contracts.sol/INonfungiblePositionManager__factory";
 export type { IPoolInitializer } from "./contracts/testing/TestUniswapV3Contracts.sol/IPoolInitializer";

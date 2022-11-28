@@ -1,6 +1,5 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import { ZetaTokenConsumerUniV3__factory } from "@zetachain/interfaces/typechain-types";
 import { BigNumber, ContractReceipt } from "ethers";
 
@@ -10,7 +9,7 @@ import {
   ERC20__factory,
   IUniswapV2Pair__factory,
   MultiChainSwapUniV2__factory,
-  UniswapV2Router02__factory,
+  UniswapV2Router02__factory
 } from "../typechain-types";
 
 export const getMintTokenId = (mintTx: ContractReceipt) => mintTx.events?.[0].args?.tokenId;
