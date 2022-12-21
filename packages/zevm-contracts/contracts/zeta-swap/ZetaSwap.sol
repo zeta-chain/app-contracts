@@ -36,11 +36,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
     }
 
     // calculates the CREATE2 address for a pair without making any external calls
-    function uniswapv2PairFor(
-        address factory,
-        address tokenA,
-        address tokenB
-    ) public pure returns (address pair) {
+    function uniswapv2PairFor(address factory, address tokenA, address tokenB) public pure returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
         pair = address(
             uint160(
@@ -58,19 +54,11 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         );
     }
 
-    function encode(
-        address zrc20,
-        address recipient,
-        uint256 minAmountOut
-    ) public pure returns (bytes memory) {
+    function encode(address zrc20, address recipient, uint256 minAmountOut) public pure returns (bytes memory) {
         return abi.encode(zrc20, recipient, minAmountOut);
     }
 
-    function _doWithdrawal(
-        address targetZRC20,
-        uint256 amount,
-        bytes32 receipient
-    ) private {
+    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 receipient) private {
         (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
 
         if (gasZRC20 != targetZRC20) revert WrongGasContract();
@@ -92,7 +80,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         bytes32 receipient,
         uint256 minAmountOut
     ) internal {
-        bool existsPairPool = _existsPairPool(zrc20, zetaToken);
+        bool existsPairPool = _existsPairPool(zrc20, targetZRC20);
 
         address[] memory path;
         if (existsPairPool) {
@@ -117,11 +105,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         _doWithdrawal(targetZRC20, amounts[path.length - 1], receipient);
     }
 
-    function onCrossChainCall(
-        address zrc20,
-        uint256 amount,
-        bytes calldata message
-    ) external virtual override {
+    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
         (address targetZRC20, bytes32 receipient, uint256 minAmountOut) = abi.decode(
             message,
             (address, bytes32, uint256)

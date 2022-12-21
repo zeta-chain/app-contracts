@@ -65,7 +65,7 @@ library SwapHelperLib {
         address targetZRC20,
         uint256 minAmountOut
     ) internal returns (uint256) {
-        bool existsPairPool = _existsPairPool(uniswapV2Router, zrc20, zetaToken);
+        bool existsPairPool = _existsPairPool(uniswapV2Router, zrc20, targetZRC20);
 
         address[] memory path;
         if (existsPairPool) {
