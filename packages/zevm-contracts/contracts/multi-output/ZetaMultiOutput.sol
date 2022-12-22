@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "../shared/BytesHelperLib.sol";
 import "../shared/SwapHelperLib.sol";
 import "../interfaces/IZRC20.sol";
@@ -10,7 +11,7 @@ interface ZetaMultiOutputErrors {
     error NoTransfersToDo();
 }
 
-contract ZetaMultiOutput is zContract, ZetaMultiOutputErrors {
+contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
     address public immutable zetaToken;
     address public immutable uniswapV2Router;
     address[] public destinationTokens;
@@ -23,7 +24,7 @@ contract ZetaMultiOutput is zContract, ZetaMultiOutputErrors {
         uniswapV2Router = uniswapV2Router_;
     }
 
-    function registerDestinationToken(address destinationToken) external {
+    function registerDestinationToken(address destinationToken) external onlyOwner {
         destinationTokens.push(destinationToken);
         emit destinationRegistered(destinationToken);
     }

@@ -39,3 +39,10 @@ export const getBitcoinTxMemoForTest = (destinationAddress: string, chainId: str
   const paddedMemo = rawMemo.padEnd(HashZero.length - 2, "0");
   return `0x${paddedMemo}`;
 };
+
+export const getMultiOOutputForTest = (destinationAddress: string) => {
+  const rawMemo = `${destinationAddress.slice(2)}`;
+
+  const paddedMemo = rawMemo.padEnd(HashZero.length - 2, "0");
+  return `0x${paddedMemo}`;
+};

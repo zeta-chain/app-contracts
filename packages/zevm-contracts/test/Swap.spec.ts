@@ -110,7 +110,7 @@ describe("ZetaSwap tests", () => {
       await zetaSwapV2Contract.onCrossChainCall(ZRC20Contracts[0].address, amount, params);
 
       const endBalance = await ZRC20Contracts[1].balanceOf(deployer.address);
-      await expect(endBalance).to.be.gt(initBalance);
+      expect(endBalance).to.be.gt(initBalance);
     });
   });
 
@@ -125,7 +125,7 @@ describe("ZetaSwap tests", () => {
       await zetaSwapBTCContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params);
 
       const endBalance = await ZRC20Contracts[1].balanceOf(deployer.address);
-      await expect(endBalance).to.be.gt(initBalance);
+      expect(endBalance).to.be.gt(initBalance);
     });
   });
 
@@ -140,7 +140,7 @@ describe("ZetaSwap tests", () => {
       await zetaSwapBTCV2Contract.onCrossChainCall(ZRC20Contracts[0].address, amount, params);
 
       const endBalance = await ZRC20Contracts[1].balanceOf(deployer.address);
-      await expect(endBalance).to.be.gt(initBalance);
+      expect(endBalance).to.be.gt(initBalance);
     });
   });
 });
