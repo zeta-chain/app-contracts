@@ -78,5 +78,34 @@ describe("ZetaSwap tests", () => {
       const zetaMultiOutputContractOtherUser = zetaMultiOutputContract.connect(accounts[1]);
       await expect(zetaMultiOutputContractOtherUser.registerDestinationToken(ZRC20Contracts[2].address)).to.be.reverted;
     });
+
+    it("Should throw error if there's no destination registered", async () => {
+      const Factory = (await ethers.getContractFactory("ZetaMultiOutput")) as ZetaMultiOutput__factory;
+      zetaMultiOutputContract = (await Factory.deploy(systemContract.address)) as ZetaMultiOutput;
+      await zetaMultiOutputContract.deployed();
+
+      const amount = parseUnits("10");
+      await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
+
+      const params = getMultiOOutputForTest(deployer.address);
+      await expect(
+        zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
+      ).to.be.revertedWith("NoTransfersToDo()");
+    });
+
+    it("Should throw error if there's no transfer to do", async () => {
+      const Factory = (await ethers.getContractFactory("ZetaMultiOutput")) as ZetaMultiOutput__factory;
+      zetaMultiOutputContract = (await Factory.deploy(systemContract.address)) as ZetaMultiOutput;
+      await zetaMultiOutputContract.deployed();
+      zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[0].address);
+
+      const amount = parseUnits("10");
+      await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
+
+      const params = getMultiOOutputForTest(deployer.address);
+      await expect(
+        zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
+      ).to.be.revertedWith("NoTransfersToDo()");
+    });
   });
 });
