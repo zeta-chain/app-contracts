@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "../shared/SwapHelperLib.sol";
+import "../system/SystemContract.sol";
 import "../interfaces/zContract.sol";
+import "../shared/SwapHelperLib.sol";
 
 contract ZetaSwapV2 is zContract {
-    address public zetaToken;
-    address public immutable uniswapV2Router;
+    SystemContract public immutable systemContract;
 
-    constructor(address zetaToken_, address uniswapV2Router_) {
-        zetaToken = zetaToken_;
-        uniswapV2Router = uniswapV2Router_;
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
     }
 
     function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
@@ -19,8 +18,9 @@ contract ZetaSwapV2 is zContract {
             (address, bytes32, uint256)
         );
         uint256 outputAmount = SwapHelperLib._doSwap(
-            zetaToken,
-            uniswapV2Router,
+            systemContract.wZetaContractAddress(),
+            systemContract.uniswapv2FactoryAddress(),
+            systemContract.uniswapv2Router02Address(),
             zrc20,
             amount,
             targetZRC20,

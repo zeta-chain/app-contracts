@@ -1,29 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
+import "../system/SystemContract.sol";
+import "../interfaces/zContract.sol";
 import "../shared/BytesHelperLib.sol";
 import "../shared/SwapHelperLib.sol";
-import "../interfaces/zContract.sol";
-import "../system/SystemContract.sol";
-import "./ZetaSwap.sol";
 
-contract ZetaSwapBtcInboundV2 is ZetaSwap {
-    address immutable systemContractAddress;
+contract ZetaSwapBtcInboundV2 {
+    SystemContract public immutable systemContract;
 
-    constructor(
-        address zetaToken_,
-        address uniswapV2Router_,
-        address systemContractAddress_
-    ) ZetaSwap(zetaToken_, uniswapV2Router_) {
-        systemContractAddress = systemContractAddress_;
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
     }
 
-    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external override {
-        address receipient = BytesHelperLib.bytesToAddress(message, 0, 20);
-        uint32 targetZRC20ChainId = BytesHelperLib.bytesToUint32(message, 20, 4);
-        address targetZRC20 = SystemContract(systemContractAddress).gasCoinZRC20ByChainId(targetZRC20ChainId);
+    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external {
+        address receipient = BytesHelperLib.bytesToAddress(message, 0);
+        uint32 targetZRC20ChainId = BytesHelperLib.bytesToUint32(message, 20);
+        address targetZRC20 = systemContract.gasCoinZRC20ByChainId(targetZRC20ChainId);
 
-        uint256 outputAmount = SwapHelperLib._doSwap(zetaToken, uniswapV2Router, zrc20, amount, targetZRC20, 0);
+        uint256 outputAmount = SwapHelperLib._doSwap(
+            systemContract.wZetaContractAddress(),
+            systemContract.uniswapv2FactoryAddress(),
+            systemContract.uniswapv2Router02Address(),
+            zrc20,
+            amount,
+            targetZRC20,
+            0
+        );
         SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, BytesHelperLib.addressToBytes(receipient));
     }
 }

@@ -2,26 +2,25 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../shared/BytesHelperLib.sol";
-import "../shared/SwapHelperLib.sol";
+import "../system/SystemContract.sol";
 import "../interfaces/IZRC20.sol";
 import "../interfaces/zContract.sol";
+import "../shared/BytesHelperLib.sol";
+import "../shared/SwapHelperLib.sol";
 
 interface ZetaMultiOutputErrors {
     error NoTransfersToDo();
 }
 
 contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
-    address public immutable zetaToken;
-    address public immutable uniswapV2Router;
+    SystemContract public immutable systemContract;
     address[] public destinationTokens;
 
     event destinationRegistered(address);
     event withdrawal(address, uint256, address);
 
-    constructor(address zetaToken_, address uniswapV2Router_) {
-        zetaToken = zetaToken_;
-        uniswapV2Router = uniswapV2Router_;
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
     }
 
     function registerDestinationToken(address destinationToken) external onlyOwner {
@@ -42,7 +41,7 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
     function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
         if (_transfersToDo(zrc20) == 0) revert NoTransfersToDo();
 
-        address receipient = BytesHelperLib.bytesToAddress(message, 0, 20);
+        address receipient = BytesHelperLib.bytesToAddress(message, 0);
         uint256 amountToTransfer = amount / _transfersToDo(zrc20);
         uint256 leftOver = amount - amountToTransfer * _transfersToDo(zrc20);
 
@@ -59,8 +58,9 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
             }
 
             uint256 outputAmount = SwapHelperLib._doSwap(
-                zetaToken,
-                uniswapV2Router,
+                systemContract.wZetaContractAddress(),
+                systemContract.uniswapv2FactoryAddress(),
+                systemContract.uniswapv2Router02Address(),
                 zrc20,
                 amountToTransfer,
                 targetZRC20,

@@ -2,17 +2,17 @@
 pragma solidity =0.8.7;
 
 library BytesHelperLib {
-    function bytesToAddress(bytes calldata data, uint256 offset, uint256 size) internal pure returns (address output) {
-        bytes memory b = data[offset:offset + size];
+    function bytesToAddress(bytes calldata data, uint256 offset) internal pure returns (address output) {
+        bytes memory b = data[offset:offset + 20];
         assembly {
-            output := mload(add(b, size))
+            output := mload(add(b, 20))
         }
     }
 
-    function bytesToUint32(bytes calldata data, uint256 offset, uint256 size) internal pure returns (uint32 output) {
-        bytes memory b = data[offset:offset + size];
+    function bytesToUint32(bytes calldata data, uint256 offset) internal pure returns (uint32 output) {
+        bytes memory b = data[offset:offset + 4];
         assembly {
-            output := mload(add(b, size))
+            output := mload(add(b, 4))
         }
     }
 

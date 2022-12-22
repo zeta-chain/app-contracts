@@ -23,7 +23,7 @@ contract TestZRC20 is ERC20 {
     }
 
     function withdraw(bytes calldata to, uint256 amount) external returns (bool) {
-        address toAddress = BytesHelperLib.bytesToAddress(to, 12, 20);
+        address toAddress = BytesHelperLib.bytesToAddress(to, 12);
         return transfer(toAddress, amount);
     }
 

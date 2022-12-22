@@ -45,7 +45,7 @@ describe("ZetaSwap tests", () => {
     systemContract = evmSetupResult.systemContract;
 
     const Factory = (await ethers.getContractFactory("ZetaMultiOutput")) as ZetaMultiOutput__factory;
-    zetaMultiOutputContract = (await Factory.deploy(wGasToken, uniswapRouterAddr)) as ZetaMultiOutput;
+    zetaMultiOutputContract = (await Factory.deploy(systemContract.address)) as ZetaMultiOutput;
     await zetaMultiOutputContract.deployed();
 
     zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[0].address);

@@ -52,20 +52,21 @@ library SwapHelperLib {
         IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
-    function _existsPairPool(address uniswapV2Router, address zrc20A, address zrc20B) internal view returns (bool) {
-        address uniswapPool = uniswapv2PairFor(uniswapV2Router, zrc20A, zrc20B);
+    function _existsPairPool(address uniswapV2Factory, address zrc20A, address zrc20B) internal view returns (bool) {
+        address uniswapPool = uniswapv2PairFor(uniswapV2Factory, zrc20A, zrc20B);
         return IZRC20(zrc20A).balanceOf(uniswapPool) > 0 && IZRC20(zrc20B).balanceOf(uniswapPool) > 0;
     }
 
     function _doSwap(
         address zetaToken,
+        address uniswapV2Factory,
         address uniswapV2Router,
         address zrc20,
         uint256 amount,
         address targetZRC20,
         uint256 minAmountOut
     ) internal returns (uint256) {
-        bool existsPairPool = _existsPairPool(uniswapV2Router, zrc20, targetZRC20);
+        bool existsPairPool = _existsPairPool(uniswapV2Factory, zrc20, targetZRC20);
 
         address[] memory path;
         if (existsPairPool) {
