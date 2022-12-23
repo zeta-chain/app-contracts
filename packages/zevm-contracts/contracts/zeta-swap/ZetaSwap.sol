@@ -20,11 +20,13 @@ interface ZetaSwapErrors {
 contract ZetaSwap is zContract, ZetaSwapErrors {
     uint16 internal constant MAX_DEADLINE = 200;
 
-    address public zetaToken;
+    address public immutable zetaToken;
+    address public immutable uniswapV2Factory;
     address public immutable uniswapV2Router;
 
-    constructor(address zetaToken_, address uniswapV2Router_) {
+    constructor(address zetaToken_, address uniswapV2Factory_, address uniswapV2Router_) {
         zetaToken = zetaToken_;
+        uniswapV2Factory = uniswapV2Factory_;
         uniswapV2Router = uniswapV2Router_;
     }
 
@@ -69,7 +71,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
     }
 
     function _existsPairPool(address zrc20A, address zrc20B) private view returns (bool) {
-        address uniswapPool = uniswapv2PairFor(uniswapV2Router, zrc20A, zrc20B);
+        address uniswapPool = uniswapv2PairFor(uniswapV2Factory, zrc20A, zrc20B);
         return IZRC20(zrc20A).balanceOf(uniswapPool) > 0 && IZRC20(zrc20B).balanceOf(uniswapPool) > 0;
     }
 

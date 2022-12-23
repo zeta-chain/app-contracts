@@ -60,7 +60,7 @@ describe("ZetaSwap tests", () => {
     systemContract = evmSetupResult.systemContract;
 
     const FactorySwap = (await ethers.getContractFactory("ZetaSwap")) as ZetaSwap__factory;
-    zetaSwapContract = (await FactorySwap.deploy(wGasToken, uniswapRouterAddr)) as ZetaSwap;
+    zetaSwapContract = (await FactorySwap.deploy(wGasToken, uniswapFactoryAddr, uniswapRouterAddr)) as ZetaSwap;
     await zetaSwapContract.deployed();
 
     const FactorySwapV2 = (await ethers.getContractFactory("ZetaSwapV2")) as ZetaSwapV2__factory;
@@ -70,6 +70,7 @@ describe("ZetaSwap tests", () => {
     const FactoryBTC = (await ethers.getContractFactory("ZetaSwapBtcInbound")) as ZetaSwapBtcInbound__factory;
     zetaSwapBTCContract = (await FactoryBTC.deploy(
       wGasToken,
+      uniswapFactoryAddr,
       uniswapRouterAddr,
       systemContract.address
     )) as ZetaSwapBtcInbound;
