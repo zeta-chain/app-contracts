@@ -1,6 +1,13 @@
 import type { NetworksUserConfig } from "hardhat/types";
 
 export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserConfig => ({
+  "athens": {
+    accounts: PRIVATE_KEYS,
+    // chainId: 7001,
+    gas: 5000000,
+    gasPrice: 80000000000,
+    url: `https://archive.athens2.zetachain.com/evm`,
+  },
   "bsc-localnet": {
     gas: 5000000,
     gasPrice: 80000000000,
@@ -10,7 +17,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `https://data-seed-prebsc-2-s3.binance.org:8545`,
+    url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
   },
   "eth-localnet": {
     gas: 2100000,
@@ -24,8 +31,8 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
   goerli: {
     accounts: PRIVATE_KEYS,
     gas: 2100000,
-    gasPrice: 8000000000,
-    url: "https://rpc.goerli.mudit.blog",
+    gasPrice: 38000000000,
+    url: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
   },
   hardhat: {
     chainId: 1337,

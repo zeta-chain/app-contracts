@@ -39,6 +39,8 @@ export const getScanVariable = ({ customNetworkName }: { customNetworkName?: str
   dotenv.config();
 
   const v = {
+    athens: "",
+    "bitcoin-test": "",
     "bsc-localnet": "",
     "bsc-testnet": process.env.BSCSCAN_API_KEY || "",
     "eth-localnet": "",
@@ -61,6 +63,8 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
   dotenv.config();
 
   const v = {
+    athens: "",
+    "bitcoin-test": "",
     "bsc-localnet": "",
     "bsc-testnet": "https://testnet.bscscan.com/",
     "eth-localnet": "",
@@ -72,6 +76,26 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
     "polygon-localnet": "",
     "polygon-mumbai": "https://mumbai.polygonscan.com/",
     ropsten: "https://ropsten.etherscan.io/"
+  };
+
+  return v[networkName];
+};
+
+export const getGasSymbolByNetwork = (networkName: NetworkName): string => {
+  const v = {
+    athens: "ZETA",
+    "bitcoin-test": "BTC",
+    "bsc-localnet": "BNB",
+    "bsc-testnet": "BNB",
+    "eth-localnet": "ETH",
+    "eth-mainnet": "ETH",
+    goerli: "ETH",
+    hardhat: "ETH",
+    "klaytn-baobab": "KLAY",
+    "klaytn-cypress": "KLAY",
+    "polygon-localnet": "MATIC",
+    "polygon-mumbai": "MATIC",
+    ropsten: "BYEBYE"
   };
 
   return v[networkName];
@@ -137,7 +161,7 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
   if (!addressName) throw new Error("Emtpy address name.");
 
   const addressesDirname = join(dirname, `./`);
-  const addressesFiles = readdirSync(addressesDirname);
+  const addressesFiles = readdirSync(addressesDirname).filter(fileName => fileName.includes(".json"));
 
   addressesFiles.forEach(addressesFilename => {
     const addressPath = join(addressesDirname, addressesFilename);
@@ -145,7 +169,7 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
     const addressesByNetwork = JSON.parse(readFileSync(addressPath, "utf8"));
 
     Object.keys(addressesByNetwork).forEach(network => {
-      if (!isNetworkName(network)) return;
+      if (!isNetworkName(network) && !isZetaNetworkName(network)) return;
 
       addressesByNetwork[network][addressName] = addressValue;
       addressesByNetwork[network] = Object.keys(addressesByNetwork[network])
@@ -165,7 +189,7 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
 export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) => {
   if (!newNetworkName) throw new Error("Emtpy networkName name.");
   const addressesDirname = join(dirname, `./`);
-  const addressesFiles = readdirSync(addressesDirname);
+  const addressesFiles = readdirSync(addressesDirname).filter(fileName => fileName.includes(".json"));
 
   addressesFiles.forEach(addressFilename => {
     const addressesFilePath = join(addressesDirname, addressFilename);
