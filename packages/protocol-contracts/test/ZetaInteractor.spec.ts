@@ -58,14 +58,16 @@ describe("ZetaInteractor tests", () => {
 
   describe("onZetaRevert", () => {
     it("Should revert if the caller is not ZetaConnector", async () => {
-      zetaInteractorMock.onZetaRevert({
-        destinationAddress: ethers.utils.solidityPack(["address"], [crossChainContractB.address]),
-        destinationChainId: chainBId,
-        message: encoder.encode(["address"], [zetaInteractorMock.address]),
-        remainingZetaValue: 0,
-        sourceChainId: chainAId,
-        zetaTxSenderAddress: deployer.address
-      });
+      await expect(
+        zetaInteractorMock.onZetaRevert({
+          destinationAddress: ethers.utils.solidityPack(["address"], [crossChainContractB.address]),
+          destinationChainId: chainBId,
+          message: encoder.encode(["address"], [zetaInteractorMock.address]),
+          remainingZetaValue: 0,
+          sourceChainId: chainAId,
+          zetaTxSenderAddress: deployer.address
+        })
+      ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
   });
 
