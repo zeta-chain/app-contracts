@@ -4,7 +4,7 @@ import { getAddress as getAddressLib } from "@zetachain/addresses";
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 
-import { getMultiOOutputForTest } from "../scripts/zeta-swap/helpers";
+import { getMultiOutputForTest } from "../scripts/zeta-swap/helpers";
 import { TestSystemContract, TestZRC20, ZetaMultiOutput, ZetaMultiOutput__factory } from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 
@@ -62,7 +62,7 @@ describe("ZetaSwap tests", () => {
       const amount = parseUnits("10");
       await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
 
-      const params = getMultiOOutputForTest(deployer.address);
+      const params = getMultiOutputForTest(deployer.address);
       await zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params);
 
       const endBalanceToken0 = await ZRC20Contracts[0].balanceOf(deployer.address);
@@ -87,7 +87,7 @@ describe("ZetaSwap tests", () => {
       const amount = parseUnits("10");
       await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
 
-      const params = getMultiOOutputForTest(deployer.address);
+      const params = getMultiOutputForTest(deployer.address);
       await expect(
         zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
       ).to.be.revertedWith("NoAvailableTransfers()");
@@ -102,7 +102,7 @@ describe("ZetaSwap tests", () => {
       const amount = parseUnits("10");
       await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
 
-      const params = getMultiOOutputForTest(deployer.address);
+      const params = getMultiOutputForTest(deployer.address);
       await expect(
         zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
       ).to.be.revertedWith("NoAvailableTransfers()");
