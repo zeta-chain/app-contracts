@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
+import "../openzeppelin/Ownable2Step.sol";
 import "../ZetaInteractor.sol";
 
-contract ZetaInteractorMock is ZetaInteractor, ZetaReceiver {
+contract ZetaInteractorMock is Ownable2Step, ZetaInteractor, ZetaReceiver {
     constructor(address zetaConnectorAddress) ZetaInteractor(zetaConnectorAddress) {}
 
     function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)

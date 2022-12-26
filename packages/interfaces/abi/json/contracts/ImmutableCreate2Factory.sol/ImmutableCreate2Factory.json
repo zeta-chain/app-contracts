@@ -30,6 +30,29 @@
         "type": "bytes"
       }
     ],
+    "name": "safeCreate2AndTransfer",
+    "outputs": [
+      {
+        "name": "deploymentAddress",
+        "type": "address"
+      }
+    ],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "name": "initializationCode",
+        "type": "bytes"
+      }
+    ],
     "name": "safeCreate2",
     "outputs": [
       {

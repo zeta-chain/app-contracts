@@ -5,37 +5,11 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ZetaInteractor,
-  ZetaInteractorInterface,
-} from "../../contracts/ZetaInteractor";
+  Ownable2Step,
+  Ownable2StepInterface,
+} from "../../../contracts/openzeppelin/Ownable2Step";
 
 const _abi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "InvalidCaller",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidDestinationChainId",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidZetaMessageCall",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidZetaRevertCall",
-    type: "error",
-  },
   {
     anonymous: false,
     inputs: [
@@ -83,38 +57,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "connector",
-    outputs: [
-      {
-        internalType: "contract ZetaConnector",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "interactorsByChainId",
-    outputs: [
-      {
-        internalType: "bytes",
-        name: "",
-        type: "bytes",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "owner",
     outputs: [
       {
@@ -149,24 +91,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "destinationChainId",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "contractAddress",
-        type: "bytes",
-      },
-    ],
-    name: "setInteractorByChainId",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address",
         name: "newOwner",
         type: "address",
@@ -179,15 +103,15 @@ const _abi = [
   },
 ];
 
-export class ZetaInteractor__factory {
+export class Ownable2Step__factory {
   static readonly abi = _abi;
-  static createInterface(): ZetaInteractorInterface {
-    return new utils.Interface(_abi) as ZetaInteractorInterface;
+  static createInterface(): Ownable2StepInterface {
+    return new utils.Interface(_abi) as Ownable2StepInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ZetaInteractor {
-    return new Contract(address, _abi, signerOrProvider) as ZetaInteractor;
+  ): Ownable2Step {
+    return new Contract(address, _abi, signerOrProvider) as Ownable2Step;
   }
 }

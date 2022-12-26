@@ -24,6 +24,7 @@ import type {
 export interface ImmutableCreate2FactoryInterface extends utils.Interface {
   functions: {
     "hasBeenDeployed(address)": FunctionFragment;
+    "safeCreate2AndTransfer(bytes32,bytes)": FunctionFragment;
     "safeCreate2(bytes32,bytes)": FunctionFragment;
     "findCreate2Address(bytes32,bytes)": FunctionFragment;
     "findCreate2AddressViaHash(bytes32,bytes32)": FunctionFragment;
@@ -32,6 +33,7 @@ export interface ImmutableCreate2FactoryInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "hasBeenDeployed"
+      | "safeCreate2AndTransfer"
       | "safeCreate2"
       | "findCreate2Address"
       | "findCreate2AddressViaHash"
@@ -40,6 +42,10 @@ export interface ImmutableCreate2FactoryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "hasBeenDeployed",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeCreate2AndTransfer",
+    values: [BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "safeCreate2",
@@ -56,6 +62,10 @@ export interface ImmutableCreate2FactoryInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "hasBeenDeployed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeCreate2AndTransfer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -106,6 +116,12 @@ export interface ImmutableCreate2Factory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    safeCreate2AndTransfer(
+      salt: BytesLike,
+      initializationCode: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     safeCreate2(
       salt: BytesLike,
       initializationCode: BytesLike,
@@ -130,6 +146,12 @@ export interface ImmutableCreate2Factory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  safeCreate2AndTransfer(
+    salt: BytesLike,
+    initializationCode: BytesLike,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   safeCreate2(
     salt: BytesLike,
     initializationCode: BytesLike,
@@ -153,6 +175,12 @@ export interface ImmutableCreate2Factory extends BaseContract {
       deploymentAddress: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    safeCreate2AndTransfer(
+      salt: BytesLike,
+      initializationCode: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     safeCreate2(
       salt: BytesLike,
@@ -181,6 +209,12 @@ export interface ImmutableCreate2Factory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    safeCreate2AndTransfer(
+      salt: BytesLike,
+      initializationCode: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     safeCreate2(
       salt: BytesLike,
       initializationCode: BytesLike,
@@ -204,6 +238,12 @@ export interface ImmutableCreate2Factory extends BaseContract {
     hasBeenDeployed(
       deploymentAddress: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    safeCreate2AndTransfer(
+      salt: BytesLike,
+      initializationCode: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     safeCreate2(
