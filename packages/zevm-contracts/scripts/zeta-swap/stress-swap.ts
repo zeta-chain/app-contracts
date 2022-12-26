@@ -11,20 +11,28 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress } from "@zetachain/addresses";
-import { ethers } from "hardhat";
-import { network } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import { ChainToZRC20, isSwappableNetwork, SwappableNetwork, ZRC20Addresses } from "../systemConstants";
 import { getSwapData } from "./helpers";
 
-const swapToChain = async (
-  zetaSwapAddress: string,
-  tssAddress: string,
-  signer: SignerWithAddress,
-  destinationNetwork: SwappableNetwork,
-  value: BigNumber,
-  nonce: number
-) => {
+interface SwapToChainParams {
+  destinationNetwork: SwappableNetwork;
+  nonce: number;
+  signer: SignerWithAddress;
+  tssAddress: string;
+  value: BigNumber;
+  zetaSwapAddress: string;
+}
+
+const swapToChain = async ({
+  zetaSwapAddress,
+  tssAddress,
+  signer,
+  destinationNetwork,
+  value,
+  nonce
+}: SwapToChainParams) => {
   const zrc20 = ChainToZRC20[destinationNetwork];
   const data = getSwapData(zetaSwapAddress, signer.address, ZRC20Addresses[zrc20], BigNumber.from("0"));
   const tx = await signer.sendTransaction({
@@ -66,18 +74,26 @@ const main = async () => {
 
   const swapsPerNetwork = destinationNetworks.map((destinationNetwork, index) => {
     const baseNonce = nonce + index * 5;
+    const param: SwapToChainParams = {
+      destinationNetwork,
+      nonce: baseNonce,
+      signer,
+      tssAddress,
+      value: parseEther("0.002"),
+      zetaSwapAddress
+    };
     return [
-      swapToChain(zetaSwapAddress, tssAddress, signer, destinationNetwork, parseEther("0.001"), baseNonce),
-      swapToChain(zetaSwapAddress, tssAddress, signer, destinationNetwork, parseEther("0.002"), baseNonce + 1),
-      swapToChain(zetaSwapAddress, tssAddress, signer, destinationNetwork, parseEther("0.003"), baseNonce + 2),
-      swapToChain(zetaSwapAddress, tssAddress, signer, destinationNetwork, parseEther("0.004"), baseNonce + 3),
-      swapToChain(zetaSwapAddress, tssAddress, signer, destinationNetwork, parseEther("0.005"), baseNonce + 4)
+      swapToChain(param),
+      swapToChain({ ...param, nonce: baseNonce + 1, value: parseEther("0.002") }),
+      swapToChain({ ...param, nonce: baseNonce + 2, value: parseEther("0.003") }),
+      swapToChain({ ...param, nonce: baseNonce + 3, value: parseEther("0.004") }),
+      swapToChain({ ...param, nonce: baseNonce + 4, value: parseEther("0.005") })
     ];
   });
 
   const swaps = swapsPerNetwork.reduce((p, c) => [...p, ...c], []);
 
-  Promise.all(swaps);
+  await Promise.all(swaps);
 };
 
 main().catch(error => {
