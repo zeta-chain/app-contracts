@@ -9,7 +9,7 @@ import "../shared/BytesHelperLib.sol";
 import "../shared/SwapHelperLib.sol";
 
 interface ZetaMultiOutputErrors {
-    error NoTransfersToDo();
+    error NoAvailableTransfers();
 }
 
 contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
@@ -39,7 +39,7 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
     }
 
     function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
-        if (_getTotalTransfers(zrc20) == 0) revert NoTransfersToDo();
+        if (_getTotalTransfers(zrc20) == 0) revert NoAvailableTransfers();
 
         address receipient = BytesHelperLib.bytesToAddress(message, 0);
         uint256 amountToTransfer = amount / _getTotalTransfers(zrc20);

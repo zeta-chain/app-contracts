@@ -90,7 +90,7 @@ describe("ZetaSwap tests", () => {
       const params = getMultiOOutputForTest(deployer.address);
       await expect(
         zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
-      ).to.be.revertedWith("NoTransfersToDo()");
+      ).to.be.revertedWith("NoAvailableTransfers()");
     });
 
     it("Should throw error if there's no transfer to do", async () => {
@@ -105,7 +105,7 @@ describe("ZetaSwap tests", () => {
       const params = getMultiOOutputForTest(deployer.address);
       await expect(
         zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
-      ).to.be.revertedWith("NoTransfersToDo()");
+      ).to.be.revertedWith("NoAvailableTransfers()");
     });
   });
 });
