@@ -16,8 +16,8 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
     SystemContract public immutable systemContract;
     address[] public destinationTokens;
 
-    event destinationRegistered(address);
-    event withdrawal(address, uint256, address);
+    event DestinationRegistered(address);
+    event Withdrawal(address, uint256, address);
 
     constructor(address systemContractAddress) {
         systemContract = SystemContract(systemContractAddress);
@@ -25,10 +25,10 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
 
     function registerDestinationToken(address destinationToken) external onlyOwner {
         destinationTokens.push(destinationToken);
-        emit destinationRegistered(destinationToken);
+        emit DestinationRegistered(destinationToken);
     }
 
-    function _transfersToDo(address zrc20) internal view returns (uint256) {
+    function _getTotalTransfers(address zrc20) internal view returns (uint256) {
         uint256 total = 0;
         for (uint256 i; i < destinationTokens.length; i++) {
             if (destinationTokens[i] == zrc20) continue;
@@ -39,11 +39,11 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
     }
 
     function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
-        if (_transfersToDo(zrc20) == 0) revert NoTransfersToDo();
+        if (_getTotalTransfers(zrc20) == 0) revert NoTransfersToDo();
 
         address receipient = BytesHelperLib.bytesToAddress(message, 0);
-        uint256 amountToTransfer = amount / _transfersToDo(zrc20);
-        uint256 leftOver = amount - amountToTransfer * _transfersToDo(zrc20);
+        uint256 amountToTransfer = amount / _getTotalTransfers(zrc20);
+        uint256 leftOver = amount - amountToTransfer * _getTotalTransfers(zrc20);
 
         uint256 lastTransferIndex = destinationTokens[destinationTokens.length - 1] == zrc20
             ? destinationTokens.length - 2
@@ -67,7 +67,7 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
                 0
             );
             SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, BytesHelperLib.addressToBytes(receipient));
-            emit withdrawal(targetZRC20, outputAmount, receipient);
+            emit Withdrawal(targetZRC20, outputAmount, receipient);
         }
     }
 }
