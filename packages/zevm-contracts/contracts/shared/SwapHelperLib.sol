@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity =0.8.7;
 
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol";
-
 import "../interfaces/IZRC20.sol";
-import "../interfaces/zContract.sol";
 
-interface ZetaSwapErrors {
+library SwapHelperLib {
+    uint16 internal constant MAX_DEADLINE = 200;
+
     error WrongGasContract();
 
     error NotEnoughToPayGasFee();
@@ -15,20 +15,6 @@ interface ZetaSwapErrors {
     error CantBeIdenticalAddresses();
 
     error CantBeZeroAddress();
-}
-
-contract ZetaSwap is zContract, ZetaSwapErrors {
-    uint16 internal constant MAX_DEADLINE = 200;
-
-    address public immutable zetaToken;
-    address public immutable uniswapV2Factory;
-    address public immutable uniswapV2Router;
-
-    constructor(address zetaToken_, address uniswapV2Factory_, address uniswapV2Router_) {
-        zetaToken = zetaToken_;
-        uniswapV2Factory = uniswapV2Factory_;
-        uniswapV2Router = uniswapV2Router_;
-    }
 
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
     function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
@@ -56,11 +42,7 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         );
     }
 
-    function encode(address zrc20, address recipient, uint256 minAmountOut) public pure returns (bytes memory) {
-        return abi.encode(zrc20, recipient, minAmountOut);
-    }
-
-    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 receipient) private {
+    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 receipient) internal {
         (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
 
         if (gasZRC20 != targetZRC20) revert WrongGasContract();
@@ -70,19 +52,21 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
         IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
-    function _existsPairPool(address zrc20A, address zrc20B) private view returns (bool) {
+    function _existsPairPool(address uniswapV2Factory, address zrc20A, address zrc20B) internal view returns (bool) {
         address uniswapPool = uniswapv2PairFor(uniswapV2Factory, zrc20A, zrc20B);
         return IZRC20(zrc20A).balanceOf(uniswapPool) > 0 && IZRC20(zrc20B).balanceOf(uniswapPool) > 0;
     }
 
     function _doSwap(
+        address zetaToken,
+        address uniswapV2Factory,
+        address uniswapV2Router,
         address zrc20,
         uint256 amount,
         address targetZRC20,
-        bytes32 receipient,
         uint256 minAmountOut
-    ) internal {
-        bool existsPairPool = _existsPairPool(zrc20, targetZRC20);
+    ) internal returns (uint256) {
+        bool existsPairPool = _existsPairPool(uniswapV2Factory, zrc20, targetZRC20);
 
         address[] memory path;
         if (existsPairPool) {
@@ -104,14 +88,6 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
             address(this),
             block.timestamp + MAX_DEADLINE
         );
-        _doWithdrawal(targetZRC20, amounts[path.length - 1], receipient);
-    }
-
-    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
-        (address targetZRC20, bytes32 receipient, uint256 minAmountOut) = abi.decode(
-            message,
-            (address, bytes32, uint256)
-        );
-        _doSwap(zrc20, amount, targetZRC20, receipient, minAmountOut);
+        return amounts[path.length - 1];
     }
 }
