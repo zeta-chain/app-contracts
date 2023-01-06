@@ -3,9 +3,11 @@ pragma solidity 0.8.7;
 
 import "./ZRC721.sol";
 
-contract ZRC721CommandTransfer is ERC721 {
-    function command(address from, address to, uint256 tokenId) internal virtual override {
-        IERC20(ERC721._zetaToken).safeTransferFrom(msg.sender, address(this), ERC721._zetaValueAndGas);
+abstract contract ZRC721CommandTransfer is ZRC721 {
+    using SafeERC20 for IERC20;
+
+    function command(address from, address to, uint256 tokenId) internal virtual {
+        IERC20(_zetaToken).safeTransferFrom(msg.sender, address(this), _zetaValueAndGas);
 
         connector.send(
             ZetaInterfaces.SendInput({
@@ -27,7 +29,7 @@ contract ZRC721CommandTransfer is ERC721 {
         );
     }
 
-    function onZetaMessageRequest(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal {
+    function onZetaMessageRequest(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal virtual {
         (, address from, address to, uint256 tokenId, , address sender, uint256 crossChaindestinationGasLimit) = abi
             .decode(zetaMessage.message, (bytes32, address, address, uint256, uint256, address, uint256));
 
@@ -55,7 +57,7 @@ contract ZRC721CommandTransfer is ERC721 {
         );
     }
 
-    function onZetaMessageConfirm(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal {
+    function onZetaMessageConfirm(ZetaInterfaces.ZetaMessage calldata zetaMessage) internal virtual {
         (, address from, address to, uint256 tokenId, , , ) = abi.decode(
             zetaMessage.message,
             (bytes32, address, address, uint256, uint256, address, uint256)

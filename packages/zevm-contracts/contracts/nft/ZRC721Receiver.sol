@@ -30,16 +30,24 @@ contract ZRC721Receiver is
         string memory symbol
     ) ZRC721(connectorAddress, zetaTokenAddress, zChainId, name, symbol) {}
 
+    function onZetaMessageRequest(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) internal override(ZRC721CommandMint, ZRC721CommandTransfer, ZRC721CommandTransferChain) {}
+
+    function onZetaMessageConfirm(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) internal override(ZRC721CommandMint, ZRC721CommandTransfer, ZRC721CommandTransferChain) {}
+
     function _mint(address to, uint256 tokenId) internal virtual override {
-        ZRC721CommandMint.command();
+        ZRC721CommandMint.command(to, tokenId);
     }
 
     function _transfer(address from, address to, uint256 tokenId) internal virtual override {
-        ZRC721CommandTransfer.command();
+        ZRC721CommandTransfer.command(from, to, tokenId);
     }
 
     function _transferChain(address from, address to, uint256 tokenId, uint256 chainId) internal virtual {
-        ZRC721CommandTransferChain.command();
+        ZRC721CommandTransferChain.command(from, to, tokenId, chainId);
     }
 
     function onZetaMessage(

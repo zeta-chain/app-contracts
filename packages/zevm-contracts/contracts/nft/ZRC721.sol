@@ -22,7 +22,7 @@ contract ZRC721 is ERC721, ZetaInteractor {
     uint256 internal _zetaValueAndGas;
     uint256 internal _crossChaindestinationGasLimit;
 
-    mapping(uint256 => uint256) private _tokenChainId;
+    mapping(uint256 => uint256) internal _tokenChainId;
 
     event OmnichainTransfer(address from, address to, uint256 tokenId, uint256 chainId);
     event OmnichainTransferFail(address from, address to, uint256 tokenId, uint256 chainId);
