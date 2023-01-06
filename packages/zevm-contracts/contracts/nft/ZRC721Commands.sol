@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.7;
+
+library ERC721Commands {
+    bytes32 constant ACTION_MINT_REQUEST = keccak256("ACTION_MINT_REQUEST");
+    bytes32 constant ACTION_MINT_CONFIRM = keccak256("ACTION_MINT_CONFIRM");
+
+    bytes32 constant ACTION_TRANSFER_REQUEST = keccak256("ACTION_TRANSFER_REQUEST");
+    bytes32 constant ACTION_TRANSFER_CONFIRM = keccak256("ACTION_TRANSFER_CONFIRM");
+
+    bytes32 constant ACTION_TRANSFER_CHAIN_REQUEST = keccak256("ACTION_TRANSFER_CHAIN_REQUEST");
+    bytes32 constant ACTION_TRANSFER_CHAIN_CONFIRM = keccak256("ACTION_TRANSFER_CHAIN_CONFIRM");
+}
