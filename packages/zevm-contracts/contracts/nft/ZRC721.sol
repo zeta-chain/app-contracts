@@ -13,11 +13,7 @@ import "./ZRC721Commands.sol";
 // @todo: remove when is stable
 import "hardhat/console.sol";
 
-interface ZRC721Errors {
-    error InvalidMessageType();
-}
-
-contract ZRC721 is ERC721, ZRC721Errors, ZetaInteractor {
+contract ZRC721 is ERC721, ZetaInteractor {
     using SafeERC20 for IERC20;
 
     IERC20 internal immutable _zetaToken;
