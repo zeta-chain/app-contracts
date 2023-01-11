@@ -3,19 +3,19 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero, MaxUint256 } from "@ethersproject/constants";
 import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
 import { IERC20__factory } from "@zetachain/interfaces/typechain-types";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { getMultiChainSwapUniV3, getMultiChainSwapZetaConnector } from "../lib/multi-chain-swap/MultiChainSwap.helpers";
+import { getAddress } from "../lib/shared/address.helpers";
 import { getNow } from "../lib/shared/deploy.helpers";
 import {
   ERC20__factory,
   IERC20,
   MultiChainSwapUniV3,
   MultiChainSwapZetaConnector,
-  UniswapV2Router02__factory,
+  UniswapV2Router02__factory
 } from "../typechain-types";
 import { getCustomErrorMessage, parseInteractorLog } from "./test.helpers";
 
@@ -25,7 +25,7 @@ chai.use(smock.matchers);
 const swapToken = async (signer: SignerWithAddress, tokenAddress: string, expectedAmount: BigNumber) => {
   const uniswapV2RouterAddr = getAddress("uniswapV2Router02", {
     customNetworkName: "eth-mainnet",
-    customZetaNetwork: "mainnet",
+    customZetaNetwork: "mainnet"
   });
 
   const uniswapRouter = UniswapV2Router02__factory.connect(uniswapV2RouterAddr, signer);
@@ -85,27 +85,27 @@ describe("MultiChainSwap tests", () => {
 
     const DAI = getAddress("dai", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const UNI_QUOTER_V3 = getAddress("uniswapV3Quoter", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const UNI_ROUTER_V3 = getAddress("uniswapV3Router", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     WETH = getAddress("weth9", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const USDC_ADDR = getAddress("usdc", {
       customNetworkName: "eth-mainnet",
-      customZetaNetwork: "mainnet",
+      customZetaNetwork: "mainnet"
     });
 
     const ERC20Factory = new ERC20__factory(deployer);
@@ -118,24 +118,16 @@ describe("MultiChainSwap tests", () => {
     zetaTokenMock = IERC20__factory.connect(zetaTokenNonEthAddress, deployer);
     zetaConnectorMock = await getMultiChainSwapZetaConnector(zetaTokenMock.address);
     multiChainSwapContractA = await getMultiChainSwapUniV3({
-      deployParams: [zetaConnectorMock.address, zetaTokenNonEthAddress, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 3000, 3000],
+      deployParams: [zetaConnectorMock.address, zetaTokenNonEthAddress, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 3000, 3000]
     });
 
     multiChainSwapContractB = await getMultiChainSwapUniV3({
-      deployParams: [zetaConnectorMock.address, zetaTokenNonEthAddress, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 3000, 3000],
+      deployParams: [zetaConnectorMock.address, zetaTokenNonEthAddress, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 3000, 3000]
     });
 
     zetaConnectorSmock = await smock.fake("MultiChainSwapZetaConnector");
     multiChainSwapContractWithSmock = await getMultiChainSwapUniV3({
-      deployParams: [
-        zetaConnectorSmock.address,
-        zetaTokenNonEthAddress,
-        UNI_ROUTER_V3,
-        UNI_QUOTER_V3,
-        WETH,
-        3000,
-        3000,
-      ],
+      deployParams: [zetaConnectorSmock.address, zetaTokenNonEthAddress, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 3000, 3000]
     });
 
     const encodedCrossChainAddressB = ethers.utils.solidityPack(["address"], [multiChainSwapContractB.address]);
@@ -162,7 +154,7 @@ describe("MultiChainSwap tests", () => {
           10,
           MaxUint256,
           {
-            value: parseUnits("1"),
+            value: parseUnits("1")
           }
         )
       ).to.be.revertedWith(getCustomErrorMessage("InvalidDestinationChainId"));
@@ -467,7 +459,7 @@ describe("MultiChainSwap tests", () => {
             message: encoder.encode(["address"], [multiChainSwapContractA.address]),
             sourceChainId: chainBId,
             zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
-            zetaValue: 0,
+            zetaValue: 0
           })
         ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
       });
@@ -494,7 +486,7 @@ describe("MultiChainSwap tests", () => {
             message: encoder.encode(["address"], [multiChainSwapContractA.address]),
             remainingZetaValue: 0,
             sourceChainId: chainAId,
-            zetaTxSenderAddress: deployer.address,
+            zetaTxSenderAddress: deployer.address
           })
         ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
       });
@@ -516,7 +508,7 @@ describe("MultiChainSwap tests", () => {
             multiChainSwapContractA.address,
             true,
             0,
-            false,
+            false
           ]
         );
 
@@ -553,7 +545,7 @@ describe("MultiChainSwap tests", () => {
             multiChainSwapContractA.address,
             true,
             0,
-            false,
+            false
           ]
         );
 
@@ -596,7 +588,7 @@ describe("MultiChainSwap tests", () => {
             multiChainSwapContractA.address,
             true,
             0,
-            true,
+            true
           ]
         );
 
@@ -637,7 +629,7 @@ describe("MultiChainSwap tests", () => {
             multiChainSwapContractA.address,
             true,
             0,
-            true,
+            true
           ]
         );
 

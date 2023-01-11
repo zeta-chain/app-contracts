@@ -1,6 +1,6 @@
 import { NetworkName } from "@zetachain/addresses";
 
-type ChainId = 0 | 5 | 97 | 1337;
+type ChainId = 0 | 5 | 97 | 1001 | 1337 | 80001;
 
 export type NetworkVariables = {
   chainId: ChainId;
@@ -47,10 +47,10 @@ export const networkVariables: Record<NetworkName, NetworkVariables> = {
     crossChainName: ""
   },
   "klaytn-baobab": {
-    chainId: 0,
+    chainId: 1001,
     connectorAddress: "",
-    crossChainId: 0,
-    crossChainName: ""
+    crossChainId: 5,
+    crossChainName: "goerli"
   },
   "klaytn-cypress": {
     chainId: 0,
