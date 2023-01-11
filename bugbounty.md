@@ -10,7 +10,7 @@ The scope of this bug bounty program is focused on ZetaChain's smart contracts, 
 
 ## Program Guidelines
 
-1. All reports must be submitted through the ImmuneFI, accessible [here](https://immunefi.com/bounty/zetachain/).
+1. All reports must be submitted through Immunefi, accessible [here](https://immunefi.com/bounty/zetachain/).
 2. Report any suspected vulnerability promptly.
 3. Do not attempt to exploit a vulnerability without prior authorization.
 4. Do not publicly disclose a vulnerability before it is reported and patched.
@@ -20,7 +20,7 @@ The scope of this bug bounty program is focused on ZetaChain's smart contracts, 
 
 ## Rewards
 
-The rewards for successful vulnerability reports range from $5,000 to $100,000, depending on the severity of the issue. All payouts are to be done by the ZetaChain team through ImmuneFi. 
+The rewards for successful vulnerability reports range from $5,000 to $100,000, depending on the severity of the issue. All payouts are to be done by the ZetaChain team through Immunefi. 
 
 ### **Smart Contracts**
 
