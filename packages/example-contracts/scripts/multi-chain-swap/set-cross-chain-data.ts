@@ -2,6 +2,7 @@ import { isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
 import { getMultiChainSwapUniV2 } from "../../lib/multi-chain-swap/MultiChainSwap.helpers";
+import { getAddress } from "../../lib/shared/address.helpers";
 import { networkVariables } from "../../lib/shared/network.constants";
 
 export async function setMultiChainSwapCrossChainData() {
@@ -14,7 +15,7 @@ export async function setMultiChainSwapCrossChainData() {
   const crossChainMultiChainSwapAddress = getAddress("multiChainSwap");
 
   const crossChainMultiChainSwapContract = await getMultiChainSwapUniV2({
-    existingContractAddress: crossChainMultiChainSwapAddress,
+    existingContractAddress: crossChainMultiChainSwapAddress
   });
 
   const crossChainAddress = getAddress("multiChainSwap", {
