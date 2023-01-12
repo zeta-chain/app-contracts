@@ -38,7 +38,7 @@ describe("ZetaInteractor tests", () => {
           message: encoder.encode(["address"], [zetaInteractorMock.address]),
           sourceChainId: chainBId,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          zetaValue: 0,
+          zetaValue: 0
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
     });
@@ -50,7 +50,7 @@ describe("ZetaInteractor tests", () => {
           message: encoder.encode(["address"], [crossChainContractB.address]),
           sourceChainId: chainBId,
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
-          zetaValue: 0,
+          zetaValue: 0
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidZetaMessageCall"));
     });
@@ -65,9 +65,33 @@ describe("ZetaInteractor tests", () => {
           message: encoder.encode(["address"], [zetaInteractorMock.address]),
           remainingZetaValue: 0,
           sourceChainId: chainAId,
-          zetaTxSenderAddress: deployer.address,
+          zetaTxSenderAddress: deployer.address
         })
       ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
+    });
+  });
+
+  describe("transferOwnership", () => {
+    it("Should transfer ownership", async () => {
+      const randomSigner = accounts[3];
+      await zetaInteractorMock.transferOwnership(randomSigner.address);
+      await zetaInteractorMock.connect(randomSigner).acceptOwnership();
+      await expect(await zetaInteractorMock.owner()).to.be.eq(randomSigner.address);
+    });
+
+    it("Should keep the ownership until accept", async () => {
+      const randomSigner = accounts[3];
+      await zetaInteractorMock.transferOwnership(randomSigner.address);
+      await expect(await zetaInteractorMock.owner()).to.be.eq(deployer.address);
+    });
+
+    it("Should revert if old owner want to do some action", async () => {
+      const randomSigner = accounts[3];
+      await zetaInteractorMock.transferOwnership(randomSigner.address);
+      await zetaInteractorMock.connect(randomSigner).acceptOwnership();
+      await expect(zetaInteractorMock.transferOwnership(randomSigner.address)).to.be.revertedWith(
+        "Ownable: caller is not the owner"
+      );
     });
   });
 });

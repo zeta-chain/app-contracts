@@ -1,5 +1,9 @@
 pragma solidity 0.5.10; // optimization enabled, 99999 runs, evm: petersburg
 
+interface Ownable {
+    function transferOwnership(address newOwner) external;
+}
+
 /**
  * @title Immutable Create2 Contract Factory
  * @author 0age
@@ -19,21 +23,8 @@ contract ImmutableCreate2Factory {
     // mapping to track which addresses have already been deployed.
     mapping(address => bool) private _deployed;
 
-    /**
-     * @dev Create a contract using CREATE2 by submitting a given salt or nonce
-     * along with the initialization code for the contract. Note that the first 20
-     * bytes of the salt must match those of the calling address, which prevents
-     * contract creation events from being submitted by unintended parties.
-     * @param salt bytes32 The nonce that will be passed into the CREATE2 call.
-     * @param initializationCode bytes The initialization code that will be passed
-     * into the CREATE2 call.
-     * @return Address of the contract that will be created, or the null address
-     * if a contract already exists at that address.
-     */
-    function safeCreate2(bytes32 salt, bytes calldata initializationCode)
-        external
-        payable
-        containsCaller(salt)
+    function safeCreate2Internal(bytes32 salt, bytes memory initializationCode)
+        internal
         returns (address deploymentAddress)
     {
         // move the initialization code from calldata to memory.
@@ -80,6 +71,26 @@ contract ImmutableCreate2Factory {
 
         // record the deployment of the contract to prevent redeploys.
         _deployed[deploymentAddress] = true;
+    }
+
+    /**
+     * @dev Create a contract using CREATE2 by submitting a given salt or nonce
+     * along with the initialization code for the contract. Note that the first 20
+     * bytes of the salt must match those of the calling address, which prevents
+     * contract creation events from being submitted by unintended parties.
+     * @param salt bytes32 The nonce that will be passed into the CREATE2 call.
+     * @param initializationCode bytes The initialization code that will be passed
+     * into the CREATE2 call.
+     * @return Address of the contract that will be created, or the null address
+     * if a contract already exists at that address.
+     */
+    function safeCreate2(bytes32 salt, bytes memory initializationCode)
+        public
+        payable
+        containsCaller(salt)
+        returns (address deploymentAddress)
+    {
+        return safeCreate2Internal(salt, initializationCode);
     }
 
     /**
@@ -190,5 +201,15 @@ contract ImmutableCreate2Factory {
             "Invalid salt - first 20 bytes of the salt must match calling address."
         );
         _;
+    }
+
+    function safeCreate2AndTransfer(bytes32 salt, bytes calldata initializationCode)
+        external
+        payable
+        containsCaller(salt)
+        returns (address deploymentAddress)
+    {
+        deploymentAddress = safeCreate2Internal(salt, initializationCode);
+        Ownable(deploymentAddress).transferOwnership(msg.sender);
     }
 }

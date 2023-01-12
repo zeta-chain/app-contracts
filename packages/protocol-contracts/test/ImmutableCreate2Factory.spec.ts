@@ -4,6 +4,7 @@ import {
   ImmutableCreate2Factory,
   ImmutableCreate2Factory__factory,
   ZetaEth__factory,
+  ZetaInteractorMock__factory
 } from "@zetachain/interfaces/typechain-types";
 import chai, { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
@@ -15,7 +16,7 @@ import {
   buildCreate2Address,
   deployContractToAddress,
   isDeployed,
-  saltToHex,
+  saltToHex
 } from "../lib/ImmutableCreate2Factory/ImmutableCreate2Factory.helpers";
 
 chai.should();
@@ -51,7 +52,7 @@ describe("Deterministic deployment tests", () => {
         contractBytecode: ZetaEth__factory.bytecode,
         factoryAddress: immutableCreate2.address,
         salt: salthex,
-        signer: signer,
+        signer: signer
       });
 
       expect(address).to.be.eq(expectedAddress);
@@ -101,5 +102,27 @@ describe("Deterministic deployment tests", () => {
     const expectedAddress = await immutableCreate2.findCreate2Address(salthex, bytecode);
     const expectedAddressOffchain = buildCreate2Address(salthex, bytecode, immutableCreate2.address);
     expect(expectedAddress.toLocaleLowerCase()).to.be.eq(expectedAddressOffchain);
+  });
+
+  it("Should deploy and transfer ownership to deployer", async () => {
+    let saltStr = "0";
+
+    const salthex = saltToHex(saltStr, signer.address);
+    const constructorTypes = ["address"];
+    const constructorArgs = [signer.address];
+
+    const { address } = await deployContractToAddress({
+      constructorArgs: constructorArgs,
+      constructorTypes: constructorTypes,
+      contractBytecode: ZetaInteractorMock__factory.bytecode,
+      factoryAddress: immutableCreate2.address,
+      salt: salthex,
+      signer: signer,
+      transferOwner: true
+    });
+
+    const contract = ZetaInteractorMock__factory.connect(address, signer);
+    await contract.acceptOwnership();
+    expect(await contract.owner()).to.be.eq(signer.address);
   });
 });

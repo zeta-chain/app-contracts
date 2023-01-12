@@ -81,6 +81,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ImmutableCreate2Factory__factory>;
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
       name: "ConnectorErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ConnectorErrors__factory>;
@@ -108,6 +112,10 @@ declare module "hardhat/types/runtime" {
       name: "ZetaNonEthInterface",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ZetaNonEthInterface__factory>;
+    getContractFactory(
+      name: "Ownable2Step",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable2Step__factory>;
     getContractFactory(
       name: "INonfungiblePositionManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -255,6 +263,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ImmutableCreate2Factory>;
     getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
       name: "ConnectorErrors",
       address: string,
       signer?: ethers.Signer
@@ -289,6 +302,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ZetaNonEthInterface>;
+    getContractAt(
+      name: "Ownable2Step",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable2Step>;
     getContractAt(
       name: "INonfungiblePositionManager",
       address: string,
