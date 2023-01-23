@@ -1,7 +1,5 @@
 
-# Use AMD64 Image because there is no pre-built solc binary for ARM64 yet
 FROM node:16.14-alpine
-# FROM --platform=linux/amd64 node:16.14-alpine
 
 ENV SHELL /bin/ash
 ENV EXECUTE_PROGRAMMATICALLY=true

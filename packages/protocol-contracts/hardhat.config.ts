@@ -39,7 +39,6 @@ const config: HardhatUserConfig = {
     alwaysGenerateOverloads: false,
     outDir: "../interfaces/typechain-types",
   },
-  
 };
 
 export default config;
