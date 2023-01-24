@@ -11,6 +11,11 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "InvalidAddress",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "address",

@@ -13,6 +13,8 @@ import type * as zetaConnectorEthSol from "./ZetaConnector.eth.sol";
 export type { zetaConnectorEthSol };
 import type * as zetaConnectorNonEthSol from "./ZetaConnector.non-eth.sol";
 export type { zetaConnectorNonEthSol };
+import type * as zetaTokenConsumerTridentStrategySol from "./ZetaTokenConsumerTrident.strategy.sol";
+export type { zetaTokenConsumerTridentStrategySol };
 import type * as zetaTokenConsumerUniV2StrategySol from "./ZetaTokenConsumerUniV2.strategy.sol";
 export type { zetaTokenConsumerUniV2StrategySol };
 import type * as zetaTokenConsumerUniV3StrategySol from "./ZetaTokenConsumerUniV3.strategy.sol";

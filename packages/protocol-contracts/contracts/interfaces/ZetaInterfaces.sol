@@ -102,3 +102,7 @@ interface ZetaTokenConsumer {
         uint256 zetaTokenAmount
     ) external returns (uint256);
 }
+
+interface ZetaCommonErrors {
+    error InvalidAddress();
+}

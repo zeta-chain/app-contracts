@@ -10,8 +10,6 @@ interface ConnectorErrors {
 
     error CallerIsNotTssOrUpdater(address caller);
 
-    error InvalidAddress();
-
     error ZetaTransferError();
 
     error ExceedsMaxSupply(uint256 maxSupply);

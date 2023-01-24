@@ -7,6 +7,7 @@ export * as zetaNonEthSol from "./Zeta.non-eth.sol";
 export * as zetaConnectorBaseSol from "./ZetaConnector.base.sol";
 export * as zetaConnectorEthSol from "./ZetaConnector.eth.sol";
 export * as zetaConnectorNonEthSol from "./ZetaConnector.non-eth.sol";
+export * as zetaTokenConsumerTridentStrategySol from "./ZetaTokenConsumerTrident.strategy.sol";
 export * as zetaTokenConsumerUniV2StrategySol from "./ZetaTokenConsumerUniV2.strategy.sol";
 export * as zetaTokenConsumerUniV3StrategySol from "./ZetaTokenConsumerUniV3.strategy.sol";
 export * as interfaces from "./interfaces";

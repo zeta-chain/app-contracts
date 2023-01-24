@@ -5,19 +5,15 @@ import "../interfaces/IZRC20.sol";
 import "../interfaces/zContract.sol";
 
 interface ICRV3 {
-    function exchange(
-        uint256 i,
-        uint256 j,
-        uint256 dx,
-        uint256 min_dy,
-        bool use_eth
-    ) external returns (uint256);
+    function exchange(uint256 i, uint256 j, uint256 dx, uint256 min_dy, bool use_eth) external returns (uint256);
 }
 
 interface ZetaCurveSwapErrors {
     error WrongGasContract();
 
     error NotEnoughToPayGasFee();
+
+    error InvalidAddress();
 }
 
 contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
@@ -25,15 +21,13 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
     address[3] public crvZRC20s;
 
     constructor(address crv3pool_, address[3] memory ZRC20s_) {
+        if (crv3pool_ == address(0) || ZRC20s_[0] == address(0) || ZRC20s_[1] == address(0) || ZRC20s_[2] == address(0))
+            revert InvalidAddress();
         crv3pool = crv3pool_;
         crvZRC20s = ZRC20s_;
     }
 
-    function encode(
-        address zrc20,
-        address recipient,
-        uint256 minAmountOut
-    ) public pure returns (bytes memory) {
+    function encode(address zrc20, address recipient, uint256 minAmountOut) public pure returns (bytes memory) {
         return abi.encode(zrc20, recipient, minAmountOut);
     }
 
@@ -46,11 +40,7 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         return 18;
     }
 
-    function _doWithdrawal(
-        address targetZRC20,
-        uint256 amount,
-        bytes32 receipient
-    ) private {
+    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 receipient) private {
         (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
 
         if (gasZRC20 != targetZRC20) revert WrongGasContract();
@@ -60,11 +50,7 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
-    function onCrossChainCall(
-        address zrc20,
-        uint256 amount,
-        bytes calldata message
-    ) external override {
+    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external override {
         (address targetZRC20, bytes32 receipient, ) = abi.decode(message, (address, bytes32, uint256));
 
         address[] memory path = new address[](2);
