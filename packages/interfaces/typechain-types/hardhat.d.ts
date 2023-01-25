@@ -89,6 +89,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ConnectorErrors__factory>;
     getContractFactory(
+      name: "ConcentratedLiquidityPoolFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ConcentratedLiquidityPoolFactory__factory>;
+    getContractFactory(
+      name: "IPoolRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPoolRouter__factory>;
+    getContractFactory(
       name: "ZetaErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ZetaErrors__factory>;
@@ -96,6 +104,10 @@ declare module "hardhat/types/runtime" {
       name: "ZetaInteractorErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ZetaInteractorErrors__factory>;
+    getContractFactory(
+      name: "ZetaCommonErrors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ZetaCommonErrors__factory>;
     getContractFactory(
       name: "ZetaConnector",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -156,6 +168,18 @@ declare module "hardhat/types/runtime" {
       name: "ZetaInteractor",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ZetaInteractor__factory>;
+    getContractFactory(
+      name: "WETH9",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WETH9__factory>;
+    getContractFactory(
+      name: "ZetaTokenConsumerTrident",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ZetaTokenConsumerTrident__factory>;
+    getContractFactory(
+      name: "ZetaTokenConsumerTridentErrors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ZetaTokenConsumerTridentErrors__factory>;
     getContractFactory(
       name: "ZetaTokenConsumerUniV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -273,6 +297,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ConnectorErrors>;
     getContractAt(
+      name: "ConcentratedLiquidityPoolFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ConcentratedLiquidityPoolFactory>;
+    getContractAt(
+      name: "IPoolRouter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPoolRouter>;
+    getContractAt(
       name: "ZetaErrors",
       address: string,
       signer?: ethers.Signer
@@ -282,6 +316,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ZetaInteractorErrors>;
+    getContractAt(
+      name: "ZetaCommonErrors",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ZetaCommonErrors>;
     getContractAt(
       name: "ZetaConnector",
       address: string,
@@ -357,6 +396,21 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ZetaInteractor>;
+    getContractAt(
+      name: "WETH9",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WETH9>;
+    getContractAt(
+      name: "ZetaTokenConsumerTrident",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ZetaTokenConsumerTrident>;
+    getContractAt(
+      name: "ZetaTokenConsumerTridentErrors",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ZetaTokenConsumerTridentErrors>;
     getContractAt(
       name: "ZetaTokenConsumerUniV2",
       address: string,

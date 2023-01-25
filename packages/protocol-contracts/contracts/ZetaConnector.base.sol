@@ -53,19 +53,14 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
 
     event PauserAddressUpdated(address updaterAddress, address newTssAddress);
 
-    constructor(
-        address zetaToken_,
-        address tssAddress_,
-        address tssAddressUpdater_,
-        address pauserAddress_
-    ) {
+    constructor(address zetaToken_, address tssAddress_, address tssAddressUpdater_, address pauserAddress_) {
         if (
             zetaToken_ == address(0) ||
             tssAddress_ == address(0) ||
             tssAddressUpdater_ == address(0) ||
             pauserAddress_ == address(0)
         ) {
-            revert InvalidAddress();
+            revert ZetaCommonErrors.InvalidAddress();
         }
 
         zetaToken = zetaToken_;
@@ -90,7 +85,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     function updatePauserAddress(address pauserAddress_) external onlyPauser {
-        if (pauserAddress_ == address(0)) revert InvalidAddress();
+        if (pauserAddress_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
 
         pauserAddress = pauserAddress_;
 
@@ -99,7 +94,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
 
     function updateTssAddress(address tssAddress_) external {
         if (msg.sender != tssAddress && msg.sender != tssAddressUpdater) revert CallerIsNotTssOrUpdater(msg.sender);
-        if (tssAddress_ == address(0)) revert InvalidAddress();
+        if (tssAddress_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
 
         tssAddress = tssAddress_;
 
@@ -110,7 +105,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
      * @dev Changes the ownership of tssAddressUpdater to be the one held by the Zeta blockchain TSS nodes.
      */
     function renounceTssAddressUpdater() external onlyTssUpdater {
-        if (tssAddress == address(0)) revert InvalidAddress();
+        if (tssAddress == address(0)) revert ZetaCommonErrors.InvalidAddress();
 
         tssAddressUpdater = tssAddress;
     }

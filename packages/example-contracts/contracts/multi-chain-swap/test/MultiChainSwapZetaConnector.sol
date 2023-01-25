@@ -7,9 +7,10 @@ import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
 import "../MultiChainSwap.sol";
 
 contract MultiChainSwapZetaConnector is ZetaConnector {
-    address public zetaToken;
+    address public immutable zetaToken;
 
     constructor(address zetaToken_) {
+        if (zetaToken_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
         zetaToken = zetaToken_;
     }
 

@@ -22,11 +22,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "InvalidAddress",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "ReentrancyError",
     type: "error",
   },

@@ -21,6 +21,7 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     mapping(uint256 => bool) public availableChainIds;
 
     constructor(address connectorAddress_, address zetaToken_) ZetaInteractor(connectorAddress_) {
+        if (zetaToken_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
         zetaToken = zetaToken_;
     }
 
@@ -36,11 +37,7 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
         delete availableChainIds[destinationChainId];
     }
 
-    function send(
-        uint256 destinationChainId,
-        bytes calldata destinationAddress,
-        uint256 zetaValueAndGas
-    ) external {
+    function send(uint256 destinationChainId, bytes calldata destinationAddress, uint256 zetaValueAndGas) external {
         if (!availableChainIds[destinationChainId]) revert InvalidDestinationChainId();
         if (zetaValueAndGas == 0) revert InvalidZetaValueAndGas();
 

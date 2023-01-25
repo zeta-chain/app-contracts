@@ -49,11 +49,7 @@ contract ZetaNonEth is ZetaNonEthInterface, ERC20Burnable, ZetaErrors {
         tssAddressUpdater = tssAddress;
     }
 
-    function mint(
-        address mintee,
-        uint256 value,
-        bytes32 internalSendHash
-    ) external override {
+    function mint(address mintee, uint256 value, bytes32 internalSendHash) external override {
         /**
          * @dev Only Connector can mint. Minting requires burning the equivalent amount on another chain
          */

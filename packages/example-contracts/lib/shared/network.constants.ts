@@ -10,6 +10,18 @@ export type NetworkVariables = {
 };
 
 export const networkVariables: Record<NetworkName, NetworkVariables> = {
+  athens: {
+    chainId: 0,
+    connectorAddress: "",
+    crossChainId: 0,
+    crossChainName: ""
+  },
+  "bitcoin-test": {
+    chainId: 0,
+    connectorAddress: "",
+    crossChainId: 0,
+    crossChainName: ""
+  },
   "bsc-localnet": {
     chainId: 0,
     connectorAddress: "",

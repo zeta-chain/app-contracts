@@ -15,11 +15,6 @@ const _abi = [
     name: "InputCantBeZero",
     type: "error",
   },
-  {
-    inputs: [],
-    name: "InvalidAddress",
-    type: "error",
-  },
 ];
 
 export class ZetaTokenConsumerUniV2Errors__factory {

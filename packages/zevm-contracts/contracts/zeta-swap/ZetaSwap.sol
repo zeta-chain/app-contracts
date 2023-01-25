@@ -25,6 +25,8 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
     address public immutable uniswapV2Router;
 
     constructor(address zetaToken_, address uniswapV2Factory_, address uniswapV2Router_) {
+        if (zetaToken_ == address(0) || uniswapV2Factory_ == address(0) || uniswapV2Router_ == address(0))
+            revert CantBeZeroAddress();
         zetaToken = zetaToken_;
         uniswapV2Factory = uniswapV2Factory_;
         uniswapV2Router = uniswapV2Router_;

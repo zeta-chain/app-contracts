@@ -19,11 +19,8 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
 
     IUniswapV2Router02 internal uniswapV2Router;
 
-    constructor(
-        address zetaConnector_,
-        address zetaToken_,
-        address uniswapV2Router_
-    ) ZetaInteractor(zetaConnector_) {
+    constructor(address zetaConnector_, address zetaToken_, address uniswapV2Router_) ZetaInteractor(zetaConnector_) {
+        if (zetaToken_ == address(0) || uniswapV2Router_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
         zetaToken = zetaToken_;
         uniswapV2RouterAddress = uniswapV2Router_;
         uniswapV2Router = IUniswapV2Router02(uniswapV2Router_);
@@ -184,11 +181,9 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
-        external
-        override
-        isValidMessageCall(zetaMessage)
-    {
+    function onZetaMessage(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) external override isValidMessageCall(zetaMessage) {
         (
             bytes32 messageType,
             address sourceTxOrigin,
@@ -268,11 +263,9 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
         );
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
-        external
-        override
-        isValidRevertCall(zetaRevert)
-    {
+    function onZetaRevert(
+        ZetaInterfaces.ZetaRevert calldata zetaRevert
+    ) external override isValidRevertCall(zetaRevert) {
         /**
          * @dev: If something goes wrong we must swap to the source input token
          */

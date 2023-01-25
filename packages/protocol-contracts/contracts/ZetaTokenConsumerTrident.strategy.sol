@@ -10,8 +10,6 @@ import "./interfaces/TridentConcentratedLiquidityPoolFactory.sol";
 import "./interfaces/TridentIPoolRouter.sol";
 
 interface ZetaTokenConsumerTridentErrors {
-    error InvalidAddress();
-
     error InputCantBeZero();
 
     error ErrorSendingETH();
@@ -44,18 +42,13 @@ contract ZetaTokenConsumerTrident is ZetaTokenConsumer, ZetaTokenConsumerTrident
 
     bool internal _locked;
 
-    constructor(
-        address zetaToken_,
-        address uniswapV3Router_,
-        address WETH9Address_,
-        address poolFactory_
-    ) {
+    constructor(address zetaToken_, address uniswapV3Router_, address WETH9Address_, address poolFactory_) {
         if (
             zetaToken_ == address(0) ||
             uniswapV3Router_ == address(0) ||
             WETH9Address_ == address(0) ||
             poolFactory_ == address(0)
-        ) revert InvalidAddress();
+        ) revert ZetaCommonErrors.InvalidAddress();
 
         zetaToken = zetaToken_;
         tridentRouter = IPoolRouter(uniswapV3Router_);
@@ -78,13 +71,11 @@ contract ZetaTokenConsumerTrident is ZetaTokenConsumer, ZetaTokenConsumerTrident
         return (token1, token0);
     }
 
-    function getZetaFromEth(address destinationAddress, uint256 minAmountOut)
-        external
-        payable
-        override
-        returns (uint256)
-    {
-        if (destinationAddress == address(0)) revert InvalidAddress();
+    function getZetaFromEth(
+        address destinationAddress,
+        uint256 minAmountOut
+    ) external payable override returns (uint256) {
+        if (destinationAddress == address(0)) revert ZetaCommonErrors.InvalidAddress();
         if (msg.value == 0) revert InputCantBeZero();
 
         (address token0, address token1) = getPair(WETH9Address, zetaToken);
@@ -111,7 +102,7 @@ contract ZetaTokenConsumerTrident is ZetaTokenConsumer, ZetaTokenConsumerTrident
         address inputToken,
         uint256 inputTokenAmount
     ) external override returns (uint256) {
-        if (destinationAddress == address(0) || inputToken == address(0)) revert InvalidAddress();
+        if (destinationAddress == address(0) || inputToken == address(0)) revert ZetaCommonErrors.InvalidAddress();
         if (inputTokenAmount == 0) revert InputCantBeZero();
 
         IERC20(inputToken).safeTransferFrom(msg.sender, address(this), inputTokenAmount);
@@ -147,7 +138,7 @@ contract ZetaTokenConsumerTrident is ZetaTokenConsumer, ZetaTokenConsumerTrident
         uint256 minAmountOut,
         uint256 zetaTokenAmount
     ) external override returns (uint256) {
-        if (destinationAddress == address(0)) revert InvalidAddress();
+        if (destinationAddress == address(0)) revert ZetaCommonErrors.InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
         IERC20(zetaToken).safeTransferFrom(msg.sender, address(this), zetaTokenAmount);
@@ -178,7 +169,7 @@ contract ZetaTokenConsumerTrident is ZetaTokenConsumer, ZetaTokenConsumerTrident
         address outputToken,
         uint256 zetaTokenAmount
     ) external override nonReentrant returns (uint256) {
-        if (destinationAddress == address(0) || outputToken == address(0)) revert InvalidAddress();
+        if (destinationAddress == address(0) || outputToken == address(0)) revert ZetaCommonErrors.InvalidAddress();
         if (zetaTokenAmount == 0) revert InputCantBeZero();
 
         IERC20(zetaToken).safeTransferFrom(msg.sender, address(this), zetaTokenAmount);

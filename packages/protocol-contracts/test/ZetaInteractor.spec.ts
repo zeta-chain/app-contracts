@@ -1,5 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ZetaInteractorMock } from "@zetachain/interfaces/typechain-types";
+import { ZetaInteractorMock, ZetaInteractorMock__factory } from "@zetachain/interfaces/typechain-types";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -28,6 +28,27 @@ describe("ZetaInteractor tests", () => {
 
     const encodedCrossChainAddressB = ethers.utils.solidityPack(["address"], [crossChainContractB.address]);
     await (await zetaInteractorMock.setInteractorByChainId(chainBId, encodedCrossChainAddressB)).wait();
+  });
+
+  describe("onCreate", () => {
+    it("Should revert if constructor param is zero address", async () => {
+      const Factory = await ethers.getContractFactory("ZetaInteractorMock");
+      await expect(Factory.deploy(ethers.constants.AddressZero)).to.be.revertedWith(
+        getCustomErrorMessage("InvalidAddress")
+      );
+    });
+
+    it("Should revert if the zetaTxSenderAddress it not in interactorsByChainId", async () => {
+      await expect(
+        zetaInteractorMock.connect(zetaConnector).onZetaMessage({
+          destinationAddress: crossChainContractB.address,
+          message: encoder.encode(["address"], [crossChainContractB.address]),
+          sourceChainId: chainBId,
+          zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
+          zetaValue: 0
+        })
+      ).to.be.revertedWith(getCustomErrorMessage("InvalidZetaMessageCall"));
+    });
   });
 
   describe("onZetaMessage", () => {
