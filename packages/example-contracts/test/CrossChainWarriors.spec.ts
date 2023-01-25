@@ -279,9 +279,7 @@ describe("CrossChainWarriors tests", () => {
       ).wait();
 
       // Make sure that the NFT was removed from the source chain
-      await expect(crossChainWarriorsContractChainA.ownerOf(nftId)).to.be.revertedWith(
-        "ERC721: owner query for nonexistent token"
-      );
+      await expect(crossChainWarriorsContractChainA.ownerOf(nftId)).to.be.revertedWith("ERC721: invalid token ID");
 
       const messageType = await crossChainWarriorsContractChainA.CROSS_CHAIN_TRANSFER_MESSAGE();
 
