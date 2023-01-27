@@ -1,10 +1,9 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ZetaInteractorMock, ZetaInteractorMock__factory } from "@zetachain/interfaces/typechain-types";
+import { ZetaInteractorMock } from "@zetachain/interfaces/typechain-types";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
 import { getZetaInteractorMock } from "../lib/contracts.helpers";
-import { getCustomErrorMessage } from "./test.helpers";
 
 chai.should();
 
@@ -33,9 +32,7 @@ describe("ZetaInteractor tests", () => {
   describe("onCreate", () => {
     it("Should revert if constructor param is zero address", async () => {
       const Factory = await ethers.getContractFactory("ZetaInteractorMock");
-      await expect(Factory.deploy(ethers.constants.AddressZero)).to.be.revertedWith(
-        getCustomErrorMessage("InvalidAddress")
-      );
+      await expect(Factory.deploy(ethers.constants.AddressZero)).to.be.revertedWith("InvalidAddress");
     });
 
     it("Should revert if the zetaTxSenderAddress it not in interactorsByChainId", async () => {
@@ -47,7 +44,7 @@ describe("ZetaInteractor tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
           zetaValue: 0
         })
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidZetaMessageCall"));
+      ).to.be.revertedWith("InvalidZetaMessageCall");
     });
   });
 
@@ -61,7 +58,9 @@ describe("ZetaInteractor tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
           zetaValue: 0
         })
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
+      )
+        .to.be.revertedWith("InvalidCaller")
+        .withArgs(deployer.address);
     });
 
     it("Should revert if the zetaTxSenderAddress it not in interactorsByChainId", async () => {
@@ -73,7 +72,7 @@ describe("ZetaInteractor tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [zetaInteractorMock.address]),
           zetaValue: 0
         })
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidZetaMessageCall"));
+      ).to.be.revertedWith("InvalidZetaMessageCall");
     });
   });
 
@@ -88,7 +87,9 @@ describe("ZetaInteractor tests", () => {
           sourceChainId: chainAId,
           zetaTxSenderAddress: deployer.address
         })
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
+      )
+        .to.be.revertedWith("InvalidCaller")
+        .withArgs(deployer.address);
     });
   });
 

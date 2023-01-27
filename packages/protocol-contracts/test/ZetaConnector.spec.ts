@@ -5,7 +5,7 @@ import {
   ZetaConnectorNonEth,
   ZetaEth,
   ZetaNonEth,
-  ZetaReceiverMock,
+  ZetaReceiverMock
 } from "@zetachain/interfaces/typechain-types";
 import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
@@ -17,7 +17,7 @@ import {
   deployZetaConnectorNonEth,
   deployZetaEth,
   deployZetaNonEth,
-  deployZetaReceiverMock,
+  deployZetaReceiverMock
 } from "../lib/contracts.helpers";
 
 describe("ZetaConnector tests", () => {
@@ -66,22 +66,22 @@ describe("ZetaConnector tests", () => {
     [tssUpdater, tssSigner, randomSigner, pauserSigner] = accounts;
 
     zetaTokenEthContract = await deployZetaEth({
-      args: [100_000],
+      args: [100_000]
     });
 
     zetaTokenNonEthContract = await deployZetaNonEth({
-      args: [tssSigner.address, tssUpdater.address],
+      args: [tssSigner.address, tssUpdater.address]
     });
 
     zetaReceiverMockContract = await deployZetaReceiverMock();
     zetaConnectorBaseContract = await deployZetaConnectorBase({
-      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address],
+      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address]
     });
     zetaConnectorEthContract = await deployZetaConnectorEth({
-      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address],
+      args: [zetaTokenEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address]
     });
     zetaConnectorNonEthContract = await deployZetaConnectorNonEth({
-      args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address],
+      args: [zetaTokenNonEthContract.address, tssSigner.address, tssUpdater.address, pauserSigner.address]
     });
 
     await zetaTokenNonEthContract.updateTssAndConnectorAddresses(
@@ -95,15 +95,15 @@ describe("ZetaConnector tests", () => {
   describe("ZetaConnector.base", () => {
     describe("updateTssAddress", () => {
       it("Should revert if the caller is not TSS or TSS updater", async () => {
-        await expect(
-          zetaConnectorBaseContract.connect(randomSigner).updateTssAddress(randomSigner.address)
-        ).to.revertedWith(`CallerIsNotTssOrUpdater("${randomSigner.address}")`);
+        await expect(zetaConnectorBaseContract.connect(randomSigner).updateTssAddress(randomSigner.address))
+          .to.revertedWith("CallerIsNotTssOrUpdater")
+          .withArgs(randomSigner.address);
       });
 
       it("Should revert if the new TSS address is invalid", async () => {
         await expect(
           zetaConnectorBaseContract.updateTssAddress("0x0000000000000000000000000000000000000000")
-        ).to.revertedWith(`InvalidAddress()`);
+        ).to.revertedWith("InvalidAddress");
       });
 
       it("Should change the TSS address if called by TSS", async () => {
@@ -125,9 +125,9 @@ describe("ZetaConnector tests", () => {
 
     describe("updatePauserAddress", () => {
       it("Should revert if the caller is not the Pauser", async () => {
-        await expect(
-          zetaConnectorBaseContract.connect(randomSigner).updatePauserAddress(randomSigner.address)
-        ).to.revertedWith(`CallerIsNotPauser("${randomSigner.address}")`);
+        await expect(zetaConnectorBaseContract.connect(randomSigner).updatePauserAddress(randomSigner.address))
+          .to.revertedWith("CallerIsNotPauser")
+          .withArgs(randomSigner.address);
       });
 
       it("Should revert if the new Pauser address is invalid", async () => {
@@ -135,7 +135,7 @@ describe("ZetaConnector tests", () => {
           zetaConnectorBaseContract
             .connect(pauserSigner)
             .updatePauserAddress("0x0000000000000000000000000000000000000000")
-        ).to.revertedWith(`InvalidAddress()`);
+        ).to.revertedWith("InvalidAddress");
       });
 
       it("Should change the Pauser address if called by Pauser", async () => {
@@ -164,13 +164,13 @@ describe("ZetaConnector tests", () => {
 
     describe("pause, unpause", () => {
       it("Should revert if not called by the Pauser", async () => {
-        await expect(zetaConnectorBaseContract.connect(randomSigner).pause()).to.revertedWith(
-          `CallerIsNotPauser("${randomSigner.address}")`
-        );
+        await expect(zetaConnectorBaseContract.connect(randomSigner).pause())
+          .to.revertedWith("CallerIsNotPauser")
+          .withArgs(randomSigner.address);
 
-        await expect(zetaConnectorBaseContract.connect(randomSigner).unpause()).to.revertedWith(
-          `CallerIsNotPauser("${randomSigner.address}")`
-        );
+        await expect(zetaConnectorBaseContract.connect(randomSigner).unpause())
+          .to.revertedWith("CallerIsNotPauser")
+          .withArgs(randomSigner.address);
       });
 
       it("Should pause if called by the Pauser", async () => {
@@ -199,7 +199,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
+            zetaValueAndGas: 1000
           })
         ).to.revertedWith("Pausable: paused");
       });
@@ -216,7 +216,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
+            zetaValueAndGas: 1000
           })
         ).to.revertedWith("ERC20: transfer amount exceeds balance");
       });
@@ -229,7 +229,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
+            zetaValueAndGas: 1000
           })
         ).to.revertedWith("ERC20: insufficient allowance");
       });
@@ -250,7 +250,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
+            zetaValueAndGas: 1000
           })
         ).wait();
 
@@ -272,7 +272,7 @@ describe("ZetaConnector tests", () => {
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
+          zetaValueAndGas: 0
         });
 
         const e2 = await zetaConnectorEthContract.queryFilter(zetaSentFilter);
@@ -290,7 +290,7 @@ describe("ZetaConnector tests", () => {
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
+          zetaValueAndGas: 0
         });
 
         const e2 = await zetaConnectorEthContract.queryFilter(zetaSentFilter);
@@ -326,7 +326,9 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             ethers.constants.HashZero
           )
-        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")'`);
+        )
+          .to.revertedWith("CallerIsNotTss")
+          .withArgs(tssUpdater.address);
       });
 
       it("Should revert if Zeta transfer fails", async () => {
@@ -427,7 +429,9 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             ethers.constants.HashZero
           )
-        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
+        )
+          .to.revertedWith("CallerIsNotTss")
+          .withArgs(tssUpdater.address);
       });
 
       it("Should transfer to the zetaTxSender address", async () => {
@@ -500,7 +504,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
+            zetaValueAndGas: 1000
           })
         ).to.revertedWith("Pausable: paused");
       });
@@ -517,7 +521,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
+            zetaValueAndGas: 1000
           })
         ).to.revertedWith("ERC20: insufficient allowance");
       });
@@ -530,7 +534,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: 1000,
+            zetaValueAndGas: 1000
           })
         ).to.revertedWith("ERC20: insufficient allowance");
       });
@@ -548,7 +552,7 @@ describe("ZetaConnector tests", () => {
             destinationGasLimit: 2500000,
             message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            zetaValueAndGas: parseEther("1"),
+            zetaValueAndGas: parseEther("1")
           })
         ).wait();
 
@@ -567,7 +571,7 @@ describe("ZetaConnector tests", () => {
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
+          zetaValueAndGas: 0
         });
 
         const e2 = await zetaConnectorNonEthContract.queryFilter(zetaSentFilter);
@@ -585,7 +589,7 @@ describe("ZetaConnector tests", () => {
           destinationGasLimit: 2500000,
           message: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
           zetaParams: new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-          zetaValueAndGas: 0,
+          zetaValueAndGas: 0
         });
 
         const e2 = await zetaConnectorNonEthContract.queryFilter(zetaSentFilter);
@@ -621,7 +625,9 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             ethers.constants.HashZero
           )
-        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")'`);
+        )
+          .to.revertedWith("CallerIsNotTss")
+          .withArgs(tssUpdater.address);
       });
 
       it("Should revert if mint fails", async () => {
@@ -641,7 +647,9 @@ describe("ZetaConnector tests", () => {
               new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
               ethers.constants.HashZero
             )
-        ).to.revertedWith(`CallerIsNotConnector("${zetaConnectorNonEthContract.address}")`);
+        )
+          .to.revertedWith("CallerIsNotConnector")
+          .withArgs(zetaConnectorNonEthContract.address);
       });
 
       it("Should mint on the receiver address", async () => {
@@ -719,7 +727,9 @@ describe("ZetaConnector tests", () => {
             new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
             ethers.constants.HashZero
           )
-        ).to.revertedWith(`CallerIsNotTss("${tssUpdater.address}")`);
+        )
+          .to.revertedWith("CallerIsNotTss")
+          .withArgs(tssUpdater.address);
       });
 
       it("Should mint on the zetaTxSender address", async () => {
@@ -773,9 +783,9 @@ describe("ZetaConnector tests", () => {
     describe("MaxSupply", () => {
       describe("setMaxSupply", () => {
         it("Should revert if the caller is not the TSS address", async () => {
-          await expect(zetaConnectorNonEthContract.connect(randomSigner).setMaxSupply(0)).to.revertedWith(
-            `CallerIsNotTss("${randomSigner.address}")`
-          );
+          await expect(zetaConnectorNonEthContract.connect(randomSigner).setMaxSupply(0))
+            .to.revertedWith("CallerIsNotTss")
+            .withArgs(randomSigner.address);
         });
 
         it("Should revert if want to mint more than MaxSupply", async () => {
@@ -791,7 +801,9 @@ describe("ZetaConnector tests", () => {
                 new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
                 ethers.constants.HashZero
               )
-          ).to.revertedWith(`ExceedsMaxSupply(999)`);
+          )
+            .to.revertedWith("ExceedsMaxSupply")
+            .withArgs(999);
         });
       });
 
@@ -830,7 +842,9 @@ describe("ZetaConnector tests", () => {
                 new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
                 ethers.constants.HashZero
               )
-          ).to.revertedWith(`ExceedsMaxSupply(${initialSupply.add(supplyToAdd)})`);
+          )
+            .to.revertedWith("ExceedsMaxSupply")
+            .withArgs(initialSupply.add(supplyToAdd));
 
           await expect(
             zetaConnectorNonEthContract
@@ -844,7 +858,9 @@ describe("ZetaConnector tests", () => {
                 new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
                 ethers.constants.HashZero
               )
-          ).to.revertedWith(`ExceedsMaxSupply(${initialSupply.add(supplyToAdd)})`);
+          )
+            .to.revertedWith("ExceedsMaxSupply")
+            .withArgs(initialSupply.add(supplyToAdd));
         });
       });
     });
