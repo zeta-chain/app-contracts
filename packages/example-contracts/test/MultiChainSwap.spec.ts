@@ -18,7 +18,7 @@ import {
   UniswapV2Router02__factory
 } from "../typechain-types";
 import { USDC_ADDR } from "./MultiChainSwap.constants";
-import { getCustomErrorMessage, parseUniswapLog, parseZetaLog } from "./test.helpers";
+import { parseUniswapLog, parseZetaLog } from "./test.helpers";
 
 chai.should();
 chai.use(smock.matchers);
@@ -139,7 +139,7 @@ describe("MultiChainSwap tests", () => {
             value: parseUnits("1")
           }
         )
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidDestinationChainId"));
+      ).to.be.revertedWith("InvalidDestinationChainId");
     });
 
     it("Should revert if the sourceInputToken isn't provided", async () => {
@@ -154,7 +154,7 @@ describe("MultiChainSwap tests", () => {
           chainBId,
           MaxUint256
         )
-      ).to.be.revertedWith(getCustomErrorMessage("MissingSourceInputTokenAddress"));
+      ).to.be.revertedWith("MissingSourceInputTokenAddress");
     });
 
     it("Should revert if the destinationOutToken isn't provided", async () => {
@@ -169,7 +169,7 @@ describe("MultiChainSwap tests", () => {
           chainBId,
           MaxUint256
         )
-      ).to.be.revertedWith(getCustomErrorMessage("OutTokenInvariant"));
+      ).to.be.revertedWith("OutTokenInvariant");
     });
 
     it("Should not perform any trade if the input token is Zeta", async () => {
@@ -364,7 +364,7 @@ describe("MultiChainSwap tests", () => {
         MaxUint256
       );
 
-      await expect(call).to.be.revertedWith(getCustomErrorMessage("InvalidDestinationChainId"));
+      await expect(call).to.be.revertedWith("InvalidDestinationChainId");
     });
 
     it("Should revert if the sourceInputToken isn't provided", async () => {
@@ -379,7 +379,7 @@ describe("MultiChainSwap tests", () => {
         MaxUint256
       );
 
-      await expect(call).to.be.revertedWith(getCustomErrorMessage("MissingSourceInputTokenAddress"));
+      await expect(call).to.be.revertedWith("MissingSourceInputTokenAddress");
     });
 
     it("Should revert if the destinationOutToken isn't provided", async () => {
@@ -394,7 +394,7 @@ describe("MultiChainSwap tests", () => {
         MaxUint256
       );
 
-      await expect(call).to.be.revertedWith(getCustomErrorMessage("OutTokenInvariant"));
+      await expect(call).to.be.revertedWith("OutTokenInvariant");
     });
   });
 
@@ -408,7 +408,9 @@ describe("MultiChainSwap tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [multiChainSwapContractA.address]),
           zetaValue: 0
         })
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
+      )
+        .to.be.revertedWith("InvalidCaller")
+        .withArgs(deployer.address);
     });
 
     it("Should revert if the zetaTxSenderAddress it not in interactorsByChainId", async () => {
@@ -420,7 +422,7 @@ describe("MultiChainSwap tests", () => {
           0,
           encoder.encode(["address"], [multiChainSwapContractB.address])
         )
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidZetaMessageCall"));
+      ).to.be.revertedWith("InvalidZetaMessageCall");
     });
   });
 
@@ -435,7 +437,9 @@ describe("MultiChainSwap tests", () => {
           sourceChainId: chainAId,
           zetaTxSenderAddress: deployer.address
         })
-      ).to.be.revertedWith(getCustomErrorMessage("InvalidCaller", [deployer.address]));
+      )
+        .to.be.revertedWith("InvalidCaller")
+        .withArgs(deployer.address);
     });
 
     it("Should trade the returned Zeta back for the input zeta token", async () => {

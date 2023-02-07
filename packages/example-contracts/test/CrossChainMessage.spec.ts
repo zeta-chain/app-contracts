@@ -82,7 +82,7 @@ describe("CrossChainMessage tests", () => {
         zetaTokenMockAddress: zetaEthTokenMockContract.address
       });
 
-      await expect(unsetContract.sendHelloWorld(chainAId)).to.be.revertedWith("InvalidDestinationChainId()");
+      await expect(unsetContract.sendHelloWorld(chainAId)).to.be.revertedWith("InvalidDestinationChainId");
     });
 
     it("Should send hello world", async () => {
@@ -101,7 +101,9 @@ describe("CrossChainMessage tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainMessageContractChainA.address]),
           zetaValue: 0
         })
-      ).to.be.revertedWith(`InvalidCaller("${deployer.address}")`);
+      )
+        .to.be.revertedWith("InvalidCaller")
+        .withArgs(deployer.address);
     });
 
     it("Should revert if the cross-chain address doesn't match with the stored one", async () => {
@@ -113,7 +115,7 @@ describe("CrossChainMessage tests", () => {
           0,
           encoder.encode(["address", "string"], [zetaConnectorMockContract.address, SAMPLE_TEXT])
         )
-      ).to.be.revertedWith("InvalidZetaMessageCall()");
+      ).to.be.revertedWith("InvalidZetaMessageCall");
     });
 
     describe("Given a valid message", () => {

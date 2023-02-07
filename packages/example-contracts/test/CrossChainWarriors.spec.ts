@@ -172,7 +172,9 @@ describe("CrossChainWarriors tests", () => {
           zetaTxSenderAddress: ethers.utils.solidityPack(["address"], [crossChainWarriorsContractChainA.address]),
           zetaValue: 0
         })
-      ).to.be.revertedWith(`InvalidCaller("${deployer.address}")`);
+      )
+        .to.be.revertedWith("InvalidCaller")
+        .withArgs(deployer.address);
     });
 
     it("Should revert if the cross-chain address doesn't match with the stored one", async () => {
@@ -184,7 +186,7 @@ describe("CrossChainWarriors tests", () => {
           0,
           encoder.encode(["address"], [zetaConnectorMockContract.address])
         )
-      ).to.be.revertedWith("InvalidZetaMessageCall()");
+      ).to.be.revertedWith("InvalidZetaMessageCall");
     });
 
     it("Should revert if the message type doesn't match with CROSS_CHAIN_TRANSFER_MESSAGE", async () => {
@@ -203,7 +205,7 @@ describe("CrossChainWarriors tests", () => {
             [invalidMessageType, 1, deployerAddress, deployerAddress]
           )
         )
-      ).to.be.revertedWith("InvalidMessageType()");
+      ).to.be.revertedWith("InvalidMessageType");
     });
 
     it("Should revert if the token already exists", async () => {

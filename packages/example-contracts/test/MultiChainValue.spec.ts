@@ -6,7 +6,7 @@ import { ethers } from "hardhat";
 import {
   deployMultiChainValueMock,
   deployZetaConnectorMock,
-  deployZetaEthMock,
+  deployZetaEthMock
 } from "../lib/multi-chain-value/MultiChainValue.helpers";
 import { MultiChainValueMock, ZetaConnectorMockValue } from "../typechain-types";
 
@@ -29,7 +29,7 @@ describe("MultiChainValue tests", () => {
     zetaEthMockContract = await deployZetaEthMock();
     multiChainValueContractA = await deployMultiChainValueMock({
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
-      zetaTokenMockAddress: zetaEthMockContract.address,
+      zetaTokenMockAddress: zetaEthMockContract.address
     });
 
     await multiChainValueContractA.addAvailableChainId(chainBId);
@@ -44,7 +44,7 @@ describe("MultiChainValue tests", () => {
     it("Should prevent enabling a chainId that's already enabled", async () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
 
-      await expect(multiChainValueContractA.addAvailableChainId(1)).to.be.revertedWith("ChainIdAlreadyEnabled()");
+      await expect(multiChainValueContractA.addAvailableChainId(1)).to.be.revertedWith("ChainIdAlreadyEnabled");
     });
 
     it("Should enable the provided chainId", async () => {
@@ -56,7 +56,7 @@ describe("MultiChainValue tests", () => {
 
   describe("removeAvailableChainId", () => {
     it("Should prevent disabling a chainId that's already disabled", async () => {
-      await expect(multiChainValueContractA.removeAvailableChainId(1)).to.be.revertedWith("ChainIdNotAvailable()");
+      await expect(multiChainValueContractA.removeAvailableChainId(1)).to.be.revertedWith("ChainIdNotAvailable");
     });
 
     it("Should disable the provided chainId", async () => {
@@ -71,14 +71,14 @@ describe("MultiChainValue tests", () => {
   describe("send", () => {
     it("Should prevent sending value to a disabled chainId", async () => {
       await expect(multiChainValueContractA.send(1, account1Address, 100_000)).to.be.revertedWith(
-        "InvalidDestinationChainId()"
+        "InvalidDestinationChainId"
       );
     });
 
     it("Should prevent sending 0 value", async () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
 
-      await expect(multiChainValueContractA.send(1, account1Address, 0)).to.be.revertedWith("InvalidZetaValueAndGas()");
+      await expect(multiChainValueContractA.send(1, account1Address, 0)).to.be.revertedWith("InvalidZetaValueAndGas");
     });
 
     it("Should prevent sending if the account has no Zeta balance", async () => {

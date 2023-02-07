@@ -24,7 +24,6 @@
     "tsc:watch": "npx tsc --watch"
   },
   "devDependencies": {
-    "@defi-wonderland/smock": "^2.0.7",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.7.20",
     "tsconfig-paths": "^3.14.1"
