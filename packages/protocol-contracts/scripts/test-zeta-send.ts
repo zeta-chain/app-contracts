@@ -9,18 +9,18 @@ const encoder = new AbiCoder();
 
 async function main() {
   const factory = (await ethers.getContractFactory("ZetaConnectorEth")) as ZetaConnectorEthFactory;
-
+  const accounts = await ethers.getSigners();
   const contract = factory.attach(getAddress("connector"));
 
-  console.log("Sending");
+  console.log(`Sending To ${accounts[0].address}`);
   await (
     await contract.send({
-      destinationAddress: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
+      destinationAddress: encoder.encode(["address"], [accounts[0].address]),
       destinationChainId: getChainId("bsc-testnet"),
       destinationGasLimit: 1_000_000,
-      message: encoder.encode(["address"], ["0x09b80BEcBe709Dd354b1363727514309d1Ac3C7b"]),
+      message: encoder.encode(["address"], [accounts[0].address]),
       zetaParams: [],
-      zetaValueAndGas: 0
+      zetaValueAndGas: "10000000000000000000"
     })
   ).wait();
   console.log("Sent");
