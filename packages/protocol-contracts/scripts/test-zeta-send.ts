@@ -6,11 +6,10 @@ import { ethers } from "hardhat";
 import { getAddress } from "../lib/address.helpers";
 
 const encoder = new AbiCoder();
-const hre = require("hardhat");
 
 async function main() {
   const factory = (await ethers.getContractFactory("ZetaConnectorEth")) as ZetaConnectorEthFactory;
-  const accounts = await hre.ethers.getSigners();
+  const accounts = await ethers.getSigners();
   const contract = factory.attach(getAddress("connector"));
 
   console.log(`Sending To ${accounts[0].address}`);
