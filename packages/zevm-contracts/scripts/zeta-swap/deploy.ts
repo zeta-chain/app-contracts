@@ -14,6 +14,12 @@ const main = async () => {
     zetaNetwork: "athens"
   });
 
+  const UNISWAP_FACTORY_ADDRESS = getAddress({
+    address: "uniswapV2Factory",
+    networkName: "athens",
+    zetaNetwork: "athens"
+  });
+
   const UNISWAP_ROUTER_ADDRESS = getAddress({
     address: "uniswapV2Router02",
     networkName: "athens",
@@ -21,7 +27,7 @@ const main = async () => {
   });
 
   const Factory = (await ethers.getContractFactory("ZetaSwap")) as ZetaSwap__factory;
-  const contract = (await Factory.deploy(WZETA_ADDRESS, UNISWAP_ROUTER_ADDRESS)) as ZetaSwap;
+  const contract = (await Factory.deploy(WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS)) as ZetaSwap;
   await contract.deployed();
 
   console.log("Deployed ZetaSwap. Address:", contract.address);
@@ -30,6 +36,7 @@ const main = async () => {
   const FactoryBTC = (await ethers.getContractFactory("ZetaSwapBtcInbound")) as ZetaSwapBtcInbound__factory;
   const contractBTC = (await FactoryBTC.deploy(
     WZETA_ADDRESS,
+    UNISWAP_FACTORY_ADDRESS,
     UNISWAP_ROUTER_ADDRESS,
     SYSTEM_CONTRACT
   )) as ZetaSwapBtcInbound;
