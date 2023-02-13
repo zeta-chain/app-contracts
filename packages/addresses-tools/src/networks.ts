@@ -32,13 +32,13 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 2100000,
     gasPrice: 38000000000,
-    url: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
+    url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY_GOERLI}`,
   },
   hardhat: {
     chainId: 1337,
     forking: {
       blockNumber: 14672712,
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY_MAINNET}`,
     },
   },
   "klaytn-baobab": {
@@ -70,7 +70,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 9000000,
     gasPrice: 80000000000,
-    url: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+    url: "https://ropsten.infura.io/v3/",
   },
 });
 
