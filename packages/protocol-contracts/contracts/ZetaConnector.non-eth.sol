@@ -8,7 +8,7 @@ import "./interfaces/ZetaInterfaces.sol";
 import "./interfaces/ZetaNonEthInterface.sol";
 
 contract ZetaConnectorNonEth is ZetaConnectorBase {
-    uint256 public maxSupply = 2**256 - 1;
+    uint256 public maxSupply = 2 ** 256 - 1;
 
     constructor(
         address zetaTokenAddress_,
@@ -47,7 +47,7 @@ contract ZetaConnectorNonEth is ZetaConnectorBase {
         uint256 zetaValue,
         bytes calldata message,
         bytes32 internalSendHash
-    ) external override whenNotPaused onlyTssAddress {
+    ) external override onlyTssAddress {
         if (zetaValue + ZetaNonEthInterface(zetaToken).totalSupply() > maxSupply) revert ExceedsMaxSupply(maxSupply);
         ZetaNonEthInterface(zetaToken).mint(destinationAddress, zetaValue, internalSendHash);
 
