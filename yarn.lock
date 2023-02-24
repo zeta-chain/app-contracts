@@ -2756,6 +2756,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@zetachain/zeta-app-contracts@workspace:packages/zeta-app-contracts":
+  version: 0.0.0-use.local
+  resolution: "@zetachain/zeta-app-contracts@workspace:packages/zeta-app-contracts"
+  dependencies:
+    "@defi-wonderland/smock": ^2.3.4
+    "@openzeppelin/contracts": 4.7.3
+    "@zetachain/addresses": "workspace:^"
+    "@zetachain/addresses-tools": "workspace:^"
+    "@zetachain/interfaces": "workspace:^"
+    "@zetachain/protocol-contracts": "workspace:^"
+    ethers: 5.6.8
+    hardhat-gas-reporter: ^1.0.8
+    solidity-coverage: ^0.7.20
+    tsconfig-paths: ^3.14.1
+  languageName: unknown
+  linkType: soft
+
 "@zetachain/zevm-contracts@workspace:packages/zevm-contracts":
   version: 0.0.0-use.local
   resolution: "@zetachain/zevm-contracts@workspace:packages/zevm-contracts"
