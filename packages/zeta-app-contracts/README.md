@@ -1,6 +1,6 @@
 # ZetaChain App contracts
 
-This package include the contract used by different ZetaChain Apps like ZetaHub
+This package include the contracts used by different ZetaChain Apps like ZetaHub
 
 ## Environment variables
 

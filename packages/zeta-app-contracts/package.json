@@ -11,8 +11,6 @@
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
-    "multi-chain-swap:deploy-local": "ZETA_NETWORK=troy EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts --network hardhat",
-    "multi-chain-swap:deploy": "ZETA_NETWORK=athens EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts",
     "lint:fix": "npm run lint:js:fix && npm run lint:sol:fix",
     "lint:js:fix": "eslint --ext .js,.ts . --fix",
     "lint:js": "eslint --ext .js,.ts .",
