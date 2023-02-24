@@ -42,7 +42,7 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         uint256 zetaValue,
         bytes calldata message,
         bytes32 internalSendHash
-    ) external override whenNotPaused onlyTssAddress {
+    ) external override onlyTssAddress {
         bool success = IERC20(zetaToken).transfer(destinationAddress, zetaValue);
         if (!success) revert ZetaTransferError();
 

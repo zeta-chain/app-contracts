@@ -299,21 +299,23 @@ describe("ZetaConnector tests", () => {
     });
 
     describe("onReceive", () => {
-      it("Should revert if the contract is paused", async () => {
+      it("Should not revert if the contract is paused", async () => {
         await (await zetaConnectorEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorEthContract.paused();
         expect(paused1).to.equal(true);
 
         await expect(
-          zetaConnectorEthContract.onReceive(
-            tssUpdater.address,
-            1,
-            randomSigner.address,
-            1000,
-            new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            ethers.constants.HashZero
-          )
-        ).to.revertedWith("Pausable: paused");
+          zetaConnectorEthContract
+            .connect(tssSigner)
+            .onReceive(
+              tssUpdater.address,
+              1,
+              zetaReceiverMockContract.address,
+              0,
+              new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+              ethers.constants.HashZero
+            )
+        ).to.be.not.reverted;
       });
 
       it("Should revert if not called by TSS address", async () => {
@@ -598,21 +600,23 @@ describe("ZetaConnector tests", () => {
     });
 
     describe("onReceive", () => {
-      it("Should revert if the contract is paused", async () => {
+      it("Should not revert if the contract is paused", async () => {
         await (await zetaConnectorNonEthContract.connect(pauserSigner).pause()).wait();
         const paused1 = await zetaConnectorNonEthContract.paused();
         expect(paused1).to.equal(true);
 
         await expect(
-          zetaConnectorNonEthContract.onReceive(
-            tssUpdater.address,
-            1,
-            randomSigner.address,
-            1000,
-            new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
-            ethers.constants.HashZero
-          )
-        ).to.revertedWith("Pausable: paused");
+          zetaConnectorNonEthContract
+            .connect(tssSigner)
+            .onReceive(
+              tssUpdater.address,
+              1,
+              zetaReceiverMockContract.address,
+              0,
+              new ethers.utils.AbiCoder().encode(["string"], ["hello"]),
+              ethers.constants.HashZero
+            )
+        ).to.be.not.reverted;
       });
 
       it("Should revert if not called by TSS address", async () => {
