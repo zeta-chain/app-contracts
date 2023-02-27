@@ -5,7 +5,7 @@ import { ethers, network } from "hardhat";
 
 import { getAddress } from "../../lib/shared/address.helpers";
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
-import { MultiChainValue__factory } from "../typechain-types";
+import { MultiChainValue__factory } from "../../typechain-types";
 
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
 const SALT_NUMBER = "0";

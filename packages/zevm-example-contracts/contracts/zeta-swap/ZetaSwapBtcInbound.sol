@@ -2,7 +2,7 @@
 pragma solidity 0.8.7;
 
 import "./ZetaSwap.sol";
-import "../system/SystemContract.sol";
+import "@zetachain/zevm-protocol-contracts/contracts/system/SystemContract.sol";
 
 contract ZetaSwapBtcInbound is ZetaSwap {
     address immutable systemContractAddress;

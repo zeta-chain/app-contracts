@@ -1,5 +1,5 @@
 {
-  "name": "@zetachain/zevm-contracts",
+  "name": "@zetachain/zevm-example-contracts",
   "version": "0.0.1",
   "license": "MIT",
   "private": true,
@@ -35,6 +35,7 @@
     "@zetachain/addresses-tools": "workspace:^",
     "@zetachain/interfaces": "workspace:^",
     "@zetachain/protocol-contracts": "workspace:^",
+    "@zetachain/zevm-protocol-contracts": "workspace:^",
     "ethers": "5.6.8"
   }
 }
