@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "../interfaces/IZRC20.sol";
-import "../interfaces/zContract.sol";
+import "@zetachain/zevm-protocol-contracts/contracts/interfaces/zContract.sol";
+import "@zetachain/zevm-protocol-contracts/contracts/interfaces/IZRC20.sol";
 
 interface ICRV3 {
     function exchange(uint256 i, uint256 j, uint256 dx, uint256 min_dy, bool use_eth) external returns (uint256);

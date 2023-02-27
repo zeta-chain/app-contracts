@@ -2,9 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../system/SystemContract.sol";
-import "../interfaces/IZRC20.sol";
-import "../interfaces/zContract.sol";
+import "@zetachain/zevm-protocol-contracts/contracts/system/SystemContract.sol";
 import "../shared/BytesHelperLib.sol";
 import "../shared/SwapHelperLib.sol";
 

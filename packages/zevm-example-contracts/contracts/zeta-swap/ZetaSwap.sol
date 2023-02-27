@@ -4,8 +4,8 @@ pragma solidity 0.8.7;
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol";
 
-import "../interfaces/IZRC20.sol";
-import "../interfaces/zContract.sol";
+import "@zetachain/zevm-protocol-contracts/contracts/interfaces/zContract.sol";
+import "@zetachain/zevm-protocol-contracts/contracts/interfaces/IZRC20.sol";
 
 interface ZetaSwapErrors {
     error WrongGasContract();
