@@ -7,6 +7,11 @@ import "./interfaces/ConnectorErrors.sol";
 import "./ZetaConnector.base.sol";
 import "./interfaces/ZetaInterfaces.sol";
 
+/**
+ * @dev ETH implementation of ZetaConnector.
+ * This contract manage all the interactions between TSS and different chains.
+ * This version is only for Etherum network because in the other chains we mint and burn and in this one we lock and unlock
+ */
 contract ZetaConnectorEth is ZetaConnectorBase {
     constructor(
         address zetaToken_,
@@ -19,6 +24,10 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         return IERC20(zetaToken).balanceOf(address(this));
     }
 
+    /**
+     * @dev Entry point to send data to protocol
+     * This call lock the token on the contract and emit an event with all the data needed by the protocol
+     */
     function send(ZetaInterfaces.SendInput calldata input) external override whenNotPaused {
         bool success = IERC20(zetaToken).transferFrom(msg.sender, address(this), input.zetaValueAndGas);
         if (!success) revert ZetaTransferError();
@@ -35,6 +44,11 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         );
     }
 
+    /**
+     * @dev Handler to receive data from other chain.
+     * This method can be called only by TSS.
+     * Transfer the Zeta tokens to destination and calls onZetaMessage if it's needed.
+     */
     function onReceive(
         bytes calldata zetaTxSenderAddress,
         uint256 sourceChainId,
@@ -55,6 +69,11 @@ contract ZetaConnectorEth is ZetaConnectorBase {
         emit ZetaReceived(zetaTxSenderAddress, sourceChainId, destinationAddress, zetaValue, message, internalSendHash);
     }
 
+    /**
+     * @dev Handler to receive errors from other chain.
+     * This method can be called only by TSS.
+     * Transfer the Zeta tokens to destination and calls onZetaRevert if it's needed.
+     */
     function onRevert(
         address zetaTxSenderAddress,
         uint256 sourceChainId,
