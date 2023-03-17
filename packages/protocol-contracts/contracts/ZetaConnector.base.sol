@@ -9,20 +9,20 @@ import "./interfaces/ZetaInterfaces.sol";
 
 /**
  * @dev Main abstraction of ZetaConnector.
- * This contract manage all the interactions between TSS and different chains.
- * There's an instance of this contract on each chain supported by Zeta.
+ * This contract manages all the interactions between TSS and different chains.
+ * There's an instance of this contract on each chain supported by ZetaChain.
  */
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public immutable zetaToken;
 
     /**
      * @dev Multisig contract to pause the income transactions.
-     * Output are not pause to allow protocol to finish pending even if it's paused
+     * Output is not paused to allow protocol to finish pending even if it's paused
      */
     address public pauserAddress;
 
     /**
-     * @dev Collectively held by Zeta blockchain validators.
+     * @dev Collectively held by ZetaChain validators.
      */
     address public tssAddress;
 
@@ -67,7 +67,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
 
     /**
      * @dev Constructor requires initial addresses.
-     * ZetaToken address it's the only immutable, the others can be updated later
+     * zetaToken address is the only immutable one, while others can be updated.
      */
     constructor(address zetaToken_, address tssAddress_, address tssAddressUpdater_, address pauserAddress_) {
         if (
@@ -86,7 +86,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Modifier to restrict actions to pauser address
+     * @dev Modifier to restrict actions to pauser address.
      */
     modifier onlyPauser() {
         if (msg.sender != pauserAddress) revert CallerIsNotPauser(msg.sender);
@@ -94,7 +94,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Modifier to restrict actions to tss address
+     * @dev Modifier to restrict actions to TSS address.
      */
     modifier onlyTssAddress() {
         if (msg.sender != tssAddress) revert CallerIsNotTss(msg.sender);
@@ -102,7 +102,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Modifier to restrict actions to tss updater address
+     * @dev Modifier to restrict actions to TSS updater address.
      */
     modifier onlyTssUpdater() {
         if (msg.sender != tssAddressUpdater) revert CallerIsNotTssUpdater(msg.sender);
@@ -110,7 +110,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Update the pauser address. The only address allow to do that is the current pauser.
+     * @dev Update the pauser address. The only address allowed to do that is the current pauser.
      */
     function updatePauserAddress(address pauserAddress_) external onlyPauser {
         if (pauserAddress_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
@@ -121,7 +121,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Update the tss address. The address can be updated by the tss updater or the tss it self
+     * @dev Update the TSS address. The address can be updated by the TSS updater or the TSS address itself.
      */
     function updateTssAddress(address tssAddress_) external {
         if (msg.sender != tssAddress && msg.sender != tssAddressUpdater) revert CallerIsNotTssOrUpdater(msg.sender);
@@ -133,7 +133,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Changes the ownership of tssAddressUpdater to be the one held by the Zeta blockchain TSS nodes.
+     * @dev Changes the ownership of tssAddressUpdater to be the one held by the ZetaChain TSS Signer nodes.
      */
     function renounceTssAddressUpdater() external onlyTssUpdater {
         if (tssAddress == address(0)) revert ZetaCommonErrors.InvalidAddress();
@@ -142,7 +142,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Pause the input transactions
+     * @dev Pause the input (send) transactions.
      */
 
     function pause() external onlyPauser {
@@ -150,7 +150,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Unpause the contract to allow transactions again
+     * @dev Unpause the contract to allow transactions again.
      */
 
     function unpause() external onlyPauser {
@@ -158,7 +158,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     }
 
     /**
-     * @dev Entry point to send data to protocol
+     * @dev Entrypoint to send data and value through ZetaChain.
      */
     function send(ZetaInterfaces.SendInput calldata input) external virtual {}
 
