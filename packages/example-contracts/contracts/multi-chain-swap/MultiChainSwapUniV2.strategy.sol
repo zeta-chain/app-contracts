@@ -267,7 +267,7 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
         ZetaInterfaces.ZetaRevert calldata zetaRevert
     ) external override isValidRevertCall(zetaRevert) {
         /**
-         * @dev: If something goes wrong we must swap to the source input token
+         * @dev If something goes wrong we must swap to the source input token
          */
         (
             ,
