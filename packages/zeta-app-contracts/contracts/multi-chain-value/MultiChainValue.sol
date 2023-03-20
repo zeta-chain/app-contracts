@@ -21,7 +21,7 @@ interface MultiChainValueErrors {
 
 /**
  * @dev MultiChainValue goal is to send Zeta token across all supported chains
- * Extends the logic defined in ZetaInteractor to handle multichain estandards
+ * Extends the logic defined in ZetaInteractor to handle multichain standards
  */
 contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     address public zetaToken;
