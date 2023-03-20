@@ -27,7 +27,7 @@ contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public tssAddress;
 
     /**
-     * @dev Multisig contract to update TSS address
+     * @dev This address will start pointing to a multisig contract, then it will become the TSS address itself.
      */
     address public tssAddressUpdater;
 
