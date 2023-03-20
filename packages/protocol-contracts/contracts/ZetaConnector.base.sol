@@ -9,15 +9,15 @@ import "./interfaces/ZetaInterfaces.sol";
 
 /**
  * @dev Main abstraction of ZetaConnector.
- * This contract manages all the interactions between TSS and different chains.
+ * This contract manages interactions between TSS and different chains.
  * There's an instance of this contract on each chain supported by ZetaChain.
  */
 contract ZetaConnectorBase is ConnectorErrors, Pausable {
     address public immutable zetaToken;
 
     /**
-     * @dev Multisig contract to pause the income transactions.
-     * Output is not paused to allow protocol to finish pending even if it's paused
+     * @dev Multisig contract to pause incoming transactions.
+     * The responsibility of pausing outgoing transactions is left to the protocol for more flexibility.
      */
     address public pauserAddress;
 

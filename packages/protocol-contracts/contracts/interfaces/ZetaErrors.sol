@@ -2,7 +2,7 @@
 pragma solidity 0.8.7;
 
 /**
- * @dev Interface with most common / share custom errors
+ * @dev Common custom errors
  */
 interface ZetaErrors {
     // @dev Error thrown when caller is not the address defined as TSS address
@@ -17,9 +17,9 @@ interface ZetaErrors {
     // @dev Error thrown when caller is not the address defined as TSS or TSS Updater address
     error CallerIsNotTssOrUpdater(address caller);
 
-    // @dev Error thrown when some contract receive an invalid address param, mostly zero address validation
+    // @dev Thrown when a contract receives an invalid address param, mostly zero address validation
     error InvalidAddress();
 
-    // @dev Error thrown when Zeta can't be transfer for some reason
+    // @dev Thrown when Zeta can't be transferred for some reason
     error ZetaTransferError();
 }

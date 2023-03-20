@@ -9,7 +9,7 @@ import "./interfaces/ZetaInterfaces.sol";
 
 /**
  * @dev ETH implementation of ZetaConnector.
- * This contract manages all the interactions between TSS and different chains.
+ * This contract manages interactions between TSS and different chains.
  * This version is only for Ethereum network because in the other chains we mint and burn and in this one we lock and unlock.
  */
 contract ZetaConnectorEth is ZetaConnectorBase {

@@ -8,7 +8,7 @@ interface ZetaInteractorErrors {
     // @dev Error thrown when try to send a message or tokens to a non whitelisted chain
     error InvalidDestinationChainId();
 
-    // @dev Error thrown when caller is invalid. Ex: if onZetaMessage or onZetaRevert are not called by connector
+    // @dev Thrown when the caller is invalid. e.g.: if onZetaMessage or onZetaRevert are not called by Connector
     error InvalidCaller(address caller);
 
     // @dev Error thrown when message on onZetaMessage has the wrong format

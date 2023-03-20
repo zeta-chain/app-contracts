@@ -17,7 +17,7 @@ interface ConnectorErrors {
     // @dev Error thrown when caller is not the address defined as TSS or TSS Updater address
     error CallerIsNotTssOrUpdater(address caller);
 
-    // @dev Error thrown when Zeta can't be transfer for some reason
+    // @dev Thrown when Zeta can't be transferred for some reason
     error ZetaTransferError();
 
     // @dev Error thrown when maxSupply will be exceed if minting will proceed
