@@ -25,7 +25,7 @@ interface MultiChainValueErrors {
  */
 contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     address public zetaToken;
-    // @dev: map of validc chains to send Zeta
+    // @dev: map of valid chains to send Zeta
     mapping(uint256 => bool) public availableChainIds;
 
     // @dev: Constructor calls ZetaInteractor constructor to setup connector and current chain
