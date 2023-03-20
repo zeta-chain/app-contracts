@@ -9,7 +9,7 @@ import "./interfaces/ZetaNonEthInterface.sol";
 
 /**
  * @dev Non ETH implementation of ZetaConnector.
- * This contract manage all the interactions between TSS and different chains.
+ * This contract manages interactions between TSS and different chains.
  * This version is for every chain but Etherum network because in the other chains we mint and burn and in Etherum we lock and unlock
  */
 contract ZetaConnectorNonEth is ZetaConnectorBase {

@@ -5,16 +5,16 @@ pragma solidity 0.8.7;
  * @dev Common custom errors
  */
 interface ZetaErrors {
-    // @dev Error thrown when caller is not the address defined as TSS address
+    // @dev Thrown when caller is not the address defined as TSS address
     error CallerIsNotTss(address caller);
 
-    // @dev Error thrown when caller is not the address defined as connector address
+    // @dev Thrown when caller is not the address defined as connector address
     error CallerIsNotConnector(address caller);
 
-    // @dev Error thrown when caller is not the address defined as TSS Updater address
+    // @dev Thrown when caller is not the address defined as TSS Updater address
     error CallerIsNotTssUpdater(address caller);
 
-    // @dev Error thrown when caller is not the address defined as TSS or TSS Updater address
+    // @dev Thrown when caller is not the address defined as TSS or TSS Updater address
     error CallerIsNotTssOrUpdater(address caller);
 
     // @dev Thrown when a contract receives an invalid address param, mostly zero address validation
