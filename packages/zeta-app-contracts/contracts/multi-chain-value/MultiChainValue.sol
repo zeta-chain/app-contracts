@@ -28,7 +28,7 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     // @dev: map of valid chains to send Zeta
     mapping(uint256 => bool) public availableChainIds;
 
-    // @dev: Constructor calls ZetaInteractor constructor to setup connector and current chain
+    // @dev Constructor calls ZetaInteractor's constructor to setup Connector address and current chain
     constructor(address connectorAddress_, address zetaToken_) ZetaInteractor(connectorAddress_) {
         if (zetaToken_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
         zetaToken = zetaToken_;
