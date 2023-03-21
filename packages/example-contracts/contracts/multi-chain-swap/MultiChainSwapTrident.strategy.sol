@@ -203,7 +203,7 @@ contract MultiChainSwapTrident is MultiChainSwap, ZetaInteractor, MultiChainSwap
         isValidRevertCall(zetaRevert)
     {
         /**
-         * @dev: If something goes wrong we must swap to the source input token
+         * @dev If something goes wrong we must swap to the source input token
          */
         (
             ,
