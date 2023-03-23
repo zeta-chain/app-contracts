@@ -9,7 +9,6 @@ import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 import "@zetachain/zevm-protocol-contracts/contracts/system/SystemContract.sol";
 
 import "./Synthetixio/StakingRewards.sol";
-import "./StakingRewardsLib.sol";
 
 contract RewardDistributor is StakingRewards {
     uint16 internal constant MAX_DEADLINE = 200;
@@ -52,6 +51,14 @@ contract RewardDistributor is StakingRewards {
         return LPTokenAmount;
     }
 
+    function _zetaByTokenAmount(address poolAddress, uint256 amount) internal view returns (uint256) {
+        (uint256 tokenReserve, uint256 zetaReserve) = IUniswapV2Pair(poolAddress).getReserves();
+        if (IUniswapV2Pair(poolAddress).token0() == address(zetaToken))
+            (zetaReserve, tokenReserve) = (tokenReserve, zetaReserve);
+
+        return (zetaReserve * amount) / tokenReserve;
+    }
+
     function addLiquidityAndStake(address tokenAddress, uint256 amount) external {
         require(amount > 0, "Cannot stake 0");
         uint256 poolAddress = systemContract.uniswapv2PairFor(
@@ -60,7 +67,7 @@ contract RewardDistributor is StakingRewards {
             address(zetaToken)
         );
         require(poolAddress == stakingToken, "Token is not valid");
-        uint256 zetaNeeded = StakingRewardsLib._zetaByTokenAmount(poolAddress, amount);
+        uint256 zetaNeeded = _zetaByTokenAmount(poolAddress, amount);
         uint256 LPTokenAmount = _deposit(tokenAddress, poolAddress, amount, zetaNeeded);
         stake(LPTokenAmount);
     }
