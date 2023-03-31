@@ -31,7 +31,10 @@ contract RewardDistributor is StakingRewards {
     function _deposit(address tokenAddress, uint256 tokenAmount, uint256 zetaAmount) internal returns (uint256) {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), tokenAmount);
         IERC20(tokenAddress).approve(systemContract.uniswapv2Router02Address(), tokenAmount);
+
+        zetaToken.transferFrom(msg.sender, address(this), zetaAmount);
         zetaToken.approve(systemContract.uniswapv2Router02Address(), zetaAmount);
+
         (, , uint LPTokenAmount) = IUniswapV2Router02(systemContract.uniswapv2Router02Address()).addLiquidity(
             tokenAddress,
             address(zetaToken),
@@ -46,7 +49,12 @@ contract RewardDistributor is StakingRewards {
         return LPTokenAmount;
     }
 
-    function _zetaByTokenAmount(address poolAddress, uint256 amount) internal view returns (uint256) {
+    function zetaByTokenAmount(address tokenAddress, uint256 amount) public view returns (uint256) {
+        address poolAddress = systemContract.uniswapv2PairFor(
+            systemContract.uniswapv2FactoryAddress(),
+            tokenAddress,
+            address(zetaToken)
+        );
         (uint256 tokenReserve, uint256 zetaReserve, ) = IUniswapV2Pair(poolAddress).getReserves();
         if (IUniswapV2Pair(poolAddress).token0() == address(zetaToken))
             (zetaReserve, tokenReserve) = (tokenReserve, zetaReserve);
@@ -62,7 +70,7 @@ contract RewardDistributor is StakingRewards {
             address(zetaToken)
         );
         require(poolAddress == address(stakingToken), "Token is not valid");
-        uint256 zetaNeeded = _zetaByTokenAmount(poolAddress, amount);
+        uint256 zetaNeeded = zetaByTokenAmount(tokenAddress, amount);
         uint256 LPTokenAmount = _deposit(tokenAddress, amount, zetaNeeded);
         // stake(LPTokenAmount)
         _totalSupply = _totalSupply + LPTokenAmount;

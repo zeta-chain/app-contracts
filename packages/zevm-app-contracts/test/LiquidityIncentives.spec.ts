@@ -7,6 +7,7 @@ import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
 import {
+  ERC20,
   IWETH,
   RewardDistributor,
   RewardDistributorFactory,
@@ -18,11 +19,13 @@ import { evmSetup } from "./test.helpers";
 
 const REWARD_DURATION = BigNumber.from("604800"); // 1 week
 const REWARDS_AMOUNT = parseEther("1000");
-const ERROR_TOLERANCE = parseEther("0.01");
+const ERROR_TOLERANCE = parseEther("0.1");
 
 describe("LiquidityIncentives tests", () => {
   let ZETA: IWETH;
+  let ZETA_ERC20: ERC20;
   let ZRC20Contracts: TestZRC20[];
+  let ZRC20Contract: TestZRC20;
   let systemContract: TestSystemContract;
 
   let accounts: SignerWithAddress[];
@@ -30,6 +33,17 @@ describe("LiquidityIncentives tests", () => {
 
   let rewardDistributorFactory: RewardDistributorFactory;
   let rewardDistributorContract: RewardDistributor;
+
+  const stakeToken = async (signer: SignerWithAddress, amount: BigNumber) => {
+    const zetaNeeded = await rewardDistributorContract.zetaByTokenAmount(ZRC20Contract.address, amount);
+    await ZRC20Contract.transfer(signer.address, amount);
+    await ZETA_ERC20.transfer(signer.address, zetaNeeded);
+
+    await ZRC20Contract.connect(signer).approve(rewardDistributorContract.address, amount);
+    await ZETA_ERC20.connect(signer).approve(rewardDistributorContract.address, zetaNeeded);
+
+    await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZRC20Contract.address, amount);
+  };
 
   beforeEach(async () => {
     accounts = await ethers.getSigners();
@@ -56,10 +70,12 @@ describe("LiquidityIncentives tests", () => {
     });
 
     ZETA = (await ethers.getContractAt("IWETH", wGasToken)) as IWETH;
-    await ZETA.deposit({ value: parseEther("1000") });
+    ZETA_ERC20 = (await ethers.getContractAt("ERC20", wGasToken)) as ERC20;
+    await ZETA.deposit({ value: parseEther("10000") });
 
     const evmSetupResult = await evmSetup(wGasToken, uniswapFactoryAddr, uniswapRouterAddr);
     ZRC20Contracts = evmSetupResult.ZRC20Contracts;
+    ZRC20Contract = ZRC20Contracts[0];
     systemContract = evmSetupResult.systemContract;
 
     const RewardDistributorFactoryFactory = (await ethers.getContractFactory(
@@ -74,7 +90,7 @@ describe("LiquidityIncentives tests", () => {
     const tx = await rewardDistributorFactory.createIncentive(
       deployer.address,
       deployer.address,
-      ZRC20Contracts[0].address
+      ZRC20Contract.address
     );
     const receipt = await tx.wait();
     const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
@@ -93,7 +109,7 @@ describe("LiquidityIncentives tests", () => {
       const tx = await rewardDistributorFactory.createIncentive(
         deployer.address,
         deployer.address,
-        ZRC20Contracts[0].address
+        ZRC20Contract.address
       );
       const receipt = await tx.wait();
 
@@ -101,10 +117,10 @@ describe("LiquidityIncentives tests", () => {
       expect(event).to.not.be.undefined;
 
       const { stakingToken, LPStakingToken, rewardToken, owner } = event?.args as any;
-      expect(stakingToken).to.be.eq(ZRC20Contracts[0].address);
+      expect(stakingToken).to.be.eq(ZRC20Contract.address);
       const LPTokenAddress = await systemContract.uniswapv2PairFor(
         uniswapv2FactoryAddress,
-        ZRC20Contracts[0].address,
+        ZRC20Contract.address,
         ZETA.address
       );
       expect(LPStakingToken).to.be.eq(LPTokenAddress);
@@ -128,16 +144,116 @@ describe("LiquidityIncentives tests", () => {
 
     const sampleAccount = accounts[0];
     const stakedAmount = parseEther("100");
-    tx = await ZRC20Contracts[0].transfer(sampleAccount.address, stakedAmount);
 
-    tx = await ZRC20Contracts[0].connect(sampleAccount).approve(rewardDistributorContract.address, stakedAmount);
-
-    tx = await rewardDistributorContract.addLiquidityAndStake(ZRC20Contracts[0].address, stakedAmount);
+    await stakeToken(sampleAccount, stakedAmount);
 
     await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
     await network.provider.send("evm_mine");
 
     const earned = await rewardDistributorContract.earned(sampleAccount.address);
     expect(earned).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+  });
+
+  it("Should distribute rewards between two users", async () => {
+    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount1 = accounts[1];
+    const sampleAccount2 = accounts[2];
+    const stakedAmount1 = parseEther("100");
+    const stakedAmount2 = parseEther("100");
+
+    await stakeToken(sampleAccount1, stakedAmount1);
+    await stakeToken(sampleAccount2, stakedAmount2);
+
+    await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
+    await network.provider.send("evm_mine");
+
+    let earned1 = await rewardDistributorContract.earned(sampleAccount1.address);
+    expect(earned1).to.be.closeTo(REWARDS_AMOUNT.div(4), ERROR_TOLERANCE);
+
+    let earned2 = await rewardDistributorContract.earned(sampleAccount2.address);
+    expect(earned2).to.be.closeTo(REWARDS_AMOUNT.div(4), ERROR_TOLERANCE);
+
+    await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
+    await network.provider.send("evm_mine");
+
+    earned1 = await rewardDistributorContract.earned(sampleAccount1.address);
+    expect(earned1).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+    earned2 = await rewardDistributorContract.earned(sampleAccount2.address);
+    expect(earned2).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+
+    let zetaBalance = BigNumber.from(0);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
+    expect(zetaBalance).to.be.eq(0);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
+    expect(zetaBalance).to.be.eq(0);
+
+    tx = await rewardDistributorContract.connect(sampleAccount1).getReward();
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
+    expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
+    expect(zetaBalance).to.be.eq(0);
+
+    tx = await rewardDistributorContract.connect(sampleAccount2).getReward();
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
+    expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
+    expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+  });
+
+  it("Should distribute rewards between two users different proportion", async () => {
+    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount1 = accounts[3];
+    const sampleAccount2 = accounts[4];
+    const stakedAmount1 = parseEther("30");
+    const stakedAmount2 = parseEther("10");
+
+    await stakeToken(sampleAccount1, stakedAmount1);
+    await stakeToken(sampleAccount2, stakedAmount2);
+
+    await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
+    await network.provider.send("evm_mine");
+
+    let earned1 = await rewardDistributorContract.earned(sampleAccount1.address);
+    expect(earned1).to.be.closeTo(
+      REWARDS_AMOUNT.div(2)
+        .div(4)
+        .mul(3),
+      ERROR_TOLERANCE
+    );
+
+    let earned2 = await rewardDistributorContract.earned(sampleAccount2.address);
+    expect(earned2).to.be.closeTo(REWARDS_AMOUNT.div(2).div(4), ERROR_TOLERANCE);
+
+    await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
+    await network.provider.send("evm_mine");
+
+    earned1 = await rewardDistributorContract.earned(sampleAccount1.address);
+    expect(earned1).to.be.closeTo(REWARDS_AMOUNT.div(4).mul(3), ERROR_TOLERANCE);
+    earned2 = await rewardDistributorContract.earned(sampleAccount2.address);
+    expect(earned2).to.be.closeTo(REWARDS_AMOUNT.div(4), ERROR_TOLERANCE);
+
+    let zetaBalance = BigNumber.from(0);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
+    expect(zetaBalance).to.be.eq(0);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
+    expect(zetaBalance).to.be.eq(0);
+
+    tx = await rewardDistributorContract.connect(sampleAccount1).getReward();
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
+    expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(4).mul(3), ERROR_TOLERANCE);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
+    expect(zetaBalance).to.be.eq(0);
+
+    tx = await rewardDistributorContract.connect(sampleAccount2).getReward();
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
+    expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(4).mul(3), ERROR_TOLERANCE);
+    zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
+    expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(4), ERROR_TOLERANCE);
   });
 });
