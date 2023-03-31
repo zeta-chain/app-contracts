@@ -3,10 +3,11 @@ import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress as getAddressLib } from "@zetachain/addresses";
 import { expect } from "chai";
+import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
 import {
-  ERC20,
+  IWETH,
   RewardDistributor,
   RewardDistributorFactory,
   RewardDistributorFactory__factory,
@@ -15,9 +16,12 @@ import {
 } from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 
+const REWARD_DURATION = BigNumber.from("604800"); // 1 week
+const REWARDS_AMOUNT = parseEther("1000");
+const ERROR_TOLERANCE = parseEther("0.01");
+
 describe("LiquidityIncentives tests", () => {
-  let USDC: ERC20;
-  let ZETA: ERC20;
+  let ZETA: IWETH;
   let ZRC20Contracts: TestZRC20[];
   let systemContract: TestSystemContract;
 
@@ -51,14 +55,8 @@ describe("LiquidityIncentives tests", () => {
       zetaNetwork: "mainnet"
     });
 
-    const USDCAddress = getAddressLib({
-      address: "usdc",
-      networkName: "eth-mainnet",
-      zetaNetwork: "mainnet"
-    });
-
-    USDC = (await ethers.getContractAt("ERC20", USDCAddress)) as ERC20;
-    ZETA = (await ethers.getContractAt("ERC20", wGasToken)) as ERC20;
+    ZETA = (await ethers.getContractAt("IWETH", wGasToken)) as IWETH;
+    await ZETA.deposit({ value: parseEther("1000") });
 
     const evmSetupResult = await evmSetup(wGasToken, uniswapFactoryAddr, uniswapRouterAddr);
     ZRC20Contracts = evmSetupResult.ZRC20Contracts;
@@ -82,8 +80,11 @@ describe("LiquidityIncentives tests", () => {
     const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
     expect(event).to.not.be.undefined;
 
-    const { rewardDistributorContract: rewardDistributorContract_ } = event?.args as any;
-    rewardDistributorContract = rewardDistributorContract_;
+    const { rewardDistributorContract: rewardDistributorContractAddress } = event?.args as any;
+    rewardDistributorContract = (await ethers.getContractAt(
+      "RewardDistributor",
+      rewardDistributorContractAddress
+    )) as RewardDistributor;
   });
 
   describe("LiquidityIncentives", () => {
@@ -110,5 +111,33 @@ describe("LiquidityIncentives tests", () => {
       expect(rewardToken).to.be.eq(ZETA.address);
       expect(owner).to.be.eq(deployer.address);
     });
+  });
+
+  it("Should create an incentive", async () => {
+    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+    const rewardRate = await rewardDistributorContract.rewardRate();
+    expect(rewardRate).to.be.closeTo(REWARDS_AMOUNT.div(REWARD_DURATION), ERROR_TOLERANCE);
+  });
+
+  it("Should create an incentive and should be able to use it", async () => {
+    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+    tx = await ZRC20Contracts[0].transfer(sampleAccount.address, stakedAmount);
+
+    tx = await ZRC20Contracts[0].connect(sampleAccount).approve(rewardDistributorContract.address, stakedAmount);
+
+    tx = await rewardDistributorContract.addLiquidityAndStake(ZRC20Contracts[0].address, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
+    await network.provider.send("evm_mine");
+
+    const earned = await rewardDistributorContract.earned(sampleAccount.address);
+    expect(earned).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
   });
 });

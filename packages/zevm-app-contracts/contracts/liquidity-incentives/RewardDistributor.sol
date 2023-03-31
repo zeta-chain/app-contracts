@@ -64,6 +64,9 @@ contract RewardDistributor is StakingRewards {
         require(poolAddress == address(stakingToken), "Token is not valid");
         uint256 zetaNeeded = _zetaByTokenAmount(poolAddress, amount);
         uint256 LPTokenAmount = _deposit(tokenAddress, amount, zetaNeeded);
-        this.stake(LPTokenAmount);
+        // stake(LPTokenAmount)
+        _totalSupply = _totalSupply + LPTokenAmount;
+        _balances[msg.sender] = _balances[msg.sender] + LPTokenAmount;
+        emit Staked(msg.sender, LPTokenAmount);
     }
 }

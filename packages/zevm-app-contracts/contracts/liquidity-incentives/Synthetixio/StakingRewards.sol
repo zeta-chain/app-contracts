@@ -28,8 +28,8 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
     mapping(address => uint256) public userRewardPerTokenPaid;
     mapping(address => uint256) public rewards;
 
-    uint256 private _totalSupply;
-    mapping(address => uint256) private _balances;
+    uint256 internal _totalSupply;
+    mapping(address => uint256) internal _balances;
 
     /* ========== CONSTRUCTOR ========== */
 
