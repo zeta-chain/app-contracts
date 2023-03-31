@@ -28,12 +28,7 @@ contract RewardDistributor is StakingRewards {
         systemContract = SystemContract(_systemContract);
     }
 
-    function _deposit(
-        address tokenAddress,
-        address poolAddress,
-        uint256 tokenAmount,
-        uint256 zetaAmount
-    ) internal returns (uint256) {
+    function _deposit(address tokenAddress, uint256 tokenAmount, uint256 zetaAmount) internal returns (uint256) {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), tokenAmount);
         IERC20(tokenAddress).approve(systemContract.uniswapv2Router02Address(), tokenAmount);
         zetaToken.approve(systemContract.uniswapv2Router02Address(), zetaAmount);
@@ -68,7 +63,7 @@ contract RewardDistributor is StakingRewards {
         );
         require(poolAddress == address(stakingToken), "Token is not valid");
         uint256 zetaNeeded = _zetaByTokenAmount(poolAddress, amount);
-        uint256 LPTokenAmount = _deposit(tokenAddress, poolAddress, amount, zetaNeeded);
+        uint256 LPTokenAmount = _deposit(tokenAddress, amount, zetaNeeded);
         this.stake(LPTokenAmount);
     }
 }
