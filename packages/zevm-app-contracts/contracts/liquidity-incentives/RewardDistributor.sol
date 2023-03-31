@@ -23,7 +23,7 @@ contract RewardDistributor is StakingRewards {
         address _stakingToken,
         address _zetaToken,
         address _systemContract
-    ) public StakingRewards(_owner, _rewardsDistribution, _rewardsToken, _stakingToken) {
+    ) StakingRewards(_owner, _rewardsDistribution, _rewardsToken, _stakingToken) {
         zetaToken = IERC20(_zetaToken);
         systemContract = SystemContract(_systemContract);
     }
@@ -35,9 +35,9 @@ contract RewardDistributor is StakingRewards {
         uint256 zetaAmount
     ) internal returns (uint256) {
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), tokenAmount);
-        IERC20(tokenAddress).approve(systemContract.uniswapv2Router02Address, tokenAmount);
-        zetaToken.approve(systemContract.uniswapv2Router02Address, zetaAmount);
-        (, , uint LPTokenAmount) = IUniswapV2Router02(systemContract.uniswapv2Router02Address).addLiquidity(
+        IERC20(tokenAddress).approve(systemContract.uniswapv2Router02Address(), tokenAmount);
+        zetaToken.approve(systemContract.uniswapv2Router02Address(), zetaAmount);
+        (, , uint LPTokenAmount) = IUniswapV2Router02(systemContract.uniswapv2Router02Address()).addLiquidity(
             tokenAddress,
             address(zetaToken),
             tokenAmount,
@@ -52,7 +52,7 @@ contract RewardDistributor is StakingRewards {
     }
 
     function _zetaByTokenAmount(address poolAddress, uint256 amount) internal view returns (uint256) {
-        (uint256 tokenReserve, uint256 zetaReserve) = IUniswapV2Pair(poolAddress).getReserves();
+        (uint256 tokenReserve, uint256 zetaReserve, ) = IUniswapV2Pair(poolAddress).getReserves();
         if (IUniswapV2Pair(poolAddress).token0() == address(zetaToken))
             (zetaReserve, tokenReserve) = (tokenReserve, zetaReserve);
 
@@ -61,14 +61,14 @@ contract RewardDistributor is StakingRewards {
 
     function addLiquidityAndStake(address tokenAddress, uint256 amount) external {
         require(amount > 0, "Cannot stake 0");
-        uint256 poolAddress = systemContract.uniswapv2PairFor(
-            systemContract.uniswapv2FactoryAddress,
+        address poolAddress = systemContract.uniswapv2PairFor(
+            systemContract.uniswapv2FactoryAddress(),
             tokenAddress,
             address(zetaToken)
         );
-        require(poolAddress == stakingToken, "Token is not valid");
+        require(poolAddress == address(stakingToken), "Token is not valid");
         uint256 zetaNeeded = _zetaByTokenAmount(poolAddress, amount);
         uint256 LPTokenAmount = _deposit(tokenAddress, poolAddress, amount, zetaNeeded);
-        stake(LPTokenAmount);
+        this.stake(LPTokenAmount);
     }
 }
