@@ -15,7 +15,13 @@ contract RewardDistributorFactory {
     mapping(uint256 => address) public incentivesContracts;
     uint256 public incentivesContractsLen;
 
-    event RewardDistributorCreated(address rewardDistributor, address stakingToken, address rewardToken);
+    event RewardDistributorCreated(
+        address rewardDistributorContract,
+        address stakingToken,
+        address LPStakingToken,
+        address rewardToken,
+        address owner
+    );
 
     constructor(address _zetaTokenAddress, address _systemContract) {
         zetaTokenAddress = _zetaTokenAddress;
@@ -23,19 +29,19 @@ contract RewardDistributorFactory {
     }
 
     function createIncentive(
-        address _owner,
+        address owner,
         ///@dev _rewardsDistribution is one who can set the amount of token to reward
-        address _rewardsDistribution,
-        address _stakingToken
+        address rewardsDistribution,
+        address stakingToken
     ) public {
         address LPTokenAddress = systemContract.uniswapv2PairFor(
             systemContract.uniswapv2FactoryAddress(),
-            _stakingToken,
+            stakingToken,
             zetaTokenAddress
         );
         RewardDistributor incentiveContract = new RewardDistributor(
-            _owner,
-            _rewardsDistribution,
+            owner,
+            rewardsDistribution,
             zetaTokenAddress,
             LPTokenAddress,
             zetaTokenAddress,
@@ -43,7 +49,13 @@ contract RewardDistributorFactory {
         );
         incentivesContracts[incentivesContractsLen++] = address(incentiveContract);
 
-        emit RewardDistributorCreated(address(incentiveContract), _stakingToken, zetaTokenAddress);
+        emit RewardDistributorCreated(
+            address(incentiveContract),
+            stakingToken,
+            LPTokenAddress,
+            zetaTokenAddress,
+            owner
+        );
     }
 
     function getIncentiveContracts() public view returns (address[] memory) {
