@@ -137,6 +137,27 @@ describe("LiquidityIncentives tests", () => {
     expect(rewardRate).to.be.closeTo(REWARDS_AMOUNT.div(REWARD_DURATION), ERROR_TOLERANCE);
   });
 
+  it("Should store incentive contract in registry", async () => {
+    const initialIncentivesContractsLen = await rewardDistributorFactory.incentivesContractsLen();
+    const tx = await rewardDistributorFactory.createIncentive(
+      deployer.address,
+      deployer.address,
+      ZRC20Contract.address
+    );
+    const receipt = await tx.wait();
+
+    const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
+    expect(event).to.not.be.undefined;
+
+    const { rewardDistributorContract } = event?.args as any;
+    expect(rewardDistributorContract).to.not.be.undefined;
+
+    const finalIncentivesContractsLen = await rewardDistributorFactory.incentivesContractsLen();
+    expect(initialIncentivesContractsLen).to.be.eq(finalIncentivesContractsLen.sub(1));
+    const incentivesContract = await rewardDistributorFactory.incentivesContracts(finalIncentivesContractsLen.sub(1));
+    expect(incentivesContract).to.be.eq(rewardDistributorContract);
+  });
+
   it("Should create an incentive and should be able to use it", async () => {
     let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
     tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
