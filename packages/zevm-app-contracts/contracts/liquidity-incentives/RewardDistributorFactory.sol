@@ -17,7 +17,8 @@ contract RewardDistributorFactory {
 
     event RewardDistributorCreated(
         address rewardDistributorContract,
-        address stakingToken,
+        address stakingTokenA,
+        address stakingTokenB,
         address LPStakingToken,
         address rewardToken,
         address owner
@@ -28,30 +29,36 @@ contract RewardDistributorFactory {
         systemContract = SystemContract(_systemContract);
     }
 
-    function createIncentive(
+    function createTokenIncentive(
         address owner,
         ///@dev _rewardsDistribution is one who can set the amount of token to reward
         address rewardsDistribution,
-        address stakingToken
+        address stakingTokenA,
+        address stakingTokenB
     ) public {
+        if (stakingTokenB == address(0)) {
+            stakingTokenB = zetaTokenAddress;
+        }
         address LPTokenAddress = systemContract.uniswapv2PairFor(
             systemContract.uniswapv2FactoryAddress(),
-            stakingToken,
-            zetaTokenAddress
+            stakingTokenA,
+            stakingTokenB
         );
         RewardDistributor incentiveContract = new RewardDistributor(
             owner,
             rewardsDistribution,
             zetaTokenAddress,
             LPTokenAddress,
-            zetaTokenAddress,
+            stakingTokenA,
+            stakingTokenB,
             address(systemContract)
         );
         incentivesContracts[incentivesContractsLen++] = address(incentiveContract);
 
         emit RewardDistributorCreated(
             address(incentiveContract),
-            stakingToken,
+            stakingTokenA,
+            stakingTokenB,
             LPTokenAddress,
             zetaTokenAddress,
             owner

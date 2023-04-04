@@ -13,7 +13,8 @@ import "./Synthetixio/StakingRewards.sol";
 contract RewardDistributor is StakingRewards {
     uint16 internal constant MAX_DEADLINE = 200;
 
-    IERC20 public zetaToken;
+    IERC20 public stakingTokenA;
+    IERC20 public stakingTokenB;
     SystemContract private systemContract;
 
     error ZeroStakeAmount();
@@ -24,25 +25,27 @@ contract RewardDistributor is StakingRewards {
         address _rewardsDistribution,
         address _rewardsToken,
         address _stakingToken,
-        address _zetaToken,
+        address _stakingTokenA,
+        address _stakingTokenB,
         address _systemContract
     ) StakingRewards(_owner, _rewardsDistribution, _rewardsToken, _stakingToken) {
-        zetaToken = IERC20(_zetaToken);
+        stakingTokenA = IERC20(_stakingTokenA);
+        stakingTokenB = IERC20(_stakingTokenB);
         systemContract = SystemContract(_systemContract);
     }
 
-    function _deposit(address tokenAddress, uint256 tokenAmount, uint256 zetaAmount) internal returns (uint256) {
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), tokenAmount);
-        IERC20(tokenAddress).approve(systemContract.uniswapv2Router02Address(), tokenAmount);
+    function _deposit(uint256 tokenAmountA, uint256 tokenAmountB) internal returns (uint256) {
+        stakingTokenA.transferFrom(msg.sender, address(this), tokenAmountA);
+        stakingTokenA.approve(systemContract.uniswapv2Router02Address(), tokenAmountA);
 
-        zetaToken.transferFrom(msg.sender, address(this), zetaAmount);
-        zetaToken.approve(systemContract.uniswapv2Router02Address(), zetaAmount);
+        stakingTokenB.transferFrom(msg.sender, address(this), tokenAmountB);
+        stakingTokenB.approve(systemContract.uniswapv2Router02Address(), tokenAmountB);
 
         (, , uint LPTokenAmount) = IUniswapV2Router02(systemContract.uniswapv2Router02Address()).addLiquidity(
-            tokenAddress,
-            address(zetaToken),
-            tokenAmount,
-            zetaAmount,
+            address(stakingTokenA),
+            address(stakingTokenB),
+            tokenAmountA,
+            tokenAmountB,
             0,
             0,
             address(this),
@@ -52,29 +55,44 @@ contract RewardDistributor is StakingRewards {
         return LPTokenAmount;
     }
 
-    function zetaByTokenAmount(address tokenAddress, uint256 amount) public view returns (uint256) {
+    /// @param tokenAddress Token you already know the amount you want to deposit
+    /// @param amount Amount of token you want to deposit
+    /// @return Amount of the other token you will need to execute addLiquidityAndStake
+    function otherTokenByAmount(address tokenAddress, uint256 amount) public view returns (uint256) {
+        address otherTokenAddress = address(stakingTokenA) == tokenAddress
+            ? address(stakingTokenB)
+            : address(stakingTokenA);
         address poolAddress = systemContract.uniswapv2PairFor(
             systemContract.uniswapv2FactoryAddress(),
             tokenAddress,
-            address(zetaToken)
+            otherTokenAddress
         );
-        (uint256 tokenReserve, uint256 zetaReserve, ) = IUniswapV2Pair(poolAddress).getReserves();
-        if (IUniswapV2Pair(poolAddress).token0() == address(zetaToken))
-            (zetaReserve, tokenReserve) = (tokenReserve, zetaReserve);
+        (uint256 tokenReserve, uint256 otherTokenReserve, ) = IUniswapV2Pair(poolAddress).getReserves();
 
-        return (zetaReserve * amount) / tokenReserve;
+        if (IUniswapV2Pair(poolAddress).token0() == otherTokenAddress)
+            (otherTokenReserve, tokenReserve) = (tokenReserve, otherTokenReserve);
+
+        return (otherTokenReserve * amount) / tokenReserve;
     }
 
     function addLiquidityAndStake(address tokenAddress, uint256 amount) external {
         if (amount == 0) revert ZeroStakeAmount();
+        address otherTokenAddress = address(stakingTokenA) == tokenAddress
+            ? address(stakingTokenB)
+            : address(stakingTokenA);
         address poolAddress = systemContract.uniswapv2PairFor(
             systemContract.uniswapv2FactoryAddress(),
             tokenAddress,
-            address(zetaToken)
+            otherTokenAddress
         );
         if (poolAddress != address(stakingToken)) revert InvalidTokenAddress();
-        uint256 zetaNeeded = zetaByTokenAmount(tokenAddress, amount);
-        uint256 LPTokenAmount = _deposit(tokenAddress, amount, zetaNeeded);
-        stakeFromContract(LPTokenAmount);
+        uint256 otherTokenRequired = otherTokenByAmount(tokenAddress, amount);
+
+        if (tokenAddress == address(stakingTokenB)) {
+            (amount, otherTokenRequired) = (otherTokenRequired, amount);
+        }
+
+        uint256 LPTokenAmount = _deposit(amount, otherTokenRequired);
+        _stakeFromContract(LPTokenAmount);
     }
 }

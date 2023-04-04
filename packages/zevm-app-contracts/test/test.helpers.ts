@@ -21,7 +21,7 @@ const addZetaEthLiquidity = async (signer: SignerWithAddress, token: TestZRC20, 
 
   const tx2 = await uniswapRouterFork.addLiquidityETH(
     token.address,
-    parseUnits("1000"),
+    parseUnits("2000"),
     0,
     0,
     signer.address,

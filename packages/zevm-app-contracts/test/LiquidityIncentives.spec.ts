@@ -1,4 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
+import { AddressZero } from "@ethersproject/constants";
 import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress as getAddressLib } from "@zetachain/addresses";
@@ -35,7 +36,7 @@ describe("LiquidityIncentives tests", () => {
   let rewardDistributorContract: RewardDistributor;
 
   const stakeToken = async (signer: SignerWithAddress, amount: BigNumber) => {
-    const zetaNeeded = await rewardDistributorContract.zetaByTokenAmount(ZRC20Contract.address, amount);
+    const zetaNeeded = await rewardDistributorContract.otherTokenByAmount(ZRC20Contract.address, amount);
     await ZRC20Contract.transfer(signer.address, amount);
     await ZETA_ERC20.transfer(signer.address, zetaNeeded);
 
@@ -87,10 +88,11 @@ describe("LiquidityIncentives tests", () => {
     )) as RewardDistributorFactory;
     await rewardDistributorFactory.deployed();
 
-    const tx = await rewardDistributorFactory.createIncentive(
+    const tx = await rewardDistributorFactory.createTokenIncentive(
       deployer.address,
       deployer.address,
-      ZRC20Contract.address
+      ZRC20Contract.address,
+      AddressZero
     );
     const receipt = await tx.wait();
     const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
@@ -106,18 +108,20 @@ describe("LiquidityIncentives tests", () => {
   describe("LiquidityIncentives", () => {
     it("Should create an incentive contract", async () => {
       const uniswapv2FactoryAddress = await systemContract.uniswapv2FactoryAddress();
-      const tx = await rewardDistributorFactory.createIncentive(
+      const tx = await rewardDistributorFactory.createTokenIncentive(
         deployer.address,
         deployer.address,
-        ZRC20Contract.address
+        ZRC20Contract.address,
+        AddressZero
       );
       const receipt = await tx.wait();
 
       const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
       expect(event).to.not.be.undefined;
 
-      const { stakingToken, LPStakingToken, rewardToken, owner } = event?.args as any;
-      expect(stakingToken).to.be.eq(ZRC20Contract.address);
+      const { stakingTokenA, stakingTokenB, LPStakingToken, rewardToken, owner } = event?.args as any;
+      expect(stakingTokenA).to.be.eq(ZRC20Contract.address);
+      expect(stakingTokenB).to.be.eq(ZETA.address);
       const LPTokenAddress = await systemContract.uniswapv2PairFor(
         uniswapv2FactoryAddress,
         ZRC20Contract.address,
@@ -130,19 +134,20 @@ describe("LiquidityIncentives tests", () => {
   });
 
   it("Should create an incentive", async () => {
-    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
-    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
-    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
     const rewardRate = await rewardDistributorContract.rewardRate();
     expect(rewardRate).to.be.closeTo(REWARDS_AMOUNT.div(REWARD_DURATION), ERROR_TOLERANCE);
   });
 
   it("Should store incentive contract in registry", async () => {
     const initialIncentivesContractsLen = await rewardDistributorFactory.incentivesContractsLen();
-    const tx = await rewardDistributorFactory.createIncentive(
+    const tx = await rewardDistributorFactory.createTokenIncentive(
       deployer.address,
       deployer.address,
-      ZRC20Contract.address
+      ZRC20Contract.address,
+      AddressZero
     );
     const receipt = await tx.wait();
 
@@ -158,10 +163,18 @@ describe("LiquidityIncentives tests", () => {
     expect(incentivesContract).to.be.eq(rewardDistributorContract);
   });
 
+  it("Should calculate the token required to swap", async () => {
+    const zetaRequired = await rewardDistributorContract.otherTokenByAmount(ZRC20Contract.address, parseEther("10"));
+    const tokenRequired = await rewardDistributorContract.otherTokenByAmount(ZETA.address, parseEther("10"));
+    //@dev This validation is valid because in addZetaEthLiquidity for test we create all the liquidity with 1 ZETA:2 Token ratio
+    expect(zetaRequired).to.be.closeTo(parseEther("5"), ERROR_TOLERANCE);
+    expect(tokenRequired).to.be.closeTo(parseEther("20"), ERROR_TOLERANCE);
+  });
+
   it("Should create an incentive and should be able to use it", async () => {
-    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
-    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
-    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
 
     const sampleAccount = accounts[0];
     const stakedAmount = parseEther("100");
@@ -176,9 +189,9 @@ describe("LiquidityIncentives tests", () => {
   });
 
   it("Should distribute rewards between two users", async () => {
-    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
-    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
-    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
 
     const sampleAccount1 = accounts[1];
     const sampleAccount2 = accounts[2];
@@ -211,13 +224,13 @@ describe("LiquidityIncentives tests", () => {
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
     expect(zetaBalance).to.be.eq(0);
 
-    tx = await rewardDistributorContract.connect(sampleAccount1).getReward();
+    await rewardDistributorContract.connect(sampleAccount1).getReward();
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
     expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
     expect(zetaBalance).to.be.eq(0);
 
-    tx = await rewardDistributorContract.connect(sampleAccount2).getReward();
+    await rewardDistributorContract.connect(sampleAccount2).getReward();
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
     expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
@@ -225,9 +238,9 @@ describe("LiquidityIncentives tests", () => {
   });
 
   it("Should distribute rewards between two users different proportion", async () => {
-    let tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
-    tx = await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
-    tx = await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
 
     const sampleAccount1 = accounts[3];
     const sampleAccount2 = accounts[4];
@@ -265,13 +278,13 @@ describe("LiquidityIncentives tests", () => {
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
     expect(zetaBalance).to.be.eq(0);
 
-    tx = await rewardDistributorContract.connect(sampleAccount1).getReward();
+    await rewardDistributorContract.connect(sampleAccount1).getReward();
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
     expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(4).mul(3), ERROR_TOLERANCE);
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
     expect(zetaBalance).to.be.eq(0);
 
-    tx = await rewardDistributorContract.connect(sampleAccount2).getReward();
+    await rewardDistributorContract.connect(sampleAccount2).getReward();
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount1.address);
     expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(4).mul(3), ERROR_TOLERANCE);
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
