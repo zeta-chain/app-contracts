@@ -26,6 +26,15 @@ jobs:
       with:
         credentials: ${{ secrets.PAT_GITHUB_SERVICE_ACCT }}
 
+    - name: set-branch-name
+    uses: ./.github/actions/set-branch-name
+    with:
+      github_ref: "${{github.ref}}"
+      github_event: "${{ github.event_name }}"
+      github_head_ref: "${{ github.event.pull_request.head.ref }}"
+      github_commit_sha: "${{ env.GIT_HASH }}"
+      current_branch_name: "${{ steps.branch-name.outputs.current_branch }}"
+  
     - name: Build, tag, and push docker images
       uses:  ./.github/actions/build-docker-images
       with:
