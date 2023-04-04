@@ -4,7 +4,7 @@ import * as https from "https";
 
 const newWallet = ethers.Wallet.createRandom();
 
-console.log(`Your New Address:${newWallet.address}`);
+console.log(`Your New Address: ${newWallet.address}`);
 console.log(`Your Private Key: ${newWallet.privateKey.substring(2)}`);
 
 const value: string = `

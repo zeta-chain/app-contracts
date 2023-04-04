@@ -24,7 +24,7 @@
     "test": "yarn workspaces foreach -ptv run test",
     "g:changeset": "changeset",
     "g:release": "yarn changeset publish",
-    "create-simple-env": "node ./scripts/create-simple-env.js"
+    "create-simple-env": "ts-node ./scripts/create-simple-env.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.23.1",
