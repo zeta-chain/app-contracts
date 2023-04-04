@@ -20,7 +20,7 @@ contract RewardDistributorFactory {
         address stakingTokenA,
         address stakingTokenB,
         address LPStakingToken,
-        address rewardToken,
+        address rewardsToken,
         address owner
     );
 
@@ -33,11 +33,15 @@ contract RewardDistributorFactory {
         address owner,
         ///@dev _rewardsDistribution is one who can set the amount of token to reward
         address rewardsDistribution,
+        address rewardsToken,
         address stakingTokenA,
         address stakingTokenB
     ) public {
         if (stakingTokenB == address(0)) {
             stakingTokenB = zetaTokenAddress;
+        }
+        if (rewardsToken == address(0)) {
+            rewardsToken = zetaTokenAddress;
         }
         address LPTokenAddress = systemContract.uniswapv2PairFor(
             systemContract.uniswapv2FactoryAddress(),
@@ -47,7 +51,7 @@ contract RewardDistributorFactory {
         RewardDistributor incentiveContract = new RewardDistributor(
             owner,
             rewardsDistribution,
-            zetaTokenAddress,
+            rewardsToken,
             LPTokenAddress,
             stakingTokenA,
             stakingTokenB,
@@ -60,7 +64,7 @@ contract RewardDistributorFactory {
             stakingTokenA,
             stakingTokenB,
             LPTokenAddress,
-            zetaTokenAddress,
+            rewardsToken,
             owner
         );
     }

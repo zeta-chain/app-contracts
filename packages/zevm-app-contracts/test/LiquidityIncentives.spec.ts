@@ -91,6 +91,7 @@ describe("LiquidityIncentives tests", () => {
     const tx = await rewardDistributorFactory.createTokenIncentive(
       deployer.address,
       deployer.address,
+      AddressZero,
       ZRC20Contract.address,
       AddressZero
     );
@@ -111,6 +112,7 @@ describe("LiquidityIncentives tests", () => {
       const tx = await rewardDistributorFactory.createTokenIncentive(
         deployer.address,
         deployer.address,
+        AddressZero,
         ZRC20Contract.address,
         AddressZero
       );
@@ -119,7 +121,7 @@ describe("LiquidityIncentives tests", () => {
       const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
       expect(event).to.not.be.undefined;
 
-      const { stakingTokenA, stakingTokenB, LPStakingToken, rewardToken, owner } = event?.args as any;
+      const { stakingTokenA, stakingTokenB, LPStakingToken, rewardsToken, owner } = event?.args as any;
       expect(stakingTokenA).to.be.eq(ZRC20Contract.address);
       expect(stakingTokenB).to.be.eq(ZETA.address);
       const LPTokenAddress = await systemContract.uniswapv2PairFor(
@@ -128,7 +130,7 @@ describe("LiquidityIncentives tests", () => {
         ZETA.address
       );
       expect(LPStakingToken).to.be.eq(LPTokenAddress);
-      expect(rewardToken).to.be.eq(ZETA.address);
+      expect(rewardsToken).to.be.eq(ZETA.address);
       expect(owner).to.be.eq(deployer.address);
     });
   });
@@ -146,6 +148,7 @@ describe("LiquidityIncentives tests", () => {
     const tx = await rewardDistributorFactory.createTokenIncentive(
       deployer.address,
       deployer.address,
+      AddressZero,
       ZRC20Contract.address,
       AddressZero
     );
