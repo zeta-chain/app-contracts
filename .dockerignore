@@ -6,3 +6,4 @@ Dockerfile
 .vscode
 .changeset
 .dockerignore
+.secrets

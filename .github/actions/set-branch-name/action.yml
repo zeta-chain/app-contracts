@@ -32,13 +32,9 @@ runs:
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
           TAG_NAME="$RELEASE_NAME-${{ inputs.github_commit_sha }}"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        elif [ ! -z "${tag_check}" ]; then
-          echo "Tag Event, Set RELEASE and TAG NAMES accordingly."
-          PASSED_GIT_REF=${{ inputs.github_ref }}
-          echo "TAG_NAME=${PASSED_GIT_REF##*/}" >> $GITHUB_ENV
-          echo "RELEASE_NAME=${PASSED_GIT_REF##*/}" >> $GITHUB_ENV
-          echo $TAG_NAME
-          echo $RELEASE_NAME
+        elif [ "${{ inputs.github_ref }}" == "refs/heads/main" ]; then
+          TAG_NAME="latest"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
         else
           RELEASE_NAME=$(sed 's#/#-#g' <<< ${{ inputs.current_branch_name }})
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV

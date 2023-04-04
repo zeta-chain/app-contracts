@@ -26,6 +26,15 @@ jobs:
       with:
         credentials: ${{ secrets.PAT_GITHUB_SERVICE_ACCT }}
 
+    - name: Get branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v6
+
+    - name: Git Hash
+      run: |
+        echo "GIT_HASH=$(git rev-parse --short HEAD)" >> ${GITHUB_ENV}
+        echo "WORKSPACE_DIR=$(pwd)" >> ${GITHUB_ENV}
+  
     - name: set-branch-name
       uses: ./.github/actions/set-branch-name
       with:

@@ -20,8 +20,10 @@ tsconfig.tsbuildinfo
 # Misc
 .env
 .DS_Store
+.secrets
 
 # Slither
 scripts/slither-results/*
 !scripts/slither-results/.gitkeep
+
 
