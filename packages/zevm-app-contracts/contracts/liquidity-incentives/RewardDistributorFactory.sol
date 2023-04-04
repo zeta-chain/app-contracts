@@ -10,7 +10,7 @@ import "./RewardDistributor.sol";
 
 contract RewardDistributorFactory {
     address public immutable zetaTokenAddress;
-    SystemContract private immutable systemContract;
+    SystemContract private immutable _systemContract;
 
     mapping(uint256 => address) public incentivesContracts;
     uint256 public incentivesContractsLen;
@@ -24,9 +24,9 @@ contract RewardDistributorFactory {
         address owner
     );
 
-    constructor(address _zetaTokenAddress, address _systemContract) {
+    constructor(address _zetaTokenAddress, address systemContract) {
         zetaTokenAddress = _zetaTokenAddress;
-        systemContract = SystemContract(_systemContract);
+        _systemContract = SystemContract(systemContract);
     }
 
     function createTokenIncentive(
@@ -43,8 +43,8 @@ contract RewardDistributorFactory {
         if (rewardsToken == address(0)) {
             rewardsToken = zetaTokenAddress;
         }
-        address LPTokenAddress = systemContract.uniswapv2PairFor(
-            systemContract.uniswapv2FactoryAddress(),
+        address LPTokenAddress = _systemContract.uniswapv2PairFor(
+            _systemContract.uniswapv2FactoryAddress(),
             stakingTokenA,
             stakingTokenB
         );
@@ -55,7 +55,7 @@ contract RewardDistributorFactory {
             LPTokenAddress,
             stakingTokenA,
             stakingTokenB,
-            address(systemContract)
+            address(_systemContract)
         );
         incentivesContracts[incentivesContractsLen++] = address(incentiveContract);
 

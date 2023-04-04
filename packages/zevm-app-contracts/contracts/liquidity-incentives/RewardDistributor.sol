@@ -21,20 +21,20 @@ contract RewardDistributor is StakingRewards {
     error InvalidTokenAddress();
 
     constructor(
-        address _owner,
-        address _rewardsDistribution,
-        address _rewardsToken,
-        address _stakingToken,
-        address _stakingTokenA,
-        address _stakingTokenB,
-        address _systemContract
-    ) StakingRewards(_owner, _rewardsDistribution, _rewardsToken, _stakingToken) {
-        stakingTokenA = IERC20(_stakingTokenA);
-        stakingTokenB = IERC20(_stakingTokenB);
-        systemContract = SystemContract(_systemContract);
+        address owner,
+        address rewardsDistribution,
+        address rewardsToken,
+        address stakingToken,
+        address stakingTokenA_,
+        address stakingTokenB_,
+        address systemContract_
+    ) StakingRewards(owner, rewardsDistribution, rewardsToken, stakingToken) {
+        stakingTokenA = IERC20(stakingTokenA_);
+        stakingTokenB = IERC20(stakingTokenB_);
+        systemContract = SystemContract(systemContract_);
     }
 
-    function _deposit(uint256 tokenAmountA, uint256 tokenAmountB) internal returns (uint256) {
+    function _addLiquidity(uint256 tokenAmountA, uint256 tokenAmountB) internal returns (uint256) {
         stakingTokenA.transferFrom(msg.sender, address(this), tokenAmountA);
         stakingTokenA.approve(systemContract.uniswapv2Router02Address(), tokenAmountA);
 
@@ -86,13 +86,13 @@ contract RewardDistributor is StakingRewards {
             otherTokenAddress
         );
         if (poolAddress != address(stakingToken)) revert InvalidTokenAddress();
-        uint256 otherTokenRequired = otherTokenByAmount(tokenAddress, amount);
+        uint256 otherTokenAmount = otherTokenByAmount(tokenAddress, amount);
 
         if (tokenAddress == address(stakingTokenB)) {
-            (amount, otherTokenRequired) = (otherTokenRequired, amount);
+            (amount, otherTokenAmount) = (otherTokenAmount, amount);
         }
 
-        uint256 LPTokenAmount = _deposit(amount, otherTokenRequired);
+        uint256 LPTokenAmount = _addLiquidity(amount, otherTokenAmount);
         _stakeFromContract(LPTokenAmount);
     }
 }
