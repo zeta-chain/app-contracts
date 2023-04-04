@@ -16,6 +16,9 @@ contract RewardDistributor is StakingRewards {
     IERC20 public zetaToken;
     SystemContract private systemContract;
 
+    error ZeroStakeAmount();
+    error InvalidTokenAddress();
+
     constructor(
         address _owner,
         address _rewardsDistribution,
@@ -63,13 +66,13 @@ contract RewardDistributor is StakingRewards {
     }
 
     function addLiquidityAndStake(address tokenAddress, uint256 amount) external {
-        require(amount > 0, "Cannot stake 0");
+        if (amount == 0) revert ZeroStakeAmount();
         address poolAddress = systemContract.uniswapv2PairFor(
             systemContract.uniswapv2FactoryAddress(),
             tokenAddress,
             address(zetaToken)
         );
-        require(poolAddress == address(stakingToken), "Token is not valid");
+        if (poolAddress != address(stakingToken)) revert InvalidTokenAddress();
         uint256 zetaNeeded = zetaByTokenAmount(tokenAddress, amount);
         uint256 LPTokenAmount = _deposit(tokenAddress, amount, zetaNeeded);
         stakeFromContract(LPTokenAmount);
