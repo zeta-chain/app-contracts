@@ -30,7 +30,7 @@ jobs:
       uses:  ./.github/actions/build-docker-images
       with:
         DOCKER_FILENAME: Dockerfile
-        REPOSITORY_NAME: zeta-node
+        REPOSITORY_NAME: zetachain
         IMAGE_TAG: ${{ env.TAG_NAME }}
         GHCR_USERNAME: ${{ secrets.PAT_GITHUB_SERVICE_ACCT_USERNAME }}
         GHCR_TOKEN: ${{ secrets.PAT_GITHUB_SERVICE_ACCT }}
