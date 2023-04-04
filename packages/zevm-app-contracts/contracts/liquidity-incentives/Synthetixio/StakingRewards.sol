@@ -89,6 +89,14 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
         emit Staked(msg.sender, amount);
     }
 
+    ///@dev This function is added to support staking from the same contract without the need of an extra transfer
+    function stakeFromContract(uint256 amount) internal nonReentrant notPaused updateReward(msg.sender) {
+        require(amount > 0, "Cannot stake 0");
+        _totalSupply = _totalSupply.add(amount);
+        _balances[msg.sender] = _balances[msg.sender].add(amount);
+        emit Staked(msg.sender, amount);
+    }
+
     function withdraw(uint256 amount) public nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Cannot withdraw 0");
         _totalSupply = _totalSupply.sub(amount);
