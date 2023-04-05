@@ -75,7 +75,7 @@ contract RewardDistributor is StakingRewards {
         return (otherTokenReserve * amount) / tokenReserve;
     }
 
-    function addLiquidityAndStake(address tokenAddress, uint256 amount) external {
+    function addLiquidityAndStake(address tokenAddress, uint256 amount) external nonReentrant {
         if (amount == 0) revert ZeroStakeAmount();
         address otherTokenAddress = address(stakingTokenA) == tokenAddress
             ? address(stakingTokenB)
