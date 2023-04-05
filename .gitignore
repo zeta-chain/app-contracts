@@ -8,6 +8,7 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 
+
 # Hardhat
 artifacts
 typechain-types
@@ -21,9 +22,11 @@ tsconfig.tsbuildinfo
 .env
 .DS_Store
 .secrets
+.wallet.json
 
 # Slither
 scripts/slither-results/*
 !scripts/slither-results/.gitkeep
+
 
 

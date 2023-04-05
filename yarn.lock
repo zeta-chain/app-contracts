@@ -11030,6 +11030,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"solc@npm:0.8.7":
+  version: 0.8.7
+  resolution: "solc@npm:0.8.7"
+  dependencies:
+    command-exists: ^1.2.8
+    commander: 3.0.2
+    follow-redirects: ^1.12.1
+    fs-extra: ^0.30.0
+    js-sha3: 0.8.0
+    memorystream: ^0.3.1
+    require-from-string: ^2.0.0
+    semver: ^5.5.0
+    tmp: 0.0.33
+  bin:
+    solcjs: solcjs
+  checksum: 3efde9e07d92be5850e19e3a660b6c05cf403263438d02b1cbcd2428c66bed9bfb3e42e58f8232e6deee8ef557c3f53e45182f5a04d13b72b47607a89686f614
+  languageName: node
+  linkType: hard
+
 "solidity-coverage@npm:^0.7.20":
   version: 0.7.20
   resolution: "solidity-coverage@npm:0.7.20"
@@ -13179,6 +13198,7 @@ __metadata:
     hardhat: 2.12.6
     inquirer: ^8.2.4
     mocha: ^10.2.0
+    solc: 0.8.7
     ts-mocha: ^10.0.0
     ts-node: 10.8.1
     typechain: ^8.0.0
