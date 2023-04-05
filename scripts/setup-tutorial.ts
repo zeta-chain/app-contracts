@@ -24,6 +24,7 @@ filePaths.forEach((filePath: string) => {
 });
 
 // Hit Faucet to get some testnet Zeta
+console.log("Requesting testnet assets from the faucet...");
 const options: https.RequestOptions = {
   hostname: "faucet.zetachain.link",
   method: "GET",

@@ -24,7 +24,7 @@
     "test": "yarn workspaces foreach -ptv run test",
     "g:changeset": "changeset",
     "g:release": "yarn changeset publish",
-    "create-simple-env": "ts-node ./scripts/create-simple-env.ts"
+    "setup-tutorial": "ts-node ./scripts/setup-tutorial.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.23.1",
@@ -63,5 +63,8 @@
     "typechain": "^8.0.0",
     "typescript": "^4.6.3"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.2.0",
+  "dependencies": {
+    "solc": "0.8.7"
+  }
 }
