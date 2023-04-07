@@ -164,28 +164,7 @@ contract ERC20Custody {
         if (!whitelisted[asset]) {
             revert NotWhitelisted();
         }
-        if (address(zeta) != address(0)) {
-            zeta.transferFrom(msg.sender, TSSAddress, zetaFee);
-        }
-        asset.transferFrom(msg.sender, address(this), amount);
-        emit Deposited(recipient, asset, amount, message);
-    }
-
-    /**
-     * @dev Deposit asset amount to recipient with message that encodes additional zetachain evm call or message.
-     * @param recipient, recipient address
-     * @param asset, ERC20 asset
-     * @param amount, asset amount
-     * @param message, bytes message or encoded zetechain call.
-     */
-    function depositFeeOnTransfer(bytes calldata recipient, IERC20 asset, uint256 amount, bytes calldata message) external {
-        if (paused) {
-            revert IsPaused();
-        }
-        if (!whitelisted[asset]) {
-            revert NotWhitelisted();
-        }
-        if (address(zeta) != address(0)) {
+        if (zetaFee != 0 && address(zeta) != address(0)) {
             zeta.transferFrom(msg.sender, TSSAddress, zetaFee);
         }
         asset.transferFrom(msg.sender, address(this), amount);
