@@ -40,70 +40,82 @@ contract ERC20Custody {
     event Unwhitelisted(IERC20 indexed asset);
     event Deposited(bytes recipient, IERC20 indexed asset, uint256 amount, bytes message);
     event Withdrawn(address indexed recipient, IERC20 indexed asset, uint256 amount);
+    event RenouncedTSSUpdater(address tssAddressUpdater);
 
-    constructor(address _TSSAddress, address _TSSAddressUpdater, uint256 _zetaFee, uint256 _zetaMaxFee, IERC20 _zeta) {       
-        TSSAddress = _TSSAddress; 
-        TSSAddressUpdater = _TSSAddressUpdater;
-        zetaFee = _zetaFee;
-        zeta = _zeta;
-        zetaMaxFee = _zetaMaxFee;
-        paused = false;
+    /**
+     * @dev Only TSS address allowed modifier.
+     */
+    modifier onlyTSS() {
+        if (msg.sender != TSSAddress) {
+            revert InvalidSender();
+        }
+        _;
+    }
+
+    /**
+     * @dev Only TSS address updater allowed modifier.
+     */
+    modifier onlyTSSUpdater() {
+        if (msg.sender != TSSAddressUpdater) {
+            revert InvalidTSSUpdater();
+        }
+        _;
+    }
+
+    constructor(address TSSAddress_, address TSSAddressUpdater_, uint256 zetaFee_, uint256 zetaMaxFee_, IERC20 zeta_) {       
+        TSSAddress = TSSAddress_; 
+        TSSAddressUpdater = TSSAddressUpdater_;
+        zetaFee = zetaFee_;
+        zeta = zeta_;
+        zetaMaxFee = zetaMaxFee_;
     }
 
     /**
      * @dev Update the TSSAddress in case of Zeta blockchain validator nodes churn
-     * @param _address, new tss address
+     * @param TSSAddress_, new tss address
      */
-    function updateTSSAddress(address _address) external {
-        if (msg.sender != TSSAddressUpdater) {
-            revert InvalidTSSUpdater();
-        }
-        if (_address == address(0)) {
+    function updateTSSAddress(address TSSAddress_) external onlyTSSUpdater {
+        if (TSSAddress_ == address(0)) {
             revert ZeroAddress();
         }
-        TSSAddress = _address;
+        TSSAddress = TSSAddress_;
     }
 
     /**
      * @dev Update zeta fee
-     * @param _zetaFee, new zeta fee
+     * @param zetaFee_, new zeta fee
      */
-    function updateZetaFee(uint256 _zetaFee) external {
+    function updateZetaFee(uint256 zetaFee_) external {
         if (msg.sender != TSSAddress) {
             revert InvalidSender();
         }
-        if (_zetaFee == 0) {
+        if (zetaFee_ == 0) {
             revert ZeroFee();
         }
-        if (_zetaFee > zetaMaxFee) {
+        if (zetaFee_ > zetaMaxFee) {
             revert ZetaMaxFeeExceeded();
         }
-        zetaFee = _zetaFee;
+        zetaFee = zetaFee_;
     }
 
     /**
      * @dev Change the ownership of TSSAddressUpdater to the Zeta blockchain TSS nodes.
      * Effectively, only Zeta blockchain validators collectively can update TSSAddress afterwards.
      */
-    function renounceTSSAddressUpdater() external {
-        if (msg.sender != TSSAddressUpdater) {
-            revert InvalidTSSUpdater();
-        }
+    function renounceTSSAddressUpdater() external onlyTSSUpdater {
         if (TSSAddress == address(0)) {
             revert ZeroAddress();
         }
         TSSAddressUpdater = TSSAddress;
+        emit RenouncedTSSUpdater(msg.sender);
     }
 
     /**
      * @dev Pause custody operations.
      */
-    function pause() external {
+    function pause() external onlyTSSUpdater {
         if (paused) {
             revert IsPaused();
-        }
-        if (msg.sender != TSSAddressUpdater) {
-            revert InvalidTSSUpdater();
         }
         if (TSSAddress == address(0)) {
             revert ZeroAddress();
@@ -115,12 +127,9 @@ contract ERC20Custody {
     /**
      * @dev Unpause custody operations.
      */
-    function unpause() external {
+    function unpause() external onlyTSSUpdater {
         if (!paused) {
             revert NotPaused();
-        }
-        if (msg.sender != TSSAddressUpdater) {
-            revert InvalidTSSUpdater();
         }
         paused = false;
         emit Unpaused(msg.sender);
@@ -130,10 +139,7 @@ contract ERC20Custody {
      * @dev Whitelist asset
      * @param asset, ERC20 asset
      */
-    function whitelist(IERC20 asset) external {
-        if (msg.sender != TSSAddress) {
-            revert InvalidSender();
-        }
+    function whitelist(IERC20 asset) external onlyTSS {
         whitelisted[asset] = true;
         emit Whitelisted(asset);
     }
@@ -142,10 +148,7 @@ contract ERC20Custody {
      * @dev Unwhitelist asset
      * @param asset, ERC20 asset
      */
-    function unwhitelist(IERC20 asset) external {
-        if (msg.sender != TSSAddress) {
-            revert InvalidSender();
-        }
+    function unwhitelist(IERC20 asset) external onlyTSS {
         whitelisted[asset] = false;
         emit Unwhitelisted(asset);
     }
@@ -177,7 +180,7 @@ contract ERC20Custody {
      * @param asset, ERC20 asset
      * @param amount, asset amount
      */
-    function withdraw(address recipient, IERC20 asset, uint256 amount) external {
+    function withdraw(address recipient, IERC20 asset, uint256 amount) external onlyTSS {
         if (paused) {
             revert IsPaused();
         }
