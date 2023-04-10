@@ -1,0 +1,45 @@
+name: 'SET:BRANCH:TAG:REFERENCES'
+description: 'Logic to set branch-name from the event and type.'
+inputs:
+  github_ref:
+    description: "github ref to use"
+    required: true
+  github_event:
+    description: "github event to use"
+    required: true
+  github_head_ref:
+    description: "github head ref to use"
+    required: true
+  github_commit_sha:
+    description: "github sha to use"
+    required: true
+  current_branch_name:
+    description: "current_branch"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Set branch name
+      id: set-branch-name
+      shell: bash
+      run: | 
+        tag_check=`echo '${{ inputs.github_ref }}' | grep 'tags'` || echo "proceed"
+        if [ "${{ inputs.github_event }}" == "pull_request" ]; then
+          echo "Setting the current branch name to same as the source branch of the PR"
+          RELEASE_NAME=$(sed 's#/#-#g' <<< ${{ inputs.github_head_ref }})
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+          TAG_NAME="$RELEASE_NAME-${{ inputs.github_commit_sha }}"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        elif [ "${{ inputs.github_ref }}" == "refs/heads/main" ]; then
+          TAG_NAME="latest"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        else
+          RELEASE_NAME=$(sed 's#/#-#g' <<< ${{ inputs.current_branch_name }})
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+          TAG_NAME="$RELEASE_NAME-${{ inputs.github_commit_sha }}"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        fi
+
+
