@@ -2,7 +2,6 @@
   "name": "@zetachain/zevm-example-contracts",
   "version": "0.0.1",
   "license": "MIT",
-  "private": true,
   "author": "zetachain",
   "publishConfig": {
     "access": "public",
@@ -34,7 +33,6 @@
     "@zetachain/addresses": "workspace:^",
     "@zetachain/addresses-tools": "workspace:^",
     "@zetachain/interfaces": "workspace:^",
-    "@zetachain/protocol-contracts": "workspace:^",
     "@zetachain/zevm-protocol-contracts": "workspace:^",
     "ethers": "5.6.8"
   }
