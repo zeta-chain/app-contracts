@@ -169,10 +169,10 @@ contract ERC20Custody {
             revert NotWhitelisted();
         }
         if (zetaFee != 0 && address(zeta) != address(0)) {
-            zeta.transferFrom(msg.sender, TSSAddress, zetaFee);
+            zeta.safeTransferFrom(msg.sender, TSSAddress, zetaFee);
         }
         uint256 oldBalance = asset.balanceOf(address(this));
-        asset.transferFrom(msg.sender, address(this), amount);
+        asset.safeTransferFrom(msg.sender, address(this), amount);
         // In case if there is a fee on a token transfer, we might not receive a full exepected amount 
         // and we need to correctly process that, o we subtract an old balance from a new balance, which should be an actual received amount.
         emit Deposited(recipient, asset, asset.balanceOf(address(this)) - oldBalance, message);
@@ -191,7 +191,7 @@ contract ERC20Custody {
         if (!whitelisted[asset]) {
             revert NotWhitelisted();
         }
-        IERC20(asset).transfer(recipient, amount);
+        IERC20(asset).safeTransfer(recipient, amount);
         emit Withdrawn(recipient, asset, amount);
     }
 }
