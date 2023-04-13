@@ -9,7 +9,8 @@
   },
   "main": "src/index.ts",
   "scripts": {
-    "tsc:watch": "npx tsc --watch"
+    "tsc:watch": "npx tsc --watch",
+    "compile": "tsc"
   },
   "devDependencies": {
     "@zetachain/addresses": "workspace:^"
