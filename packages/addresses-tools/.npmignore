@@ -1,0 +1,20 @@
+# Ignore source files and other development files
+src/
+*.ts
+*.tsx
+*.map
+*.spec.*
+*.test.*
+*.log
+*.lock
+.editorconfig
+.eslintrc*
+.prettierrc*
+.jest.config.js
+tsconfig.json
+
+# Include the dist folder and other necessary files
+!dist/
+!README.md
+!LICENSE
+!package.json

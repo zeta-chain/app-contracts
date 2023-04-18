@@ -3,7 +3,7 @@ import { getTestnetList, isZetaNetworkName, ZetaTestnetNetworkName } from "@zeta
 import { getExplorerUrl } from "./addresses.helpers";
 const network = process.argv[2];
 
-const toFilter = process.argv[3].split(",").map((w) => w.toLowerCase());
+const toFilter = process.argv[3].split(",").map(w => w.toLowerCase());
 
 if (!isZetaNetworkName(network)) {
   console.error(`Invalid network (${network}).`);
@@ -26,7 +26,7 @@ const logAddresses = (zetaNetwork: ZetaTestnetNetworkName) => {
 
       console.log(
         `${capitalizeFirstLetter(name)}: [${address}](${getExplorerUrl({
-          customNetworkName: networkName,
+          customNetworkName: networkName
         })}address/${address})`
       );
     });
