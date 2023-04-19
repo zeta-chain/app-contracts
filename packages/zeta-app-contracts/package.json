@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
-    "prepublishOnly": "echo 'This package is not meant to be published.' && exit 1",
+    "prepublishOnly": "echo 'This package has no prepublishOnly tasks.' && exit 1",
     "lint:fix": "npm run lint:js:fix && npm run lint:sol:fix",
     "lint:js:fix": "eslint --ext .js,.ts . --fix",
     "lint:js": "eslint --ext .js,.ts .",
