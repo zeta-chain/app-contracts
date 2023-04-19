@@ -1,13 +1,18 @@
 {
   "name": "@zetachain/addresses-tools",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "author": "zetachain",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "tsc:watch": "npx tsc --watch",
     "prepublishOnly": "npx tsc"

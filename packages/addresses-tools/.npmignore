@@ -1,6 +1,5 @@
 # Ignore source files and other development files
 src/
-*.ts
 *.tsx
 *.map
 *.spec.*
