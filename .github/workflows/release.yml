@@ -23,6 +23,10 @@ jobs:
       - name: Install Dependencies
         run: yarn
 
+      # This expect to have a script called g:prepublishOnly on every package
+      - name: Generate dist
+        run: yarn g:prepublishOnly
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1

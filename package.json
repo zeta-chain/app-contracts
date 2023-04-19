@@ -18,6 +18,7 @@
   "scripts": {
     "clean": "yarn workspaces foreach -pv run clean",
     "compile": "yarn workspaces foreach -pv run compile",
+    "g:prepublishOnly": "yarn workspaces foreach -pv run prepublishOnly",
     "lint:fix": "npx eslint . --ext .js,.ts --fix",
     "lint": "npx eslint . --ext .js,.ts",
     "slither": "npx ts-node ./scripts/slither.ts",
