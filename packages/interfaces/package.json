@@ -8,7 +8,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "prepublishOnly": "echo 'This package has no prepublishOnly tasks.' && exit 1",
+    "prepublishOnly": "echo 'This package has no prepublishOnly tasks.'",
     "tsc:watch": "npx tsc --watch"
   }
 }
