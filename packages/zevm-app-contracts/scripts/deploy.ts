@@ -9,7 +9,8 @@ import {
   RewardDistributor__factory,
   RewardDistributorFactory,
   RewardDistributorFactory__factory,
-  SystemContract
+  SystemContract,
+  SystemContract__factory
 } from "../typechain-types";
 
 const networkName = network.name;
@@ -78,7 +79,7 @@ const deployRewardByNetwork = async (
 async function main() {
   const [deployer] = await ethers.getSigners();
   if (!isNetworkName(networkName)) throw new Error("Invalid network name");
-  const systemContract = await ethers.getContractAt("SystemContract", SYSTEM_CONTRACT);
+  const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
   const zetaTokenAddress = await systemContract.wZetaContractAddress();
 
   const RewardDistributorFactoryFactory = (await ethers.getContractFactory(
