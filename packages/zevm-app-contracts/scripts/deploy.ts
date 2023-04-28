@@ -5,7 +5,6 @@ import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
 import {
-  ERC20,
   ERC20__factory,
   RewardDistributor__factory,
   RewardDistributorFactory,
@@ -52,6 +51,7 @@ const deployRewardByNetwork = async (
     deployer.address,
     deployer.address,
     zetaTokenAddress,
+    // @dev: now we send both tokens so contract calculate internaly LP address
     zetaTokenAddress,
     tokenAddress
   );
