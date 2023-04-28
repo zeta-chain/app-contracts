@@ -36,7 +36,7 @@ contract RewardDistributorFactory {
         address rewardsToken,
         address stakingTokenA,
         address stakingTokenB
-    ) public {
+    ) external {
         if (stakingTokenB == address(0)) {
             stakingTokenB = zetaTokenAddress;
         }
