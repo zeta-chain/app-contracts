@@ -90,7 +90,7 @@ async function main() {
   await rewardDistributorFactory.deployed();
   console.log("RewardDistributorFactory deployed to:", rewardDistributorFactory.address);
 
-  await deployRewardByNetwork(deployer, systemContract, networkName, rewardDistributorFactory);
+  await deployRewardByNetwork(deployer, systemContract, "goerli", rewardDistributorFactory);
 }
 
 main().catch(error => {
