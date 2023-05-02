@@ -38,7 +38,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     chainId: 1337,
     forking: {
       blockNumber: 14672712,
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY_MAINNET}`,
+      url: `https://rpc.ankr.com/eth`,
     },
   },
   "klaytn-baobab": {
