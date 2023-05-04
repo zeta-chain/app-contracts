@@ -16,9 +16,14 @@ contract RewardDistributor is StakingRewards {
     IERC20 public stakingTokenA;
     IERC20 public stakingTokenB;
     SystemContract private systemContract;
+    uint256 minCoolDown;
+    uint256 minStakingPeriod;
+    mapping(address => uint256) public lastDeposit;
+    mapping(address => uint256) public unlockTokensAt;
 
     error ZeroStakeAmount();
     error InvalidTokenAddress();
+    error MinimumStakingPeriodNotMet();
 
     constructor(
         address owner,
@@ -92,7 +97,34 @@ contract RewardDistributor is StakingRewards {
             (amount, otherTokenAmount) = (otherTokenAmount, amount);
         }
 
+        lastDeposit[msg.sender] = block.timestamp;
+        unlockTokensAt[msg.sender] = type(uint256).max;
         uint256 LPTokenAmount = _addLiquidity(amount, otherTokenAmount);
         _stakeFromContract(LPTokenAmount);
+    }
+
+    function setMinCoolDown(uint256 minCoolDown_) external onlyOwner {
+        minCoolDown = minCoolDown_;
+    }
+
+    function setMinStakingPeriod(uint256 minStakingPeriod_) external onlyOwner {
+        minStakingPeriod = minStakingPeriod_;
+    }
+
+    function stake(uint256 amount) public override {
+        if (amount == 0) revert ZeroStakeAmount();
+        lastDeposit[msg.sender] = block.timestamp;
+        unlockTokensAt[msg.sender] = type(uint256).max;
+        super.stake(amount);
+    }
+
+    function beginCoolDown() external {
+        if (lastDeposit[msg.sender] + minStakingPeriod > block.timestamp) revert MinimumStakingPeriodNotMet();
+        unlockTokensAt[msg.sender] = block.timestamp + minCoolDown;
+    }
+
+    function withdraw(uint256 amount) public override {
+        if (unlockTokensAt[msg.sender] > block.timestamp) revert MinimumStakingPeriodNotMet();
+        super.withdraw(amount);
     }
 }

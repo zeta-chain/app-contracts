@@ -43,7 +43,7 @@ describe("LiquidityIncentives tests", () => {
     await ZRC20Contract.connect(signer).approve(rewardDistributorContract.address, amount);
     await ZETA_ERC20.connect(signer).approve(rewardDistributorContract.address, zetaNeeded);
 
-    await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZRC20Contract.address, amount);
+    return await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZRC20Contract.address, amount);
   };
 
   beforeEach(async () => {
@@ -292,5 +292,159 @@ describe("LiquidityIncentives tests", () => {
     expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(4).mul(3), ERROR_TOLERANCE);
     zetaBalance = await ZETA_ERC20.balanceOf(sampleAccount2.address);
     expect(zetaBalance).to.be.closeTo(REWARDS_AMOUNT.div(4), ERROR_TOLERANCE);
+  });
+
+  it("Should prevent unstaking when minimum staking period has not elapsed", async () => {
+    const MIN_STAKING_PERIOD = 1000;
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setMinStakingPeriod(MIN_STAKING_PERIOD);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD - 2]);
+    await network.provider.send("evm_mine");
+
+    const LPStaked = await rewardDistributorContract.balanceOf(sampleAccount.address);
+    const withdraw = rewardDistributorContract.connect(sampleAccount).withdraw(LPStaked);
+    await expect(withdraw).to.be.revertedWith("MinimumStakingPeriodNotMet");
+  });
+
+  it("Should prevent starting cool down when minimum staking period has not passed", async () => {
+    const MIN_STAKING_PERIOD = 1000;
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setMinStakingPeriod(MIN_STAKING_PERIOD);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD - 2]);
+    await network.provider.send("evm_mine");
+
+    const withdraw = rewardDistributorContract.connect(sampleAccount).beginCoolDown();
+    await expect(withdraw).to.be.revertedWith("MinimumStakingPeriodNotMet");
+  });
+
+  it("Should allow unstaking when minimum staking period has been fulfilled", async () => {
+    const MIN_STAKING_PERIOD = 1000;
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setMinStakingPeriod(MIN_STAKING_PERIOD);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD + 2]);
+    await network.provider.send("evm_mine");
+
+    await rewardDistributorContract.connect(sampleAccount).beginCoolDown();
+
+    const LPStaked = await rewardDistributorContract.balanceOf(sampleAccount.address);
+    const withdraw = rewardDistributorContract.connect(sampleAccount).withdraw(LPStaked);
+    await expect(withdraw).not.to.be.reverted;
+  });
+
+  it("Should prevent unstaking when minimum cool down period has not been reached", async () => {
+    const MIN_STAKING_PERIOD = 1000;
+    const MIN_COOL_DOWN = 1000;
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setMinStakingPeriod(MIN_STAKING_PERIOD);
+    await rewardDistributorContract.setMinCoolDown(MIN_COOL_DOWN);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD + 2]);
+    await network.provider.send("evm_mine");
+
+    await rewardDistributorContract.connect(sampleAccount).beginCoolDown();
+
+    const LPStaked = await rewardDistributorContract.balanceOf(sampleAccount.address);
+    const withdraw = rewardDistributorContract.connect(sampleAccount).withdraw(LPStaked);
+    await expect(withdraw).to.be.revertedWith("MinimumStakingPeriodNotMet");
+  });
+
+  it("Should allow unstaking when minimum cool down period has been satisfied", async () => {
+    const MIN_STAKING_PERIOD = 1000;
+    const MIN_COOL_DOWN = 1000;
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setMinStakingPeriod(MIN_STAKING_PERIOD);
+    await rewardDistributorContract.setMinCoolDown(MIN_COOL_DOWN);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD + 2]);
+    await network.provider.send("evm_mine");
+
+    await rewardDistributorContract.connect(sampleAccount).beginCoolDown();
+
+    await network.provider.send("evm_increaseTime", [MIN_COOL_DOWN + 2]);
+    await network.provider.send("evm_mine");
+
+    const LPStaked = await rewardDistributorContract.balanceOf(sampleAccount.address);
+    const withdraw = rewardDistributorContract.connect(sampleAccount).withdraw(LPStaked);
+    await expect(withdraw).not.to.be.reverted;
+  });
+
+  it("Should prevent exit when minimum staking period has not elapsed", async () => {
+    const MIN_STAKING_PERIOD = 1000;
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setMinStakingPeriod(MIN_STAKING_PERIOD);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD - 2]);
+    await network.provider.send("evm_mine");
+
+    const withdraw = rewardDistributorContract.connect(sampleAccount).exit();
+    await expect(withdraw).to.be.revertedWith("MinimumStakingPeriodNotMet");
+  });
+
+  it("Should prevent exit when minimum cool down period has not been reached", async () => {
+    const MIN_STAKING_PERIOD = 1000;
+    const MIN_COOL_DOWN = 1000;
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setMinStakingPeriod(MIN_STAKING_PERIOD);
+    await rewardDistributorContract.setMinCoolDown(MIN_COOL_DOWN);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD + 2]);
+    await network.provider.send("evm_mine");
+
+    await rewardDistributorContract.connect(sampleAccount).beginCoolDown();
+
+    const withdraw = rewardDistributorContract.connect(sampleAccount).exit();
+    await expect(withdraw).to.be.revertedWith("MinimumStakingPeriodNotMet");
   });
 });
