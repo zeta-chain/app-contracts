@@ -21,7 +21,7 @@
   },
   "scripts": {
     "tsc:watch": "npx tsc --watch",
-    "prepublishOnly": "vite build"
+    "prepublishOnly": "npx tsc"
   },
   "devDependencies": {
     "vite": "^3.1.0",
