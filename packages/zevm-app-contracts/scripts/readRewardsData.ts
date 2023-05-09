@@ -27,8 +27,8 @@ const readRewardData = async (rewardContractAddress: string) => {
 
   console.table({
     contract: rewardContractAddress,
-    lastUpdateTime: lastUpdateTime.toString(),
-    periodFinish: periodFinish.toString(),
+    lastUpdateTime: `${lastUpdateTime.toString()}-${new Date(lastUpdateTime.toNumber() * 1000).toISOString()}`,
+    periodFinish: `${periodFinish.toString()}-${new Date(periodFinish.toNumber() * 1000).toISOString()}`,
     rewardPerTokenStored: rewardPerTokenStored.toString(),
     rewardRate: rewardRate.toString(),
     rewardsDuration: rewardsDuration.toString(),

@@ -9,6 +9,8 @@ import { SYSTEM_CONTRACT } from "../systemConstants";
 const getZRC20Address = async (systemContract: SystemContract, network: NetworkName) => {
   const tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId(network));
   console.log(`${getGasSymbolByNetwork(network)}`, tokenAddress);
+  const tokenAddressLP = await systemContract.gasZetaPoolByChainId(getChainId(network));
+  console.log(`${getGasSymbolByNetwork(network)} LP`, tokenAddressLP);
 };
 
 async function main() {
