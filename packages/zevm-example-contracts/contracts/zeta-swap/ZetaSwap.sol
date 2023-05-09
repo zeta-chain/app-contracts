@@ -7,106 +7,13 @@ import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IZRC20.sol";
 
-interface ZetaSwapErrors {
-    error WrongGasContract();
+import "../shared/SwapHelperLib.sol";
 
-    error NotEnoughToPayGasFee();
+contract ZetaSwap is zContract {
+    SystemContract public immutable systemContract;
 
-    error CantBeIdenticalAddresses();
-
-    error CantBeZeroAddress();
-}
-
-contract ZetaSwap is zContract, ZetaSwapErrors {
-    uint16 internal constant MAX_DEADLINE = 200;
-
-    address public immutable zetaToken;
-    address public immutable uniswapV2Factory;
-    address public immutable uniswapV2Router;
-
-    constructor(address zetaToken_, address uniswapV2Factory_, address uniswapV2Router_) {
-        if (zetaToken_ == address(0) || uniswapV2Factory_ == address(0) || uniswapV2Router_ == address(0))
-            revert CantBeZeroAddress();
-        zetaToken = zetaToken_;
-        uniswapV2Factory = uniswapV2Factory_;
-        uniswapV2Router = uniswapV2Router_;
-    }
-
-    // returns sorted token addresses, used to handle return values from pairs sorted in this order
-    function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
-        if (tokenA == tokenB) revert CantBeIdenticalAddresses();
-        (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        if (token0 == address(0)) revert CantBeZeroAddress();
-    }
-
-    // calculates the CREATE2 address for a pair without making any external calls
-    function uniswapv2PairFor(address factory, address tokenA, address tokenB) public pure returns (address pair) {
-        (address token0, address token1) = sortTokens(tokenA, tokenB);
-        pair = address(
-            uint160(
-                uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            hex"ff",
-                            factory,
-                            keccak256(abi.encodePacked(token0, token1)),
-                            hex"96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f" // init code hash
-                        )
-                    )
-                )
-            )
-        );
-    }
-
-    function encode(address zrc20, address recipient, uint256 minAmountOut) public pure returns (bytes memory) {
-        return abi.encode(zrc20, recipient, minAmountOut);
-    }
-
-    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 receipient) private {
-        (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
-
-        if (gasZRC20 != targetZRC20) revert WrongGasContract();
-        if (gasFee >= amount) revert NotEnoughToPayGasFee();
-
-        IZRC20(targetZRC20).approve(targetZRC20, gasFee);
-        IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
-    }
-
-    function _existsPairPool(address zrc20A, address zrc20B) private view returns (bool) {
-        address uniswapPool = uniswapv2PairFor(uniswapV2Factory, zrc20A, zrc20B);
-        return IZRC20(zrc20A).balanceOf(uniswapPool) > 0 && IZRC20(zrc20B).balanceOf(uniswapPool) > 0;
-    }
-
-    function _doSwap(
-        address zrc20,
-        uint256 amount,
-        address targetZRC20,
-        bytes32 receipient,
-        uint256 minAmountOut
-    ) internal {
-        bool existsPairPool = _existsPairPool(zrc20, targetZRC20);
-
-        address[] memory path;
-        if (existsPairPool) {
-            path = new address[](2);
-            path[0] = zrc20;
-            path[1] = targetZRC20;
-        } else {
-            path = new address[](3);
-            path[0] = zrc20;
-            path[1] = zetaToken;
-            path[2] = targetZRC20;
-        }
-
-        IZRC20(zrc20).approve(address(uniswapV2Router), amount);
-        uint256[] memory amounts = IUniswapV2Router01(uniswapV2Router).swapExactTokensForTokens(
-            amount,
-            minAmountOut,
-            path,
-            address(this),
-            block.timestamp + MAX_DEADLINE
-        );
-        _doWithdrawal(targetZRC20, amounts[path.length - 1], receipient);
+    constructor(address systemContractAddress) {
+        systemContract = SystemContract(systemContractAddress);
     }
 
     function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
@@ -114,6 +21,15 @@ contract ZetaSwap is zContract, ZetaSwapErrors {
             message,
             (address, bytes32, uint256)
         );
-        _doSwap(zrc20, amount, targetZRC20, receipient, minAmountOut);
+        uint256 outputAmount = SwapHelperLib._doSwap(
+            systemContract.wZetaContractAddress(),
+            systemContract.uniswapv2FactoryAddress(),
+            systemContract.uniswapv2Router02Address(),
+            zrc20,
+            amount,
+            targetZRC20,
+            minAmountOut
+        );
+        SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, receipient);
     }
 }
