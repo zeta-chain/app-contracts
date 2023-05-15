@@ -169,7 +169,7 @@ describe("LiquidityIncentives tests", () => {
   it("Should calculate the token required to swap", async () => {
     const zetaRequired = await rewardDistributorContract.otherTokenByAmount(ZRC20Contract.address, parseEther("10"));
     const tokenRequired = await rewardDistributorContract.otherTokenByAmount(ZETA.address, parseEther("10"));
-    //@dev This validation is valid because in addZetaEthLiquidity for test we create all the liquidity with 1 ZETA:2 Token ratio
+    // @dev This validation works because we create all the liquidity for this test with 1 ZETA:2 Token ratio (see addZetaEthLiquidity)
     expect(zetaRequired).to.be.closeTo(parseEther("5"), ERROR_TOLERANCE);
     expect(tokenRequired).to.be.closeTo(parseEther("20"), ERROR_TOLERANCE);
   });
