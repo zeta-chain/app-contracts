@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/IQuoter.sol";
 
-import "./interfaces/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
 import "./interfaces/TridentConcentratedLiquidityPoolFactory.sol";
 import "./interfaces/TridentIPoolRouter.sol";
 

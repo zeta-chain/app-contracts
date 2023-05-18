@@ -3,7 +3,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero, MaxUint256 } from "@ethersproject/constants";
 import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { IERC20__factory } from "@zetachain/interfaces/typechain-types";
+import { IERC20__factory } from "@zetachain/protocol-contracts/dist/typechain-types";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -220,7 +220,7 @@ describe("MultiChainSwap tests", () => {
       expect(eventNames.filter(e => e === "ZetaExchangedForToken")).to.have.lengthOf(0);
 
       const swappedFilter = multiChainSwapContractB.filters.Swapped();
-      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter);
+      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter, tx3.blockHash);
       expect(e1.length).to.equal(1);
     });
 
@@ -255,7 +255,7 @@ describe("MultiChainSwap tests", () => {
       expect(eventNames.filter(e => e === "ZetaExchangedForToken")).to.have.lengthOf(0);
 
       const swappedFilter = multiChainSwapContractB.filters.Swapped();
-      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter);
+      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter, tx3.blockHash);
       expect(e1.length).to.equal(1);
     });
 
@@ -289,7 +289,7 @@ describe("MultiChainSwap tests", () => {
       expect(eventNames.filter(e => e === "ZetaExchangedForToken")).to.have.lengthOf(0);
 
       const swappedFilter = multiChainSwapContractB.filters.Swapped();
-      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter);
+      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter, tx3.blockHash);
       expect(e1.length).to.equal(1);
     });
 
@@ -324,7 +324,7 @@ describe("MultiChainSwap tests", () => {
       expect(eventNames.filter(e => e === "ZetaExchangedForToken")).to.have.lengthOf(0);
 
       const swappedFilter = multiChainSwapContractB.filters.Swapped();
-      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter);
+      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter, tx3.blockHash);
       expect(e1.length).to.equal(1);
     });
 
@@ -359,7 +359,7 @@ describe("MultiChainSwap tests", () => {
       expect(eventNames.filter(e => e === "ZetaExchangedForToken")).to.have.lengthOf(1);
 
       const swappedFilter = multiChainSwapContractB.filters.Swapped();
-      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter);
+      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter, tx3.blockHash);
       expect(e1.length).to.equal(1);
     });
 
@@ -394,7 +394,7 @@ describe("MultiChainSwap tests", () => {
       expect(eventNames.filter(e => e === "ZetaExchangedForToken")).to.have.lengthOf(1);
 
       const swappedFilter = multiChainSwapContractB.filters.Swapped();
-      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter);
+      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter, tx3.blockHash);
       expect(e1.length).to.equal(1);
     });
 
@@ -447,7 +447,7 @@ describe("MultiChainSwap tests", () => {
       await tx3.wait();
 
       const swappedFilter = multiChainSwapContractB.filters.Swapped();
-      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter);
+      const e1 = await multiChainSwapContractB.queryFilter(swappedFilter, tx3.blockHash);
       expect(e1.length).to.equal(1);
     });
 
@@ -648,7 +648,7 @@ describe("MultiChainSwap tests", () => {
         );
 
         const swappedFilter = multiChainSwapContractA.filters.RevertedSwap();
-        const e1 = await multiChainSwapContractA.queryFilter(swappedFilter);
+        const e1 = await multiChainSwapContractA.queryFilter(swappedFilter, tx2.blockHash);
         expect(e1.length).to.equal(1);
       });
     });
