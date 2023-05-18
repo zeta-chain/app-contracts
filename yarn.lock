@@ -2782,10 +2782,10 @@ __metadata:
   resolution: "@zetachain/zeta-app-contracts@workspace:packages/zeta-app-contracts"
   dependencies:
     "@defi-wonderland/smock": ^2.3.4
-    "@openzeppelin/contracts": 4.7.3
+    "@openzeppelin/contracts": ^4.8.3
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^0.0.4
+    "@zetachain/protocol-contracts": ^0.0.6
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
