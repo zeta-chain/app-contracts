@@ -14,6 +14,7 @@ COPY packages/zevm-example-contracts/package.json ./packages/zevm-example-contra
 COPY packages/addresses/package.json packages/addresses/package.json
 COPY packages/example-contracts/package.json ./packages/example-contracts/package.json
 COPY packages/zeta-app-contracts/package.json ./packages/zeta-app-contracts/package.json
+COPY packages/protocol-contracts-deprecated/package.json ./packages/protocol-contracts-deprecated/package.json
 RUN yarn install ; exit 0
 
 COPY . ./
