@@ -20,14 +20,12 @@ RUN yarn install ; exit 0
 COPY . ./
 RUN yarn install 
 
-RUN yarn add solc@0.5.10        
-RUN yarn add solc@0.6.6      
-RUN yarn add solc@0.7.6 
-RUN yarn add solc@0.8.7
+RUN yarn add solc@0.5.10 solc@0.6.6 solc@0.7.6 solc@0.8.7
 
 RUN cd packages/example-contracts && npx hardhat compile && cd -
 RUN cd packages/zeta-app-contracts && npx hardhat compile && cd -
 RUN cd packages/zevm-example-contracts && npx hardhat compile && cd -
+RUN cd packages/protocol-contracts-deprecated && npx hardhat compile && cd -
 
 WORKDIR /home/zetachain/
 

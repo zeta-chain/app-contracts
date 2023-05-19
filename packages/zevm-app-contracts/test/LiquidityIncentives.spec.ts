@@ -326,7 +326,7 @@ describe("LiquidityIncentives tests", () => {
 
     await stakeToken(sampleAccount, stakedAmount);
 
-    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD - 2]);
+    await network.provider.send("evm_increaseTime", [MIN_STAKING_PERIOD - 3]);
     await network.provider.send("evm_mine");
 
     const withdraw = rewardDistributorContract.connect(sampleAccount).beginCoolDown();

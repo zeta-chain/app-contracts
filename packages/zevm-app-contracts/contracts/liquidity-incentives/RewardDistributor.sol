@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 
-import "@zetachain/zevm-protocol-contracts/contracts/system/SystemContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
 
 import "./Synthetixio/StakingRewards.sol";
 
