@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "./ZetaSwap.sol";
 import "@zetachain/protocol-contracts/contracts/zevm/SystemContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 
 import "../shared/BytesHelperLib.sol";
 import "../shared/SwapHelperLib.sol";
