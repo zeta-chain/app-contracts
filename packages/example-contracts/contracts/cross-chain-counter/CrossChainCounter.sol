@@ -2,8 +2,8 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
 
 interface CrossChainCounterErrors {
     error InvalidMessageType();
@@ -34,11 +34,9 @@ contract CrossChainCounter is ZetaInteractor, ZetaReceiver, CrossChainCounterErr
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
-        external
-        override
-        isValidMessageCall(zetaMessage)
-    {
+    function onZetaMessage(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) external override isValidMessageCall(zetaMessage) {
         (bytes32 messageType, address messageFrom) = abi.decode(zetaMessage.message, (bytes32, address));
 
         if (messageType != CROSS_CHAIN_INCREMENT_MESSAGE) revert InvalidMessageType();
@@ -46,11 +44,9 @@ contract CrossChainCounter is ZetaInteractor, ZetaReceiver, CrossChainCounterErr
         counter[messageFrom]++;
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
-        external
-        override
-        isValidRevertCall(zetaRevert)
-    {
+    function onZetaRevert(
+        ZetaInterfaces.ZetaRevert calldata zetaRevert
+    ) external override isValidRevertCall(zetaRevert) {
         (bytes32 messageType, address messageFrom) = abi.decode(zetaRevert.message, (bytes32, address));
 
         if (messageType != CROSS_CHAIN_INCREMENT_MESSAGE) revert InvalidMessageType();

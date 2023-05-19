@@ -29,11 +29,10 @@
     "tsconfig-paths": "^3.14.1"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "4.7.3",
+    "@openzeppelin/contracts": "^4.8.3",
     "@zetachain/addresses": "workspace:^",
     "@zetachain/addresses-tools": "workspace:^",
-    "@zetachain/interfaces": "workspace:^",
-    "@zetachain/protocol-contracts": "workspace:^",
+    "@zetachain/protocol-contracts": "^0.0.6",
     "ethers": "5.6.8"
   }
 }

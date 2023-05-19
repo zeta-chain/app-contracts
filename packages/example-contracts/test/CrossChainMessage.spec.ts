@@ -1,5 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ZetaTokenConsumerUniV2 } from "@zetachain/interfaces/typechain-types";
+import { ZetaTokenConsumerUniV2 } from "@zetachain/protocol-contracts/dist/typechain-types";
 import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
@@ -133,7 +133,7 @@ describe("CrossChainMessage tests", () => {
         await tx.wait();
 
         const helloWorldEventFilter = crossChainMessageContractChainB.filters.HelloWorldEvent();
-        const e1 = await crossChainMessageContractChainB.queryFilter(helloWorldEventFilter);
+        const e1 = await crossChainMessageContractChainB.queryFilter(helloWorldEventFilter, tx.blockHash);
         expect(e1.length).to.equal(1);
         expect(e1[0].transactionHash).to.equal(tx.hash);
       });

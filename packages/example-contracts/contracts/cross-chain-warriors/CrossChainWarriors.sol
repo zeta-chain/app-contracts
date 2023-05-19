@@ -5,8 +5,8 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
 
 interface CrossChainWarriorsErrors {
     error InvalidMessageType();
@@ -85,15 +85,11 @@ contract CrossChainWarriors is
      * @dev Cross-chain functions
      */
 
-    function crossChainTransfer(
-        uint256 crossChainId,
-        address to,
-        uint256 tokenId
-    ) external payable {
+    function crossChainTransfer(uint256 crossChainId, address to, uint256 tokenId) external payable {
         if (!_isValidChainId(crossChainId)) revert InvalidDestinationChainId();
         if (!_isApprovedOrOwner(_msgSender(), tokenId)) revert InvalidTransferCaller();
 
-        uint256 crossChainGas = 18 * (10**18);
+        uint256 crossChainGas = 18 * (10 ** 18);
         uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{value: msg.value}(address(this), crossChainGas);
         _zetaToken.approve(address(connector), zetaValueAndGas);
 
@@ -111,11 +107,9 @@ contract CrossChainWarriors is
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
-        external
-        override
-        isValidMessageCall(zetaMessage)
-    {
+    function onZetaMessage(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) external override isValidMessageCall(zetaMessage) {
         (
             bytes32 messageType,
             uint256 tokenId,
@@ -131,11 +125,9 @@ contract CrossChainWarriors is
         _mintId(to, tokenId);
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
-        external
-        override
-        isValidRevertCall(zetaRevert)
-    {
+    function onZetaRevert(
+        ZetaInterfaces.ZetaRevert calldata zetaRevert
+    ) external override isValidRevertCall(zetaRevert) {
         (bytes32 messageType, uint256 tokenId, address from) = abi.decode(
             zetaRevert.message,
             (bytes32, uint256, address)

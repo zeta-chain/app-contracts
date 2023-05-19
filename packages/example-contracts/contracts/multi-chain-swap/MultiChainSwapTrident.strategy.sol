@@ -3,7 +3,7 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaTokenConsumerTrident.strategy.sol";
+import "@zetachain/protocol-contracts-deprecated/contracts/ZetaTokenConsumerTrident.strategy.sol";
 
 import "./MultiChainSwapErrors.sol";
 import "./MultiChainSwap.sol";
@@ -137,11 +137,9 @@ contract MultiChainSwapTrident is MultiChainSwap, ZetaInteractor, MultiChainSwap
         );
     }
 
-    function onZetaMessage(ZetaInterfaces.ZetaMessage calldata zetaMessage)
-        external
-        override
-        isValidMessageCall(zetaMessage)
-    {
+    function onZetaMessage(
+        ZetaInterfaces.ZetaMessage calldata zetaMessage
+    ) external override isValidMessageCall(zetaMessage) {
         (
             bytes32 messageType,
             address sourceTxOrigin,
@@ -197,11 +195,9 @@ contract MultiChainSwapTrident is MultiChainSwap, ZetaInteractor, MultiChainSwap
         );
     }
 
-    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert)
-        external
-        override
-        isValidRevertCall(zetaRevert)
-    {
+    function onZetaRevert(
+        ZetaInterfaces.ZetaRevert calldata zetaRevert
+    ) external override isValidRevertCall(zetaRevert) {
         /**
          * @dev If something goes wrong we must swap to the source input token
          */
