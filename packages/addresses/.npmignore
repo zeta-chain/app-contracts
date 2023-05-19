@@ -22,3 +22,9 @@ test
 
 # git
 .git
+
+# Include the dist folder and other necessary files
+!dist/
+!README.md
+!LICENSE
+!package.json

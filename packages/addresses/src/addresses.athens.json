@@ -21,7 +21,8 @@
     "zetaSwap": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
-    "zetaTokenConsumerUniV2": "0xa67b03930eb53d0462dCc0835e97964C062042fb"
+    "zetaTokenConsumerUniV2": "0xa67b03930eb53d0462dCc0835e97964C062042fb",
+    "zetaTokenConsumerUniV3": ""
   },
   "goerli": {
     "connector": "0x00007d0BA516a2bA02D77907d3a1348C1187Ae62",
@@ -45,7 +46,8 @@
     "zetaSwap": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0xCc7bb2D219A0FC08033E130629C2B854b7bA9195",
-    "zetaTokenConsumerUniV2": "0xDDB1C86c69f258F6d33377a8725404E4393326bB"
+    "zetaTokenConsumerUniV2": "0xDDB1C86c69f258F6d33377a8725404E4393326bB",
+    "zetaTokenConsumerUniV3": ""
   },
   "polygon-mumbai": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
@@ -56,7 +58,7 @@
     "multiChainSwap": "0xaf28cb0d9E045170E1642321B964740784E7dC64",
     "tridentPoolFactory": "",
     "multiChainSwapZetaConnector": "",
-    "multiChainValue": "0xb3021F5603291895b0Df5fC6276cda33a0B90fa6",
+    "multiChainValue": "0x15D434879B65d7008Dec00f191e578D8E90D026b",
     "tss": "0x7c125C1d515b8945841b3d5144a060115C58725F",
     "tssUpdater": "0x7274d1d5dddef36aac53dd45b93487ce01ef0a55",
     "uniswapV2Factory": "",
@@ -69,7 +71,8 @@
     "zetaSwap": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0x000080383847bd75f91c168269aa74004877592f",
-    "zetaTokenConsumerUniV2": ""
+    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV3": "0xCa7185cA7AB06fA60060d4D65C50b6883cc70419"
   },
   "ropsten": {
     "connector": "",
@@ -93,7 +96,8 @@
     "zetaSwap": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "",
-    "zetaTokenConsumerUniV2": ""
+    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV3": ""
   },
   "klaytn-baobab": {
     "connector": "0x000054d3A0Bc83Ec7808F52fCdC28A96c89F6C5c",
@@ -116,7 +120,8 @@
     "zetaSwap": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "0x000080383847bD75F91c168269Aa74004877592f",
-    "zetaTokenConsumerUniV2": ""
+    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV3": ""
   },
   "athens": {
     "connector": "",
@@ -140,7 +145,8 @@
     "zetaSwap": "0x71Ec5c05Aa669c4922569c1D33F7a81aaa218138",
     "zetaSwapBtcInbound": "0x79c73Ba355f84feFFcDA2D2Cd4D61b9c795919Cc",
     "zetaToken": "",
-    "zetaTokenConsumerUniV2": ""
+    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV3": ""
   },
   "bitcoin-test": {
     "connector": "",
@@ -164,6 +170,7 @@
     "zetaSwap": "",
     "zetaSwapBtcInbound": "",
     "zetaToken": "",
-    "zetaTokenConsumerUniV2": ""
+    "zetaTokenConsumerUniV2": "",
+    "zetaTokenConsumerUniV3": ""
   }
 }

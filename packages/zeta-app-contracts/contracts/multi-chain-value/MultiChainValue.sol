@@ -2,9 +2,9 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@zetachain/protocol-contracts/contracts/Zeta.eth.sol";
-import "@zetachain/protocol-contracts/contracts/ZetaInteractor.sol";
-import "@zetachain/protocol-contracts/contracts/interfaces/ZetaInterfaces.sol";
+import "@zetachain/protocol-contracts/contracts/evm/Zeta.eth.sol";
+import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
+import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
 
 /**
  * @dev Custom errors for contract MultiChainValue

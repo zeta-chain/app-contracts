@@ -6,7 +6,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     // chainId: 7001,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `https://archive.athens2.zetachain.com/evm`,
+    url: `https://api.athens2.zetachain.com/evm`,
   },
   "bsc-localnet": {
     gas: 5000000,
@@ -26,19 +26,19 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
   },
   "eth-mainnet": {
     accounts: PRIVATE_KEYS,
-    url: "https://api.mycryptoapi.com/eth",
+    url: "https://rpc.ankr.com/eth",
   },
   goerli: {
     accounts: PRIVATE_KEYS,
     gas: 2100000,
     gasPrice: 38000000000,
-    url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY_GOERLI}`,
+    url: `https://rpc.ankr.com/eth_goerli`,
   },
   hardhat: {
     chainId: 1337,
     forking: {
       blockNumber: 14672712,
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY_MAINNET}`,
+      url: `https://rpc.ankr.com/eth`,
     },
   },
   "klaytn-baobab": {
@@ -64,7 +64,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: "https://polygon-mumbai.chainstacklabs.com",
+    url: "https://rpc.ankr.com/polygon_mumbai",
   },
   ropsten: {
     accounts: PRIVATE_KEYS,

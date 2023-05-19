@@ -18,12 +18,14 @@
   "scripts": {
     "clean": "yarn workspaces foreach -pv run clean",
     "compile": "yarn workspaces foreach -pv run compile",
+    "g:prepublishOnly": "yarn workspaces foreach -pv run prepublishOnly",
     "lint:fix": "npx eslint . --ext .js,.ts --fix",
     "lint": "npx eslint . --ext .js,.ts",
     "slither": "npx ts-node ./scripts/slither.ts",
     "test": "yarn workspaces foreach -ptv run test",
     "g:changeset": "changeset",
-    "g:release": "yarn changeset publish"
+    "g:release": "yarn changeset publish",
+    "setup-tutorial": "ts-node ./scripts/setup-tutorial.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.23.1",
@@ -62,5 +64,8 @@
     "typechain": "^8.0.0",
     "typescript": "^4.6.3"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.2.0",
+  "dependencies": {
+    "solc": "0.8.7"
+  }
 }

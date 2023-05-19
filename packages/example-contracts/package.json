@@ -11,6 +11,7 @@
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
+    "prepublishOnly": "echo 'This package has no prepublishOnly tasks.'",
     "multi-chain-swap:deploy-local": "ZETA_NETWORK=troy EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts --network hardhat",
     "multi-chain-swap:deploy": "ZETA_NETWORK=athens EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts",
     "lint:fix": "npm run lint:js:fix && npm run lint:sol:fix",
@@ -30,13 +31,13 @@
     "tsconfig-paths": "^3.14.1"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "4.7.3",
+    "@openzeppelin/contracts": "^4.8.3",
     "@uniswap/v2-periphery": "1.1.0-beta.0",
     "@uniswap/v3-periphery": "1.1.0",
     "@zetachain/addresses": "workspace:^",
     "@zetachain/addresses-tools": "workspace:^",
-    "@zetachain/interfaces": "workspace:^",
-    "@zetachain/protocol-contracts": "workspace:^",
+    "@zetachain/protocol-contracts": "^0.0.6",
+    "@zetachain/protocol-contracts-deprecated": "workspace:^",
     "ethers": "5.6.8"
   }
 }

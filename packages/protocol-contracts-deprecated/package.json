@@ -1,39 +1,40 @@
 {
-  "name": "@zetachain/zevm-example-contracts",
-  "version": "0.0.1",
+  "name": "@zetachain/protocol-contracts-deprecated",
+  "version": "0.0.3",
   "license": "MIT",
   "author": "zetachain",
   "publishConfig": {
-    "access": "public",
+    "access": "restricted",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
+    "deploy": "EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/deploy.ts",
     "prepublishOnly": "echo 'This package has no prepublishOnly tasks.'",
-    "multi-chain-swap:deploy-local": "ZETA_NETWORK=troy EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts --network hardhat",
-    "multi-chain-swap:deploy": "ZETA_NETWORK=athens EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts",
+    "deploy-local": "ZETA_NETWORK=troy EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/deploy.ts --network hardhat",
     "lint:fix": "npm run lint:js:fix && npm run lint:sol:fix",
     "lint:js:fix": "eslint --ext .js,.ts . --fix",
     "lint:js": "eslint --ext .js,.ts .",
     "lint:sol:fix": "prettier --write \"contracts/**/*.sol\"",
     "lint:sol": "solhint 'contracts/**/*.sol' && prettier -c 'contracts/**/*.sol'",
     "lint": "npm run lint:js && npm run lint:sol",
-    "test:watch": "echo You need to install `entr` to run this command && find contracts/**/** lib/**/** test/**/** -iname '*.sol' -o -iname '*.ts' | entr -cnr npx hardhat test",
+    "test:watch": "echo You need to install `entr` to run this command && find contracts test -iname '*.sol' -o -iname '*.spec.ts' | entr -cnr npx hardhat test",
     "test": "npx hardhat test",
-    "tsc:watch": "npx tsc --watch"
+    "tsc:watch": "npx tsc --watch",
+    "verify": "npx hardhat run scripts/verify-contracts.ts"
   },
   "devDependencies": {
-    "hardhat-gas-reporter": "^1.0.8",
-    "solidity-coverage": "^0.7.20",
+    "@zetachain/addresses": "workspace:^",
+    "@zetachain/addresses-tools": "workspace:^",
+    "@zetachain/protocol-contracts": "^0.0.4",
+    "hardhat-abi-exporter": "^2.10.0",
     "tsconfig-paths": "^3.14.1"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.3",
     "@uniswap/v2-periphery": "1.1.0-beta.0",
-    "@zetachain/addresses": "workspace:^",
-    "@zetachain/addresses-tools": "workspace:^",
-    "@zetachain/protocol-contracts": "^0.0.6",
+    "@uniswap/v3-periphery": "1.1.0",
     "ethers": "5.6.8"
   }
 }

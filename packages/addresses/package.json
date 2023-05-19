@@ -1,6 +1,6 @@
 {
   "name": "@zetachain/addresses",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "license": "MIT",
   "author": "zetachain",
   "publishConfig": {
@@ -21,7 +21,7 @@
   },
   "scripts": {
     "tsc:watch": "npx tsc --watch",
-    "prepublishOnly": "vite build"
+    "prepublishOnly": "npx tsc"
   },
   "devDependencies": {
     "vite": "^3.1.0",

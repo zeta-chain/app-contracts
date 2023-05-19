@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "@zetachain/zevm-protocol-contracts/contracts/interfaces/zContract.sol";
-import "@zetachain/zevm-protocol-contracts/contracts/interfaces/IZRC20.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
+import "@zetachain/protocol-contracts/contracts/zevm/interfaces/IZRC20.sol";
 
 interface SystemContractErrors {
     error CallerIsNotFungibleModule();
