@@ -1737,6 +1737,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openzeppelin/contracts@npm:4.7.3":
+  version: 4.7.3
+  resolution: "@openzeppelin/contracts@npm:4.7.3"
+  checksum: 18382fcacf7cfd652f5dd0e70c08f08ea74eaa8ff11e9f9850639ada70198ae01a3f9493d89a52d724f2db394e9616bf6258017804612ba273167cf657fbb073
+  languageName: node
+  linkType: hard
+
 "@openzeppelin/contracts@npm:^4.8.3":
   version: 4.8.3
   resolution: "@openzeppelin/contracts@npm:4.8.3"
@@ -2734,12 +2741,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@zetachain/interfaces-deprecated@workspace:packages/interfaces-deprecated":
-  version: 0.0.0-use.local
-  resolution: "@zetachain/interfaces-deprecated@workspace:packages/interfaces-deprecated"
-  languageName: unknown
-  linkType: soft
-
 "@zetachain/protocol-contracts-deprecated@workspace:^, @zetachain/protocol-contracts-deprecated@workspace:packages/protocol-contracts-deprecated":
   version: 0.0.0-use.local
   resolution: "@zetachain/protocol-contracts-deprecated@workspace:packages/protocol-contracts-deprecated"
@@ -2776,6 +2777,22 @@ __metadata:
   dependencies:
     "@defi-wonderland/smock": ^2.3.4
     "@openzeppelin/contracts": ^4.8.3
+    "@zetachain/addresses": "workspace:^"
+    "@zetachain/addresses-tools": "workspace:^"
+    "@zetachain/protocol-contracts": ^0.0.6
+    ethers: 5.6.8
+    hardhat-gas-reporter: ^1.0.8
+    solidity-coverage: ^0.7.20
+    tsconfig-paths: ^3.14.1
+  languageName: unknown
+  linkType: soft
+
+"@zetachain/zevm-app-contracts@workspace:packages/zevm-app-contracts":
+  version: 0.0.0-use.local
+  resolution: "@zetachain/zevm-app-contracts@workspace:packages/zevm-app-contracts"
+  dependencies:
+    "@openzeppelin/contracts": 4.7.3
+    "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
     "@zetachain/protocol-contracts": ^0.0.6

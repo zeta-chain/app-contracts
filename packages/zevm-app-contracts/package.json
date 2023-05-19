@@ -1,0 +1,39 @@
+{
+  "name": "@zetachain/zevm-app-contracts",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "author": "zetachain",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "clean": "npx hardhat clean",
+    "compile": "npx hardhat compile",
+    "multi-chain-swap:deploy-local": "ZETA_NETWORK=troy EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts --network hardhat",
+    "multi-chain-swap:deploy": "ZETA_NETWORK=athens EXECUTE_PROGRAMMATICALLY=true npx hardhat run scripts/multi-chain-swap/deploy.ts",
+    "lint:fix": "npm run lint:js:fix && npm run lint:sol:fix",
+    "lint:js:fix": "eslint --ext .js,.ts . --fix",
+    "lint:js": "eslint --ext .js,.ts .",
+    "lint:sol:fix": "prettier --write \"contracts/**/*.sol\"",
+    "lint:sol": "solhint 'contracts/**/*.sol' && prettier -c 'contracts/**/*.sol'",
+    "lint": "npm run lint:js && npm run lint:sol",
+    "test:watch": "echo You need to install `entr` to run this command && find contracts/**/** lib/**/** test/**/** -iname '*.sol' -o -iname '*.ts' | entr -cnr npx hardhat test",
+    "test": "npx hardhat test",
+    "tsc:watch": "npx tsc --watch"
+  },
+  "devDependencies": {
+    "hardhat-gas-reporter": "^1.0.8",
+    "solidity-coverage": "^0.7.20",
+    "tsconfig-paths": "^3.14.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "4.7.3",
+    "@uniswap/v2-periphery": "1.1.0-beta.0",
+    "@zetachain/addresses": "workspace:^",
+    "@zetachain/addresses-tools": "workspace:^",
+    "@zetachain/protocol-contracts": "^0.0.6",
+    "ethers": "5.6.8"
+  }
+}
