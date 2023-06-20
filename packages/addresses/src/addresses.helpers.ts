@@ -167,8 +167,6 @@ export const getAddress = ({
   if (!isNetworkName(networkName)) throw getInvalidNetworkError(networkName, false);
   if (!isZetaNetworkName(zetaNetwork)) throw getInvalidNetworkError(networkName, true);
 
-  console.log(`Getting ${address} address from ${zetaNetwork}: ${networkName}.`);
-
   if (isZetaLocalnet(zetaNetwork) && isLocalNetworkName(networkName)) {
     return getLocalnetList()[zetaNetwork][networkName][address];
   }
