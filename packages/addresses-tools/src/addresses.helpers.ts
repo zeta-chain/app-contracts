@@ -21,6 +21,8 @@ import {
   ZetaNetworkName,
   ZetaTestnetNetworkName
 } from "@zetachain/addresses";
+import { ZetaProtocolNetwork } from "@zetachain/protocol-contracts/dist/lib";
+import { ProtocolNetworkNetworkNameMap } from "@zetachain/protocol-contracts/dist/lib/address.helpers";
 import dotenv from "dotenv";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { network } from "hardhat";
@@ -31,7 +33,7 @@ import { deepCloneSerializable } from "./misc.helpers";
 const LOCAL_PKG = "addresses-tools";
 const PUBLIC_PKG = "addresses";
 
-const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG);
+const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG).replace("dist", "src");
 
 export const getScanVariable = ({ customNetworkName }: { customNetworkName?: string } = {}): string => {
   const networkName = customNetworkName || network.name;
@@ -289,4 +291,9 @@ export const loadAddressFromFile = async (
   }
 
   throw new Error(`Invalid ZETA_NETWORK + network combination ${ZETA_NETWORK} ${networkName}.`);
+};
+
+export const getProtocolNetwork = (value: NetworkName): ZetaProtocolNetwork | undefined => {
+  //@ts-expect-error
+  return Object.keys(ProtocolNetworkNetworkNameMap).find(key => ProtocolNetworkNetworkNameMap[key] === value);
 };
