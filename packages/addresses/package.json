@@ -10,7 +10,7 @@
   "files": [
     "dist"
   ],
-  "main": "",
+  "main": "./dist/",
   "exports": {
     ".": "./dist/index.js"
   },
