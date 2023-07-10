@@ -1,7 +1,7 @@
 import { NetworkName } from "@zetachain/addresses";
 import { getAddress, getZRC20Address as getZRC20AddressFromProtocol } from "@zetachain/protocol-contracts/dist/lib";
 
-export type AthensVersion = "A2" | "A3";
+export type AthensVersion = "Athens2" | "Athens3";
 
 export type ZRC20 = "gETH" | "tBNB" | "tBTC" | "tMATIC";
 
@@ -14,15 +14,15 @@ const ATHENS2_ZRC20Addresses: Record<ZRC20, string> = {
   tMATIC: "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891"
 };
 
-export const getSystemContractAddress = (version: AthensVersion = "A3") => {
-  if (version === "A2") {
+export const getSystemContractAddress = (version: AthensVersion = "Athens3") => {
+  if (version === "Athens2") {
     return ATHENS2_SYSTEM_CONTRACT;
   }
   return getAddress("systemContract", "zeta_testnet");
 };
 
-export const getZRC20Address = (version: AthensVersion = "A3") => {
-  if (version === "A2") {
+export const getZRC20Address = (version: AthensVersion = "Athens3") => {
+  if (version === "Athens2") {
     return ATHENS2_ZRC20Addresses;
   }
   const ZRC20Addresses: Record<ZRC20, string> = {
