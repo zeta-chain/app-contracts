@@ -1,10 +1,11 @@
+import { getSystemContractAddress } from "@zetachain/addresses-tools";
 import { ethers } from "hardhat";
 
 import { ZetaMultiOutput, ZetaMultiOutput__factory } from "../../typechain-types";
-import { SYSTEM_CONTRACT } from "../systemConstants";
 
 const main = async () => {
   console.log(`Deploying MultiOutput...`);
+  const SYSTEM_CONTRACT = getSystemContractAddress();
 
   const Factory = (await ethers.getContractFactory("ZetaMultiOutput")) as ZetaMultiOutput__factory;
   const contract = (await Factory.deploy(SYSTEM_CONTRACT)) as ZetaMultiOutput;

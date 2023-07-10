@@ -4,7 +4,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getChainId } from "@zetachain/addresses";
 import { NetworkName } from "@zetachain/addresses";
 import { getAddress } from "@zetachain/addresses";
-import { getGasSymbolByNetwork } from "@zetachain/addresses-tools";
+import { getGasSymbolByNetwork, getSystemContractAddress } from "@zetachain/addresses-tools";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
@@ -17,7 +17,8 @@ import {
   SystemContract__factory,
   UniswapV2Router02__factory
 } from "../../typechain-types";
-import { SYSTEM_CONTRACT } from "../systemConstants";
+
+const SYSTEM_CONTRACT = getSystemContractAddress();
 
 const BTC_TO_ADD = parseUnits("0", 8);
 const ETH_TO_ADD = parseUnits("1500");

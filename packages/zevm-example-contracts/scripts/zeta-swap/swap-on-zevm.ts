@@ -1,11 +1,11 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseUnits } from "@ethersproject/units";
 import { getAddress, isZetaNetworkName } from "@zetachain/addresses";
+import { getZRC20Address } from "@zetachain/addresses-tools";
 import { ethers } from "hardhat";
 import { network } from "hardhat";
 
 import { ERC20__factory, ZetaSwap__factory, ZetaSwapBtcInbound__factory } from "../../typechain-types";
-import { ZRC20Addresses } from "../systemConstants";
 import { getSwapParams } from "./helpers";
 
 const USE_BTC_SWAP = true;
@@ -14,6 +14,8 @@ const SAMPLE_MEMO = "0x25A92a5853702F199bb2d805Bba05d67025214A800000005"; // 0xA
 const main = async () => {
   if (!isZetaNetworkName(network.name) || !network.name) throw new Error("Invalid network name");
   const [signer] = await ethers.getSigners();
+
+  const ZRC20Addresses = getZRC20Address();
   const zetaSwap = getAddress({
     address: USE_BTC_SWAP ? "zetaSwapBtcInbound" : "zetaSwap",
     networkName: "athens",

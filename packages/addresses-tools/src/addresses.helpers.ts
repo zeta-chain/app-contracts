@@ -52,8 +52,7 @@ export const getScanVariable = ({ customNetworkName }: { customNetworkName?: str
     "klaytn-baobab": "",
     "klaytn-cypress": "",
     "polygon-localnet": "",
-    "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || "",
-    ropsten: process.env.ETHERSCAN_API_KEY || ""
+    "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || ""
   };
 
   return v[networkName];
@@ -76,8 +75,7 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
     "klaytn-baobab": "https://baobab.scope.klaytn.com/",
     "klaytn-cypress": "https://scope.klaytn.com/",
     "polygon-localnet": "",
-    "polygon-mumbai": "https://mumbai.polygonscan.com/",
-    ropsten: "https://ropsten.etherscan.io/"
+    "polygon-mumbai": "https://mumbai.polygonscan.com/"
   };
 
   return v[networkName];
@@ -96,8 +94,7 @@ export const getGasSymbolByNetwork = (networkName: NetworkName): string => {
     "klaytn-baobab": "KLAY",
     "klaytn-cypress": "KLAY",
     "polygon-localnet": "MATIC",
-    "polygon-mumbai": "MATIC",
-    ropsten: "BYEBYE"
+    "polygon-mumbai": "MATIC"
   };
 
   return v[networkName];

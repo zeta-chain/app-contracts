@@ -17,7 +17,8 @@ async function main() {
 
   const amount = parseEther("1");
 
-  await zetaToken.approve(multiChainValueContract.address, amount.mul(10));
+  const tx = await zetaToken.approve(multiChainValueContract.address, amount.mul(10));
+  await tx.wait();
 
   if (isZetaTestnet(ZETA_NETWORK)) {
     networkName !== "goerli" &&
@@ -56,10 +57,10 @@ async function main() {
         )
       ).wait());
 
-    networkName !== "ropsten" &&
+    networkName !== "athens" &&
       (await (
         await multiChainValueContract.send(
-          getChainId("ropsten"),
+          getChainId("athens"),
           ethers.utils.solidityPack(["address"], [process.env.PUBLIC_KEY_1]),
           amount
         )
