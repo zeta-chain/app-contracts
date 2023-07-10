@@ -21,7 +21,6 @@ async function main() {
   const contract = (await Factory.deploy(connectorAddress, zetaTokenAddress)) as MultiChainValue;
   await contract.deployed();
 
-  //@ts-expect-error
   console.log("MultiChainValue deployed to:", contract.address);
 
   if (isZetaTestnet(ZETA_NETWORK)) {
@@ -42,7 +41,6 @@ async function main() {
       (await (await contract.addAvailableChainId(getChainId("athens"))).wait().catch((e: any) => console.error(e)));
   }
 
-  //@ts-expect-error
   saveAddress("multiChainValue", contract.address);
 }
 

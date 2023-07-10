@@ -11,10 +11,12 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getAddress } from "@zetachain/addresses";
+import { ChainToZRC20, getZRC20Address, isSwappableNetwork, SwappableNetwork } from "@zetachain/addresses-tools";
 import { ethers, network } from "hardhat";
 
-import { ChainToZRC20, isSwappableNetwork, SwappableNetwork, ZRC20Addresses } from "../systemConstants";
 import { getSwapData } from "./helpers";
+
+const ZRC20Addresses = getZRC20Address();
 
 interface SwapToChainParams {
   destinationNetwork: SwappableNetwork;

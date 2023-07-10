@@ -1,11 +1,11 @@
-import { saveAddress } from "@zetachain/addresses-tools";
+import { getSystemContractAddress, saveAddress } from "@zetachain/addresses-tools";
 import { ethers } from "hardhat";
 
 import { ZetaSwap, ZetaSwap__factory, ZetaSwapBtcInbound, ZetaSwapBtcInbound__factory } from "../../typechain-types";
-import { SYSTEM_CONTRACT } from "../systemConstants";
 
 const main = async () => {
   console.log(`Deploying ZetaSwap...`);
+  const SYSTEM_CONTRACT = getSystemContractAddress();
 
   const Factory = (await ethers.getContractFactory("ZetaSwap")) as ZetaSwap__factory;
   const contract = (await Factory.deploy(SYSTEM_CONTRACT)) as ZetaSwap;

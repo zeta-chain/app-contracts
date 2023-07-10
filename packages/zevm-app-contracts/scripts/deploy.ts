@@ -1,6 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getChainId, isNetworkName, NetworkName } from "@zetachain/addresses";
+import { getSystemContractAddress } from "@zetachain/addresses-tools";
 import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
@@ -17,10 +18,7 @@ const networkName = network.name;
 const REWARD_DURATION = BigNumber.from("604800"); // 1 week
 const REWARDS_AMOUNT = parseEther("10");
 
-//@todo: this is here because need to import address pkg but this pkg will be move to new repo,
-// so will refactor when it will be done
-
-export const SYSTEM_CONTRACT = "0x239e96c8f17C85c30100AC26F635Ea15f23E9c67";
+const SYSTEM_CONTRACT = getSystemContractAddress();
 
 interface Pair {
   TokenA: string;

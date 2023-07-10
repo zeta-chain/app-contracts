@@ -81,12 +81,6 @@ export const networkVariables: Record<NetworkName, NetworkVariables> = {
     connectorAddress: "",
     crossChainId: 0,
     crossChainName: ""
-  },
-  ropsten: {
-    chainId: 0,
-    connectorAddress: "",
-    crossChainId: 0,
-    crossChainName: ""
   }
 };
 
