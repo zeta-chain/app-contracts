@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/evm/Zeta.eth.sol";
 import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
+import "../shared/IWZeta.sol";
 
 /**
  * @dev Custom errors for contract MultiChainValue
@@ -50,6 +51,31 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
         if (!availableChainIds[destinationChainId]) revert ChainIdNotAvailable();
 
         delete availableChainIds[destinationChainId];
+    }
+
+    /**
+     * @dev If the destination chain is a valid chain, send the Zeta tokens to that chain
+     */
+    function sendZeta(uint256 destinationChainId, bytes calldata destinationAddress) public payable {
+        uint256 zetaValueAndGas = msg.value;
+
+        if (!availableChainIds[destinationChainId]) revert InvalidDestinationChainId();
+        if (zetaValueAndGas == 0) revert InvalidZetaValueAndGas();
+
+        IWZeta(zetaToken).deposit{value: zetaValueAndGas}();
+        bool success1 = ZetaEth(zetaToken).approve(address(connector), zetaValueAndGas);
+        if (!success1) revert ErrorTransferringZeta();
+
+        connector.send(
+            ZetaInterfaces.SendInput({
+                destinationChainId: destinationChainId,
+                destinationAddress: destinationAddress,
+                destinationGasLimit: 300000,
+                message: abi.encode(),
+                zetaValueAndGas: zetaValueAndGas,
+                zetaParams: abi.encode("")
+            })
+        );
     }
 
     /**

@@ -106,7 +106,7 @@
     "immutableCreate2Factory": "",
     "multiChainSwap": "",
     "multiChainSwapZetaConnector": "",
-    "multiChainValue": "0x14BeC0E4A8e7bF7A02Af54Ad81a57a9fcA4D37Fd",
+    "multiChainValue": "0x82aC45D07dEe4DBDe050e838beF345347DEd99a8",
     "tridentPoolFactory": "",
     "tss": "",
     "tssUpdater": "",
@@ -119,7 +119,7 @@
     "weth9": "0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf",
     "zetaSwap": "0xd886b7Af031F9a505310bA01951948BD1d673aF1",
     "zetaSwapBtcInbound": "0x064516547ECd3b2D1709e1b2798Aae92b1C8a84C",
-    "zetaToken": "",
+    "zetaToken": "0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf",
     "zetaTokenConsumerUniV2": "",
     "zetaTokenConsumerUniV3": ""
   },
