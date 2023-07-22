@@ -18,6 +18,9 @@ export async function deployMultiChainSwap() {
 
   const WETH = getAddress("weth9");
 
+  console.log([CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 500, 3000]);
+
+  return;
   const multiChainSwapContract = await getMultiChainSwapUniV3({
     deployParams: [CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 500, 3000]
   });
