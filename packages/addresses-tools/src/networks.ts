@@ -18,7 +18,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
+    url: `https://rpc.ankr.com/bsc_testnet_chapel`,
   },
   "eth-localnet": {
     gas: 2100000,

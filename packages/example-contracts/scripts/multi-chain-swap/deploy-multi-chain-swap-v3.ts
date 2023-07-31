@@ -12,17 +12,16 @@ export async function deployMultiChainSwap() {
 
   const ZETA_TOKEN = getAddress("zetaToken");
 
-  const UNI_QUOTER_V3 = getAddress("uniswapV3Quoter");
+  const UNI_FACTORY_V3 = getAddress("uniswapV3PoolFactory");
 
   const UNI_ROUTER_V3 = getAddress("uniswapV3Router");
 
   const WETH = getAddress("weth9");
 
-  console.log([CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 500, 3000]);
+  console.log([CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_FACTORY_V3, WETH, 500, 3000]);
 
-  return;
   const multiChainSwapContract = await getMultiChainSwapUniV3({
-    deployParams: [CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_QUOTER_V3, WETH, 500, 3000]
+    deployParams: [CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_FACTORY_V3, WETH, 500, 3000]
   });
 
   saveAddress("multiChainSwap", multiChainSwapContract.address);

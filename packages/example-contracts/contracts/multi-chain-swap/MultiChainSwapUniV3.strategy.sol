@@ -16,11 +16,19 @@ contract MultiChainSwapUniV3 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
         address zetaConnector_,
         address zetaToken_,
         address uniswapV3Router_,
+        address uniswapV3Factory_,
         address WETH9Address_,
         uint24 zetaPoolFee_,
         uint24 tokenPoolFee_
     )
-        ZetaTokenConsumerUniV3(zetaToken_, uniswapV3Router_, WETH9Address_, zetaPoolFee_, tokenPoolFee_)
+        ZetaTokenConsumerUniV3(
+            zetaToken_,
+            uniswapV3Router_,
+            uniswapV3Factory_,
+            WETH9Address_,
+            zetaPoolFee_,
+            tokenPoolFee_
+        )
         ZetaInteractor(zetaConnector_)
     {}
 
