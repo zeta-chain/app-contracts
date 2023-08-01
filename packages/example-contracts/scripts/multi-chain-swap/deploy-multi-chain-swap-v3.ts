@@ -4,6 +4,8 @@ import { network } from "hardhat";
 
 import { getMultiChainSwapUniV3 } from "../../lib/multi-chain-swap/MultiChainSwap.helpers";
 import { getAddress } from "../../lib/shared/address.helpers";
+import { GetContractParams } from "../../lib/shared/deploy.helpers";
+import { MultiChainSwapUniV3__factory } from "../../typechain-types";
 
 export async function deployMultiChainSwap() {
   if (!isNetworkName(network.name) || !network.name) throw new Error("Invalid network name");
@@ -18,11 +20,13 @@ export async function deployMultiChainSwap() {
 
   const WETH = getAddress("weth9");
 
-  console.log([CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_FACTORY_V3, WETH, 500, 3000]);
-
-  const multiChainSwapContract = await getMultiChainSwapUniV3({
+  const deployParams: GetContractParams<MultiChainSwapUniV3__factory> = {
     deployParams: [CONNECTOR, ZETA_TOKEN, UNI_ROUTER_V3, UNI_FACTORY_V3, WETH, 500, 3000]
-  });
+  };
+
+  console.log(deployParams);
+
+  const multiChainSwapContract = await getMultiChainSwapUniV3(deployParams);
 
   saveAddress("multiChainSwap", multiChainSwapContract.address);
 }
