@@ -7,6 +7,7 @@ import { getAddress } from "../../lib/shared/address.helpers";
 
 export async function deployMultiChainSwap() {
   if (!isNetworkName(network.name) || !network.name) throw new Error("Invalid network name");
+  console.log([getAddress("connector"), getAddress("zetaToken"), getAddress("uniswapV2Router02")]);
 
   const multiChainSwapContract = await getMultiChainSwapUniV2({
     deployParams: [getAddress("connector"), getAddress("zetaToken"), getAddress("uniswapV2Router02")]

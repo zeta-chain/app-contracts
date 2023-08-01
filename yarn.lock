@@ -2726,7 +2726,7 @@ __metadata:
     "@uniswap/v3-periphery": 1.1.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^0.0.7
+    "@zetachain/protocol-contracts": ^0.0.8
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2741,10 +2741,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/protocol-contracts@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@zetachain/protocol-contracts@npm:0.0.7"
-  checksum: 83cf3d534878b5748479a18aec8702c45db74b92473cc1ab693562623e5e11a5270f4b5bd9ca52c1adc1ebeea5f5e5ebb9089be7d171a975cefbf37f586f8bd5
+"@zetachain/protocol-contracts@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@zetachain/protocol-contracts@npm:0.0.8"
+  checksum: 050d31604636ba09e1ff7a0ba4d8341c50d0b78883b67c90018957697791afed41d0428f0423591d22bf6c088d0499c075243bb88860953376b539c25966bc2c
   languageName: node
   linkType: hard
 
