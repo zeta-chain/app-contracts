@@ -21,6 +21,8 @@ import {
   ZetaNetworkName,
   ZetaTestnetNetworkName
 } from "@zetachain/addresses";
+import { ZetaProtocolNetwork } from "@zetachain/protocol-contracts/dist/lib";
+import { ProtocolNetworkNetworkNameMap } from "@zetachain/protocol-contracts/dist/lib/address.helpers";
 import dotenv from "dotenv";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { network } from "hardhat";
@@ -31,7 +33,7 @@ import { deepCloneSerializable } from "./misc.helpers";
 const LOCAL_PKG = "addresses-tools";
 const PUBLIC_PKG = "addresses";
 
-const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG);
+const dirname = __dirname.replace(LOCAL_PKG, PUBLIC_PKG).replace("dist", "src");
 
 export const getScanVariable = ({ customNetworkName }: { customNetworkName?: string } = {}): string => {
   const networkName = customNetworkName || network.name;
@@ -50,8 +52,7 @@ export const getScanVariable = ({ customNetworkName }: { customNetworkName?: str
     "klaytn-baobab": "",
     "klaytn-cypress": "",
     "polygon-localnet": "",
-    "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || "",
-    ropsten: process.env.ETHERSCAN_API_KEY || ""
+    "polygon-mumbai": process.env.POLYGONSCAN_API_KEY || ""
   };
 
   return v[networkName];
@@ -74,8 +75,7 @@ export const getExplorerUrl = ({ customNetworkName }: { customNetworkName?: stri
     "klaytn-baobab": "https://baobab.scope.klaytn.com/",
     "klaytn-cypress": "https://scope.klaytn.com/",
     "polygon-localnet": "",
-    "polygon-mumbai": "https://mumbai.polygonscan.com/",
-    ropsten: "https://ropsten.etherscan.io/"
+    "polygon-mumbai": "https://mumbai.polygonscan.com/"
   };
 
   return v[networkName];
@@ -94,8 +94,7 @@ export const getGasSymbolByNetwork = (networkName: NetworkName): string => {
     "klaytn-baobab": "KLAY",
     "klaytn-cypress": "KLAY",
     "polygon-localnet": "MATIC",
-    "polygon-mumbai": "MATIC",
-    ropsten: "BYEBYE"
+    "polygon-mumbai": "MATIC"
   };
 
   return v[networkName];
@@ -289,4 +288,9 @@ export const loadAddressFromFile = async (
   }
 
   throw new Error(`Invalid ZETA_NETWORK + network combination ${ZETA_NETWORK} ${networkName}.`);
+};
+
+export const getProtocolNetwork = (value: NetworkName): ZetaProtocolNetwork | undefined => {
+  //@ts-expect-error
+  return Object.keys(ProtocolNetworkNetworkNameMap).find(key => ProtocolNetworkNetworkNameMap[key] === value);
 };

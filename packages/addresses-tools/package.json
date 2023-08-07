@@ -18,6 +18,7 @@
     "prepublishOnly": "npx tsc"
   },
   "devDependencies": {
-    "@zetachain/addresses": "workspace:^"
+    "@zetachain/addresses": "workspace:^",
+    "@zetachain/protocol-contracts": "^1.0.1-athens3"
   }
 }

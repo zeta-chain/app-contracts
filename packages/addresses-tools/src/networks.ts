@@ -6,7 +6,8 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     // chainId: 7001,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `https://api.athens2.zetachain.com/evm`,
+    // url: `https://api.athens2.zetachain.com/evm`, //A2
+    url: `https://zetachain-athens-evm.blockpi.network/v1/rpc/public`, //A3
   },
   "bsc-localnet": {
     gas: 5000000,
@@ -17,7 +18,7 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     accounts: PRIVATE_KEYS,
     gas: 5000000,
     gasPrice: 80000000000,
-    url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
+    url: `https://rpc.ankr.com/bsc_testnet_chapel`,
   },
   "eth-localnet": {
     gas: 2100000,
@@ -66,19 +67,12 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     gasPrice: 80000000000,
     url: "https://rpc.ankr.com/polygon_mumbai",
   },
-  ropsten: {
-    accounts: PRIVATE_KEYS,
-    gas: 9000000,
-    gasPrice: 80000000000,
-    url: "https://ropsten.infura.io/v3/",
-  },
 });
 
 export const getHardhatConfigScanners = () => ({
   apiKey: {
     bscTestnet: process.env.BSCSCAN_API_KEY,
     goerli: process.env.ETHERSCAN_API_KEY,
-    polygonMumbai: process.env.POYLGONSCAN_API_KEY,
-    ropsten: process.env.ETHERSCAN_API_KEY,
+    polygonMumbai: process.env.POYLGONSCAN_API_KEY
   },
 });

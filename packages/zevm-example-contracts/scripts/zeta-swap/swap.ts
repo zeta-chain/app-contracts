@@ -1,14 +1,15 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseEther } from "@ethersproject/units";
 import { getAddress, isNetworkName } from "@zetachain/addresses";
+import { getZRC20Address } from "@zetachain/addresses-tools";
 import { ethers } from "hardhat";
 import { network } from "hardhat";
 
-import { ZRC20Addresses } from "../systemConstants";
 import { getSwapData } from "./helpers";
 
 const main = async () => {
   if (!isNetworkName(network.name) || !network.name) throw new Error("Invalid network name");
+  const ZRC20Addresses = getZRC20Address();
 
   const destinationToken = network.name == "goerli" ? ZRC20Addresses["tMATIC"] : ZRC20Addresses["gETH"];
 

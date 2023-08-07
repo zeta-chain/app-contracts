@@ -1,14 +1,12 @@
 import { isNetworkName } from "@zetachain/addresses";
+import { getSystemContractAddress } from "@zetachain/addresses-tools";
 import { ethers, network } from "hardhat";
 
-import { SYSTEM_CONTRACT } from "../../zevm-example-contracts/scripts/systemConstants";
 import { RewardDistributorFactory__factory, SystemContract__factory } from "../typechain-types";
 
 const networkName = network.name;
 
-//@todo: this is here because need to import address pkg but this pkg will be move to new repo,
-// so will refactor when it will be done
-export const FACTORY_CONTRACT = "0xf05Bc79b88026fbC32221926308405C2Bf919f2E";
+const SYSTEM_CONTRACT = getSystemContractAddress();
 
 async function main() {
   const [deployer] = await ethers.getSigners();

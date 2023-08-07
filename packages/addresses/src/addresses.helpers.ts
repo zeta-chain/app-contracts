@@ -16,7 +16,7 @@ export type ZetaAddress =
   | "tssUpdater"
   | "uniswapV2Factory"
   | "uniswapV2Router02"
-  | "uniswapV3NftManager"
+  | "uniswapV3PoolFactory"
   | "uniswapV3Quoter"
   | "uniswapV3Router"
   | "usdc"
@@ -42,7 +42,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   tssUpdater: true,
   uniswapV2Factory: true,
   uniswapV2Router02: true,
-  uniswapV3NftManager: true,
+  uniswapV3PoolFactory: true,
   uniswapV3Quoter: true,
   uniswapV3Router: true,
   usdc: true,
@@ -85,15 +85,13 @@ export type TestnetNetworkName =
   | "bsc-testnet"
   | "goerli"
   | "klaytn-baobab"
-  | "polygon-mumbai"
-  | "ropsten";
+  | "polygon-mumbai";
 export type ZetaTestnetNetworkName = "athens";
 export type TestnetAddressGroup = Record<TestnetNetworkName, NetworkAddresses>;
 export const isTestnetNetworkName = (networkName: string): networkName is TestnetNetworkName =>
   networkName === "goerli" ||
   networkName === "bsc-testnet" ||
   networkName === "polygon-mumbai" ||
-  networkName === "ropsten" ||
   networkName === "klaytn-baobab" ||
   networkName === "athens";
 export const isZetaTestnet = (networkName: string | undefined): networkName is ZetaTestnetNetworkName =>
@@ -139,8 +137,7 @@ export const getChainId = (networkName: NetworkName) => {
     "klaytn-baobab": 1001,
     "klaytn-cypress": 8217,
     "polygon-localnet": 80001,
-    "polygon-mumbai": 80001,
-    ropsten: 3
+    "polygon-mumbai": 80001
   };
 
   return chainIds[networkName];
