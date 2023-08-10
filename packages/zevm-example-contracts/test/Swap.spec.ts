@@ -7,8 +7,8 @@ import { ethers, network } from "hardhat";
 
 import { getBitcoinTxMemoForTest, getSwapParams } from "../scripts/zeta-swap/helpers";
 import {
-  TestSystemContract,
-  TestZRC20,
+  MockSystemContract,
+  MockZRC20,
   ZetaSwap,
   ZetaSwap__factory,
   ZetaSwapBtcInbound,
@@ -19,8 +19,8 @@ import { evmSetup } from "./test.helpers";
 describe("ZetaSwap tests", () => {
   let zetaSwapContract: ZetaSwap;
   let zetaSwapBTCContract: ZetaSwapBtcInbound;
-  let ZRC20Contracts: TestZRC20[];
-  let systemContract: TestSystemContract;
+  let ZRC20Contracts: MockZRC20[];
+  let systemContract: MockSystemContract;
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;

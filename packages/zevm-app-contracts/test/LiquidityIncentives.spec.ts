@@ -10,11 +10,11 @@ import { ethers, network } from "hardhat";
 import {
   ERC20,
   IWETH,
+  MockSystemContract,
+  MockZRC20,
   RewardDistributor,
   RewardDistributorFactory,
-  RewardDistributorFactory__factory,
-  TestSystemContract,
-  TestZRC20
+  RewardDistributorFactory__factory
 } from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 
@@ -25,9 +25,9 @@ const ERROR_TOLERANCE = parseEther("0.1");
 describe("LiquidityIncentives tests", () => {
   let ZETA: IWETH;
   let ZETA_ERC20: ERC20;
-  let ZRC20Contracts: TestZRC20[];
-  let ZRC20Contract: TestZRC20;
-  let systemContract: TestSystemContract;
+  let ZRC20Contracts: MockZRC20[];
+  let ZRC20Contract: MockZRC20;
+  let systemContract: MockSystemContract;
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;

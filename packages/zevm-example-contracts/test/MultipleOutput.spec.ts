@@ -5,13 +5,13 @@ import { expect } from "chai";
 import { ethers, network } from "hardhat";
 
 import { getMultiOutputForTest } from "../scripts/zeta-swap/helpers";
-import { TestSystemContract, TestZRC20, ZetaMultiOutput, ZetaMultiOutput__factory } from "../typechain-types";
+import { MockSystemContract, MockZRC20, ZetaMultiOutput, ZetaMultiOutput__factory } from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 
 describe("ZetaSwap tests", () => {
   let zetaMultiOutputContract: ZetaMultiOutput;
-  let ZRC20Contracts: TestZRC20[];
-  let systemContract: TestSystemContract;
+  let ZRC20Contracts: MockZRC20[];
+  let systemContract: MockSystemContract;
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;

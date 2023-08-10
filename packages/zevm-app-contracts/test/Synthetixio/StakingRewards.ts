@@ -4,7 +4,7 @@ import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { StakingRewards, StakingRewards__factory, TestZRC20, TestZRC20__factory } from "../../typechain-types";
+import { MockZRC20, MockZRC20__factory, StakingRewards, StakingRewards__factory } from "../../typechain-types";
 
 const { assert, addSnapshotBeforeRestoreAfterEach } = require("./common");
 
@@ -13,8 +13,8 @@ const { currentTime, fastForward } = require("./utils")();
 const toUnit = parseEther;
 
 const mockToken = async (acount: SignerWithAddress, name: string, symbol: string) => {
-  const ZRC20Factory = (await ethers.getContractFactory("TestZRC20")) as TestZRC20__factory;
-  const token = (await ZRC20Factory.connect(acount).deploy(parseUnits("1000000"), name, symbol)) as TestZRC20;
+  const ZRC20Factory = (await ethers.getContractFactory("MockZRC20")) as MockZRC20__factory;
+  const token = (await ZRC20Factory.connect(acount).deploy(parseUnits("1000000"), name, symbol)) as MockZRC20;
   return token;
 };
 
