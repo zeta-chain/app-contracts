@@ -51,4 +51,10 @@ contract TestSystemContract is SystemContractErrors {
         wZetaContractAddress = addr;
         emit SetWZeta(wZetaContractAddress);
     }
+
+    function onCrossChainCall(address target, address zrc20, uint256 amount, bytes calldata message) external {
+        zContext memory context = zContext({sender: msg.sender, origin: "", chainID: block.chainid});
+        IZRC20(zrc20).transfer(target, amount);
+        zContract(target).onCrossChainCall(context, zrc20, amount, message);
+    }
 }

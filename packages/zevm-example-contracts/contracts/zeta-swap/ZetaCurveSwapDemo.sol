@@ -50,7 +50,12 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
     }
 
-    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external override {
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external override {
         (address targetZRC20, bytes32 receipient, ) = abi.decode(message, (address, bytes32, uint256));
 
         address[] memory path = new address[](2);

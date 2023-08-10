@@ -65,12 +65,12 @@ describe("ZetaSwap tests", () => {
   describe("zetaSwap", () => {
     it("Should do swap", async () => {
       const amount = parseUnits("10");
-      await ZRC20Contracts[0].transfer(zetaSwapContract.address, amount);
+      await ZRC20Contracts[0].transfer(systemContract.address, amount);
 
       const initBalance = await ZRC20Contracts[1].balanceOf(deployer.address);
 
       const params = getSwapParams(deployer.address, ZRC20Contracts[1].address, BigNumber.from(0));
-      await zetaSwapContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params);
+      await systemContract.onCrossChainCall(zetaSwapContract.address, ZRC20Contracts[0].address, amount, params);
 
       const endBalance = await ZRC20Contracts[1].balanceOf(deployer.address);
       expect(endBalance).to.be.gt(initBalance);
@@ -80,12 +80,12 @@ describe("ZetaSwap tests", () => {
   describe("zetaSwapBTC", () => {
     it("Should do swap", async () => {
       const amount = parseUnits("1");
-      await ZRC20Contracts[0].transfer(zetaSwapBTCContract.address, amount);
+      await ZRC20Contracts[0].transfer(systemContract.address, amount);
 
       const initBalance = await ZRC20Contracts[1].balanceOf(deployer.address);
 
       const params = getBitcoinTxMemoForTest(deployer.address, "5");
-      await zetaSwapBTCContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params);
+      await systemContract.onCrossChainCall(zetaSwapBTCContract.address, ZRC20Contracts[0].address, amount, params);
 
       const endBalance = await ZRC20Contracts[1].balanceOf(deployer.address);
       expect(endBalance).to.be.gt(initBalance);

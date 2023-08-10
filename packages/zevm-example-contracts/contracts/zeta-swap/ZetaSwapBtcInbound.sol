@@ -7,14 +7,24 @@ import "@zetachain/protocol-contracts/contracts/zevm/interfaces/zContract.sol";
 import "../shared/BytesHelperLib.sol";
 import "../shared/SwapHelperLib.sol";
 
-contract ZetaSwapBtcInbound {
+contract ZetaSwapBtcInbound is zContract {
     SystemContract public immutable systemContract;
 
     constructor(address systemContractAddress) {
         systemContract = SystemContract(systemContractAddress);
     }
 
-    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external {
+    modifier onlySystem() {
+        require(msg.sender == address(systemContract), "Only system contract can call this function");
+        _;
+    }
+
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override onlySystem {
         address receipient = BytesHelperLib.bytesToAddress(message, 0);
         uint32 targetZRC20ChainId = BytesHelperLib.bytesToUint32(message, 20);
         address targetZRC20 = systemContract.gasCoinZRC20ByChainId(targetZRC20ChainId);
