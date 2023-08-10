@@ -20,7 +20,7 @@ import {
 
 const SYSTEM_CONTRACT = getSystemContractAddress();
 
-const BTC_TO_ADD = parseUnits("0.01", 8);
+const BTC_TO_ADD = parseUnits("0", 8);
 const ETH_TO_ADD = parseUnits("1500");
 const MATIC_TO_ADD = parseUnits("1500");
 const BNB_TO_ADD = parseUnits("100");
@@ -51,31 +51,19 @@ const addTokenEthLiquidity = async (
   uniswapRouter: IUniswapV2Router02,
   deployer: SignerWithAddress
 ) => {
-  // const tx1 = await tokenContract.approve(uniswapRouter.address, MaxUint256);
-  // await tx1.wait();
-  // const tx2 = await uniswapRouter.addLiquidityETH(
-  //   tokenContract.address,
-  //   tokenAmountToAdd,
-  //   0,
-  //   0,
-  //   deployer.address,
-  //   (await getNow()) + 360,
-  //   { gasLimit: 10_000_000, value: ETHToAdd }
-  // );
-  // await tx2.wait();
-  // const WZETA_ADDRESS = getAddress({
-  //   address: "weth9",
-  //   networkName: "athens",
-  //   zetaNetwork: "athens"
-  // });
-  // const tx2 = await uniswapRouter.swapExactETHForTokens(
-  //   0,
-  //   [WZETA_ADDRESS, tokenContract.address],
-  //   deployer.address,
-  //   (await getNow()) + 360,
-  //   { gasLimit: 10_000_000, value: parseUnits("0.1") }
-  // );
-  // await tx2.wait();
+  const tx1 = await tokenContract.approve(uniswapRouter.address, MaxUint256);
+  await tx1.wait();
+
+  const tx2 = await uniswapRouter.addLiquidityETH(
+    tokenContract.address,
+    tokenAmountToAdd,
+    0,
+    0,
+    deployer.address,
+    (await getNow()) + 360,
+    { gasLimit: 10_000_000, value: ETHToAdd }
+  );
+  await tx2.wait();
 };
 
 const estimateZetaForToken = async (
@@ -148,7 +136,7 @@ async function addLiquidity(
     )}`
   );
 
-  await addTokenEthLiquidity(tokenContract, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
+  // await addTokenEthLiquidity(tokenContract, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
 }
 async function main() {
   const WZETA_ADDRESS = getAddress({
@@ -169,15 +157,15 @@ async function main() {
     zetaNetwork: "athens"
   });
 
-  // if (!ETH_TO_ADD.isZero()) {
-  //   await addLiquidity("goerli", ETH_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
-  // }
-  // if (!MATIC_TO_ADD.isZero()) {
-  //   await addLiquidity("polygon-mumbai", MATIC_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
-  // }
-  // if (!BNB_TO_ADD.isZero()) {
-  //   await addLiquidity("bsc-testnet", BNB_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
-  // }
+  if (!ETH_TO_ADD.isZero()) {
+    await addLiquidity("goerli", ETH_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  }
+  if (!MATIC_TO_ADD.isZero()) {
+    await addLiquidity("polygon-mumbai", MATIC_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  }
+  if (!BNB_TO_ADD.isZero()) {
+    await addLiquidity("bsc-testnet", BNB_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  }
   if (!BTC_TO_ADD.isZero()) {
     await addLiquidity("bitcoin-test", BTC_TO_ADD, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
   }
