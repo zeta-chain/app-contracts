@@ -1,5 +1,5 @@
 
-FROM node:16.14-alpine
+FROM node:16.20.1-alpine
 
 ENV SHELL /bin/ash
 ENV EXECUTE_PROGRAMMATICALLY=true
