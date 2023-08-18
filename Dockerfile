@@ -1,5 +1,9 @@
 
+ snyk-fix-0f52db8d1e71df94fde855364313224e
+FROM node:16.20.1-alpine
+
 FROM node:16.20.2-alpine
+ main
 
 ENV SHELL /bin/ash
 ENV EXECUTE_PROGRAMMATICALLY=true
