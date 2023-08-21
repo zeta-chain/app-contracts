@@ -7910,9 +7910,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"solc@npm:0.8.20":
-  version: 0.8.20
-  resolution: "solc@npm:0.8.20"
+"solc@npm:0.8.21":
+  version: 0.8.21
+  resolution: "solc@npm:0.8.21"
   dependencies:
     command-exists: ^1.2.8
     commander: ^8.1.0
@@ -7923,7 +7923,7 @@ __metadata:
     tmp: 0.0.33
   bin:
     solcjs: solc.js
-  checksum: 8ff85f5e4aeda2018a97d1383284ed982ccc93fe528e1e78e3a8897e8da69848c7d44a8b1562e2ca9082b72c7a547827543eda6bcb12210e6a191e9e64baa5c8
+  checksum: 0145d0e1f4ba7b1ec574a2ad7c4782357c4a27949c3bcc7bb4411a7b325a3ad186c18f93b1802a438ea9a527711dd56d2d7190bc8dd431dc194fb6098ab6ed01
   languageName: node
   linkType: hard
 
@@ -9126,7 +9126,7 @@ __metadata:
     hardhat: 2.12.6
     inquirer: ^8.2.4
     mocha: ^10.2.0
-    solc: 0.8.20
+    solc: 0.8.21
     ts-mocha: ^10.0.0
     ts-node: 10.8.1
     typechain: ^8.0.0

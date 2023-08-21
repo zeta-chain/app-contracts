@@ -66,6 +66,6 @@
   },
   "packageManager": "yarn@3.2.0",
   "dependencies": {
-    "solc": "0.8.20"
+    "solc": "0.8.21"
   }
 }
