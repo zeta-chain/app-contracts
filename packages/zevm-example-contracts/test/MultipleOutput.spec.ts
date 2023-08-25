@@ -5,13 +5,13 @@ import { expect } from "chai";
 import { ethers, network } from "hardhat";
 
 import { getMultiOutputForTest } from "../scripts/zeta-swap/helpers";
-import { TestSystemContract, TestZRC20, ZetaMultiOutput, ZetaMultiOutput__factory } from "../typechain-types";
+import { MockSystemContract, MockZRC20, ZetaMultiOutput, ZetaMultiOutput__factory } from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 
 describe("ZetaSwap tests", () => {
   let zetaMultiOutputContract: ZetaMultiOutput;
-  let ZRC20Contracts: TestZRC20[];
-  let systemContract: TestSystemContract;
+  let ZRC20Contracts: MockZRC20[];
+  let systemContract: MockSystemContract;
 
   let accounts: SignerWithAddress[];
   let deployer: SignerWithAddress;
@@ -60,10 +60,10 @@ describe("ZetaSwap tests", () => {
       const initBalanceToken2 = await ZRC20Contracts[2].balanceOf(deployer.address);
 
       const amount = parseUnits("10");
-      await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
+      await ZRC20Contracts[0].transfer(systemContract.address, amount);
 
       const params = getMultiOutputForTest(deployer.address);
-      await zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params);
+      await systemContract.onCrossChainCall(zetaMultiOutputContract.address, ZRC20Contracts[0].address, amount, params);
 
       const endBalanceToken0 = await ZRC20Contracts[0].balanceOf(deployer.address);
       const endBalanceToken1 = await ZRC20Contracts[1].balanceOf(deployer.address);
@@ -85,11 +85,11 @@ describe("ZetaSwap tests", () => {
       await zetaMultiOutputContract.deployed();
 
       const amount = parseUnits("10");
-      await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
+      await ZRC20Contracts[0].transfer(systemContract.address, amount);
 
       const params = getMultiOutputForTest(deployer.address);
       await expect(
-        zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
+        systemContract.onCrossChainCall(zetaMultiOutputContract.address, ZRC20Contracts[0].address, amount, params)
       ).to.be.revertedWith("NoAvailableTransfers");
     });
 
@@ -100,11 +100,11 @@ describe("ZetaSwap tests", () => {
       zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[0].address);
 
       const amount = parseUnits("10");
-      await ZRC20Contracts[0].transfer(zetaMultiOutputContract.address, amount);
+      await ZRC20Contracts[0].transfer(systemContract.address, amount);
 
       const params = getMultiOutputForTest(deployer.address);
       await expect(
-        zetaMultiOutputContract.onCrossChainCall(ZRC20Contracts[0].address, amount, params)
+        systemContract.onCrossChainCall(zetaMultiOutputContract.address, ZRC20Contracts[0].address, amount, params)
       ).to.be.revertedWith("NoAvailableTransfers");
     });
   });

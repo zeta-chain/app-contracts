@@ -14,7 +14,7 @@ interface SystemContractErrors {
     error CantBeZeroAddress();
 }
 
-contract TestSystemContract is SystemContractErrors {
+contract MockSystemContract is SystemContractErrors {
     mapping(uint256 => uint256) public gasPriceByChainId;
     mapping(uint256 => address) public gasCoinZRC20ByChainId;
     mapping(uint256 => address) public gasZetaPoolByChainId;
@@ -50,5 +50,11 @@ contract TestSystemContract is SystemContractErrors {
     function setWZETAContractAddress(address addr) external {
         wZetaContractAddress = addr;
         emit SetWZeta(wZetaContractAddress);
+    }
+
+    function onCrossChainCall(address target, address zrc20, uint256 amount, bytes calldata message) external {
+        zContext memory context = zContext({sender: msg.sender, origin: "", chainID: block.chainid});
+        IZRC20(zrc20).transfer(target, amount);
+        zContract(target).onCrossChainCall(context, zrc20, amount, message);
     }
 }

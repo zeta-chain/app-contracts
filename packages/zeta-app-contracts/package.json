@@ -32,7 +32,7 @@
     "@openzeppelin/contracts": "^4.8.3",
     "@zetachain/addresses": "workspace:^",
     "@zetachain/addresses-tools": "workspace:^",
-    "@zetachain/protocol-contracts": "^1.0.1-athens3",
+    "@zetachain/protocol-contracts": "^2.0.1",
     "ethers": "5.6.8"
   }
 }

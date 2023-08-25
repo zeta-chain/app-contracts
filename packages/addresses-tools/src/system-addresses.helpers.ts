@@ -26,9 +26,9 @@ export const getZRC20Address = (version: AthensVersion = "Athens3") => {
     return ATHENS2_ZRC20Addresses;
   }
   const ZRC20Addresses: Record<ZRC20, string> = {
-    gETH: getZRC20AddressFromProtocol("bsc_testnet"),
+    gETH: getZRC20AddressFromProtocol("goerli_testnet"),
     tBNB: getZRC20AddressFromProtocol("bsc_testnet"),
-    // tBTC: getZRC20AddressFromProtocol(""),
+    // tBTC: getZRC20AddressFromProtocol("bitcoin-test"),
     tBTC: "0x0",
     tMATIC: getZRC20AddressFromProtocol("mumbai_testnet")
   };

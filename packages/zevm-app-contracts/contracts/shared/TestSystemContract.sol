@@ -14,7 +14,7 @@ interface SystemContractErrors {
     error CantBeZeroAddress();
 }
 
-contract TestSystemContract is SystemContractErrors {
+contract MockSystemContract is SystemContractErrors {
     mapping(uint256 => uint256) public gasPriceByChainId;
     mapping(uint256 => address) public gasCoinZRC20ByChainId;
     mapping(uint256 => address) public gasZetaPoolByChainId;

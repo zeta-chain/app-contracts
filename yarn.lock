@@ -2703,7 +2703,7 @@ __metadata:
   resolution: "@zetachain/addresses-tools@workspace:packages/addresses-tools"
   dependencies:
     "@zetachain/addresses": "workspace:^"
-    "@zetachain/protocol-contracts": ^1.0.1-athens3
+    "@zetachain/protocol-contracts": ^2.0.1
   languageName: unknown
   linkType: soft
 
@@ -2726,7 +2726,7 @@ __metadata:
     "@uniswap/v3-periphery": 1.1.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^0.0.8
+    "@zetachain/protocol-contracts": ^2.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2734,24 +2734,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@zetachain/protocol-contracts@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@zetachain/protocol-contracts@npm:0.0.6"
-  checksum: a35368ff57d1d49eb65034453acc9bb045378765af630cdca82cc6182536a90d6b2bbef23288b7154d25d2f878a4350d9764a52f83a09604e019f028a7a729db
-  languageName: node
-  linkType: hard
-
-"@zetachain/protocol-contracts@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "@zetachain/protocol-contracts@npm:0.0.8"
-  checksum: 050d31604636ba09e1ff7a0ba4d8341c50d0b78883b67c90018957697791afed41d0428f0423591d22bf6c088d0499c075243bb88860953376b539c25966bc2c
-  languageName: node
-  linkType: hard
-
-"@zetachain/protocol-contracts@npm:^1.0.1-athens3":
-  version: 1.0.1-athens3
-  resolution: "@zetachain/protocol-contracts@npm:1.0.1-athens3"
-  checksum: b0877c78160ae233ef3786e2e62fa8352592c97711903c10bad9a9fe74683a4a28eaa242d4a5091f0aa594ea8879eb8e0cee108c3a1f61262756a04bb6e5a1a2
+"@zetachain/protocol-contracts@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@zetachain/protocol-contracts@npm:2.0.1"
+  checksum: 1a5056e1f21b49be7975e9e4d98c429f7e53203ff194bcd262eeb9da91b48543149224b96e39e9808bf8fd55d5df5cc1c99de6e6626ad10541b3c2599a3f2477
   languageName: node
   linkType: hard
 
@@ -2763,7 +2749,7 @@ __metadata:
     "@openzeppelin/contracts": ^4.8.3
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^1.0.1-athens3
+    "@zetachain/protocol-contracts": ^2.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2779,7 +2765,7 @@ __metadata:
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^0.0.6
+    "@zetachain/protocol-contracts": ^2.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2795,7 +2781,7 @@ __metadata:
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^0.0.6
+    "@zetachain/protocol-contracts": ^2.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20

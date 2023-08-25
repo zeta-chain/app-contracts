@@ -21,6 +21,11 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
         systemContract = SystemContract(systemContractAddress);
     }
 
+    modifier onlySystem() {
+        require(msg.sender == address(systemContract), "Only system contract can call this function");
+        _;
+    }
+
     function registerDestinationToken(address destinationToken) external onlyOwner {
         destinationTokens.push(destinationToken);
         emit DestinationRegistered(destinationToken);
@@ -36,7 +41,12 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
         return total;
     }
 
-    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override onlySystem {
         if (_getTotalTransfers(zrc20) == 0) revert NoAvailableTransfers();
 
         address receipient = BytesHelperLib.bytesToAddress(message, 0);

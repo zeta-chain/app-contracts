@@ -13,7 +13,17 @@ contract ZetaSwap is zContract {
         systemContract = SystemContract(systemContractAddress);
     }
 
-    function onCrossChainCall(address zrc20, uint256 amount, bytes calldata message) external virtual override {
+    modifier onlySystem() {
+        require(msg.sender == address(systemContract), "Only system contract can call this function");
+        _;
+    }
+
+    function onCrossChainCall(
+        zContext calldata context,
+        address zrc20,
+        uint256 amount,
+        bytes calldata message
+    ) external virtual override onlySystem {
         (address targetZRC20, bytes32 receipient, uint256 minAmountOut) = abi.decode(
             message,
             (address, bytes32, uint256)
