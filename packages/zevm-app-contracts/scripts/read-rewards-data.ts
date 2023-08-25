@@ -2,13 +2,9 @@ import { isNetworkName } from "@zetachain/addresses";
 import { ethers, network } from "hardhat";
 
 import { RewardDistributor__factory, RewardDistributorFactory__factory } from "../typechain-types";
+import { FACTORY_CONTRACT } from "./deploy";
 
 const networkName = network.name;
-
-//@todo: this is here because need to import address pkg but this pkg will be move to new repo,
-// so will refactor when it will be done
-
-export const FACTORY_CONTRACT = "0xf05Bc79b88026fbC32221926308405C2Bf919f2E";
 
 const readRewardData = async (rewardContractAddress: string) => {
   const [deployer] = await ethers.getSigners();

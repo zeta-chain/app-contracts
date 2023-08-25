@@ -16,8 +16,8 @@ contract RewardDistributor is StakingRewards {
     IERC20 public stakingTokenA;
     IERC20 public stakingTokenB;
     SystemContract private systemContract;
-    uint256 minCoolDown;
-    uint256 minStakingPeriod;
+    uint256 public minCoolDown;
+    uint256 public minStakingPeriod;
     mapping(address => uint256) public lastDeposit;
     mapping(address => uint256) public unlockTokensAt;
 
