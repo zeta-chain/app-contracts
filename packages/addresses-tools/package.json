@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "@zetachain/addresses": "workspace:^",
-    "@zetachain/protocol-contracts": "^2.0.1"
+    "@zetachain/protocol-contracts": "^2.1.0"
   }
 }

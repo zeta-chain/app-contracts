@@ -1,8 +1,8 @@
 import { isNetworkName } from "@zetachain/addresses";
-import { getSystemContractAddress } from "@zetachain/addresses-tools";
+import { getSystemContractAddress, saveAddress } from "@zetachain/addresses-tools";
 import { ethers, network } from "hardhat";
 
-import { RewardDistributorFactory__factory, SystemContract__factory } from "../typechain-types";
+import { RewardDistributorFactory__factory, SystemContract__factory } from "../../typechain-types";
 
 const networkName = network.name;
 
@@ -21,6 +21,7 @@ async function main() {
   const rewardDistributorFactory = await RewardDistributorFactoryFactory.deploy(zetaTokenAddress, SYSTEM_CONTRACT);
   await rewardDistributorFactory.deployed();
   console.log("RewardDistributorFactory deployed to:", rewardDistributorFactory.address);
+  saveAddress("rewardDistributorFactory", rewardDistributorFactory.address);
 }
 
 main().catch(error => {

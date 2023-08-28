@@ -12,14 +12,14 @@ const main = async () => {
   await contract.deployed();
 
   console.log("Deployed ZetaSwap. Address:", contract.address);
-  // saveAddress("zetaSwap", contract.address);
+  saveAddress("zetaSwap", contract.address);
 
   const FactoryBTC = (await ethers.getContractFactory("ZetaSwapBtcInbound")) as ZetaSwapBtcInbound__factory;
   const contractBTC = (await FactoryBTC.deploy(SYSTEM_CONTRACT)) as ZetaSwapBtcInbound;
   await contractBTC.deployed();
 
   console.log("Deployed zetaSwapBtcInbound. Address:", contractBTC.address);
-  // saveAddress("zetaSwapBtcInbound", contractBTC.address);
+  saveAddress("zetaSwapBtcInbound", contractBTC.address);
 };
 
 main().catch(error => {

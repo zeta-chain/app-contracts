@@ -2703,7 +2703,7 @@ __metadata:
   resolution: "@zetachain/addresses-tools@workspace:packages/addresses-tools"
   dependencies:
     "@zetachain/addresses": "workspace:^"
-    "@zetachain/protocol-contracts": ^2.0.1
+    "@zetachain/protocol-contracts": ^2.1.0
   languageName: unknown
   linkType: soft
 
@@ -2726,7 +2726,7 @@ __metadata:
     "@uniswap/v3-periphery": 1.1.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^2.0.1
+    "@zetachain/protocol-contracts": ^2.1.0
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2734,10 +2734,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@zetachain/protocol-contracts@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@zetachain/protocol-contracts@npm:2.0.1"
-  checksum: 1a5056e1f21b49be7975e9e4d98c429f7e53203ff194bcd262eeb9da91b48543149224b96e39e9808bf8fd55d5df5cc1c99de6e6626ad10541b3c2599a3f2477
+"@zetachain/protocol-contracts@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@zetachain/protocol-contracts@npm:2.1.0"
+  checksum: 0b9a7c869c351eca415b6e6097f79243a3d150b57da8161ab7f7ccb969d0315e2c48d417fcdb8d71375227e58560481e3a4572e6c689224e89bd404ab519e37b
   languageName: node
   linkType: hard
 
@@ -2749,7 +2749,7 @@ __metadata:
     "@openzeppelin/contracts": ^4.8.3
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^2.0.1
+    "@zetachain/protocol-contracts": ^2.1.0
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2765,7 +2765,7 @@ __metadata:
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^2.0.1
+    "@zetachain/protocol-contracts": ^2.1.0
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2781,7 +2781,7 @@ __metadata:
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/addresses": "workspace:^"
     "@zetachain/addresses-tools": "workspace:^"
-    "@zetachain/protocol-contracts": ^2.0.1
+    "@zetachain/protocol-contracts": ^2.1.0
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20

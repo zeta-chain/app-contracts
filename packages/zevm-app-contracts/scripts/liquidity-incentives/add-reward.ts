@@ -1,10 +1,11 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getChainId, isNetworkName, NetworkName } from "@zetachain/addresses";
+import { getAddress } from "@zetachain/addresses";
+import { getSystemContractAddress } from "@zetachain/addresses-tools";
 import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
-import { SYSTEM_CONTRACT } from "../../zevm-example-contracts/scripts/systemConstants";
 import {
   ERC20__factory,
   RewardDistributor__factory,
@@ -12,8 +13,9 @@ import {
   RewardDistributorFactory__factory,
   SystemContract,
   SystemContract__factory
-} from "../typechain-types";
-import { FACTORY_CONTRACT } from "./deploy";
+} from "../../typechain-types";
+
+const SYSTEM_CONTRACT = getSystemContractAddress();
 
 const networkName = network.name;
 const REWARD_DURATION = BigNumber.from("604800").mul(8); // 1 week * 8
@@ -78,7 +80,13 @@ async function main() {
   if (!isNetworkName(networkName)) throw new Error("Invalid network name");
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
 
-  const rewardDistributorFactory = RewardDistributorFactory__factory.connect(FACTORY_CONTRACT, deployer);
+  const factoryContractAddress = getAddress({
+    address: "rewardDistributorFactory",
+    networkName: network.name,
+    zetaNetwork: "athens"
+  });
+
+  const rewardDistributorFactory = RewardDistributorFactory__factory.connect(factoryContractAddress, deployer);
   let rewardContractAddress = "";
   // @dev: you can write your own address here to add reward to an existing contract
   // rewardContractAddress = "0x0dee8b6e2d2035a798b67c68d47f941718a62263";

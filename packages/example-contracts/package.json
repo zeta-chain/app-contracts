@@ -36,7 +36,7 @@
     "@uniswap/v3-periphery": "1.1.0",
     "@zetachain/addresses": "workspace:^",
     "@zetachain/addresses-tools": "workspace:^",
-    "@zetachain/protocol-contracts": "^2.0.1",
+    "@zetachain/protocol-contracts": "^2.1.0",
     "ethers": "5.6.8"
   }
 }
