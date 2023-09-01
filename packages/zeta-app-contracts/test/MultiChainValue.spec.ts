@@ -1,6 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ZetaEth } from "@zetachain/interfaces/typechain-types";
 import { expect } from "chai";
+import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import {
@@ -23,6 +24,8 @@ describe("MultiChainValue tests", () => {
   let account1: SignerWithAddress;
   let deployerAddress: string;
   let account1Address: string;
+
+  const encoder = new ethers.utils.AbiCoder();
 
   beforeEach(async () => {
     zetaConnectorMockContract = await deployZetaConnectorMock();
@@ -87,6 +90,27 @@ describe("MultiChainValue tests", () => {
 
     it("Should prevent sending value to an invalid address", async () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
+    });
+
+    it("Should send the tokens back to the sender", async () => {
+      await (await multiChainValueContractA.addAvailableChainId(chainAId)).wait();
+      const chainId = await deployer.getChainId();
+
+      const remainingZetaValue = parseEther("15");
+      await zetaEthMockContract.transfer(multiChainValueContractA.address, remainingZetaValue);
+
+      await zetaConnectorMockContract.onRevert(
+        multiChainValueContractA.address,
+        chainId,
+        ethers.utils.solidityPack(["address"], [multiChainValueContractA.address]),
+        chainBId,
+        remainingZetaValue,
+        encoder.encode(["address"], [account1.address]),
+        ethers.utils.hexZeroPad("0x0", 32)
+      );
+
+      const balance = await zetaEthMockContract.balanceOf(account1.address);
+      await expect(balance).to.be.eq(remainingZetaValue);
     });
 
     describe("Given a valid input", () => {
