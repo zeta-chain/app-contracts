@@ -15,6 +15,7 @@ const getZRC20Address = async (systemContract: SystemContract, network: NetworkN
 async function main() {
   const [deployer] = await ethers.getSigners();
   const SYSTEM_CONTRACT = getSystemContractAddress();
+  console.log(`SYSTEM CONTRACT:`, SYSTEM_CONTRACT);
 
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);
   const uniswapFactoryAddress = await systemContract.uniswapv2FactoryAddress();

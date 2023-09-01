@@ -11,6 +11,7 @@ export type ZetaAddress =
   | "multiChainSwap"
   | "multiChainSwapZetaConnector"
   | "multiChainValue"
+  | "rewardDistributorFactory"
   | "tridentPoolFactory"
   | "tss"
   | "tssUpdater"
@@ -37,6 +38,7 @@ const zetaAddresses: Record<ZetaAddress, boolean> = {
   multiChainSwap: true,
   multiChainSwapZetaConnector: true,
   multiChainValue: true,
+  rewardDistributorFactory: true,
   tridentPoolFactory: true,
   tss: true,
   tssUpdater: true,

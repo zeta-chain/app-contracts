@@ -25,6 +25,9 @@ contract RewardDistributor is StakingRewards {
     error InvalidTokenAddress();
     error MinimumStakingPeriodNotMet();
 
+    event MinCoolDownUpdated(address callerAddress, uint256 minCoolDown);
+    event MinStakingPeriodUpdated(address callerAddress, uint256 minStakingPeriod);
+
     constructor(
         address owner,
         address rewardsDistribution,
@@ -105,10 +108,12 @@ contract RewardDistributor is StakingRewards {
 
     function setMinCoolDown(uint256 minCoolDown_) external onlyOwner {
         minCoolDown = minCoolDown_;
+        emit MinCoolDownUpdated(msg.sender, minCoolDown_);
     }
 
     function setMinStakingPeriod(uint256 minStakingPeriod_) external onlyOwner {
         minStakingPeriod = minStakingPeriod_;
+        emit MinStakingPeriodUpdated(msg.sender, minStakingPeriod_);
     }
 
     function stake(uint256 amount) public override {
