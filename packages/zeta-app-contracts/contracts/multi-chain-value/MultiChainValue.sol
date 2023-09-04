@@ -71,7 +71,7 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
                 destinationChainId: destinationChainId,
                 destinationAddress: destinationAddress,
                 destinationGasLimit: 300000,
-                message: abi.encode(),
+                message: abi.encode(msg.sender),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
@@ -94,10 +94,18 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
                 destinationChainId: destinationChainId,
                 destinationAddress: destinationAddress,
                 destinationGasLimit: 300000,
-                message: abi.encode(),
+                message: abi.encode(msg.sender),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );
+    }
+
+    function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external isValidRevertCall(zetaRevert) {
+        address messageFrom = abi.decode(zetaRevert.message, (address));
+
+        bool success1 = ZetaEth(zetaToken).approve(address(this), zetaRevert.remainingZetaValue);
+        bool success2 = ZetaEth(zetaToken).transferFrom(address(this), messageFrom, zetaRevert.remainingZetaValue);
+        if (!(success1 && success2)) revert ErrorTransferringZeta();
     }
 }
