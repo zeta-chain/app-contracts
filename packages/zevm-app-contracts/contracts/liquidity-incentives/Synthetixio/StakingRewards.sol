@@ -117,8 +117,7 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
 
                 // Construct the call data
                 // Here, 'wad' is set to zero just for the purpose of the check
-                uint256 wad = 0;
-                bytes memory data = abi.encodeWithSelector(functionSignature, wad);
+                bytes memory data = abi.encodeWithSelector(functionSignature, 0);
 
                 // Make the low-level call
                 (bool success, ) = address(rewardsToken).call(data);
