@@ -276,7 +276,7 @@ describe("StakingRewards", () => {
     });
   });
 
-  describe("getReward()", () => {
+  describe("getReward(false)", () => {
     it("should increase rewards token balance", async () => {
       const totalToStake = toUnit("100");
       const totalToDistribute = toUnit("5000");
@@ -292,7 +292,7 @@ describe("StakingRewards", () => {
 
       const initialRewardBal = await rewardsToken.balanceOf(stakingAccount1.address);
       const initialEarnedBal = await stakingRewards.earned(stakingAccount1.address);
-      await stakingRewards.connect(stakingAccount1).getReward();
+      await stakingRewards.connect(stakingAccount1).getReward(false);
       const postRewardBal = await rewardsToken.balanceOf(stakingAccount1.address);
       const postEarnedBal = await stakingRewards.earned(stakingAccount1.address);
 
@@ -365,7 +365,7 @@ describe("StakingRewards", () => {
       await stakingRewards.connect(rewardsDistribution).notifyRewardAmount(totalToDistribute);
 
       await fastForward(DAY * 4);
-      await stakingRewards.connect(stakingAccount1).getReward();
+      await stakingRewards.connect(stakingAccount1).getReward(false);
       await fastForward(DAY * 4);
 
       // New Rewards period much lower
@@ -383,7 +383,7 @@ describe("StakingRewards", () => {
       await stakingRewards.connect(rewardsDistribution).notifyRewardAmount(totalToDistribute);
 
       await fastForward(DAY * 71);
-      await stakingRewards.connect(stakingAccount1).getReward();
+      await stakingRewards.connect(stakingAccount1).getReward(false);
     });
   });
 
@@ -434,7 +434,7 @@ describe("StakingRewards", () => {
     });
   });
 
-  describe("exit()", () => {
+  describe("exit(false)", () => {
     it("should retrieve all earned and increase rewards bal", async () => {
       const totalToStake = toUnit("100");
       const totalToDistribute = toUnit("5000");
@@ -450,7 +450,7 @@ describe("StakingRewards", () => {
 
       const initialRewardBal = await rewardsToken.balanceOf(stakingAccount1.address);
       const initialEarnedBal = await stakingRewards.earned(stakingAccount1.address);
-      await stakingRewards.connect(stakingAccount1).exit();
+      await stakingRewards.connect(stakingAccount1).exit(false);
       const postRewardBal = await rewardsToken.balanceOf(stakingAccount1.address);
       const postEarnedBal = await stakingRewards.earned(stakingAccount1.address);
 
@@ -545,12 +545,12 @@ describe("StakingRewards", () => {
       assert.bnClose(rewardRewardsEarned, rewardRewardsEarnedPostWithdraw, toUnit("0.1"));
       // Get rewards
       const initialRewardBal = await rewardsToken.balanceOf(stakingAccount1.address);
-      await stakingRewards.connect(stakingAccount1).getReward();
+      await stakingRewards.connect(stakingAccount1).getReward(false);
       const postRewardRewardBal = await rewardsToken.balanceOf(stakingAccount1.address);
       assert.bnGt(postRewardRewardBal, initialRewardBal);
       // Exit
       const preExitLPBal = await stakingToken.balanceOf(stakingAccount1.address);
-      await stakingRewards.connect(stakingAccount1).exit();
+      await stakingRewards.connect(stakingAccount1).exit(false);
       const postExitLPBal = await stakingToken.balanceOf(stakingAccount1.address);
       assert.bnGt(postExitLPBal, preExitLPBal);
     });
