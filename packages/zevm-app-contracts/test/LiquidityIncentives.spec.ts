@@ -9,7 +9,6 @@ import { ethers, network } from "hardhat";
 
 import {
   ERC20,
-  ERC20__factory,
   IWETH,
   MockSystemContract,
   MockZRC20,
