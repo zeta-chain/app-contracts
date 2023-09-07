@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./interfaces/IStakingRewards.sol";
 import "./RewardsDistributionRecipient.sol";
 import "./Pausable.sol";
-import "./interfaces/IWETH9.sol";
 
 // https://docs.synthetix.io/contracts/source/contracts/stakingrewards
 contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausable {
@@ -116,14 +115,13 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
                 bytes4 functionSignature = 0x2e1a7d4d;
 
                 // Construct the call data
-                // Here, 'wad' is set to zero just for the purpose of the check
-                bytes memory data = abi.encodeWithSelector(functionSignature, 0);
+                // Here, 'wad' is set to reward
+                bytes memory data = abi.encodeWithSelector(functionSignature, reward);
 
                 // Make the low-level call
                 (bool success, ) = address(rewardsToken).call(data);
                 require(success, "Reward is not a wrapped asset");
 
-                IWETH9(address(rewardsToken)).withdraw(reward);
                 (success, ) = msg.sender.call{value: reward}("");
                 require(success, "Transfer failed");
             } else rewardsToken.safeTransfer(msg.sender, reward);
