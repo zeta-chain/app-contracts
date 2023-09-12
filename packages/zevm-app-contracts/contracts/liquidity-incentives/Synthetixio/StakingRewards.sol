@@ -105,18 +105,33 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
         emit Withdrawn(msg.sender, amount);
     }
 
-    function getReward() public nonReentrant updateReward(msg.sender) {
+    function getReward(bool unwrap) public nonReentrant updateReward(msg.sender) {
         uint256 reward = rewards[msg.sender];
         if (reward > 0) {
             rewards[msg.sender] = 0;
-            rewardsToken.safeTransfer(msg.sender, reward);
+            if (unwrap) {
+                // The 4-byte signature of the function "withdraw(uint256)"
+                // This is calculated as: bytes4(keccak256("withdraw(uint256)"))
+                bytes4 functionSignature = 0x2e1a7d4d;
+
+                // Construct the call data
+                // Here, 'wad' is set to reward
+                bytes memory data = abi.encodeWithSelector(functionSignature, reward);
+
+                // Make the low-level call
+                (bool success, ) = address(rewardsToken).call(data);
+                require(success, "Reward is not a wrapped asset");
+
+                (success, ) = msg.sender.call{value: reward}("");
+                require(success, "Transfer failed");
+            } else rewardsToken.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward);
         }
     }
 
-    function exit() external {
+    function exit(bool unwrap) external {
         withdraw(_balances[msg.sender]);
-        getReward();
+        getReward(unwrap);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -178,4 +193,7 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
     event RewardPaid(address indexed user, uint256 reward);
     event RewardsDurationUpdated(uint256 newDuration);
     event Recovered(address token, uint256 amount);
+
+    // Function to accept Ether
+    receive() external payable {}
 }
