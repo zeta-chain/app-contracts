@@ -20,7 +20,7 @@ const readRewardData = async (rewardContractAddress: string) => {
   const rewardsDuration = await rewardDistributorContract.rewardsDuration();
   const lastUpdateTime = await rewardDistributorContract.lastUpdateTime();
   const rewardPerTokenStored = await rewardDistributorContract.rewardPerTokenStored();
-
+  if (rewardRate.isZero()) return;
   console.table({
     contract: rewardContractAddress,
     lastUpdateTime: `${lastUpdateTime.toString()}-${new Date(lastUpdateTime.toNumber() * 1000).toISOString()}`,

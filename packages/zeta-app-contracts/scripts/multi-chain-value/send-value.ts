@@ -38,7 +38,7 @@ const main = async () => {
 
   const amount = parseEther("1");
 
-  if (ZETA_NETWORK !== "athens") {
+  if (networkName !== "athens") {
     const zetaToken = await getErc20(getAddress("zetaToken"));
     const tx = await zetaToken.approve(multiChainValueContract.address, amount.mul(10));
     await tx.wait();
@@ -47,11 +47,11 @@ const main = async () => {
   if (isZetaTestnet(ZETA_NETWORK)) {
     const destinationAddress = ethers.utils.solidityPack(["address"], [process.env.PUBLIC_KEY_1 ?? signer.address]);
 
-    await doTranfer(ZETA_NETWORK, multiChainValueContract, getChainId("goerli"), amount, destinationAddress);
-    // await doTranfer(ZETA_NETWORK, multiChainValueContract, getChainId("klaytn-baobab"), amount, destinationAddress);
-    await doTranfer(ZETA_NETWORK, multiChainValueContract, getChainId("polygon-mumbai"), amount, destinationAddress);
-    await doTranfer(ZETA_NETWORK, multiChainValueContract, getChainId("bsc-testnet"), amount, destinationAddress);
-    await doTranfer(ZETA_NETWORK, multiChainValueContract, getChainId("athens"), amount, destinationAddress);
+    await doTranfer(networkName, multiChainValueContract, getChainId("goerli"), amount, destinationAddress);
+    // await doTranfer(networkName, multiChainValueContract, getChainId("klaytn-baobab"), amount, destinationAddress);
+    await doTranfer(networkName, multiChainValueContract, getChainId("polygon-mumbai"), amount, destinationAddress);
+    await doTranfer(networkName, multiChainValueContract, getChainId("bsc-testnet"), amount, destinationAddress);
+    await doTranfer(networkName, multiChainValueContract, getChainId("athens"), amount, destinationAddress);
   }
 };
 
