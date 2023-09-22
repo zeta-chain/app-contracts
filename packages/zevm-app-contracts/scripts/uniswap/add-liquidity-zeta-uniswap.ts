@@ -17,32 +17,16 @@ import {
   SystemContract__factory,
   UniswapV2Router02__factory
 } from "../../typechain-types";
+import { getNow, printReserves, sortPair } from "./uniswap.helpers";
 
 const SYSTEM_CONTRACT = getSystemContractAddress();
 
 const BTC_TO_ADD = parseUnits("0", 8);
-const ETH_TO_ADD = parseUnits("1500");
-const MATIC_TO_ADD = parseUnits("1500");
-const BNB_TO_ADD = parseUnits("100");
+const ETH_TO_ADD = parseUnits("0");
+const MATIC_TO_ADD = parseUnits("0");
+const BNB_TO_ADD = parseUnits("0");
 
 const ZETA_TO_ADD = parseUnits("0");
-
-interface Pair {
-  TokenA: string;
-  TokenB: string;
-}
-
-export const getNow = async () => {
-  const block = await ethers.provider.getBlock("latest");
-  return block.timestamp;
-};
-
-export const sortPair = (token1: string, token2: string): Pair => {
-  if (token1 < token2) {
-    return { TokenA: token1, TokenB: token2 };
-  }
-  return { TokenA: token2, TokenB: token1 };
-};
 
 const addTokenEthLiquidity = async (
   tokenContract: ERC20,
@@ -53,6 +37,8 @@ const addTokenEthLiquidity = async (
 ) => {
   const tx1 = await tokenContract.approve(uniswapRouter.address, MaxUint256);
   await tx1.wait();
+
+  console.log("Uniswap approved to consume token...");
 
   const tx2 = await uniswapRouter.addLiquidityETH(
     tokenContract.address,
@@ -89,13 +75,6 @@ const estimateZetaForToken = async (
 
   const ZETAValue = reservesZETA.mul(tokenAmountToAdd).div(reservesToken);
 
-  const tokenDecimals = await tokenContract.decimals();
-  console.log(
-    `Zeta/${getGasSymbolByNetwork(network)} reserves ${formatUnits(reservesZETA)}/${formatUnits(
-      reservesToken,
-      tokenDecimals
-    )}`
-  );
   return ZETAValue;
 };
 
@@ -116,7 +95,6 @@ async function addLiquidity(
 
   const tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId(network));
   const tokenContract = ERC20__factory.connect(tokenAddress, deployer);
-  const tokenDecimals = await tokenContract.decimals();
 
   const zetaToAdd = initLiquidityPool
     ? ZETA_TO_ADD
@@ -129,14 +107,9 @@ async function addLiquidity(
         deployer
       );
 
-  console.log(
-    `Zeta/${getGasSymbolByNetwork(network)} to add ${formatUnits(zetaToAdd)}/${formatUnits(
-      tokenAmountToAdd,
-      tokenDecimals
-    )}`
-  );
-
+  await printReserves(tokenContract, WZETAAddress, uniswapFactoryAddress, deployer);
   // await addTokenEthLiquidity(tokenContract, tokenAmountToAdd, zetaToAdd, uniswapRouter, deployer);
+  await printReserves(tokenContract, WZETAAddress, uniswapFactoryAddress, deployer);
 }
 async function main() {
   const WZETA_ADDRESS = getAddress({
