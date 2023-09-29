@@ -107,11 +107,11 @@ export const getTestnetList = (): Record<ZetaTestnetNetworkName, TestnetAddressG
  * @description Mainnet
  */
 
-export type MainnetNetworkName = "eth-mainnet" | "klaytn-cypress";
+export type MainnetNetworkName = "bsc-mainnet" | "eth-mainnet" | "klaytn-cypress";
 export type ZetaMainnetNetworkName = "mainnet";
 export type MainnetAddressGroup = Record<MainnetNetworkName, NetworkAddresses>;
 export const isMainnetNetworkName = (networkName: string): networkName is MainnetNetworkName =>
-  networkName === "eth-mainnet" || networkName === "klaytn-cypress";
+  networkName === "bsc-mainnet" || networkName === "eth-mainnet" || networkName === "klaytn-cypress";
 export const isZetaMainnet = (networkName: string | undefined): networkName is ZetaMainnetNetworkName =>
   networkName === "mainnet";
 
@@ -131,6 +131,7 @@ export const getChainId = (networkName: NetworkName) => {
     athens: 7001,
     "bitcoin-test": 18332,
     "bsc-localnet": 97,
+    "bsc-mainnet": 56,
     "bsc-testnet": 97,
     "eth-localnet": 5,
     "eth-mainnet": 1,
