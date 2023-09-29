@@ -14,6 +14,12 @@ export const getHardhatConfigNetworks = (PRIVATE_KEYS: string[]): NetworksUserCo
     gasPrice: 80000000000,
     url: "http://localhost:8120",
   },
+  "bsc-mainnet": {
+    accounts: PRIVATE_KEYS,
+    gas: 5000000,
+    gasPrice: 80000000000,
+    url: `https://rpc.ankr.com/bsc`,
+  },
   "bsc-testnet": {
     accounts: PRIVATE_KEYS,
     gas: 5000000,
