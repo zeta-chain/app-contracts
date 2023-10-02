@@ -1,6 +1,6 @@
 import { NetworkName } from "@zetachain/addresses";
 
-type ChainId = 0 | 5 | 97 | 1001 | 1337 | 80001;
+type ChainId = 0 | 1 | 5 | 56 | 97 | 1001 | 1337 | 80001;
 
 export type NetworkVariables = {
   chainId: ChainId;
@@ -27,6 +27,12 @@ export const networkVariables: Record<NetworkName, NetworkVariables> = {
     connectorAddress: "",
     crossChainId: 0,
     crossChainName: ""
+  },
+  "bsc-mainnet": {
+    chainId: 56,
+    connectorAddress: "",
+    crossChainId: 1,
+    crossChainName: "eth-mainnet"
   },
   "bsc-testnet": {
     chainId: 97,

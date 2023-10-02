@@ -1,4 +1,27 @@
 {
+  "bsc-mainnet": {
+    "connector": "",
+    "crossChainCounter": "",
+    "crossChainNft": "",
+    "dai": "",
+    "multiChainValue": "",
+    "tss": "",
+    "tssUpdater": "",
+    "uniswapV2Router02": "",
+    "uniswapV3PoolFactory": "",
+    "uniswapV3Quoter": "",
+    "uniswapV3Router": "",
+    "usdc": "",
+    "weth9": "",
+    "zetaSwapBtcInbound": "",
+    "zetaToken": "",
+    "zetaTokenConsumerUniV2": "",
+    "immutableCreate2Factory": "",
+    "multiChainSwapZetaConnector": "",
+    "multiChainSwap": "",
+    "uniswapV2Factory": "",
+    "zetaSwap": ""
+  },
   "eth-mainnet": {
     "connector": "",
     "crossChainCounter": "",
