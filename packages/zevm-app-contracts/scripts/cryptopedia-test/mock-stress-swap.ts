@@ -19,6 +19,7 @@ const stressSwap = async () => {
   const [deployer] = await ethers.getSigners();
 
   const MockToken = await MockZETA__factory.connect(tokenAddress1, deployer);
+  const MockToken2 = await MockZETA__factory.connect(tokenAddress2, deployer);
 
   await MockToken.mint(deployer.address, TOKEN_TO_MINT);
 
@@ -65,12 +66,18 @@ const stressSwap = async () => {
 
   await tx4.wait();
 
+  const balanceAfterSecondSwap1 = await tokenContract1.balanceOf(deployer.address);
+  const balanceAfterSecondSwap2 = await tokenContract2.balanceOf(deployer.address);
+  console.log(`endBalance1: ${balanceAfterSecondSwap1.toString()}`);
+  console.log(`endBalance2: ${balanceAfterSecondSwap2.toString()}`);
+
+  await MockToken.burn(deployer.address, balanceAfterSecondSwap1);
+  await MockToken2.burn(deployer.address, balanceAfterSecondSwap2);
+
   const endBalance1 = await tokenContract1.balanceOf(deployer.address);
   const endBalance2 = await tokenContract2.balanceOf(deployer.address);
   console.log(`endBalance1: ${endBalance1.toString()}`);
   console.log(`endBalance2: ${endBalance2.toString()}`);
-
-  await MockToken.burn(deployer.address, endBalance1);
 };
 
 stressSwap()
