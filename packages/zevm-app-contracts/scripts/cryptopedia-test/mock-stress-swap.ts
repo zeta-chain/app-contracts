@@ -18,10 +18,10 @@ const uniswapRouterAddress = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
 const stressSwap = async () => {
   const [deployer] = await ethers.getSigners();
 
-  const MockToken = await MockZETA__factory.connect(tokenAddress1, deployer);
+  const MockToken1 = await MockZETA__factory.connect(tokenAddress1, deployer);
   const MockToken2 = await MockZETA__factory.connect(tokenAddress2, deployer);
 
-  await MockToken.mint(deployer.address, TOKEN_TO_MINT);
+  await MockToken1.mint(deployer.address, TOKEN_TO_MINT);
 
   const uniswapRouter = await UniswapV2Router02__factory.connect(uniswapRouterAddress, deployer);
 
@@ -68,10 +68,10 @@ const stressSwap = async () => {
 
   const balanceAfterSecondSwap1 = await tokenContract1.balanceOf(deployer.address);
   const balanceAfterSecondSwap2 = await tokenContract2.balanceOf(deployer.address);
-  console.log(`endBalance1: ${balanceAfterSecondSwap1.toString()}`);
-  console.log(`endBalance2: ${balanceAfterSecondSwap2.toString()}`);
+  console.log(`balanceAfterSecondSwap1: ${balanceAfterSecondSwap1.toString()}`);
+  console.log(`balanceAfterSecondSwap2: ${balanceAfterSecondSwap2.toString()}`);
 
-  await MockToken.burn(deployer.address, balanceAfterSecondSwap1);
+  await MockToken1.burn(deployer.address, balanceAfterSecondSwap1);
   await MockToken2.burn(deployer.address, balanceAfterSecondSwap2);
 
   const endBalance1 = await tokenContract1.balanceOf(deployer.address);
