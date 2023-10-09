@@ -22,7 +22,7 @@ contract UserVerificationRegistry {
         return userVerificationTimestamps[userAddress] > 0;
     }
 
-    function getLastVerifiedTimestamp(address userAddress) external view returns (uint256) {
+    function getVerifiedTimestamp(address userAddress) external view returns (uint256) {
         return userVerificationTimestamps[userAddress];
     }
 }
