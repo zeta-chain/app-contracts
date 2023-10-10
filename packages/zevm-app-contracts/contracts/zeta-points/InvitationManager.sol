@@ -15,6 +15,12 @@ contract InvitationManager {
     // Store invitees for each inviter
     mapping(address => address[]) public inviteeLists;
 
+    // Total invites accepted by day (using the start timestamp of each day as key)
+    mapping(uint256 => uint256) public totalInvitesByDay;
+
+    // Total invites accepted by inviter by day (using the start timestamp of each day as key)
+    mapping(address => mapping(uint256 => uint256)) public totalInvitesByInviterByDay;
+
     error UnrecognizedInvitation();
     error IndexOutOfBounds();
     event InvitationAccepted(address indexed inviter, address indexed invitee, uint256 indexed timestamp);
@@ -37,6 +43,11 @@ contract InvitationManager {
         // Add the invitee to the inviter's list
         inviteeLists[inviter].push(msg.sender);
 
+        uint256 dayStartTimestamp = (block.timestamp / 86400) * 86400; // Normalize to the start of the day
+
+        totalInvitesByDay[dayStartTimestamp]++;
+        totalInvitesByInviterByDay[inviter][dayStartTimestamp]++;
+
         emit InvitationAccepted(inviter, msg.sender, block.timestamp);
     }
 
@@ -47,5 +58,13 @@ contract InvitationManager {
     function getInviteeAtIndex(address inviter, uint256 index) external view returns (address) {
         if (index >= inviteeLists[inviter].length) revert IndexOutOfBounds();
         return inviteeLists[inviter][index];
+    }
+
+    function getTotalInvitesOnDay(uint256 dayStartTimestamp) external view returns (uint256) {
+        return totalInvitesByDay[dayStartTimestamp];
+    }
+
+    function getInvitesByInviterOnDay(address inviter, uint256 dayStartTimestamp) external view returns (uint256) {
+        return totalInvitesByInviterByDay[inviter][dayStartTimestamp];
     }
 }
