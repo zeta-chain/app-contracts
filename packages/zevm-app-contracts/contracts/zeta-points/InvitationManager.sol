@@ -23,7 +23,8 @@ contract InvitationManager {
 
     error UnrecognizedInvitation();
     error IndexOutOfBounds();
-    event InvitationAccepted(address indexed inviter, address indexed invitee, uint256 indexed timestamp);
+    error InvitationAlreadyAccepted();
+    event InvitationAccepted(address indexed inviter, address indexed invitee, uint256 timestamp);
 
     function verifySignature(address inviter, address invitee, Signature calldata signature) private pure {
         bytes32 payloadHash = keccak256(abi.encode(inviter, invitee));
@@ -34,7 +35,7 @@ contract InvitationManager {
     }
 
     function confirmAndAcceptInvitation(address inviter, Signature calldata signature) external {
-        if (acceptedInvitationsTimestamp[inviter][msg.sender] != 0) revert UnrecognizedInvitation();
+        if (acceptedInvitationsTimestamp[inviter][msg.sender] != 0) revert InvitationAlreadyAccepted();
 
         verifySignature(inviter, msg.sender, signature);
 

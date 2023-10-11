@@ -1,7 +1,5 @@
-//@ts-ignore
-import { BigNumber } from "@ethersproject/bignumber";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ethers, network } from "hardhat";
+import { ethers } from "hardhat";
 
 export const getInvitationSig = async (signer: SignerWithAddress, invitee: string) => {
   let payload = ethers.utils.defaultAbiCoder.encode(["address", "address"], [signer.address, invitee]);
