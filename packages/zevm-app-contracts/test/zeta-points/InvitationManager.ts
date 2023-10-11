@@ -28,7 +28,7 @@ describe("InvitationManager Contract test", () => {
 
   describe("Invitations test", () => {
     it("Should verify an invitation and store it", async () => {
-      const sig = await getInvitationSig(inviter, invitee.address);
+      const sig = await getInvitationSig(inviter);
       const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
       const rec = await tx.wait();
 
@@ -42,20 +42,20 @@ describe("InvitationManager Contract test", () => {
     });
 
     it("Should revert if invitation is invalid", async () => {
-      const sig = await getInvitationSig(inviter, addrs[0].address);
-      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
+      const sig = await getInvitationSig(inviter);
+      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(addrs[0].address, sig);
       await expect(tx).to.be.revertedWith("UnrecognizedInvitation");
     });
 
     it("Should revert if invitation is already accepted", async () => {
-      const sig = await getInvitationSig(inviter, invitee.address);
+      const sig = await getInvitationSig(inviter);
       await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
       const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
       await expect(tx).to.be.revertedWith("InvitationAlreadyAccepted");
     });
 
     it("Should count only for today if I just accepted", async () => {
-      const sig = await getInvitationSig(inviter, invitee.address);
+      const sig = await getInvitationSig(inviter);
       const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
       const rec = await tx.wait();
 

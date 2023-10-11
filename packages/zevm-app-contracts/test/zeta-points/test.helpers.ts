@@ -1,8 +1,8 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
-export const getInvitationSig = async (signer: SignerWithAddress, invitee: string) => {
-  let payload = ethers.utils.defaultAbiCoder.encode(["address", "address"], [signer.address, invitee]);
+export const getInvitationSig = async (signer: SignerWithAddress) => {
+  let payload = ethers.utils.defaultAbiCoder.encode(["address"], [signer.address]);
 
   let payloadHash = ethers.utils.keccak256(payload);
 
