@@ -68,7 +68,8 @@ const addReward = async (
   );
 
   const ZETA = ERC20__factory.connect(zetaTokenAddress, deployer);
-  await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT.mul(2));
+  const tx = await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT.mul(1));
+  await tx.wait();
   await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
   await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
 
