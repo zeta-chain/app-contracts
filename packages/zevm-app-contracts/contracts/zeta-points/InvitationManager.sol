@@ -61,6 +61,7 @@ contract InvitationManager {
 
     function confirmAndAcceptInvitation(address inviter, Signature calldata signature) external {
         if (inviter == msg.sender) revert CanNotInviteYourself();
+        if (userVerificationTimestamps[inviter] == 0) revert UnrecognizedInvitation();
         _verifySignature(inviter, signature);
 
         acceptedInvitationsTimestamp[inviter][msg.sender] = block.timestamp;
