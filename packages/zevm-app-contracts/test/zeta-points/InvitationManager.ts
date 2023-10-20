@@ -18,6 +18,7 @@ describe("InvitationManager Contract test", () => {
     const InvitationManager = await ethers.getContractFactory("InvitationManager");
     //@ts-ignore
     invitationManager = await InvitationManager.deploy();
+    await invitationManager.markAsVerified();
   });
 
   describe("True", () => {
@@ -51,7 +52,7 @@ describe("InvitationManager Contract test", () => {
       const sig = await getInvitationSig(inviter);
       await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
       const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
-      await expect(tx).to.be.revertedWith("InvitationAlreadyAccepted");
+      await expect(tx).to.be.revertedWith("UserAlreadyVerified");
     });
 
     it("Should count only for today if I just accepted", async () => {

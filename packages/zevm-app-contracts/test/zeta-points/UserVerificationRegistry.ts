@@ -4,16 +4,16 @@ use(solidity);
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
-import { UserVerificationRegistry } from "../../typechain-types";
+import { InvitationManager } from "../../typechain-types";
 
 describe("UserVerificationRegistry Contract test", () => {
-  let userVerificationRegistry: UserVerificationRegistry, user: SignerWithAddress, addrs: SignerWithAddress[];
+  let invitationManager: InvitationManager, user: SignerWithAddress, addrs: SignerWithAddress[];
 
   beforeEach(async () => {
     [user, ...addrs] = await ethers.getSigners();
-    const UserVerificationRegistryFactory = await ethers.getContractFactory("UserVerificationRegistry");
+    const InvitationManagerFactory = await ethers.getContractFactory("InvitationManager");
     //@ts-ignore
-    userVerificationRegistry = await UserVerificationRegistryFactory.deploy();
+    invitationManager = await InvitationManagerFactory.deploy();
   });
 
   describe("True", () => {
@@ -24,17 +24,17 @@ describe("UserVerificationRegistry Contract test", () => {
 
   describe("Vereification test", () => {
     it("Should be able to verify a wallet", async () => {
-      const hasBeenVerified = await userVerificationRegistry.hasBeenVerified(user.address);
+      const hasBeenVerified = await invitationManager.hasBeenVerified(user.address);
       expect(hasBeenVerified).to.be.false;
 
-      const tx = await userVerificationRegistry.markAsVerified();
+      const tx = await invitationManager.markAsVerified();
       const receipt = await tx.wait();
       const block = await ethers.provider.getBlock(receipt.blockNumber);
 
-      const hasBeenVerifiedAfter = await userVerificationRegistry.hasBeenVerified(user.address);
+      const hasBeenVerifiedAfter = await invitationManager.hasBeenVerified(user.address);
       expect(hasBeenVerifiedAfter).to.be.true;
 
-      const verification = await userVerificationRegistry.getVerifiedTimestamp(user.address);
+      const verification = await invitationManager.getVerifiedTimestamp(user.address);
       expect(verification).to.be.eq(block.timestamp);
     });
   });
