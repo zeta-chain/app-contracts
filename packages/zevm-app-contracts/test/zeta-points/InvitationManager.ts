@@ -30,6 +30,10 @@ describe("InvitationManager Contract test", () => {
   describe("Invitations test", () => {
     it("Should verify an invitation and store it", async () => {
       const sig = await getInvitationSig(inviter);
+
+      const hasBeenVerifiedBefore = await invitationManager.hasBeenVerified(invitee.address);
+      await expect(hasBeenVerifiedBefore).to.be.eq(false);
+
       const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
       const rec = await tx.wait();
 
@@ -40,10 +44,19 @@ describe("InvitationManager Contract test", () => {
 
       const invitationCount = await invitationManager.getInviteeCount(inviter.address);
       await expect(invitationCount).to.be.eq(1);
+
+      const hasBeenVerifiedAfter = await invitationManager.hasBeenVerified(invitee.address);
+      await expect(hasBeenVerifiedAfter).to.be.eq(true);
     });
 
     it("Should revert if invitation is invalid", async () => {
       const sig = await getInvitationSig(inviter);
+      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(addrs[0].address, sig);
+      await expect(tx).to.be.revertedWith("UnrecognizedInvitation");
+    });
+
+    it("Should revert if inviter has not been verified", async () => {
+      const sig = await getInvitationSig(addrs[0]);
       const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(addrs[0].address, sig);
       await expect(tx).to.be.revertedWith("UnrecognizedInvitation");
     });

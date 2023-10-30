@@ -29,7 +29,7 @@ contract InvitationManager {
     error CanNotInviteYourself();
 
     event UserVerified(address indexed userAddress, uint256 verifiedAt);
-    event InvitationAccepted(address indexed inviter, address indexed invitee, uint256 timestamp);
+    event InvitationAccepted(address indexed inviter, address indexed invitee, uint256 acceptedAt);
 
     function _markAsVerified(address user) internal {
         // Check if the user is already verified
