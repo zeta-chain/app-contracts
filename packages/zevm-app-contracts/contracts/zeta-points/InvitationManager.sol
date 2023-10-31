@@ -55,8 +55,8 @@ contract InvitationManager {
         bytes32 payloadHash = keccak256(abi.encode(inviter));
         bytes32 messageHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
 
-        address signerOfMessage = ecrecover(messageHash, signature.v, signature.r, signature.s);
-        if (inviter != signerOfMessage) revert UnrecognizedInvitation();
+        address messageSigner = ecrecover(messageHash, signature.v, signature.r, signature.s);
+        if (inviter != messageSigner) revert UnrecognizedInvitation();
     }
 
     function confirmAndAcceptInvitation(address inviter, Signature calldata signature) external {
