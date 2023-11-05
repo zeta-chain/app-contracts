@@ -1,6 +1,5 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ZetaTokenConsumerUniV3__factory } from "@zetachain/protocol-contracts/dist/typechain-types";
 import { BigNumber, ContractReceipt } from "ethers";
 
 import { getAddress } from "../lib/shared/address.helpers";
@@ -9,7 +8,8 @@ import {
   ERC20__factory,
   IUniswapV2Pair__factory,
   MultiChainSwapUniV2__factory,
-  UniswapV2Router02__factory
+  UniswapV2Router02__factory,
+  ZetaTokenConsumerUniV3__factory
 } from "../typechain-types";
 
 export const getMintTokenId = (mintTx: ContractReceipt) => mintTx.events?.[0].args?.tokenId;
@@ -48,17 +48,14 @@ export const parseZetaLog = (logs: ContractReceipt["logs"]) => {
 
 export const parseInteractorLog = (logs: ContractReceipt["logs"]) => {
   const iface = ZetaTokenConsumerUniV3__factory.createInterface();
-
   const eventNames = logs.map(log => {
     try {
       const parsedLog = iface.parseLog(log);
-
       return parsedLog.name;
     } catch (e) {
       return "NO_ZETA_LOG";
     }
   });
-
   return eventNames;
 };
 

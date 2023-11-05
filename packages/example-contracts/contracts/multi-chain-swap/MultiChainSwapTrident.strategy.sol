@@ -33,8 +33,31 @@ contract MultiChainSwapTrident is MultiChainSwap, ZetaInteractor, MultiChainSwap
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChaindestinationGasLimit
+        uint256 crossChaindestinationGasLimit,
+        uint /* deadline */
     ) external payable override {
+        _swapETHForTokensCrossChain(
+            receiverAddress,
+            destinationOutToken,
+            isDestinationOutETH,
+            outTokenMinAmount,
+            destinationChainId,
+            crossChaindestinationGasLimit
+        );
+    }
+
+    function _swapETHForTokensCrossChain(
+        bytes calldata receiverAddress,
+        address destinationOutToken,
+        bool isDestinationOutETH,
+        /**
+         * @dev The minimum amount of tokens that receiverAddress should get,
+         * if it's not reached, the transaction will revert on the destination chain
+         */
+        uint256 outTokenMinAmount,
+        uint256 destinationChainId,
+        uint256 crossChaindestinationGasLimit
+    ) internal {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (msg.value == 0) revert ValueShouldBeGreaterThanZero();
@@ -85,8 +108,35 @@ contract MultiChainSwapTrident is MultiChainSwap, ZetaInteractor, MultiChainSwap
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChaindestinationGasLimit
+        uint256 crossChaindestinationGasLimit,
+        uint /* deadline */
     ) external override {
+        _swapTokensForTokensCrossChain(
+            sourceInputToken,
+            inputTokenAmount,
+            receiverAddress,
+            destinationOutToken,
+            isDestinationOutETH,
+            outTokenMinAmount,
+            destinationChainId,
+            crossChaindestinationGasLimit
+        );
+    }
+
+    function _swapTokensForTokensCrossChain(
+        address sourceInputToken,
+        uint256 inputTokenAmount,
+        bytes calldata receiverAddress,
+        address destinationOutToken,
+        bool isDestinationOutETH,
+        /**
+         * @dev The minimum amount of tokens that receiverAddress should get,
+         * if it's not reached, the transaction will revert on the destination chain
+         */
+        uint256 outTokenMinAmount,
+        uint256 destinationChainId,
+        uint256 crossChaindestinationGasLimit
+    ) internal {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
 
         if (sourceInputToken == address(0)) revert MissingSourceInputTokenAddress();

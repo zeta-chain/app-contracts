@@ -3,7 +3,6 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero, MaxUint256 } from "@ethersproject/constants";
 import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { IERC20__factory } from "@zetachain/protocol-contracts/dist/typechain-types";
 import chai, { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -13,6 +12,7 @@ import { getNow } from "../lib/shared/deploy.helpers";
 import {
   ERC20__factory,
   IERC20,
+  IERC20__factory,
   MultiChainSwapUniV3,
   MultiChainSwapZetaConnector,
   UniswapV2Router02__factory
@@ -153,6 +153,7 @@ describe("MultiChainSwap tests", () => {
           0,
           10,
           MaxUint256,
+          MaxUint256,
           {
             value: parseUnits("1")
           }
@@ -170,6 +171,7 @@ describe("MultiChainSwap tests", () => {
           false,
           0,
           chainBId,
+          MaxUint256,
           MaxUint256
         )
       ).to.be.revertedWith("MissingSourceInputTokenAddress");
@@ -185,6 +187,7 @@ describe("MultiChainSwap tests", () => {
           false,
           0,
           chainBId,
+          MaxUint256,
           MaxUint256
         )
       ).to.be.revertedWith("OutTokenInvariant");
@@ -207,6 +210,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256,
         { value: ZETA_TO_TRANSFER }
       );
@@ -243,6 +247,7 @@ describe("MultiChainSwap tests", () => {
         true,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
       const result = await tx3.wait();
@@ -276,6 +281,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
       await tx3.wait();
@@ -312,6 +318,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
       const result = await tx3.wait();
@@ -347,6 +354,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
       const result = await tx3.wait();
@@ -382,6 +390,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
       const result = await tx3.wait();
@@ -417,6 +426,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -442,6 +452,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
       await tx3.wait();

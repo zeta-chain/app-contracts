@@ -10,7 +10,7 @@ import "./MultiChainSwap.sol";
 
 contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapErrors {
     using SafeERC20 for IERC20;
-    uint16 internal constant MAX_DEADLINE = 200;
+    uint internal constant MAX_DEADLINE = 200;
     bytes32 public constant CROSS_CHAIN_SWAP_MESSAGE = keccak256("CROSS_CHAIN_SWAP");
 
     address public immutable uniswapV2RouterAddress;
@@ -18,6 +18,23 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
     address public immutable zetaToken;
 
     IUniswapV2Router02 internal uniswapV2Router;
+
+    struct CrossChainCallParams {
+        address sourceInputToken;
+        uint256 inputTokenAmount;
+        bytes receiverAddress;
+        address destinationOutToken;
+        bool isDestinationOutETH;
+        bool inputTokenIsETH;
+        /**
+         * @dev The minimum amount of tokens that receiverAddress should get,
+         * if it's not reached, the transaction will revert on the destination chain
+         */
+        uint256 outTokenMinAmount;
+        uint256 destinationChainId;
+        uint256 crossChaindestinationGasLimit;
+        uint256 zetaValueAndGas;
+    }
 
     constructor(address zetaConnector_, address zetaToken_, address uniswapV2Router_) ZetaInteractor(zetaConnector_) {
         if (zetaToken_ == address(0) || uniswapV2Router_ == address(0)) revert ZetaCommonErrors.InvalidAddress();
@@ -37,56 +54,46 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChaindestinationGasLimit
+        uint256 crossChaindestinationGasLimit,
+        uint deadline
     ) external payable override {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
-
         if (msg.value == 0) revert ValueShouldBeGreaterThanZero();
         if (
             (destinationOutToken != address(0) && isDestinationOutETH) ||
             (destinationOutToken == address(0) && !isDestinationOutETH)
         ) revert OutTokenInvariant();
-
         uint256 zetaValueAndGas;
         {
             address[] memory path = new address[](2);
             path[0] = wETH;
             path[1] = zetaToken;
-
             uint256[] memory amounts = uniswapV2Router.swapExactETHForTokens{value: msg.value}(
                 0, /// @todo Add min amount
                 path,
                 address(this),
-                block.timestamp + MAX_DEADLINE
+                deadline
             );
-
             zetaValueAndGas = amounts[path.length - 1];
         }
         if (zetaValueAndGas == 0) revert ErrorSwappingTokens();
-
         {
             bool success = IERC20(zetaToken).approve(address(connector), zetaValueAndGas);
             if (!success) revert ErrorApprovingTokens(zetaToken);
         }
 
-        connector.send(
-            ZetaInterfaces.SendInput({
+        _crossChainCall(
+            CrossChainCallParams({
+                sourceInputToken: wETH,
+                inputTokenAmount: msg.value,
+                receiverAddress: receiverAddress,
+                destinationOutToken: destinationOutToken,
+                isDestinationOutETH: isDestinationOutETH,
+                inputTokenIsETH: false,
+                outTokenMinAmount: outTokenMinAmount,
                 destinationChainId: destinationChainId,
-                destinationAddress: interactorsByChainId[destinationChainId],
-                destinationGasLimit: crossChaindestinationGasLimit,
-                message: abi.encode(
-                    CROSS_CHAIN_SWAP_MESSAGE,
-                    msg.sender,
-                    wETH,
-                    msg.value,
-                    receiverAddress,
-                    destinationOutToken,
-                    isDestinationOutETH,
-                    outTokenMinAmount,
-                    true // inputTokenIsETH
-                ),
-                zetaValueAndGas: zetaValueAndGas,
-                zetaParams: abi.encode("")
+                crossChaindestinationGasLimit: crossChaindestinationGasLimit,
+                zetaValueAndGas: zetaValueAndGas
             })
         );
     }
@@ -103,23 +110,20 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChaindestinationGasLimit
+        uint256 crossChaindestinationGasLimit,
+        uint deadline
     ) external override {
         if (!_isValidChainId(destinationChainId)) revert InvalidDestinationChainId();
-
         if (sourceInputToken == address(0)) revert MissingSourceInputTokenAddress();
         if (
             (destinationOutToken != address(0) && isDestinationOutETH) ||
             (destinationOutToken == address(0) && !isDestinationOutETH)
         ) revert OutTokenInvariant();
-
         uint256 zetaValueAndGas;
-
         if (sourceInputToken == zetaToken) {
             bool success1 = IERC20(zetaToken).transferFrom(msg.sender, address(this), inputTokenAmount);
             bool success2 = IERC20(zetaToken).approve(address(connector), inputTokenAmount);
             if (!success1 || !success2) revert ErrorTransferringTokens(zetaToken);
-
             zetaValueAndGas = inputTokenAmount;
         } else {
             /**
@@ -129,7 +133,6 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
                 IERC20(sourceInputToken).safeTransferFrom(msg.sender, address(this), inputTokenAmount);
                 IERC20(sourceInputToken).safeApprove(uniswapV2RouterAddress, inputTokenAmount);
             }
-
             address[] memory path;
             if (sourceInputToken == wETH) {
                 path = new address[](2);
@@ -141,41 +144,55 @@ contract MultiChainSwapUniV2 is MultiChainSwap, ZetaInteractor, MultiChainSwapEr
                 path[1] = wETH;
                 path[2] = zetaToken;
             }
-
             uint256[] memory amounts = uniswapV2Router.swapExactTokensForTokens(
                 inputTokenAmount,
                 0, /// @todo Add min amount
                 path,
                 address(this),
-                block.timestamp + MAX_DEADLINE
+                deadline
             );
-
             zetaValueAndGas = amounts[path.length - 1];
             if (zetaValueAndGas == 0) revert ErrorSwappingTokens();
         }
-
         {
             bool success = IERC20(zetaToken).approve(address(connector), zetaValueAndGas);
             if (!success) revert ErrorApprovingTokens(zetaToken);
         }
 
+        _crossChainCall(
+            CrossChainCallParams({
+                sourceInputToken: sourceInputToken,
+                inputTokenAmount: inputTokenAmount,
+                receiverAddress: receiverAddress,
+                destinationOutToken: destinationOutToken,
+                isDestinationOutETH: isDestinationOutETH,
+                inputTokenIsETH: false,
+                outTokenMinAmount: outTokenMinAmount,
+                destinationChainId: destinationChainId,
+                crossChaindestinationGasLimit: crossChaindestinationGasLimit,
+                zetaValueAndGas: zetaValueAndGas
+            })
+        );
+    }
+
+    function _crossChainCall(CrossChainCallParams memory params) internal {
         connector.send(
             ZetaInterfaces.SendInput({
-                destinationChainId: destinationChainId,
-                destinationAddress: interactorsByChainId[destinationChainId],
-                destinationGasLimit: crossChaindestinationGasLimit,
+                destinationChainId: params.destinationChainId,
+                destinationAddress: interactorsByChainId[params.destinationChainId],
+                destinationGasLimit: params.crossChaindestinationGasLimit,
                 message: abi.encode(
                     CROSS_CHAIN_SWAP_MESSAGE,
                     msg.sender,
-                    sourceInputToken,
-                    inputTokenAmount,
-                    receiverAddress,
-                    destinationOutToken,
-                    isDestinationOutETH,
-                    outTokenMinAmount,
-                    false // inputTokenIsETH
+                    params.sourceInputToken,
+                    params.inputTokenAmount,
+                    params.receiverAddress,
+                    params.destinationOutToken,
+                    params.isDestinationOutETH,
+                    params.outTokenMinAmount,
+                    params.inputTokenIsETH
                 ),
-                zetaValueAndGas: zetaValueAndGas,
+                zetaValueAndGas: params.zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
         );
