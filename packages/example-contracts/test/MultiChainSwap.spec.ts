@@ -135,6 +135,7 @@ describe("MultiChainSwap tests", () => {
           0,
           10,
           MaxUint256,
+          MaxUint256,
           {
             value: parseUnits("1")
           }
@@ -152,6 +153,7 @@ describe("MultiChainSwap tests", () => {
           false,
           0,
           chainBId,
+          MaxUint256,
           MaxUint256
         )
       ).to.be.revertedWith("MissingSourceInputTokenAddress");
@@ -167,6 +169,7 @@ describe("MultiChainSwap tests", () => {
           false,
           0,
           chainBId,
+          MaxUint256,
           MaxUint256
         )
       ).to.be.revertedWith("OutTokenInvariant");
@@ -194,6 +197,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -224,6 +228,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -254,6 +259,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -284,6 +290,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -314,6 +321,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -343,6 +351,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -361,6 +370,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId + 5,
+        MaxUint256,
         MaxUint256
       );
 
@@ -376,6 +386,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 
@@ -391,6 +402,7 @@ describe("MultiChainSwap tests", () => {
         false,
         0,
         chainBId,
+        MaxUint256,
         MaxUint256
       );
 

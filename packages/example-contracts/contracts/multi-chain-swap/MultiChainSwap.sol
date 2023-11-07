@@ -47,7 +47,8 @@ interface MultiChainSwap is ZetaReceiver {
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChaindestinationGasLimit
+        uint256 crossChaindestinationGasLimit,
+        uint deadline
     ) external payable;
 
     function swapTokensForTokensCrossChain(
@@ -62,6 +63,7 @@ interface MultiChainSwap is ZetaReceiver {
          */
         uint256 outTokenMinAmount,
         uint256 destinationChainId,
-        uint256 crossChaindestinationGasLimit
+        uint256 crossChaindestinationGasLimit,
+        uint deadline
     ) external;
 }
