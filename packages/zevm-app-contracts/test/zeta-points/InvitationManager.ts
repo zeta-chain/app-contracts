@@ -102,5 +102,32 @@ describe("InvitationManager Contract test", () => {
       );
       await expect(invitationByInviterCountYesterday).to.be.eq(0);
     });
+
+    it("Should emit the right event when invitation is accepted", async () => {
+      const sig = await getInvitationSig(inviter);
+
+      const hasBeenVerifiedBefore = await invitationManager.hasBeenVerified(invitee.address);
+      await expect(hasBeenVerifiedBefore).to.be.eq(false);
+
+      const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
+      const rec = await tx.wait();
+      const event = rec.events?.find(e => e.event === "InvitationAccepted");
+      const block = await ethers.provider.getBlock(rec.blockNumber);
+
+      await expect(event?.args?.inviter).to.be.eq(inviter.address);
+      await expect(event?.args?.invitee).to.be.eq(invitee.address);
+      await expect(event?.args?.index).to.be.eq(0);
+      await expect(event?.args?.acceptedAt).to.be.eq(block.timestamp);
+
+      const tx2 = await invitationManager.connect(addrs[0]).confirmAndAcceptInvitation(inviter.address, sig);
+      const rec2 = await tx2.wait();
+      const event2 = rec2.events?.find(e => e.event === "InvitationAccepted");
+      const block2 = await ethers.provider.getBlock(rec2.blockNumber);
+
+      await expect(event2?.args?.inviter).to.be.eq(inviter.address);
+      await expect(event2?.args?.invitee).to.be.eq(addrs[0].address);
+      await expect(event2?.args?.index).to.be.eq(1);
+      await expect(event2?.args?.acceptedAt).to.be.eq(block2.timestamp);
+    });
   });
 });

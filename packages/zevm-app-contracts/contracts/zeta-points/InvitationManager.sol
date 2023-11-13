@@ -29,7 +29,7 @@ contract InvitationManager {
     error CanNotInviteYourself();
 
     event UserVerified(address indexed userAddress, uint256 verifiedAt);
-    event InvitationAccepted(address indexed inviter, address indexed invitee, uint256 acceptedAt);
+    event InvitationAccepted(address indexed inviter, address indexed invitee, uint256 index, uint256 acceptedAt);
 
     function _markAsVerified(address user) internal {
         // Check if the user is already verified
@@ -75,7 +75,7 @@ contract InvitationManager {
         totalInvitesByDay[dayStartTimestamp]++;
         totalInvitesByInviterByDay[inviter][dayStartTimestamp]++;
 
-        emit InvitationAccepted(inviter, msg.sender, block.timestamp);
+        emit InvitationAccepted(inviter, msg.sender, inviteeLists[inviter].length - 1, block.timestamp);
     }
 
     function getInviteeCount(address inviter) external view returns (uint256) {
