@@ -5,9 +5,18 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 contract Disperse {
     function disperseEther(address[] calldata recipients, uint256[] calldata values) external payable {
-        for (uint256 i = 0; i < recipients.length; i++) payable(recipients[i]).transfer(values[i]);
+        require(recipients.length == values.length, "Recipients and values length mismatch");
+
+        for (uint256 i = 0; i < recipients.length; i++) {
+            (bool sent, ) = payable(recipients[i]).call{value: values[i]}("");
+            require(sent, "Failed to send Ether");
+        }
+
         uint256 balance = address(this).balance;
-        if (balance > 0) payable(msg.sender).transfer(balance);
+        if (balance > 0) {
+            (bool sent, ) = payable(msg.sender).call{value: balance}("");
+            require(sent, "Failed to refund remaining Ether");
+        }
     }
 
     function disperseToken(IERC20 token, address[] calldata recipients, uint256[] calldata values) external {
