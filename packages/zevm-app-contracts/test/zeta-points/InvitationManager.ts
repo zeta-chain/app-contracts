@@ -114,10 +114,12 @@ describe("InvitationManager Contract test", () => {
       const event = rec.events?.find(e => e.event === "InvitationAccepted");
       const block = await ethers.provider.getBlock(rec.blockNumber);
 
-      await expect(event?.args?.inviter).to.be.eq(inviter.address);
-      await expect(event?.args?.invitee).to.be.eq(invitee.address);
-      await expect(event?.args?.index).to.be.eq(0);
-      await expect(event?.args?.acceptedAt).to.be.eq(block.timestamp);
+      expect(event?.args?.inviter).to.be.eq(inviter.address);
+      expect(event?.args?.invitee).to.be.eq(invitee.address);
+      expect(event?.args?.index).to.be.eq(0);
+      expect(event?.args?.acceptedAt).to.be.eq(block.timestamp);
+      const inviteeByIndex = await invitationManager.getInviteeAtIndex(inviter.address, event?.args?.index);
+      expect(inviteeByIndex).to.be.eq(invitee.address);
 
       const tx2 = await invitationManager.connect(addrs[0]).confirmAndAcceptInvitation(inviter.address, sig);
       const rec2 = await tx2.wait();
@@ -128,6 +130,8 @@ describe("InvitationManager Contract test", () => {
       await expect(event2?.args?.invitee).to.be.eq(addrs[0].address);
       await expect(event2?.args?.index).to.be.eq(1);
       await expect(event2?.args?.acceptedAt).to.be.eq(block2.timestamp);
+      const inviteeByIndex2 = await invitationManager.getInviteeAtIndex(inviter.address, event2?.args?.index);
+      expect(inviteeByIndex2).to.be.eq(addrs[0].address);
     });
   });
 });
