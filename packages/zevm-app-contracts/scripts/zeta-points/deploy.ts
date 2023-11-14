@@ -1,8 +1,8 @@
-import { isNetworkName } from "@zetachain/addresses";
-import { saveAddress } from "@zetachain/addresses-tools";
+import { isProtocolNetworkName } from "@zetachain/protocol-contracts";
 import { ethers, network } from "hardhat";
 
-import { InvitationManager__factory, UserVerificationRegistry__factory } from "../../typechain-types";
+import { InvitationManager__factory } from "../../typechain-types";
+import { saveAddress } from "../address.helpers";
 
 const networkName = network.name;
 
@@ -11,12 +11,13 @@ const invitationManager = async () => {
 
   const invitationManager = await InvitationManagerFactory.deploy();
   await invitationManager.deployed();
+
   console.log("InvitationManager deployed to:", invitationManager.address);
-  // saveAddress("invitationManager", invitationManager.address);
+  saveAddress("invitationManager", invitationManager.address);
 };
 
 const main = async () => {
-  if (!isNetworkName(networkName)) throw new Error("Invalid network name");
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
   await invitationManager();
 };
 

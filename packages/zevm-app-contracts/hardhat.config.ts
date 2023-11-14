@@ -5,7 +5,7 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "tsconfig-paths/register";
 
-import { getHardhatConfigNetworks, getHardhatConfigScanners } from "@zetachain/addresses-tools/src/networks";
+import { getHardhatConfigNetworks } from "@zetachain/networks";
 import * as dotenv from "dotenv";
 import type { HardhatUserConfig } from "hardhat/types";
 
@@ -14,15 +14,22 @@ dotenv.config();
 const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [];
 
 const config: HardhatUserConfig = {
+  //@ts-ignore
   etherscan: {
-    ...getHardhatConfigScanners(),
+    apiKey: {
+      // BSC
+      bscTestnet: process.env.BSCSCAN_API_KEY || "",
+      // ETH
+      goerli: process.env.ETHERSCAN_API_KEY || "",
+      mainnet: process.env.ETHERSCAN_API_KEY || "",
+    },
   },
   gasReporter: {
     currency: "USD",
     enabled: process.env.REPORT_GAS !== undefined,
   },
   networks: {
-    ...getHardhatConfigNetworks(PRIVATE_KEYS),
+    ...getHardhatConfigNetworks(),
   },
   solidity: {
     compilers: [

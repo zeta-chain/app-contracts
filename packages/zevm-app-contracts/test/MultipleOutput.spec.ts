@@ -1,6 +1,6 @@
 import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress as getAddressLib } from "@zetachain/addresses";
+import { getNonZetaAddress } from "@zetachain/protocol-contracts";
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 
@@ -22,23 +22,11 @@ describe("ZetaSwap tests", () => {
 
     await network.provider.send("hardhat_setBalance", [deployer.address, parseUnits("1000000").toHexString()]);
 
-    const uniswapRouterAddr = getAddressLib({
-      address: "uniswapV2Router02",
-      networkName: "eth-mainnet",
-      zetaNetwork: "mainnet"
-    });
+    const uniswapRouterAddr = getNonZetaAddress("uniswapV2Router02", "eth_mainnet");
 
-    const uniswapFactoryAddr = getAddressLib({
-      address: "uniswapV2Factory",
-      networkName: "eth-mainnet",
-      zetaNetwork: "mainnet"
-    });
+    const uniswapFactoryAddr = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"; // getNonZetaAddress("uniswapV2Factory02", "etherum_mainnet");
 
-    const wGasToken = getAddressLib({
-      address: "weth9",
-      networkName: "eth-mainnet",
-      zetaNetwork: "mainnet"
-    });
+    const wGasToken = getNonZetaAddress("weth9", "eth_mainnet");
 
     const evmSetupResult = await evmSetup(wGasToken, uniswapFactoryAddr, uniswapRouterAddr);
     ZRC20Contracts = evmSetupResult.ZRC20Contracts;

@@ -1,33 +1,24 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseEther } from "@ethersproject/units";
-import { getAddress, isNetworkName } from "@zetachain/addresses";
-import { getZRC20Address } from "@zetachain/addresses-tools";
-import { ethers } from "hardhat";
-import { network } from "hardhat";
+import { getAddress, getZRC20Address, isProtocolNetworkName } from "@zetachain/protocol-contracts";
+import { ethers, network } from "hardhat";
 
+import { getZEVMAppAddress } from "../address.helpers";
 import { getSwapData } from "./helpers";
 
 const main = async () => {
-  if (!isNetworkName(network.name) || !network.name) throw new Error("Invalid network name");
-  const ZRC20Addresses = getZRC20Address();
+  if (!isProtocolNetworkName(network.name)) throw new Error("Invalid network name");
 
-  const destinationToken = network.name == "goerli" ? ZRC20Addresses["tMATIC"] : ZRC20Addresses["gETH"];
+  const destinationToken =
+    network.name == "goerli_testnet" ? getZRC20Address("mumbai_testnet") : getZRC20Address("goerli_testnet");
 
   console.log(`Swapping native token...`);
 
   const [signer] = await ethers.getSigners();
 
-  const zetaSwapAddress = getAddress({
-    address: "zetaSwap",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  const zetaSwapAddress = getZEVMAppAddress("zetaSwap");
 
-  const tssAddress = getAddress({
-    address: "tss",
-    networkName: network.name,
-    zetaNetwork: "athens"
-  });
+  const tssAddress = getAddress("tss", network.name);
 
   const data = getSwapData(zetaSwapAddress, signer.address, destinationToken, BigNumber.from("0"));
 

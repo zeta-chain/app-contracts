@@ -1,11 +1,10 @@
-import { getChainId } from "@zetachain/addresses";
-import { NetworkName } from "@zetachain/addresses";
-import { getGasSymbolByNetwork, getSystemContractAddress } from "@zetachain/addresses-tools";
+import { ZetaProtocolNetwork } from "@zetachain/protocol-contracts";
 import { ethers } from "hardhat";
 
 import { SystemContract, SystemContract__factory } from "../../typechain-types";
+import { getChainId, getGasSymbolByNetwork, getSystemContractAddress } from "../address.helpers";
 
-const getZRC20Address = async (systemContract: SystemContract, network: NetworkName) => {
+const getZRC20Address = async (systemContract: SystemContract, network: ZetaProtocolNetwork) => {
   const tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId(network));
   console.log(`${getGasSymbolByNetwork(network)}`, tokenAddress);
   const tokenAddressLP = await systemContract.gasZetaPoolByChainId(getChainId(network));
@@ -25,11 +24,11 @@ async function main() {
 
   const WZETAAddress = await systemContract.wZetaContractAddress();
   console.log(`WZETA:`, WZETAAddress);
-  await getZRC20Address(systemContract, "bitcoin-test");
-  await getZRC20Address(systemContract, "goerli");
-  await getZRC20Address(systemContract, "klaytn-baobab");
-  await getZRC20Address(systemContract, "bsc-testnet");
-  await getZRC20Address(systemContract, "polygon-mumbai");
+  await getZRC20Address(systemContract, "btc_testnet");
+  await getZRC20Address(systemContract, "goerli_testnet");
+  // await getZRC20Address(systemContract, "klaytn-baobab");
+  await getZRC20Address(systemContract, "bsc_testnet");
+  await getZRC20Address(systemContract, "mumbai_testnet");
 }
 
 main()
