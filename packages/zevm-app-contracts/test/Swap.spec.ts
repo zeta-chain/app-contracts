@@ -5,6 +5,7 @@ import { getNonZetaAddress } from "@zetachain/protocol-contracts";
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 
+import { getBitcoinTxMemoForTest, getSwapParams } from "../scripts/zeta-swap/helpers";
 import {
   MockSystemContract,
   MockZRC20,
@@ -12,8 +13,7 @@ import {
   ZetaSwap__factory,
   ZetaSwapBtcInbound,
   ZetaSwapBtcInbound__factory
-} from "../../zevm-example-contracts/typechain-types";
-import { getBitcoinTxMemoForTest, getSwapParams } from "../scripts/zeta-swap/helpers";
+} from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 
 describe("ZetaSwap tests", () => {

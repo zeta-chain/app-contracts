@@ -51,7 +51,7 @@ const main = async () => {
   const swappableNetwork: SwappableNetwork = network.name;
 
   // @dev: bitcoin is invalid as destination
-  const invalidDestinations: SwappableNetwork[] = [swappableNetwork, "bitcoin-test"];
+  const invalidDestinations: SwappableNetwork[] = [swappableNetwork, "btc_testnet"];
   const networks = Object.keys(ChainToZRC20).map(c => c as SwappableNetwork);
 
   const destinationNetworks = networks.filter(e => !invalidDestinations.includes(e));
