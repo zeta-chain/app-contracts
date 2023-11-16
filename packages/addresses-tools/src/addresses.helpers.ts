@@ -160,7 +160,7 @@ export const saveAddress = (addressName: ZetaAddress, newAddress: string) => {
 };
 
 export const addNewAddress = (addressName: string, addressValue: string = "") => {
-  if (!addressName) throw new Error("Emtpy address name.");
+  if (!addressName) throw new Error("Empty address name.");
 
   const addressesDirname = join(dirname, `./`);
   const addressesFiles = readdirSync(addressesDirname).filter(fileName => fileName.includes(".json"));
@@ -189,7 +189,7 @@ export const addNewAddress = (addressName: string, addressValue: string = "") =>
 };
 
 export const addNewNetwork = (newNetworkName: string, addTo: ZetaNetworkName[]) => {
-  if (!newNetworkName) throw new Error("Emtpy networkName name.");
+  if (!newNetworkName) throw new Error("Empty networkName name.");
   const addressesDirname = join(dirname, `./`);
   const addressesFiles = readdirSync(addressesDirname).filter(fileName => fileName.includes(".json"));
 
