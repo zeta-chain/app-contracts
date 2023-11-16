@@ -1,5 +1,5 @@
 import { networks } from "@zetachain/networks";
-import { isProtocolNetworkName, ZetaProtocolNetwork } from "@zetachain/protocol-contracts";
+import { ZetaProtocolNetwork } from "@zetachain/protocol-contracts";
 import protocolAddresses from "@zetachain/protocol-contracts/dist/data/addresses.json";
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -29,7 +29,7 @@ export const saveAddress = (name: string, address: string) => {
 
   console.log(`Updating ${name} address on ${networkName}.`);
 
-  const filename = join(__dirname, `./data/addresses.json`);
+  const filename = join(__dirname, `../data/addresses.json`);
 
   const newAddresses = JSON.parse(readFileSync(filename, "utf8"));
 

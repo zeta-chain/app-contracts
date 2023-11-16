@@ -33,7 +33,7 @@ describe("ZetaSwap tests", () => {
 
     const uniswapRouterAddr = getNonZetaAddress("uniswapV2Router02", "eth_mainnet");
 
-    const uniswapFactoryAddr = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"; // getNonZetaAddress("uniswapV2Factory02", "etherum_mainnet");
+    const uniswapFactoryAddr = getNonZetaAddress("uniswapV2Factory", "eth_mainnet");
 
     const wGasToken = getNonZetaAddress("weth9", "eth_mainnet");
 

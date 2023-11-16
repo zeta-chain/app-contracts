@@ -21,7 +21,7 @@ export const saveAddress = (name: string, address: string) => {
 
   console.log(`Updating ${name} address on ${networkName}.`);
 
-  const filename = join(__dirname, `./data/addresses.json`);
+  const filename = join(__dirname, `../data/addresses.json`);
 
   const newAddresses = JSON.parse(readFileSync(filename, "utf8"));
 

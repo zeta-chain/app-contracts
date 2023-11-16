@@ -10,16 +10,22 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getAddress } from "@zetachain/addresses";
-import { ChainToZRC20, getZRC20Address, isSwappableNetwork, SwappableNetwork } from "@zetachain/addresses-tools";
+import {
+  getAddress,
+  getZRC20Address,
+  isProtocolNetworkName,
+  ZetaProtocolNetwork,
+  zetaProtocolNetworks
+} from "@zetachain/protocol-contracts";
 import { ethers, network } from "hardhat";
 
+import { getZEVMAppAddress } from "../address.helpers";
 import { getSwapData } from "./helpers";
 
-const ZRC20Addresses = getZRC20Address();
+const networkName = network.name;
 
 interface SwapToChainParams {
-  destinationNetwork: SwappableNetwork;
+  destinationNetwork: ZetaProtocolNetwork;
   nonce: number;
   signer: SignerWithAddress;
   tssAddress: string;
@@ -35,8 +41,7 @@ const swapToChain = async ({
   value,
   nonce
 }: SwapToChainParams) => {
-  const zrc20 = ChainToZRC20[destinationNetwork];
-  const data = getSwapData(zetaSwapAddress, signer.address, ZRC20Addresses[zrc20], BigNumber.from("0"));
+  const data = getSwapData(zetaSwapAddress, signer.address, getZRC20Address(destinationNetwork), BigNumber.from("0"));
   const tx = await signer.sendTransaction({
     data,
     nonce,
@@ -47,12 +52,12 @@ const swapToChain = async ({
 };
 
 const main = async () => {
-  if (!isSwappableNetwork(network.name) || !network.name) throw new Error("Invalid network name");
-  const swappableNetwork: SwappableNetwork = network.name;
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
+  const swappableNetwork: ZetaProtocolNetwork = networkName;
 
   // @dev: bitcoin is invalid as destination
-  const invalidDestinations: SwappableNetwork[] = [swappableNetwork, "btc_testnet"];
-  const networks = Object.keys(ChainToZRC20).map(c => c as SwappableNetwork);
+  const invalidDestinations: ZetaProtocolNetwork[] = [swappableNetwork, "btc_testnet"];
+  const networks = zetaProtocolNetworks.map(c => c as ZetaProtocolNetwork);
 
   const destinationNetworks = networks.filter(e => !invalidDestinations.includes(e));
 
@@ -60,17 +65,9 @@ const main = async () => {
 
   const [signer] = await ethers.getSigners();
 
-  const zetaSwapAddress = getAddress({
-    address: "zetaSwap",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  const zetaSwapAddress = getZEVMAppAddress("zetaSwap");
 
-  const tssAddress = getAddress({
-    address: "tss",
-    networkName: network.name,
-    zetaNetwork: "athens"
-  });
+  const tssAddress = getAddress("tss", swappableNetwork);
 
   const nonce = await signer.getTransactionCount();
 

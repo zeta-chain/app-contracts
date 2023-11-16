@@ -17,6 +17,9 @@ async function main() {
   await contract.deployed();
 
   console.log("MultiChainValue deployed to:", contract.address);
+  saveAddress("multiChainValue", contract.address);
+
+  console.log("MultiChainValue post rutine...");
 
   networkName !== "goerli_testnet" &&
     (await (await contract.addAvailableChainId(getChainId("goerli_testnet")))
@@ -34,7 +37,7 @@ async function main() {
   networkName !== "zeta_testnet" &&
     (await (await contract.addAvailableChainId(getChainId("zeta_testnet"))).wait().catch((e: any) => console.error(e)));
 
-  saveAddress("multiChainValue", contract.address);
+  console.log("MultiChainValue post rutine finish");
 }
 
 main().catch(error => {

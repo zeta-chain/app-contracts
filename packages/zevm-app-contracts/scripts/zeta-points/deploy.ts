@@ -8,10 +8,8 @@ const networkName = network.name;
 
 const invitationManager = async () => {
   const InvitationManagerFactory = (await ethers.getContractFactory("InvitationManager")) as InvitationManager__factory;
-
   const invitationManager = await InvitationManagerFactory.deploy();
   await invitationManager.deployed();
-
   console.log("InvitationManager deployed to:", invitationManager.address);
   saveAddress("invitationManager", invitationManager.address);
 };

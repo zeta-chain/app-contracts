@@ -4,7 +4,8 @@
       "disperse": "0x1E0F767F48Fb10FcF820703f116E9B0F87319d63",
       "rewardDistributorFactory": "0x667e4C493d40015256BDC89E3ba750B2F90359E1",
       "zetaSwap": "0x44D1F1f9289DBA1Cf5824bd667184cEBE020aA1c",
-      "zetaSwapBtcInbound": "0x008b393933D5CA2457Df570CA5D628380FFf6da4"
+      "zetaSwapBtcInbound": "0x008b393933D5CA2457Df570CA5D628380FFf6da4",
+      "invitationManager": "0xF4cF881A3d23936e3710ef2Cbbe93f71C4389918"
     }
   }
 }

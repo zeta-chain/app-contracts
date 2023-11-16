@@ -26,7 +26,6 @@ async function main() {
   console.log(`WZETA:`, WZETAAddress);
   await getZRC20Address(systemContract, "btc_testnet");
   await getZRC20Address(systemContract, "goerli_testnet");
-  // await getZRC20Address(systemContract, "klaytn-baobab");
   await getZRC20Address(systemContract, "bsc_testnet");
   await getZRC20Address(systemContract, "mumbai_testnet");
 }

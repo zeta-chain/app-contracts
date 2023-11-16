@@ -37,7 +37,12 @@ const main = async () => {
     params = getSwapParams(signer.address, getZRC20Address("goerli_testnet"), BigNumber.from("0"));
     zetaSwapContract = ZetaSwap__factory.connect(zetaSwap, signer);
   }
-  const tx1 = await zetaSwapContract.onCrossChainCall(sourceToken, amount, params);
+  const zContextStruct = {
+    chainID: ethers.BigNumber.from("0"),
+    origin: ethers.constants.HashZero,
+    sender: ethers.constants.AddressZero
+  };
+  const tx1 = await zetaSwapContract.onCrossChainCall(zContextStruct, sourceToken, amount, params);
   await tx1.wait();
 
   console.log("tx:", tx1.hash);

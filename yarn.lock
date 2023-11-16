@@ -2542,10 +2542,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/protocol-contracts@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@zetachain/protocol-contracts@npm:3.0.0"
-  checksum: 2bfc8fe05e5e5145cecfb76dd7fe72c22388f7303ebab6039bfa11c92fe89d1bcbe562741dc3d7b3e3819393515c641c4034ebce55bed11f4667be384dddb652
+"@zetachain/protocol-contracts@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@zetachain/protocol-contracts@npm:3.0.1"
+  checksum: 5a833dc9f59b69b83654754f4587aad57f4c9859908bc3fd9b5f3f6329cf803bf68e66aff4f355a99fb7e23726526196610e43987d15ec60208cc5564bc94259
   languageName: node
   linkType: hard
 
@@ -2556,7 +2556,7 @@ __metadata:
     "@defi-wonderland/smock": ^2.3.4
     "@openzeppelin/contracts": ^4.8.3
     "@zetachain/networks": ^2.4.3
-    "@zetachain/protocol-contracts": ^3.0.0
+    "@zetachain/protocol-contracts": ^3.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2571,22 +2571,7 @@ __metadata:
     "@openzeppelin/contracts": 4.8.3
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/networks": ^2.4.3
-    "@zetachain/protocol-contracts": ^3.0.0
-    ethers: 5.6.8
-    hardhat-gas-reporter: ^1.0.8
-    solidity-coverage: ^0.7.20
-    tsconfig-paths: ^3.14.1
-  languageName: unknown
-  linkType: soft
-
-"@zetachain/zevm-example-contracts@workspace:packages/zevm-example-contracts":
-  version: 0.0.0-use.local
-  resolution: "@zetachain/zevm-example-contracts@workspace:packages/zevm-example-contracts"
-  dependencies:
-    "@openzeppelin/contracts": ^4.8.3
-    "@uniswap/v2-periphery": 1.1.0-beta.0
-    "@zetachain/networks": ^2.4.3
-    "@zetachain/protocol-contracts": ^3.0.0
+    "@zetachain/protocol-contracts": ^3.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
