@@ -31,16 +31,6 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
     uint256 internal _totalSupply;
     mapping(address => uint256) internal _balances;
 
-    /* ========== CUSTOM ERRORS ========== */
-
-    error CannotStakeZero();
-    error CannotWithdrawZero();
-    error PreviousRewardsPeriodNotComplete();
-    error ProvidedRewardTooHigh();
-    error CannotWithdrawStakingToken();
-    error RewardIsNotAWrappedAsset();
-    error TransferFailed();
-
     /* ========== CONSTRUCTOR ========== */
 
     constructor(
@@ -92,7 +82,7 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function stake(uint256 amount) public virtual nonReentrant notPaused updateReward(msg.sender) {
-        if (amount == 0) revert CannotStakeZero();
+        require(amount > 0, "Cannot stake 0");
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
         stakingToken.safeTransferFrom(msg.sender, address(this), amount);
@@ -101,14 +91,14 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
 
     ///@dev This function is added to support staking from the same contract without the need of an extra transfer
     function _stakeFromContract(uint256 amount) internal notPaused updateReward(msg.sender) {
-        if (amount == 0) revert CannotStakeZero();
+        require(amount > 0, "Cannot stake 0");
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
         emit Staked(msg.sender, amount);
     }
 
     function withdraw(uint256 amount) public virtual nonReentrant updateReward(msg.sender) {
-        if (amount == 0) revert CannotWithdrawZero();
+        require(amount > 0, "Cannot withdraw 0");
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
         stakingToken.safeTransfer(msg.sender, amount);
@@ -130,11 +120,10 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
 
                 // Make the low-level call
                 (bool success, ) = address(rewardsToken).call(data);
-
-                if (!success) revert RewardIsNotAWrappedAsset();
+                require(success, "Reward is not a wrapped asset");
 
                 (success, ) = msg.sender.call{value: reward}("");
-                if (!success) revert TransferFailed();
+                require(success, "Transfer failed");
             } else rewardsToken.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward);
         }
@@ -161,7 +150,7 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
         // very high values of rewardRate in the earned and rewardsPerToken functions;
         // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
         uint balance = rewardsToken.balanceOf(address(this));
-        if (rewardRate > balance.div(rewardsDuration)) revert ProvidedRewardTooHigh();
+        require(rewardRate <= balance.div(rewardsDuration), "Provided reward too high");
 
         lastUpdateTime = block.timestamp;
         periodFinish = block.timestamp.add(rewardsDuration);
@@ -170,13 +159,16 @@ contract StakingRewards is RewardsDistributionRecipient, ReentrancyGuard, Pausab
 
     // Added to support recovering LP Rewards from other systems such as BAL to be distributed to holders
     function recoverERC20(address tokenAddress, uint256 tokenAmount) external onlyOwner {
-        if (tokenAddress == address(stakingToken)) revert CannotWithdrawStakingToken();
+        require(tokenAddress != address(stakingToken), "Cannot withdraw the staking token");
         IERC20(tokenAddress).safeTransfer(owner, tokenAmount);
         emit Recovered(tokenAddress, tokenAmount);
     }
 
     function setRewardsDuration(uint256 _rewardsDuration) external onlyOwner {
-        if (block.timestamp <= periodFinish) revert PreviousRewardsPeriodNotComplete();
+        require(
+            block.timestamp > periodFinish,
+            "Previous rewards period must be complete before changing the duration for the new period"
+        );
         rewardsDuration = _rewardsDuration;
         emit RewardsDurationUpdated(rewardsDuration);
     }

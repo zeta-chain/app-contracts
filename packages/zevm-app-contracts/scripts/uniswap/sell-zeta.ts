@@ -1,5 +1,4 @@
-import { MaxUint256 } from "@ethersproject/constants";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { getNonZetaAddress, isProtocolNetworkName, ZetaProtocolNetwork } from "@zetachain/protocol-contracts";
 import { BigNumber } from "ethers";
