@@ -6,7 +6,9 @@ import { join } from "path";
 
 import addresses from "../data/addresses.json";
 
-export const getAppAddress = (address: string, network: ZetaProtocolNetwork): string => {
+export type AppAddress = "multiChainSwap" | "multiChainValue" | "zetaTokenConsumerUniV2" | "zetaTokenConsumerUniV3";
+
+export const getAppAddress = (address: AppAddress, network: ZetaProtocolNetwork): string => {
   return (addresses["ccm"] as any)[network][address];
 };
 
