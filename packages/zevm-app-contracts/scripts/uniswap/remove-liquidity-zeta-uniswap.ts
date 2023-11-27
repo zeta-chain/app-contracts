@@ -1,12 +1,9 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { formatUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getChainId } from "@zetachain/addresses";
-import { NetworkName } from "@zetachain/addresses";
-import { getAddress } from "@zetachain/addresses";
-import { getSystemContractAddress } from "@zetachain/addresses-tools";
+import { getNonZetaAddress, isProtocolNetworkName, ZetaProtocolNetwork } from "@zetachain/protocol-contracts";
 import { BigNumber } from "ethers";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
   ERC20,
@@ -18,8 +15,10 @@ import {
   SystemContract__factory,
   UniswapV2Router02__factory
 } from "../../typechain-types";
+import { getChainId, getSystemContractAddress } from "../address.helpers";
 import { getNow, printReserves, sortPair } from "./uniswap.helpers";
 
+const networkName = network.name;
 const SYSTEM_CONTRACT = getSystemContractAddress();
 
 const removeTokenEthLiquidity = async (
@@ -47,7 +46,7 @@ const removeTokenEthLiquidity = async (
 };
 
 async function removeLiquidity(
-  network: NetworkName,
+  network: ZetaProtocolNetwork,
   WZETAAddress: string,
   uniswapFactoryAddress: string,
   uniswapRouterAddress: string
@@ -78,28 +77,18 @@ async function removeLiquidity(
   await printReserves(tokenContract, WZETAAddress, uniswapFactoryAddress, deployer);
 }
 async function main() {
-  const WZETA_ADDRESS = getAddress({
-    address: "weth9",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
-  const UNISWAP_FACTORY_ADDRESS = getAddress({
-    address: "uniswapV2Factory",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  const WZETA_ADDRESS = getNonZetaAddress("weth9", networkName);
 
-  const UNISWAP_ROUTER_ADDRESS = getAddress({
-    address: "uniswapV2Router02",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  const UNISWAP_FACTORY_ADDRESS = getNonZetaAddress("uniswapV2Factory", networkName);
 
-  await removeLiquidity("goerli", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
-  await removeLiquidity("polygon-mumbai", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
-  await removeLiquidity("bsc-testnet", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
-  await removeLiquidity("bitcoin-test", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  const UNISWAP_ROUTER_ADDRESS = getNonZetaAddress("uniswapV2Router02", networkName);
+
+  await removeLiquidity("goerli_testnet", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  await removeLiquidity("mumbai_testnet", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  await removeLiquidity("bsc_testnet", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+  await removeLiquidity("btc_testnet", WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
 }
 
 main()

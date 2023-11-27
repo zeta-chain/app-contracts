@@ -1,8 +1,8 @@
-import { isNetworkName } from "@zetachain/addresses";
-import { getAddress } from "@zetachain/addresses";
+import { isProtocolNetworkName } from "@zetachain/protocol-contracts";
 import { ethers, network } from "hardhat";
 
 import { RewardDistributor__factory, RewardDistributorFactory__factory } from "../../typechain-types";
+import { getZEVMAppAddress } from "../address.helpers";
 
 const networkName = network.name;
 
@@ -37,13 +37,9 @@ const readRewardData = async (rewardContractAddress: string) => {
 
 async function main() {
   const [deployer] = await ethers.getSigners();
-  if (!isNetworkName(networkName)) throw new Error("Invalid network name");
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
-  const factoryContractAddress = getAddress({
-    address: "rewardDistributorFactory",
-    networkName: network.name,
-    zetaNetwork: "athens"
-  });
+  const factoryContractAddress = getZEVMAppAddress("rewardDistributorFactory");
 
   const rewardDistributorFactory = RewardDistributorFactory__factory.connect(factoryContractAddress, deployer);
   const incentivesContractsLen = await rewardDistributorFactory.incentivesContractsLen();

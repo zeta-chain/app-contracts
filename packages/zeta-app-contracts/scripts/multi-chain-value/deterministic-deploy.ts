@@ -1,19 +1,18 @@
-import { isNetworkName } from "@zetachain/addresses";
-import { saveAddress } from "@zetachain/addresses-tools";
+import { getAddress, isProtocolNetworkName } from "@zetachain/protocol-contracts";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
-import { getAddress } from "../../lib/shared/address.helpers";
 import { deployContractToAddress, saltToHex } from "../../lib/shared/ImmutableCreate2Factory.helpers";
 import { MultiChainValue__factory } from "../../typechain-types";
+import { saveAddress } from "../address.helpers";
 
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS ?? "";
 const SALT_NUMBER = "0";
 
+const networkName = network.name;
+
 export async function deterministicDeployMultiChainValue() {
-  if (!isNetworkName(network.name)) {
-    throw new Error(`network.name: ${network.name} isn't supported.`);
-  }
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
   const accounts = await ethers.getSigners();
   const [signer] = accounts;
@@ -21,10 +20,10 @@ export async function deterministicDeployMultiChainValue() {
   const saltNumber = SALT_NUMBER;
   const saltStr = BigNumber.from(saltNumber).toHexString();
 
-  const connector = getAddress("connector");
-  const zetaToken = getAddress("zetaToken");
+  const connector = getAddress("connector", networkName);
+  const zetaToken = getAddress("zetaToken", networkName);
 
-  const immutableCreate2Factory = getAddress("immutableCreate2Factory");
+  const immutableCreate2Factory = getAddress("immutableCreate2Factory", networkName);
 
   const salthex = saltToHex(saltStr, DEPLOYER_ADDRESS);
 
