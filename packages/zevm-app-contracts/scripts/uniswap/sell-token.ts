@@ -1,12 +1,9 @@
 import { MaxUint256 } from "@ethersproject/constants";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { getChainId } from "@zetachain/addresses";
-import { NetworkName } from "@zetachain/addresses";
-import { getAddress } from "@zetachain/addresses";
-import { getSystemContractAddress } from "@zetachain/addresses-tools";
+import { getNonZetaAddress, isProtocolNetworkName, ZetaProtocolNetwork } from "@zetachain/protocol-contracts";
 import { BigNumber } from "ethers";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
   ERC20,
@@ -15,8 +12,10 @@ import {
   SystemContract__factory,
   UniswapV2Router02__factory
 } from "../../typechain-types";
+import { getChainId, getSystemContractAddress } from "../address.helpers";
 import { getNow, printReserves } from "./uniswap.helpers";
 
+const networkName = network.name;
 const SYSTEM_CONTRACT = getSystemContractAddress();
 
 const BTC_TO_SELL = parseUnits("0", 8);
@@ -50,7 +49,7 @@ const swapZeta = async (
 };
 
 async function sellToken(
-  network: NetworkName,
+  network: ZetaProtocolNetwork,
   tokenAmountToSell: BigNumber,
   WZETAAddress: string,
   uniswapFactoryAddress: string,
@@ -71,35 +70,25 @@ async function sellToken(
   await printReserves(tokenContract, WZETAAddress, uniswapFactoryAddress, deployer);
 }
 async function main() {
-  const WZETA_ADDRESS = getAddress({
-    address: "weth9",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
-  const UNISWAP_FACTORY_ADDRESS = getAddress({
-    address: "uniswapV2Factory",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  const WZETA_ADDRESS = getNonZetaAddress("weth9", networkName);
 
-  const UNISWAP_ROUTER_ADDRESS = getAddress({
-    address: "uniswapV2Router02",
-    networkName: "athens",
-    zetaNetwork: "athens"
-  });
+  const UNISWAP_FACTORY_ADDRESS = getNonZetaAddress("uniswapV2Factory", networkName);
+
+  const UNISWAP_ROUTER_ADDRESS = getNonZetaAddress("uniswapV2Router02", networkName);
 
   if (!ETH_TO_SELL.isZero()) {
-    await sellToken("goerli", ETH_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+    await sellToken("goerli_testnet", ETH_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
   }
   if (!MATIC_TO_SELL.isZero()) {
-    await sellToken("polygon-mumbai", MATIC_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+    await sellToken("mumbai_testnet", MATIC_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
   }
   if (!BNB_TO_SELL.isZero()) {
-    await sellToken("bsc-testnet", BNB_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+    await sellToken("bsc_testnet", BNB_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
   }
   if (!BTC_TO_SELL.isZero()) {
-    await sellToken("bitcoin-test", BTC_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
+    await sellToken("btc_testnet", BTC_TO_SELL, WZETA_ADDRESS, UNISWAP_FACTORY_ADDRESS, UNISWAP_ROUTER_ADDRESS);
   }
 }
 

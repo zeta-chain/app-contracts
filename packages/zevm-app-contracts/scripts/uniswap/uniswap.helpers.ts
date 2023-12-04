@@ -2,7 +2,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-import { IUniswapV2Factory__factory } from "../../../zevm-example-contracts/typechain-types";
+import { IUniswapV2Factory__factory } from "../../typechain-types";
 import { ERC20, IUniswapV2Pair__factory } from "../../typechain-types";
 
 export interface Pair {

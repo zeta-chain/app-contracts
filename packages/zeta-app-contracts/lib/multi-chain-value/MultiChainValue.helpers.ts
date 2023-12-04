@@ -1,4 +1,5 @@
-import { ZetaEth, ZetaEth__factory as ZetaEthFactory } from "@zetachain/interfaces/typechain-types";
+import { getAddress, isProtocolNetworkName } from "@zetachain/protocol-contracts";
+import { ZetaEth, ZetaEth__factory as ZetaEthFactory } from "@zetachain/protocol-contracts/dist/typechain-types";
 import assert from "assert";
 import { ethers, network } from "hardhat";
 
@@ -11,8 +12,8 @@ import {
   ZetaConnectorMockValue,
   ZetaConnectorMockValue__factory as ZetaConnectorMockValueFactory
 } from "../../typechain-types";
-import { getAddress } from "../shared/address.helpers";
 
+const networkName = network.name;
 /**
  * @description only for testing or local environment
  */
@@ -39,13 +40,16 @@ export const deployMultiChainValueMock = async ({
   return multiChainValueContract;
 };
 
-export const getMultiChainValue = (existingContractAddress?: string) =>
-  getContract<MultiChainValueFactory, MultiChainValue>({
+export const getMultiChainValue = (existingContractAddress?: string) => {
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
+
+  return getContract<MultiChainValueFactory, MultiChainValue>({
     contractName: "MultiChainValue",
     ...(existingContractAddress
       ? { existingContractAddress }
-      : { deployParams: [getAddress("connector"), getAddress("zetaToken")] })
+      : { deployParams: [getAddress("connector", networkName), getAddress("zetaToken", networkName)] })
   });
+};
 
 export const deployZetaConnectorMock = async () => {
   const Factory = (await ethers.getContractFactory("ZetaConnectorMockValue")) as ZetaConnectorMockValueFactory;
@@ -58,9 +62,11 @@ export const deployZetaConnectorMock = async () => {
 };
 
 export const deployZetaEthMock = async () => {
+  const [signer] = await ethers.getSigners();
+
   const Factory = (await ethers.getContractFactory("ZetaEthMock")) as ZetaEthFactory;
 
-  const zetaConnectorMockContract = (await Factory.deploy(100_000)) as ZetaEth;
+  const zetaConnectorMockContract = (await Factory.deploy(signer.address, 100_000)) as ZetaEth;
 
   await zetaConnectorMockContract.deployed();
 

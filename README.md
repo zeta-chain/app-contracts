@@ -6,8 +6,6 @@ ZetaChain is a public, decentralized blockchain and smart contract platform buil
 
 * Utilities to interact with ZetaChain's contracts from your dApp, scripts, or tests.
 * Interfaces to easily develop omnichain contracts.
-* Omnichain dApp example contracts.
-* Protocol native contracts (Zeta Token, Zeta Connector).
 
 ## Learn more about ZetaChain
 
@@ -34,13 +32,9 @@ ZetaChain is a public, decentralized blockchain and smart contract platform buil
 
 ### Packages
 
-#### [Addresses](packages/addresses)
+#### [Zeta App contracts](packages/zeta-app-contracts)
 
-#### [Example contracts](packages/example-contracts)
-
-#### [Protocol contracts](packages/example-contracts)
-
-#### [ZEVM contracts](packages/zevm-contracts)
+#### [ZEVM App contracts](packages/zevm-app-contracts)
 
 ### Cross-repo commands
 

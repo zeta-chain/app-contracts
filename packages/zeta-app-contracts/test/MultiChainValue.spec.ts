@@ -1,5 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ZetaEth } from "@zetachain/interfaces/typechain-types";
+import { ZetaEth } from "@zetachain/protocol-contracts/dist/typechain-types";
 import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";

@@ -44,6 +44,7 @@ contract RewardDistributor is StakingRewards {
 
     function _addLiquidity(uint256 tokenAmountA, uint256 tokenAmountB) internal returns (uint256) {
         stakingTokenA.transferFrom(msg.sender, address(this), tokenAmountA);
+        stakingTokenA.approve(systemContract.uniswapv2Router02Address(), 0);
         stakingTokenA.approve(systemContract.uniswapv2Router02Address(), tokenAmountA);
 
         stakingTokenB.transferFrom(msg.sender, address(this), tokenAmountB);

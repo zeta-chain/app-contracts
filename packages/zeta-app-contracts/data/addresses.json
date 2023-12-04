@@ -1,0 +1,55 @@
+{
+  "ccm": {
+    "baobab_testnet": {
+      "multiChainSwap": "",
+      "multiChainValue": "",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    },
+    "bsc_mainnet": {
+      "multiChainSwap": "",
+      "multiChainValue": "",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    },
+    "bsc_testnet": {
+      "multiChainSwap": "0x8BD7144Ddb59c9Fa3Dcf809998521E9cAD946fa1",
+      "multiChainValue": "0x064516547ECd3b2D1709e1b2798Aae92b1C8a84C",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    },
+    "btc_testnet": {
+      "multiChainSwap": "",
+      "multiChainValue": "",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    },
+    "eth_mainnet": {
+      "multiChainSwap": "",
+      "multiChainValue": "",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    },
+    "goerli_testnet": {
+      "multiChainSwap": "0x323745f16C93e56a98012970c28788498d8B3a14",
+      "multiChainValue": "0x14BeC0E4A8e7bF7A02Af54Ad81a57a9fcA4D37Fd",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    },
+    "mumbai_testnet": {
+      "multiChainSwap": "0xb1b812b664c28E1bA1d35De925Ae88b7Bc7cdCF5",
+      "multiChainValue": "0x14BeC0E4A8e7bF7A02Af54Ad81a57a9fcA4D37Fd",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    },
+    "zeta_testnet": {
+      "multiChainSwap": "",
+      "multiChainValue": "0x82aC45D07dEe4DBDe050e838beF345347DEd99a8",
+      "zetaTokenConsumerUniV2": "",
+      "zetaTokenConsumerUniV3": ""
+    }
+  },
+  "zevm": {
+    "zeta_testnet": {}
+  }
+}
