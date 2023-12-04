@@ -1671,10 +1671,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:4.8.3, @openzeppelin/contracts@npm:^4.8.3":
-  version: 4.8.3
-  resolution: "@openzeppelin/contracts@npm:4.8.3"
-  checksum: aea130d38d46840c5cbe3adbaa9a7ac645e4bd66ad3f3baf2fa78588c408d1a686170b3408c9e2e5e05530fba22ecdc00d7efb6b27852a8b29f91accbc0af255
+"@openzeppelin/contracts@npm:4.9.3, @openzeppelin/contracts@npm:^4.9.3":
+  version: 4.9.3
+  resolution: "@openzeppelin/contracts@npm:4.9.3"
+  checksum: 4932063e733b35fa7669b9fe2053f69b062366c5c208b0c6cfa1ac451712100c78acff98120c3a4b88d94154c802be05d160d71f37e7d74cadbe150964458838
   languageName: node
   linkType: hard
 
@@ -2554,7 +2554,7 @@ __metadata:
   resolution: "@zetachain/zeta-app-contracts@workspace:packages/zeta-app-contracts"
   dependencies:
     "@defi-wonderland/smock": ^2.3.4
-    "@openzeppelin/contracts": ^4.8.3
+    "@openzeppelin/contracts": ^4.9.3
     "@zetachain/networks": ^2.4.3
     "@zetachain/protocol-contracts": ^3.0.1
     ethers: 5.6.8
@@ -2568,7 +2568,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@zetachain/zevm-app-contracts@workspace:packages/zevm-app-contracts"
   dependencies:
-    "@openzeppelin/contracts": 4.8.3
+    "@openzeppelin/contracts": 4.9.3
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/networks": ^2.4.3
     "@zetachain/protocol-contracts": ^3.0.1
