@@ -27,7 +27,8 @@ EXECUTE_PROGRAMMATICALLY=true`;
   });
 }
 function saveWalletFile(address: string, privateKey: string, jsonPath: string): void {
-  const data = `{"address": "${address}", "privateKey": "${privateKey}}`;
+  const data = `{"address": "${address}", "privateKey": "${privateKey}"}`;
+
 
   fs.access(jsonPath, err => {
     if (err) {
