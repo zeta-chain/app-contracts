@@ -24,3 +24,9 @@ jobs:
 
       - name: Test
         run: yarn test
+        working-directory: packages/zeta-app-contracts
+
+      - name: Test
+        run: yarn test
+        working-directory: packages/zevm-app-contracts
+        
