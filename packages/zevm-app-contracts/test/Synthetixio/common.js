@@ -19,7 +19,7 @@ const {
   assertRevert,
   fromUnit,
   takeSnapshot,
-  restoreSnapshot
+  restoreSnapshot,
 } = require("./utils")();
 
 let lastSnapshotId;
@@ -67,6 +67,6 @@ module.exports = {
     invalidOpcode: assertInvalidOpcode,
     revert: assertRevert,
     unitEqual: assertUnitEqual,
-    unitNotEqual: assertUnitNotEqual
-  })
+    unitNotEqual: assertUnitNotEqual,
+  }),
 };

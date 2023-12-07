@@ -38,7 +38,7 @@ export async function deterministicDeployMultiChainValue() {
     contractBytecode,
     factoryAddress: immutableCreate2Factory,
     salt: salthex,
-    signer
+    signer,
   });
 
   saveAddress("multiChainValue", address);
@@ -48,7 +48,7 @@ export async function deterministicDeployMultiChainValue() {
 if (!process.env.EXECUTE_PROGRAMMATICALLY) {
   deterministicDeployMultiChainValue()
     .then(() => process.exit(0))
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
       process.exit(1);
     });

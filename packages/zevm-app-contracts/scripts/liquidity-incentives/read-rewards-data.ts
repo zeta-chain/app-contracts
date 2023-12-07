@@ -31,7 +31,7 @@ const readRewardData = async (rewardContractAddress: string) => {
     rewardsToken: rewardsToken,
     stakingToken: stakingToken,
     stakingTokenA,
-    stakingTokenB
+    stakingTokenB,
   });
 };
 
@@ -51,12 +51,12 @@ async function main() {
   }
 
   console.log("incentiveContracts", incentiveContracts);
-  incentiveContracts.forEach(async incentiveContract => {
+  incentiveContracts.forEach(async (incentiveContract) => {
     await readRewardData(incentiveContract);
   });
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

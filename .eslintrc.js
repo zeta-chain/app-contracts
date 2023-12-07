@@ -1,5 +1,7 @@
 const path = require("path");
 
+const OFF = 0;
+
 /**
  * @type {import("eslint").Linter.Config}
  */
@@ -19,6 +21,7 @@ module.exports = {
   rules: {
     "@typescript-eslint/sort-type-union-intersection-members": "error",
     camelcase: "off",
+    "no-console": OFF,
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
     "sort-keys-fix/sort-keys-fix": "error",

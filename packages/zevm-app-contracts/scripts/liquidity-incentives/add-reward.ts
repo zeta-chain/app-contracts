@@ -10,7 +10,7 @@ import {
   RewardDistributorFactory,
   RewardDistributorFactory__factory,
   SystemContract,
-  SystemContract__factory
+  SystemContract__factory,
 } from "../../typechain-types";
 import { getChainId, getSystemContractAddress, getZEVMAppAddress } from "../address.helpers";
 
@@ -45,7 +45,7 @@ const deployRewardByNetwork = async (
 
   const receipt = await tx.wait();
 
-  const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
+  const event = receipt.events?.find((e) => e.event === "RewardDistributorCreated");
 
   const { rewardDistributorContract: rewardDistributorContractAddress } = event?.args as any;
 
@@ -117,7 +117,7 @@ async function main() {
   await addReward(deployer, systemContract, rewardContractAddress);
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

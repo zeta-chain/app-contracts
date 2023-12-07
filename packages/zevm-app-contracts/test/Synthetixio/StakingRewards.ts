@@ -142,7 +142,7 @@ describe("StakingRewards", () => {
       const event = receipt.events?.find((e: any) => e.event === "Recovered");
       assert.eventEqual(event, "Recovered", {
         amount: amount,
-        token: externalRewardsToken.address
+        token: externalRewardsToken.address,
       });
     });
   });
@@ -346,7 +346,7 @@ describe("StakingRewards", () => {
       const receipt = await transaction.wait();
       const event = receipt.events?.find((e: any) => e.event === "RewardsDurationUpdated");
       assert.eventEqual(event, "RewardsDurationUpdated", {
-        newDuration: seventyDays
+        newDuration: seventyDays,
       });
       const newDuration = await stakingRewards.rewardsDuration();
       assert.bnEqual(newDuration, seventyDays);
@@ -374,7 +374,7 @@ describe("StakingRewards", () => {
       const receipt = await transaction.wait();
       const event = receipt.events?.find((e: any) => e.event === "RewardsDurationUpdated");
       assert.eventEqual(event, "RewardsDurationUpdated", {
-        newDuration: seventyDays
+        newDuration: seventyDays,
       });
 
       const newDuration = await stakingRewards.rewardsDuration();

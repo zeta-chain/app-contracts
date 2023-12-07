@@ -13,13 +13,13 @@ const main = async () => {
 
   const tx = await signer.sendTransaction({
     to: tssAddress,
-    value: parseEther("30")
+    value: parseEther("30"),
   });
 
   console.log("Token sent. tx:", tx.hash);
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

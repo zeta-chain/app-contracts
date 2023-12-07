@@ -11,8 +11,6 @@ import type { HardhatUserConfig } from "hardhat/types";
 
 dotenv.config();
 
-const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [];
-
 const config: HardhatUserConfig = {
   //@ts-ignore
   etherscan: {
@@ -37,7 +35,6 @@ const config: HardhatUserConfig = {
       { version: "0.6.6" /** For uniswap v2 */ },
       { version: "0.8.7" },
       { version: "0.4.18" /** For WETH / WZETA */ },
-      
     ],
     settings: {
       /**

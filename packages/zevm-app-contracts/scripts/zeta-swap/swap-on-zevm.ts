@@ -40,7 +40,7 @@ const main = async () => {
   const zContextStruct = {
     chainID: ethers.BigNumber.from("0"),
     origin: ethers.constants.HashZero,
-    sender: ethers.constants.AddressZero
+    sender: ethers.constants.AddressZero,
   };
   const tx1 = await zetaSwapContract.onCrossChainCall(zContextStruct, sourceToken, amount, params);
   await tx1.wait();
@@ -48,7 +48,7 @@ const main = async () => {
   console.log("tx:", tx1.hash);
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

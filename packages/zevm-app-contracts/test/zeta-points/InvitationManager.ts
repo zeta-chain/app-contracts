@@ -111,7 +111,7 @@ describe("InvitationManager Contract test", () => {
 
       const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
       const rec = await tx.wait();
-      const event = rec.events?.find(e => e.event === "InvitationAccepted");
+      const event = rec.events?.find((e) => e.event === "InvitationAccepted");
       const block = await ethers.provider.getBlock(rec.blockNumber);
 
       expect(event?.args?.inviter).to.be.eq(inviter.address);
@@ -123,7 +123,7 @@ describe("InvitationManager Contract test", () => {
 
       const tx2 = await invitationManager.connect(addrs[0]).confirmAndAcceptInvitation(inviter.address, sig);
       const rec2 = await tx2.wait();
-      const event2 = rec2.events?.find(e => e.event === "InvitationAccepted");
+      const event2 = rec2.events?.find((e) => e.event === "InvitationAccepted");
       const block2 = await ethers.provider.getBlock(rec2.blockNumber);
 
       await expect(event2?.args?.inviter).to.be.eq(inviter.address);

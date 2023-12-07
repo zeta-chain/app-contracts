@@ -24,7 +24,7 @@ async function main() {
   saveAddress("rewardDistributorFactory", rewardDistributorFactory.address);
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

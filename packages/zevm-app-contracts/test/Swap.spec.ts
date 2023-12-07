@@ -12,7 +12,7 @@ import {
   ZetaSwap,
   ZetaSwap__factory,
   ZetaSwapBtcInbound,
-  ZetaSwapBtcInbound__factory
+  ZetaSwapBtcInbound__factory,
 } from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 

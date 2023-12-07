@@ -17,7 +17,7 @@ async function main() {
   saveAddress("disperse", disperseFactory.address);
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

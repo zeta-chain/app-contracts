@@ -7,7 +7,7 @@ export const buildBytecode = (constructorTypes: any[], constructorArgs: any[], c
 
 export const buildCreate2Address = (saltHex: string, byteCode: string, factoryAddress: string) => {
   const payload = ethers.utils.keccak256(
-    `0x${["ff", factoryAddress, saltHex, ethers.utils.keccak256(byteCode)].map(x => x.replace(/0x/, "")).join("")}`
+    `0x${["ff", factoryAddress, saltHex, ethers.utils.keccak256(byteCode)].map((x) => x.replace(/0x/, "")).join("")}`
   );
 
   return `0x${payload.slice(-40)}`.toLowerCase();
@@ -39,7 +39,7 @@ export async function deployContractToAddress({
   contractBytecode,
   constructorTypes = [] as string[],
   constructorArgs = [] as any[],
-  signer
+  signer,
 }: {
   constructorArgs?: any[];
   constructorTypes?: string[];
@@ -55,14 +55,14 @@ export async function deployContractToAddress({
   const computedAddr = await factory.findCreate2Address(salt, bytecode);
 
   const tx = await factory.safeCreate2(salt, bytecode, {
-    gasLimit: 6000000
+    gasLimit: 6000000,
   });
   const result = await tx.wait();
 
   return {
     address: computedAddr as string,
     receipt: result as TransactionReceipt,
-    txHash: result.transactionHash as string
+    txHash: result.transactionHash as string,
   };
 }
 

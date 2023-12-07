@@ -29,11 +29,10 @@ EXECUTE_PROGRAMMATICALLY=true`;
 function saveWalletFile(address: string, privateKey: string, jsonPath: string): void {
   const data = `{"address": "${address}", "privateKey": "${privateKey}"}`;
 
-
-  fs.access(jsonPath, err => {
+  fs.access(jsonPath, (err) => {
     if (err) {
       // The file does not exist, so we can write to it
-      fs.writeFile(jsonPath, data, err => {
+      fs.writeFile(jsonPath, data, (err) => {
         if (err) throw err;
         console.log("The new wallet file has been saved!");
       });
@@ -50,18 +49,18 @@ function callFaucet(address: string): void {
     hostname: "faucet.zetachain.link",
     method: "GET",
     path: `/eth/${address}`,
-    port: 443
+    port: 443,
   };
 
-  const req = https.request(options, res => {
+  const req = https.request(options, (res) => {
     console.log(`statusCode: ${res.statusCode}`);
 
-    res.on("data", d => {
+    res.on("data", (d) => {
       process.stdout.write(d);
     });
   });
 
-  req.on("error", error => {
+  req.on("error", (error) => {
     console.error(error);
   });
 
@@ -69,7 +68,7 @@ function callFaucet(address: string): void {
 }
 
 function createWallet(filePath: string, callback: () => void): void {
-  fs.access(filePath, err => {
+  fs.access(filePath, (err) => {
     if (!err) {
       callback();
     }
@@ -88,7 +87,7 @@ async function getOrCreateWallet(filePath: string): Promise<Wallet> {
     const newWallet = Wallet.createRandom();
     const walletConfig: WalletConfig = {
       address: newWallet.address,
-      privateKey: newWallet.privateKey
+      privateKey: newWallet.privateKey,
     };
     await fs.promises.writeFile(filePath, JSON.stringify(walletConfig));
     wallet = newWallet;
@@ -97,7 +96,7 @@ async function getOrCreateWallet(filePath: string): Promise<Wallet> {
   return wallet;
 }
 
-const wallet = getOrCreateWallet(jsonPath).then(async wallet => {
+const wallet = getOrCreateWallet(jsonPath).then(async (wallet) => {
   console.log(`Your Wallet Address: ${wallet.address}`);
   console.log(`Your Private Key: ${wallet.privateKey.substring(2)}`);
   saveEnvFiles(wallet.address, wallet.privateKey.substring(2));
