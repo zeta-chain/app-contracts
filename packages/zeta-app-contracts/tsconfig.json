@@ -15,17 +15,6 @@
     "hardhat.config.ts",
   ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@zetachain/addresses": [
-        "../addresses/src/index"
-      ],
-      "@zetachain/addresses/*": [
-        "../addresses/src/*"
-      ],
-      "@zetachain/interfaces": [
-        "../interfaces/src/index"
-      ]
-    }
+    "baseUrl": "."
   }
 }
