@@ -19,7 +19,7 @@ const main = async () => {
   await invitationManager();
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

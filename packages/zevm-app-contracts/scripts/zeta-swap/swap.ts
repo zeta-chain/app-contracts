@@ -25,13 +25,13 @@ const main = async () => {
   const tx = await signer.sendTransaction({
     data,
     to: tssAddress,
-    value: parseEther("0.005")
+    value: parseEther("0.005"),
   });
 
   console.log("tx:", tx.hash);
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

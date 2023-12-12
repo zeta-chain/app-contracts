@@ -22,7 +22,7 @@ const main = async () => {
   saveAddress("zetaSwapBtcInbound", contractBTC.address);
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

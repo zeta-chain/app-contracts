@@ -15,7 +15,7 @@ import {
   getZRC20Address,
   isProtocolNetworkName,
   ZetaProtocolNetwork,
-  zetaProtocolNetworks
+  zetaProtocolNetworks,
 } from "@zetachain/protocol-contracts";
 import { ethers, network } from "hardhat";
 
@@ -39,14 +39,14 @@ const swapToChain = async ({
   signer,
   destinationNetwork,
   value,
-  nonce
+  nonce,
 }: SwapToChainParams) => {
   const data = getSwapData(zetaSwapAddress, signer.address, getZRC20Address(destinationNetwork), BigNumber.from("0"));
   const tx = await signer.sendTransaction({
     data,
     nonce,
     to: tssAddress,
-    value
+    value,
   });
   console.log(`tx: ${tx.hash}, nonce: ${nonce}, destinationToken: ${destinationNetwork}, value: ${formatEther(value)}`);
 };
@@ -57,9 +57,9 @@ const main = async () => {
 
   // @dev: bitcoin is invalid as destination
   const invalidDestinations: ZetaProtocolNetwork[] = [swappableNetwork, "btc_testnet"];
-  const networks = zetaProtocolNetworks.map(c => c as ZetaProtocolNetwork);
+  const networks = zetaProtocolNetworks.map((c) => c as ZetaProtocolNetwork);
 
-  const destinationNetworks = networks.filter(e => !invalidDestinations.includes(e));
+  const destinationNetworks = networks.filter((e) => !invalidDestinations.includes(e));
 
   console.log(`Swapping native token...`);
 
@@ -79,14 +79,14 @@ const main = async () => {
       signer,
       tssAddress,
       value: parseEther("0.002"),
-      zetaSwapAddress
+      zetaSwapAddress,
     };
     return [
       swapToChain(param),
       swapToChain({ ...param, nonce: baseNonce + 1, value: parseEther("0.002") }),
       swapToChain({ ...param, nonce: baseNonce + 2, value: parseEther("0.003") }),
       swapToChain({ ...param, nonce: baseNonce + 3, value: parseEther("0.004") }),
-      swapToChain({ ...param, nonce: baseNonce + 4, value: parseEther("0.005") })
+      swapToChain({ ...param, nonce: baseNonce + 4, value: parseEther("0.005") }),
     ];
   });
 
@@ -95,7 +95,7 @@ const main = async () => {
   await Promise.all(swaps);
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

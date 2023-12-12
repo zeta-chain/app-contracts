@@ -52,7 +52,7 @@ const main = async () => {
   await doTranfer(networkName, multiChainValueContract, getChainId("zeta_testnet"), amount, destinationAddress);
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

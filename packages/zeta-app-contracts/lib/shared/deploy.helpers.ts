@@ -16,7 +16,7 @@ export type GetContractParams<Factory extends ContractFactory> =
 export const getContract = async <Factory extends ContractFactory, Contract extends BaseContract>({
   contractName,
   deployParams,
-  existingContractAddress
+  existingContractAddress,
 }: GetContractParams<Factory> & { contractName: string }): Promise<Contract> => {
   const ContractFactory = (await ethers.getContractFactory(contractName)) as Factory;
 
@@ -35,5 +35,5 @@ export const getContract = async <Factory extends ContractFactory, Contract exte
 export const getErc20 = async (existingContractAddress?: string) =>
   getContract<ERC20Factory, ERC20>({
     contractName: "ERC20",
-    ...(existingContractAddress ? { existingContractAddress } : { deployParams: ["ERC20Mock", "ERC20Mock"] })
+    ...(existingContractAddress ? { existingContractAddress } : { deployParams: ["ERC20Mock", "ERC20Mock"] }),
   });

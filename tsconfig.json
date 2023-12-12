@@ -1,12 +1,30 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true,
-    "outDir": "dist",
+    "baseUrl": ".",
     "declaration": true,
-    "resolveJsonModule": true
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "dist",
+    "paths": {
+      "@typechain-types": [
+        "typechain-types"
+      ]
+    },
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": true,
+    "target": "es2020",
+    "typeRoots": [
+      "@types",
+      "./node_modules/@types"
+    ]
   },
-  "exclude": [".yarn", "node_modules"]
+  "exclude": [
+    ".yarn",
+    "node_modules"
+  ]
 }

@@ -12,7 +12,7 @@ import {
   IUniswapV2Pair__factory,
   IUniswapV2Router02,
   SystemContract__factory,
-  UniswapV2Router02__factory
+  UniswapV2Router02__factory,
 } from "../../typechain-types";
 import { getChainId, getSystemContractAddress } from "../address.helpers";
 import { getNow, printReserves, sortPair } from "./uniswap.helpers";
@@ -127,7 +127,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error);
     process.exit(1);
   });

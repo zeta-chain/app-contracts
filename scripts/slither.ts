@@ -58,7 +58,7 @@ const run = async (command: string) => {
     });
 
     console.log("Results output to the console and saved to slither-output/ in Markdown, JSON, and SARIF formats.");
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error: Docker Failed To Run");
     console.error(`${error}`);
   }

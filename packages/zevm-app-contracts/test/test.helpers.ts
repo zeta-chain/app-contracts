@@ -8,7 +8,7 @@ import {
   MockSystemContract__factory,
   MockZRC20,
   MockZRC20__factory,
-  UniswapV2Router02__factory
+  UniswapV2Router02__factory,
 } from "../typechain-types";
 
 const addZetaEthLiquidity = async (signer: SignerWithAddress, token: MockZRC20, uniswapRouterAddr: string) => {

@@ -10,7 +10,7 @@ import {
   MultiChainValueMock,
   MultiChainValueMock__factory as MultiChainValueMockFactory,
   ZetaConnectorMockValue,
-  ZetaConnectorMockValue__factory as ZetaConnectorMockValueFactory
+  ZetaConnectorMockValue__factory as ZetaConnectorMockValueFactory,
 } from "../../typechain-types";
 
 const networkName = network.name;
@@ -19,7 +19,7 @@ const networkName = network.name;
  */
 export const deployMultiChainValueMock = async ({
   zetaConnectorMockAddress,
-  zetaTokenMockAddress
+  zetaTokenMockAddress,
 }: {
   zetaConnectorMockAddress: string;
   zetaTokenMockAddress: string;
@@ -47,7 +47,7 @@ export const getMultiChainValue = (existingContractAddress?: string) => {
     contractName: "MultiChainValue",
     ...(existingContractAddress
       ? { existingContractAddress }
-      : { deployParams: [getAddress("connector", networkName), getAddress("zetaToken", networkName)] })
+      : { deployParams: [getAddress("connector", networkName), getAddress("zetaToken", networkName)] }),
   });
 };
 

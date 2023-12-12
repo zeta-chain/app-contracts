@@ -7,7 +7,7 @@ import { ethers } from "hardhat";
 import {
   deployMultiChainValueMock,
   deployZetaConnectorMock,
-  deployZetaEthMock
+  deployZetaEthMock,
 } from "../lib/multi-chain-value/MultiChainValue.helpers";
 import { MultiChainValueMock, ZetaConnectorMockValue } from "../typechain-types";
 
@@ -32,7 +32,7 @@ describe("MultiChainValue tests", () => {
     zetaEthMockContract = await deployZetaEthMock();
     multiChainValueContractA = await deployMultiChainValueMock({
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
-      zetaTokenMockAddress: zetaEthMockContract.address
+      zetaTokenMockAddress: zetaEthMockContract.address,
     });
 
     await multiChainValueContractA.addAvailableChainId(chainBId);

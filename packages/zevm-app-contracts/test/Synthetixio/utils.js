@@ -13,7 +13,7 @@ module.exports = () => {
   /**
    * Sets default properties on the jsonrpc object and promisifies it so we don't have to copy/paste everywhere.
    */
-  const send = async payload => {
+  const send = async (payload) => {
     if (!payload.jsonrpc) payload.jsonrpc = "2.0";
     if (!payload.id) payload.id = new Date().getTime();
     result = await hardhat.network.provider.send(payload.method, payload.params);
@@ -37,7 +37,7 @@ module.exports = () => {
    *  Increases the time in the EVM.
    *  @param seconds Number of seconds to increase the time by
    */
-  const fastForward = async seconds => {
+  const fastForward = async (seconds) => {
     // It's handy to be able to be able to pass big numbers in as we can just
     // query them from the contract, then send them back. If not changed to
     // a number, this causes much larger fast forwards than expected without error.
@@ -48,13 +48,13 @@ module.exports = () => {
 
     let params = {
       method: "evm_increaseTime",
-      params: [seconds]
+      params: [seconds],
     };
 
     if (hardhat.ovm) {
       params = {
         method: "evm_setNextBlockTimestamp",
-        params: [(await currentTime()) + seconds]
+        params: [(await currentTime()) + seconds],
       };
     }
 
@@ -69,7 +69,7 @@ module.exports = () => {
    *  sometimes the result can vary by a second or two depending on how fast or slow the local EVM is responding.
    *  @param time Date object representing the desired time at the end of the operation
    */
-  const fastForwardTo = async time => {
+  const fastForwardTo = async (time) => {
     if (typeof time === "string") time = parseInt(time);
 
     const timestamp = await currentTime();
@@ -98,10 +98,10 @@ module.exports = () => {
    *  Restores a snapshot that was previously taken with takeSnapshot
    *  @param id The ID that was returned when takeSnapshot was called.
    */
-  const restoreSnapshot = async id => {
+  const restoreSnapshot = async (id) => {
     await send({
       method: "evm_revert",
-      params: [id]
+      params: [id],
     });
     await mineBlock();
   };
@@ -112,8 +112,8 @@ module.exports = () => {
    *  we should be able to update the conversion factor here.
    *  @param amount The amount you want to re-base to UNIT
    */
-  const toUnit = amount => toBN(toWei(amount.toString(), "ether"));
-  const fromUnit = amount => fromWei(amount, "ether");
+  const toUnit = (amount) => toBN(toWei(amount.toString(), "ether"));
+  const fromUnit = (amount) => fromWei(amount, "ether");
 
   /**
    *  Translates an amount to our canonical precise unit. We happen to use 10^27, which means we can
@@ -124,7 +124,7 @@ module.exports = () => {
   const PRECISE_UNIT_STRING = "1000000000000000000000000000";
   const PRECISE_UNIT = toBN(PRECISE_UNIT_STRING);
 
-  const toPreciseUnit = amount => {
+  const toPreciseUnit = (amount) => {
     // Code is largely lifted from the guts of web3 toWei here:
     // https://github.com/ethjs/ethjs-unit/blob/master/src/index.js
     const amountString = amount.toString();
@@ -171,7 +171,7 @@ module.exports = () => {
     return result;
   };
 
-  const fromPreciseUnit = amount => {
+  const fromPreciseUnit = (amount) => {
     // Code is largely lifted from the guts of web3 fromWei here:
     // https://github.com/ethjs/ethjs-unit/blob/master/src/index.js
     const negative = amount.lt(new BN("0"));
@@ -284,7 +284,7 @@ module.exports = () => {
   /**
    * Converts a hex string of bytes into a UTF8 string with \0 characters (from padding) removed
    */
-  const bytesToString = bytes => {
+  const bytesToString = (bytes) => {
     const result = hexToAscii(bytes);
     return result.replace(/\0/g, "");
   };
@@ -401,7 +401,7 @@ module.exports = () => {
         // We take the keys that are integers as the array part, and get the `length` of that.
         // This is because this method is used to check event args or view result structs
         // that are shaped like {0: bla, 1: foo, blaName: bla, fooName: foo}. FML-JS
-        const intLike = Object.keys(actual).filter(k => k.match(/^\d+$/g) !== null);
+        const intLike = Object.keys(actual).filter((k) => k.match(/^\d+$/g) !== null);
         len = intLike.length;
       }
       assert.strictEqual(len, expected.length, `array length`);
@@ -458,7 +458,7 @@ module.exports = () => {
     assert.strictEqual(errorCaught, true, "Operation did not revert as expected");
   };
 
-  const assertInvalidOpcode = async blockOrPromise => {
+  const assertInvalidOpcode = async (blockOrPromise) => {
     let errorCaught = false;
     try {
       const result = typeof blockOrPromise === "function" ? blockOrPromise() : blockOrPromise;
@@ -475,12 +475,12 @@ module.exports = () => {
    *  Gets the ETH balance for the account address
    * 	@param account Ethereum wallet address
    */
-  const getEthBalance = account => web3.eth.getBalance(account);
+  const getEthBalance = (account) => web3.eth.getBalance(account);
 
   const loadLocalUsers = () => {
     return normalizeHardhatNetworkAccountsConfig(accounts).map(({ privateKey }) => ({
       private: privateKey,
-      public: web3.eth.accounts.privateKeyToAccount(privateKey).address
+      public: web3.eth.accounts.privateKeyToAccount(privateKey).address,
     }));
   };
 
@@ -495,19 +495,19 @@ module.exports = () => {
   };
 
   // create a factory to deploy mock price aggregators
-  const createMockAggregatorFactory = async account => {
+  const createMockAggregatorFactory = async (account) => {
     const { abi, bytecode } = getCompiledArtifacts("MockAggregatorV2V3");
     return new ethers.ContractFactory(abi, bytecode, account);
   };
 
   // load artifacts needed for contract instances
-  const getCompiledArtifacts = contract => {
+  const getCompiledArtifacts = (contract) => {
     const { compiled } = loadCompiledFiles({ buildPath });
     const {
       abi,
       evm: {
-        bytecode: { object: bytecode }
-      }
+        bytecode: { object: bytecode },
+      },
     } = compiled[contract];
     return { abi, bytecode };
   };
@@ -525,7 +525,7 @@ module.exports = () => {
 
     return {
       provider,
-      wallet: wallet || undefined
+      wallet: wallet || undefined,
     };
   };
 
@@ -536,7 +536,7 @@ module.exports = () => {
     useOvm = false,
     deploymentPath = undefined,
     wallet,
-    provider
+    provider,
   }) => {
     const target = getTarget({ contract, deploymentPath, fs, network, path, useOvm });
     const sourceData = getSource({
@@ -545,7 +545,7 @@ module.exports = () => {
       fs,
       network,
       path,
-      useOvm
+      useOvm,
     });
 
     return new ethers.Contract(target.address, sourceData.abi, wallet || provider);
@@ -595,6 +595,6 @@ module.exports = () => {
     toBN,
 
     toPreciseUnit,
-    toUnit
+    toUnit,
   };
 };

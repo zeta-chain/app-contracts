@@ -14,7 +14,7 @@ import {
   MockZRC20,
   RewardDistributor,
   RewardDistributorFactory,
-  RewardDistributorFactory__factory
+  RewardDistributorFactory__factory,
 } from "../typechain-types";
 import { evmSetup } from "./test.helpers";
 
@@ -84,7 +84,7 @@ describe("LiquidityIncentives tests", () => {
       AddressZero
     );
     const receipt = await tx.wait();
-    const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
+    const event = receipt.events?.find((e) => e.event === "RewardDistributorCreated");
     expect(event).to.not.be.undefined;
 
     const { rewardDistributorContract: rewardDistributorContractAddress } = event?.args as any;
@@ -106,7 +106,7 @@ describe("LiquidityIncentives tests", () => {
       );
       const receipt = await tx.wait();
 
-      const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
+      const event = receipt.events?.find((e) => e.event === "RewardDistributorCreated");
       expect(event).to.not.be.undefined;
 
       const { stakingTokenA, stakingTokenB, LPStakingToken, rewardsToken, owner } = event?.args as any;
@@ -142,7 +142,7 @@ describe("LiquidityIncentives tests", () => {
     );
     const receipt = await tx.wait();
 
-    const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
+    const event = receipt.events?.find((e) => e.event === "RewardDistributorCreated");
     expect(event).to.not.be.undefined;
 
     const { rewardDistributorContract } = event?.args as any;
@@ -245,12 +245,7 @@ describe("LiquidityIncentives tests", () => {
     await network.provider.send("evm_mine");
 
     let earned1 = await rewardDistributorContract.earned(sampleAccount1.address);
-    expect(earned1).to.be.closeTo(
-      REWARDS_AMOUNT.div(2)
-        .div(4)
-        .mul(3),
-      ERROR_TOLERANCE
-    );
+    expect(earned1).to.be.closeTo(REWARDS_AMOUNT.div(2).div(4).mul(3), ERROR_TOLERANCE);
 
     let earned2 = await rewardDistributorContract.earned(sampleAccount2.address);
     expect(earned2).to.be.closeTo(REWARDS_AMOUNT.div(2).div(4), ERROR_TOLERANCE);
@@ -493,7 +488,7 @@ describe("LiquidityIncentives tests", () => {
       AddressZero
     );
     const receipt = await tx.wait();
-    const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
+    const event = receipt.events?.find((e) => e.event === "RewardDistributorCreated");
     expect(event).to.not.be.undefined;
 
     const { rewardDistributorContract: rewardDistributorContractAddress } = event?.args as any;
