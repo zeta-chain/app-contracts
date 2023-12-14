@@ -66,6 +66,26 @@ yarn lint
 yarn lint:fix
 ```
 
+## Coverage
+To check the test coverage run the follow command on the desire package
+
+```bash
+npx hardhat coverage
+```
+
+## Static test
+We run slither on our packages. If you want to run it should install slither
+
+```bash
+brew install slither-analyzer
+```
+and execute it
+
+```bash
+slither . --filter-paths "contracts/test/|node_modules/" --exclude naming-convention
+```
+
 ## Contributing
 
 We welcome (and appreciate) everyone's contributions. If you wanna contribute, read [CONTRIBUTING.md](CONTRIBUTING.md) for next steps.
+
