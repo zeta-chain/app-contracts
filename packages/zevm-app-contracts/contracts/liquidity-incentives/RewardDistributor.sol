@@ -13,9 +13,9 @@ import "./Synthetixio/StakingRewards.sol";
 contract RewardDistributor is StakingRewards {
     uint16 internal constant MAX_DEADLINE = 200;
 
-    IERC20 public stakingTokenA;
-    IERC20 public stakingTokenB;
-    SystemContract private systemContract;
+    IERC20 public immutable stakingTokenA;
+    IERC20 public immutable stakingTokenB;
+    SystemContract private immutable systemContract;
     uint256 public minCoolDown;
     uint256 public minStakingPeriod;
     mapping(address => uint256) public lastDeposit;
@@ -24,6 +24,8 @@ contract RewardDistributor is StakingRewards {
     error ZeroStakeAmount();
     error InvalidTokenAddress();
     error MinimumStakingPeriodNotMet();
+    error ApproveFailed();
+    error TransferFailed();
 
     event MinCoolDownUpdated(address callerAddress, uint256 minCoolDown);
     event MinStakingPeriodUpdated(address callerAddress, uint256 minStakingPeriod);
@@ -43,12 +45,17 @@ contract RewardDistributor is StakingRewards {
     }
 
     function _addLiquidity(uint256 tokenAmountA, uint256 tokenAmountB) internal returns (uint256) {
-        stakingTokenA.transferFrom(msg.sender, address(this), tokenAmountA);
-        stakingTokenA.approve(systemContract.uniswapv2Router02Address(), 0);
-        stakingTokenA.approve(systemContract.uniswapv2Router02Address(), tokenAmountA);
+        bool transfer = stakingTokenA.transferFrom(msg.sender, address(this), tokenAmountA);
+        if (!transfer) revert TransferFailed();
+        bool approve = stakingTokenA.approve(systemContract.uniswapv2Router02Address(), 0);
+        if (!approve) revert ApproveFailed();
+        approve = stakingTokenA.approve(systemContract.uniswapv2Router02Address(), tokenAmountA);
+        if (!approve) revert ApproveFailed();
 
-        stakingTokenB.transferFrom(msg.sender, address(this), tokenAmountB);
-        stakingTokenB.approve(systemContract.uniswapv2Router02Address(), tokenAmountB);
+        transfer = stakingTokenB.transferFrom(msg.sender, address(this), tokenAmountB);
+        if (!transfer) revert TransferFailed();
+        approve = stakingTokenB.approve(systemContract.uniswapv2Router02Address(), tokenAmountB);
+        if (!approve) revert ApproveFailed();
 
         (, , uint LPTokenAmount) = IUniswapV2Router02(systemContract.uniswapv2Router02Address()).addLiquidity(
             address(stakingTokenA),

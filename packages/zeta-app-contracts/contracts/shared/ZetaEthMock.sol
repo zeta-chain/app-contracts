@@ -9,4 +9,8 @@ contract ZetaEthMock is ERC20("Zeta", "ZETA") {
     constructor(address creator, uint256 initialSupply) {
         _mint(creator, initialSupply * (10 ** uint256(decimals())));
     }
+
+    function deposit() external payable {
+        _mint(_msgSender(), msg.value);
+    }
 }

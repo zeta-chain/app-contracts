@@ -28,5 +28,5 @@ tsconfig.tsbuildinfo
 scripts/slither-results/*
 !scripts/slither-results/.gitkeep
 
-
+**/coverage/*
 

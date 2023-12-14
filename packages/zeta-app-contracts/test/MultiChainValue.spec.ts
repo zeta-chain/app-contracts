@@ -1,13 +1,13 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ZetaEth } from "@zetachain/protocol-contracts/dist/typechain-types";
 import { expect } from "chai";
-import { parseEther } from "ethers/lib/utils";
+import { AbiCoder, defaultAbiCoder, parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import {
   deployMultiChainValueMock,
   deployZetaConnectorMock,
-  deployZetaEthMock,
+  deployZetaEthMock
 } from "../lib/multi-chain-value/MultiChainValue.helpers";
 import { MultiChainValueMock, ZetaConnectorMockValue } from "../typechain-types";
 
@@ -32,7 +32,7 @@ describe("MultiChainValue tests", () => {
     zetaEthMockContract = await deployZetaEthMock();
     multiChainValueContractA = await deployMultiChainValueMock({
       zetaConnectorMockAddress: zetaConnectorMockContract.address,
-      zetaTokenMockAddress: zetaEthMockContract.address,
+      zetaTokenMockAddress: zetaEthMockContract.address
     });
 
     await multiChainValueContractA.addAvailableChainId(chainBId);
@@ -72,16 +72,45 @@ describe("MultiChainValue tests", () => {
   });
 
   describe("send", () => {
+    it("Should send msg", async () => {
+      await zetaEthMockContract.approve(multiChainValueContractA.address, parseEther("1000"));
+      const tx = multiChainValueContractA.send(chainBId, account1Address, 10);
+
+      await expect(tx)
+        .to.be.emit(zetaConnectorMockContract, "Send")
+        .withArgs(
+          chainBId,
+          account1Address.toLowerCase(),
+          300000,
+          defaultAbiCoder.encode(["address"], [deployer.address]),
+          10,
+          defaultAbiCoder.encode(["string"], [""])
+        );
+    });
+
+    it("Should send native token", async () => {
+      const tx = multiChainValueContractA.sendZeta(chainBId, account1Address, { value: 10 });
+      await expect(tx)
+        .to.be.emit(zetaConnectorMockContract, "Send")
+        .withArgs(
+          chainBId,
+          account1Address.toLowerCase(),
+          300000,
+          defaultAbiCoder.encode(["address"], [deployer.address]),
+          10,
+          defaultAbiCoder.encode(["string"], [""])
+        );
+    });
+
     it("Should prevent sending value to a disabled chainId", async () => {
-      await expect(multiChainValueContractA.send(1, account1Address, 100_000)).to.be.revertedWith(
-        "InvalidDestinationChainId"
-      );
+      const tx = multiChainValueContractA.send(1, account1Address, 100_000);
+      await expect(tx).to.be.revertedWith("InvalidDestinationChainId");
     });
 
     it("Should prevent sending 0 value", async () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
-
-      await expect(multiChainValueContractA.send(1, account1Address, 0)).to.be.revertedWith("InvalidZetaValueAndGas");
+      const tx = multiChainValueContractA.send(1, account1Address, 0);
+      await expect(tx).to.be.revertedWith("InvalidZetaValueAndGas");
     });
 
     it("Should prevent sending if the account has no Zeta balance", async () => {
