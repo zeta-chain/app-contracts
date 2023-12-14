@@ -27,7 +27,7 @@ describe("Disperse tests", () => {
       const balance0 = await ethers.provider.getBalance(accounts[0].address);
       const balance1 = await ethers.provider.getBalance(accounts[1].address);
       await disperseContract.disperseEther([accounts[0].address, accounts[1].address], [amount, amount.mul(2)], {
-        value: amount.mul(3)
+        value: amount.mul(3),
       });
 
       const balance0After = await ethers.provider.getBalance(accounts[0].address);
@@ -42,7 +42,7 @@ describe("Disperse tests", () => {
       const balance0 = await ethers.provider.getBalance(accounts[0].address);
       const balance1 = await ethers.provider.getBalance(accounts[1].address);
       await disperseContract.disperseEther([accounts[0].address, accounts[1].address], [amount, amount.mul(2)], {
-        value: amount.mul(4)
+        value: amount.mul(4),
       });
 
       const balance0After = await ethers.provider.getBalance(accounts[0].address);
