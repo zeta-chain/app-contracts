@@ -46,6 +46,17 @@ describe("LiquidityIncentives tests", () => {
     return await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZRC20Contract.address, amount);
   };
 
+  const stakeZETA = async (signer: SignerWithAddress, amount: BigNumber) => {
+    const zetaNeeded = await rewardDistributorContract.otherTokenByAmount(ZRC20Contract.address, amount);
+    await ZRC20Contract.transfer(signer.address, amount);
+    await ZETA_ERC20.transfer(signer.address, zetaNeeded);
+
+    await ZRC20Contract.connect(signer).approve(rewardDistributorContract.address, amount);
+    await ZETA_ERC20.connect(signer).approve(rewardDistributorContract.address, zetaNeeded);
+
+    return await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZETA_ERC20.address, zetaNeeded);
+  };
+
   beforeEach(async () => {
     accounts = await ethers.getSigners();
     [deployer] = accounts;
@@ -171,6 +182,72 @@ describe("LiquidityIncentives tests", () => {
     const stakedAmount = parseEther("100");
 
     await stakeToken(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
+    await network.provider.send("evm_mine");
+
+    const earned = await rewardDistributorContract.earned(sampleAccount.address);
+    expect(earned).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+  });
+
+  it("Should create an incentive and should be able to use it reverse tokens", async () => {
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    await stakeZETA(sampleAccount, stakedAmount);
+
+    await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
+    await network.provider.send("evm_mine");
+
+    const earned = await rewardDistributorContract.earned(sampleAccount.address);
+    expect(earned).to.be.closeTo(REWARDS_AMOUNT.div(2), ERROR_TOLERANCE);
+  });
+
+  it("Should create an incentive and should be able to use it using stake", async () => {
+    await ZETA.transfer(rewardDistributorContract.address, REWARDS_AMOUNT);
+    await rewardDistributorContract.setRewardsDuration(REWARD_DURATION);
+    await rewardDistributorContract.notifyRewardAmount(REWARDS_AMOUNT);
+
+    const sampleAccount = accounts[0];
+    const stakedAmount = parseEther("100");
+
+    // await stakeToken(sampleAccount, stakedAmount);
+    const uniswapRouterAddr = getNonZetaAddress("uniswapV2Router02", "eth_mainnet");
+    const zetaNeeded = await rewardDistributorContract.otherTokenByAmount(ZRC20Contract.address, stakedAmount);
+    await ZRC20Contract.transfer(sampleAccount.address, stakedAmount);
+    await ZETA_ERC20.transfer(sampleAccount.address, zetaNeeded);
+
+    await ZRC20Contract.connect(sampleAccount).approve(uniswapRouterAddr, stakedAmount);
+    await ZETA_ERC20.connect(sampleAccount).approve(uniswapRouterAddr, zetaNeeded);
+
+    const uniswapRouter = (await ethers.getContractAt("IUniswapV2Router02", uniswapRouterAddr)) as any;
+    const deadline = (await ethers.provider.getBlock("latest")).timestamp + 1000000;
+    await uniswapRouter.addLiquidity(
+      ZRC20Contract.address,
+      ZETA.address,
+      stakedAmount,
+      zetaNeeded,
+      0,
+      0,
+      sampleAccount.address,
+      deadline
+    );
+
+    const LPTokenAddress = await systemContract.uniswapv2PairFor(
+      await systemContract.uniswapv2FactoryAddress(),
+      ZRC20Contract.address,
+      ZETA.address
+    );
+
+    const ERC20Contract = (await ethers.getContractAt("ERC20", LPTokenAddress)) as any;
+    const LPBalance = await ERC20Contract.balanceOf(sampleAccount.address);
+
+    await ERC20Contract.connect(sampleAccount).approve(rewardDistributorContract.address, LPBalance);
+    await rewardDistributorContract.connect(sampleAccount).stake(LPBalance);
 
     await network.provider.send("evm_increaseTime", [REWARD_DURATION.div(2).toNumber()]);
     await network.provider.send("evm_mine");
@@ -511,5 +588,57 @@ describe("LiquidityIncentives tests", () => {
 
     const getReward = rewardDistributorContract.connect(sampleAccount1).getReward(true);
     await expect(getReward).to.be.revertedWith("Reward is not a wrapped asset");
+  });
+
+  it("Should return incentive contracts", async () => {
+    const rewardToken = ZRC20Contracts[1];
+    const tx = await rewardDistributorFactory.createTokenIncentive(
+      deployer.address,
+      deployer.address,
+      rewardToken.address,
+      ZRC20Contract.address,
+      AddressZero
+    );
+    const receipt = await tx.wait();
+    const event = receipt.events?.find((e) => e.event === "RewardDistributorCreated");
+    expect(event).to.not.be.undefined;
+
+    const { rewardDistributorContract: rewardDistributorContractAddress1 } = event?.args as any;
+
+    const tx2 = await rewardDistributorFactory.createTokenIncentive(
+      deployer.address,
+      deployer.address,
+      rewardToken.address,
+      ZRC20Contract.address,
+      AddressZero
+    );
+    const receipt2 = await tx2.wait();
+    const event2 = receipt2.events?.find((e) => e.event === "RewardDistributorCreated");
+    expect(event2).to.not.be.undefined;
+
+    const { rewardDistributorContract: rewardDistributorContractAddress2 } = event2?.args as any;
+
+    // @dev: on setup is already deployed a rewardDistributorContract
+    const incentiveContracts = await rewardDistributorFactory.getIncentiveContracts();
+    expect(incentiveContracts[1]).to.be.eq(rewardDistributorContractAddress1);
+    expect(incentiveContracts[2]).to.be.eq(rewardDistributorContractAddress2);
+  });
+
+  it("Should be pausable", async () => {
+    const paused1 = await rewardDistributorContract.paused();
+    expect(paused1).to.be.false;
+
+    await rewardDistributorContract.setPaused(true);
+    const paused2 = await rewardDistributorContract.paused();
+    expect(paused2).to.be.true;
+  });
+
+  it("Should be pausable even the same value", async () => {
+    const paused1 = await rewardDistributorContract.paused();
+    expect(paused1).to.be.false;
+
+    await rewardDistributorContract.setPaused(false);
+    const paused2 = await rewardDistributorContract.paused();
+    expect(paused2).to.be.false;
   });
 });

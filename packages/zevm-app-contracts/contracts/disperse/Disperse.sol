@@ -4,7 +4,16 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 contract Disperse {
-    function disperseEther(address[] calldata recipients, uint256[] calldata values) external payable {
+    bool private locked;
+
+    modifier noReentrancy() {
+        require(!locked, "No reentrancy");
+        locked = true;
+        _;
+        locked = false;
+    }
+
+    function disperseEther(address[] calldata recipients, uint256[] calldata values) external payable noReentrancy {
         require(recipients.length == values.length, "Recipients and values length mismatch");
 
         for (uint256 i = 0; i < recipients.length; i++) {
@@ -19,14 +28,22 @@ contract Disperse {
         }
     }
 
-    function disperseToken(IERC20 token, address[] calldata recipients, uint256[] calldata values) external {
+    function disperseToken(
+        IERC20 token,
+        address[] calldata recipients,
+        uint256[] calldata values
+    ) external noReentrancy {
         uint256 total = 0;
         for (uint256 i = 0; i < recipients.length; i++) total += values[i];
         require(token.transferFrom(msg.sender, address(this), total));
         for (uint256 i = 0; i < recipients.length; i++) require(token.transfer(recipients[i], values[i]));
     }
 
-    function disperseTokenSimple(IERC20 token, address[] calldata recipients, uint256[] calldata values) external {
+    function disperseTokenSimple(
+        IERC20 token,
+        address[] calldata recipients,
+        uint256[] calldata values
+    ) external noReentrancy {
         for (uint256 i = 0; i < recipients.length; i++)
             require(token.transferFrom(msg.sender, recipients[i], values[i]));
     }

@@ -15,13 +15,15 @@ interface SystemContractErrors {
 }
 
 contract MockSystemContract is SystemContractErrors {
+    error TransferFailed();
+
     mapping(uint256 => uint256) public gasPriceByChainId;
     mapping(uint256 => address) public gasCoinZRC20ByChainId;
     mapping(uint256 => address) public gasZetaPoolByChainId;
 
     address public wZetaContractAddress;
-    address public uniswapv2FactoryAddress;
-    address public uniswapv2Router02Address;
+    address public immutable uniswapv2FactoryAddress;
+    address public immutable uniswapv2Router02Address;
 
     event SystemContractDeployed();
     event SetGasPrice(uint256, uint256);
@@ -79,7 +81,8 @@ contract MockSystemContract is SystemContractErrors {
 
     function onCrossChainCall(address target, address zrc20, uint256 amount, bytes calldata message) external {
         zContext memory context = zContext({sender: msg.sender, origin: "", chainID: block.chainid});
-        IZRC20(zrc20).transfer(target, amount);
+        bool transfer = IZRC20(zrc20).transfer(target, amount);
+        if (!transfer) revert TransferFailed();
         zContract(target).onCrossChainCall(context, zrc20, amount, message);
     }
 }
