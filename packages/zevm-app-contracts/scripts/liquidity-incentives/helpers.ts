@@ -7,7 +7,7 @@ import {
   ERC20__factory,
   RewardDistributor__factory,
   RewardDistributorFactory,
-  SystemContract
+  SystemContract,
 } from "../../typechain-types";
 import { getChainId } from "../address.helpers";
 
@@ -30,7 +30,7 @@ export const deployRewardByToken = async (
 
   const receipt = await tx.wait();
 
-  const event = receipt.events?.find(e => e.event === "RewardDistributorCreated");
+  const event = receipt.events?.find((e) => e.event === "RewardDistributorCreated");
 
   const { rewardDistributorContract: rewardDistributorContractAddress } = event?.args as any;
 

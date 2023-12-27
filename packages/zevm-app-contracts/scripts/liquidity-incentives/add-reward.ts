@@ -23,7 +23,7 @@ const main = async () => {
   await addReward(deployer, systemContract, REWARD_CONTRACT_ADDRESS, REWARD_DURATION, REWARDS_AMOUNT);
 };
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
