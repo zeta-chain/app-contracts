@@ -49,7 +49,7 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
     ) external virtual override onlySystem {
         if (_getTotalTransfers(zrc20) == 0) revert NoAvailableTransfers();
 
-        address receipient = BytesHelperLib.bytesToAddress(message, 0);
+        address recipient = BytesHelperLib.bytesToAddress(message, 0);
         uint256 amountToTransfer = amount / _getTotalTransfers(zrc20);
         uint256 leftOver = amount - amountToTransfer * _getTotalTransfers(zrc20);
 
@@ -74,8 +74,8 @@ contract ZetaMultiOutput is zContract, Ownable, ZetaMultiOutputErrors {
                 targetZRC20,
                 0
             );
-            SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, BytesHelperLib.addressToBytes(receipient));
-            emit Withdrawal(targetZRC20, outputAmount, receipient);
+            SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, BytesHelperLib.addressToBytes(recipient));
+            emit Withdrawal(targetZRC20, outputAmount, recipient);
         }
     }
 }

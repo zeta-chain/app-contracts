@@ -24,7 +24,7 @@ contract ZetaSwap is zContract {
         uint256 amount,
         bytes calldata message
     ) external virtual override onlySystem {
-        (address targetZRC20, bytes32 receipient, uint256 minAmountOut) = abi.decode(
+        (address targetZRC20, bytes32 recipient, uint256 minAmountOut) = abi.decode(
             message,
             (address, bytes32, uint256)
         );
@@ -37,6 +37,6 @@ contract ZetaSwap is zContract {
             targetZRC20,
             minAmountOut
         );
-        SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, receipient);
+        SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, recipient);
     }
 }
