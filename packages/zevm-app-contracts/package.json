@@ -1,6 +1,6 @@
 {
   "name": "@zetachain/zevm-app-contracts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "private": false,
   "author": "zetachain",
@@ -8,6 +8,12 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "files": [
+    "contracts",
+    "data",
+    "scripts",
+    "typechain-types"
+  ],
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
