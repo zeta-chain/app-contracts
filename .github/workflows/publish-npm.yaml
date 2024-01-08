@@ -1,0 +1,62 @@
+name: Publish to NPM
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Determine NPM Tag zeta app contracts
+        id: determine-npm-tag-zeta-app-contracts
+        working-directory: packages/zeta-app-contracts
+        run: |
+          VERSION_TAG=${GITHUB_REF#refs/tags/v}
+          if [[ $VERSION_TAG == *"-"* ]]; then
+            echo ::set-output name=NPM_TAG::${VERSION_TAG#*-}
+          else
+            echo ::set-output name=NPM_TAG::latest
+          fi
+        env:
+          GITHUB_REF: ${{ github.ref }}
+
+      - name: Publish to NPM zeta app contracts
+        working-directory: packages/zeta-app-contracts
+        run: yarn publish --new-version ${GITHUB_REF#refs/tags/v} --tag ${{ steps.determine-npm-tag.outputs.NPM_TAG }} --no-git-tag-version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_REF: ${{ github.ref }}
+
+      - name: Determine NPM Tag zevm app contracts
+        id: determine-npm-tag-zevm-app-contracts
+        working-directory: packages/zevm-app-contracts
+        run: |
+          VERSION_TAG=${GITHUB_REF#refs/tags/v}
+          if [[ $VERSION_TAG == *"-"* ]]; then
+            echo ::set-output name=NPM_TAG::${VERSION_TAG#*-}
+          else
+            echo ::set-output name=NPM_TAG::latest
+          fi
+        env:
+          GITHUB_REF: ${{ github.ref }}
+
+      - name: Publish to NPM zevm app contracts
+        working-directory: packages/zevm-app-contracts
+        run: yarn publish --new-version ${GITHUB_REF#refs/tags/v} --tag ${{ steps.determine-npm-tag.outputs.NPM_TAG }} --no-git-tag-version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_REF: ${{ github.ref }}
