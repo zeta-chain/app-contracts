@@ -2,7 +2,7 @@
   "name": "@zetachain/zevm-app-contracts",
   "version": "0.0.1",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "author": "zetachain",
   "publishConfig": {
     "access": "public",
