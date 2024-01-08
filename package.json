@@ -2,7 +2,7 @@
   "name": "zetachain",
   "license": "MIT",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "workspaces": {
     "packages": [
       "packages/*"
