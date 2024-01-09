@@ -36,7 +36,7 @@ jobs:
 
       - name: Publish to NPM zeta app contracts
         working-directory: packages/zeta-app-contracts
-        run: yarn npm publish --tag ${{ steps.determine-npm-tag-zeta-app-contracts.outputs.NPM_TAG }}
+        run: npm publish --tag ${{ steps.determine-npm-tag-zeta-app-contracts.outputs.NPM_TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_REF: ${{ github.ref }}
@@ -56,7 +56,7 @@ jobs:
 
       - name: Publish to NPM zevm app contracts
         working-directory: packages/zevm-app-contracts
-        run: yarn npm publish --tag ${{ steps.determine-npm-tag-zevm-app-contracts.outputs.NPM_TAG }}
+        run: npm publish --tag ${{ steps.determine-npm-tag-zevm-app-contracts.outputs.NPM_TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_REF: ${{ github.ref }}
