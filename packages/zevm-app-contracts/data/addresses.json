@@ -1,7 +1,7 @@
 {
   "zevm": {
     "zeta_testnet": {
-      "disperse": "0x110b79d085872831301f5485649864d8429bB8e2",
+      "disperse": "0x8F0e6DdEdc755771a35eFA724304fcEFC8071745",
       "rewardDistributorFactory": "0x667e4C493d40015256BDC89E3ba750B2F90359E1",
       "zetaSwap": "0x44D1F1f9289DBA1Cf5824bd667184cEBE020aA1c",
       "zetaSwapBtcInbound": "0x008b393933D5CA2457Df570CA5D628380FFf6da4",
