@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 contract Disperse {
     bool private locked;
 
+    event disperse(address indexed token, address indexed recipient, uint256 value);
+
     modifier noReentrancy() {
         require(!locked, "No reentrancy");
         locked = true;
@@ -19,6 +21,7 @@ contract Disperse {
         for (uint256 i = 0; i < recipients.length; i++) {
             (bool sent, ) = payable(recipients[i]).call{value: values[i]}("");
             require(sent, "Failed to send Ether");
+            emit disperse(address(0), recipients[i], values[i]);
         }
 
         uint256 balance = address(this).balance;
@@ -36,7 +39,10 @@ contract Disperse {
         uint256 total = 0;
         for (uint256 i = 0; i < recipients.length; i++) total += values[i];
         require(token.transferFrom(msg.sender, address(this), total));
-        for (uint256 i = 0; i < recipients.length; i++) require(token.transfer(recipients[i], values[i]));
+        for (uint256 i = 0; i < recipients.length; i++) {
+            require(token.transfer(recipients[i], values[i]));
+            emit disperse(address(token), recipients[i], values[i]);
+        }
     }
 
     function disperseTokenSimple(
@@ -44,7 +50,9 @@ contract Disperse {
         address[] calldata recipients,
         uint256[] calldata values
     ) external noReentrancy {
-        for (uint256 i = 0; i < recipients.length; i++)
+        for (uint256 i = 0; i < recipients.length; i++) {
             require(token.transferFrom(msg.sender, recipients[i], values[i]));
+            emit disperse(address(token), recipients[i], values[i]);
+        }
     }
 }
