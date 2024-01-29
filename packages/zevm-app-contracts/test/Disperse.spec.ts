@@ -1,6 +1,7 @@
 import { parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
+import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
 import { Disperse, Disperse__factory, MockZRC20, MockZRC20__factory } from "../typechain-types";
@@ -26,15 +27,19 @@ describe("Disperse tests", () => {
       const amount = parseUnits("10");
       const balance0 = await ethers.provider.getBalance(accounts[0].address);
       const balance1 = await ethers.provider.getBalance(accounts[1].address);
-      await disperseContract.disperseEther([accounts[0].address, accounts[1].address], [amount, amount.mul(2)], {
+
+      const bigArrayAddress = new Array(500).fill(accounts[0].address);
+      const bigArrayAmount = new Array(500).fill(parseEther("0.01"));
+
+      await disperseContract.disperseEther(bigArrayAddress, bigArrayAmount, {
         value: amount.mul(3),
       });
 
       const balance0After = await ethers.provider.getBalance(accounts[0].address);
       const balance1After = await ethers.provider.getBalance(accounts[1].address);
 
-      expect(balance0After.sub(balance0)).to.be.eq(amount);
-      expect(balance1After.sub(balance1)).to.be.eq(amount.mul(2));
+      expect(balance0After.sub(balance0)).to.be.eq(parseEther("0.01").mul("500"));
+      expect(balance1After.sub(balance1)).to.be.eq(0);
     });
 
     it("Should disperse ETH with surplus", async () => {

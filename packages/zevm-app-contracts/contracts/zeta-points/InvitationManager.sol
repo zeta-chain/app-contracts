@@ -8,6 +8,10 @@ contract InvitationManager {
         bytes32 r;
         bytes32 s;
     }
+
+    // Indicate if invitation is still available. The default value is true.
+    mapping(address => bool) public invitationEnabled;
+
     // Records the timestamp when a particular user gets verified.
     mapping(address => uint256) public userVerificationTimestamps;
 
@@ -24,6 +28,7 @@ contract InvitationManager {
     mapping(address => mapping(uint256 => uint256)) public totalInvitesByInviterByDay;
 
     error UserAlreadyVerified();
+    error UserNotVerified();
     error UnrecognizedInvitation();
     error IndexOutOfBounds();
     error CanNotInviteYourself();
@@ -41,6 +46,12 @@ contract InvitationManager {
 
     function markAsVerified() external {
         _markAsVerified(msg.sender);
+        invitationEnabled[msg.sender] = true;
+    }
+
+    function udpateInvitationStatus(bool value) external {
+        if (userVerificationTimestamps[msg.sender] == 0) revert UserNotVerified();
+        invitationEnabled[msg.sender] = value;
     }
 
     function hasBeenVerified(address userAddress) external view returns (bool) {
@@ -61,7 +72,8 @@ contract InvitationManager {
 
     function confirmAndAcceptInvitation(address inviter, Signature calldata signature) external {
         if (inviter == msg.sender) revert CanNotInviteYourself();
-        if (userVerificationTimestamps[inviter] == 0) revert UnrecognizedInvitation();
+        if (!invitationEnabled[inviter]) revert UnrecognizedInvitation();
+
         _verifySignature(inviter, signature);
 
         acceptedInvitationsTimestamp[inviter][msg.sender] = block.timestamp;
