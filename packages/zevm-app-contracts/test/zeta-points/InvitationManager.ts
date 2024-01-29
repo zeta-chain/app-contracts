@@ -21,6 +21,13 @@ describe("InvitationManager Contract test", () => {
     await invitationManager.markAsVerified();
   });
 
+  const getTomorrowTimestamp = async () => {
+    const block = await ethers.provider.getBlock("latest");
+    const now = block.timestamp;
+    const tomorrow = now + 24 * 60 * 60;
+    return tomorrow;
+  };
+
   describe("True", () => {
     it("Should be true", async () => {
       expect(true).to.equal(true);
@@ -29,12 +36,16 @@ describe("InvitationManager Contract test", () => {
 
   describe("Invitations test", () => {
     it("Should verify an invitation and store it", async () => {
-      const sig = await getInvitationSig(inviter);
+      const expirationDate = await getTomorrowTimestamp();
+
+      const sig = await getInvitationSig(inviter, expirationDate);
 
       const hasBeenVerifiedBefore = await invitationManager.hasBeenVerified(invitee.address);
       await expect(hasBeenVerifiedBefore).to.be.eq(false);
 
-      const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
+      const tx = await invitationManager
+        .connect(invitee)
+        .confirmAndAcceptInvitation(inviter.address, expirationDate, sig);
       const rec = await tx.wait();
 
       const block = await ethers.provider.getBlock(rec.blockNumber);
@@ -50,30 +61,47 @@ describe("InvitationManager Contract test", () => {
     });
 
     it("Should revert if invitation is invalid", async () => {
-      const sig = await getInvitationSig(inviter);
-      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(addrs[0].address, sig);
+      const expirationDate = await getTomorrowTimestamp();
+      const sig = await getInvitationSig(inviter, expirationDate);
+      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(addrs[0].address, expirationDate, sig);
+      await expect(tx).to.be.revertedWith("UnrecognizedInvitation");
+    });
+
+    it("Should revert if invitation is expired", async () => {
+      const expirationDate = await getTomorrowTimestamp();
+      const yesterdayTimestamp = expirationDate - 24 * 60 * 60;
+      const sig = await getInvitationSig(inviter, expirationDate);
+      const tx = invitationManager
+        .connect(invitee)
+        .confirmAndAcceptInvitation(inviter.address, yesterdayTimestamp, sig);
       await expect(tx).to.be.revertedWith("UnrecognizedInvitation");
     });
 
     it("Should revert if inviter has not been verified", async () => {
-      const sig = await getInvitationSig(addrs[0]);
-      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(addrs[0].address, sig);
+      const expirationDate = await getTomorrowTimestamp();
+      const sig = await getInvitationSig(addrs[0], expirationDate);
+      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(addrs[0].address, expirationDate, sig);
       await expect(tx).to.be.revertedWith("UnrecognizedInvitation");
     });
 
     it("Should revert if invitation is already accepted", async () => {
-      const sig = await getInvitationSig(inviter);
-      await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
-      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
+      const expirationDate = await getTomorrowTimestamp();
+      const sig = await getInvitationSig(inviter, expirationDate);
+      await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, expirationDate, sig);
+      const tx = invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, expirationDate, sig);
       await expect(tx).to.be.revertedWith("UserAlreadyVerified");
     });
 
     it("Should count only for today if I just accepted", async () => {
-      const sig = await getInvitationSig(inviter);
-      const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
+      const expirationDate = await getTomorrowTimestamp();
+      const sig = await getInvitationSig(inviter, expirationDate);
+      const tx = await invitationManager
+        .connect(invitee)
+        .confirmAndAcceptInvitation(inviter.address, expirationDate, sig);
       const rec = await tx.wait();
 
       const block = await ethers.provider.getBlock(rec.blockNumber);
+      const now = block.timestamp;
 
       const invitation = await invitationManager.acceptedInvitationsTimestamp(inviter.address, invitee.address);
       await expect(invitation).to.be.eq(block.timestamp);
@@ -81,7 +109,6 @@ describe("InvitationManager Contract test", () => {
       const invitationCount = await invitationManager.getInviteeCount(inviter.address);
       await expect(invitationCount).to.be.eq(1);
 
-      const now = block.timestamp;
       const todayTimestamp = Math.floor(now / 86400) * 86400;
       const invitationCountToday = await invitationManager.getTotalInvitesOnDay(todayTimestamp);
       await expect(invitationCountToday).to.be.eq(1);
@@ -104,12 +131,15 @@ describe("InvitationManager Contract test", () => {
     });
 
     it("Should emit the right event when invitation is accepted", async () => {
-      const sig = await getInvitationSig(inviter);
+      const expirationDate = await getTomorrowTimestamp();
+      const sig = await getInvitationSig(inviter, expirationDate);
 
       const hasBeenVerifiedBefore = await invitationManager.hasBeenVerified(invitee.address);
       await expect(hasBeenVerifiedBefore).to.be.eq(false);
 
-      const tx = await invitationManager.connect(invitee).confirmAndAcceptInvitation(inviter.address, sig);
+      const tx = await invitationManager
+        .connect(invitee)
+        .confirmAndAcceptInvitation(inviter.address, expirationDate, sig);
       const rec = await tx.wait();
       const event = rec.events?.find((e) => e.event === "InvitationAccepted");
       const block = await ethers.provider.getBlock(rec.blockNumber);
@@ -121,7 +151,9 @@ describe("InvitationManager Contract test", () => {
       const inviteeByIndex = await invitationManager.getInviteeAtIndex(inviter.address, event?.args?.index);
       expect(inviteeByIndex).to.be.eq(invitee.address);
 
-      const tx2 = await invitationManager.connect(addrs[0]).confirmAndAcceptInvitation(inviter.address, sig);
+      const tx2 = await invitationManager
+        .connect(addrs[0])
+        .confirmAndAcceptInvitation(inviter.address, expirationDate, sig);
       const rec2 = await tx2.wait();
       const event2 = rec2.events?.find((e) => e.event === "InvitationAccepted");
       const block2 = await ethers.provider.getBlock(rec2.blockNumber);
