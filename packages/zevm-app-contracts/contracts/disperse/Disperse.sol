@@ -2,8 +2,11 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract Disperse {
+    using SafeERC20 for IERC20;
+
     bool private locked;
 
     event FundsDispersed(address indexed token, address indexed from, address indexed recipient, uint256 value);
@@ -38,9 +41,9 @@ contract Disperse {
     ) external noReentrancy {
         uint256 total = 0;
         for (uint256 i = 0; i < recipients.length; i++) total += values[i];
-        require(token.transferFrom(msg.sender, address(this), total));
+        token.safeTransferFrom(msg.sender, address(this), total);
         for (uint256 i = 0; i < recipients.length; i++) {
-            require(token.transfer(recipients[i], values[i]));
+            token.safeTransfer(recipients[i], values[i]);
             emit FundsDispersed(address(token), msg.sender, recipients[i], values[i]);
         }
     }
@@ -51,7 +54,7 @@ contract Disperse {
         uint256[] calldata values
     ) external noReentrancy {
         for (uint256 i = 0; i < recipients.length; i++) {
-            require(token.transferFrom(msg.sender, recipients[i], values[i]));
+            token.safeTransferFrom(msg.sender, recipients[i], values[i]);
             emit FundsDispersed(address(token), msg.sender, recipients[i], values[i]);
         }
     }
