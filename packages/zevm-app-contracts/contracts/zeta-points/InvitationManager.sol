@@ -33,13 +33,14 @@ contract InvitationManager {
     error IndexOutOfBounds();
     error CanNotInviteYourself();
 
-    event UserVerified(address indexed userAddress, uint256 verifiedAt);
+    event UserVerified(address indexed userAddress, uint256 verifiedAt, uint256 unix_timestamp);
     event InvitationAccepted(
         address indexed inviter,
         address indexed invitee,
         uint256 index,
         uint256 expiration,
-        uint256 acceptedAt
+        uint256 acceptedAt,
+        uint256 unix_timestamp
     );
 
     function _markAsVerified(address user) internal {
@@ -47,7 +48,7 @@ contract InvitationManager {
         if (userVerificationTimestamps[user] > 0) revert UserAlreadyVerified();
 
         userVerificationTimestamps[user] = block.timestamp;
-        emit UserVerified(user, block.timestamp);
+        emit UserVerified(user, block.timestamp, block.timestamp);
     }
 
     function markAsVerified() external {
@@ -55,7 +56,7 @@ contract InvitationManager {
         invitationEnabled[msg.sender] = true;
     }
 
-    function udpateInvitationStatus(bool value) external {
+    function updateInvitationStatus(bool value) external {
         if (userVerificationTimestamps[msg.sender] == 0) revert UserNotVerified();
         invitationEnabled[msg.sender] = value;
     }
@@ -95,7 +96,14 @@ contract InvitationManager {
         totalInvitesByDay[dayStartTimestamp]++;
         totalInvitesByInviterByDay[inviter][dayStartTimestamp]++;
 
-        emit InvitationAccepted(inviter, msg.sender, inviteeLists[inviter].length - 1, expiration, block.timestamp);
+        emit InvitationAccepted(
+            inviter,
+            msg.sender,
+            inviteeLists[inviter].length - 1,
+            expiration,
+            block.timestamp,
+            block.timestamp
+        );
     }
 
     function getInviteeCount(address inviter) external view returns (uint256) {
