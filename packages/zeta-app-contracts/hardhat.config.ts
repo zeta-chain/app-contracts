@@ -11,6 +11,8 @@ import type { HardhatUserConfig } from "hardhat/types";
 
 dotenv.config();
 
+const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [];
+
 const config: HardhatUserConfig = {
   //@ts-ignore
   etherscan: {
