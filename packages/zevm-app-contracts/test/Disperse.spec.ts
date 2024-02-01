@@ -24,21 +24,22 @@ describe("Disperse tests", () => {
 
   describe("Disperse", () => {
     it("Should disperse ETH", async () => {
-      const amount = parseUnits("10");
+      const count = 500;
+      const amount = parseEther("0.01");
       const balance0 = await ethers.provider.getBalance(accounts[0].address);
       const balance1 = await ethers.provider.getBalance(accounts[1].address);
 
-      const bigArrayAddress = new Array(500).fill(accounts[0].address);
-      const bigArrayAmount = new Array(500).fill(parseEther("0.01"));
+      const bigArrayAddress = new Array(count).fill(accounts[0].address);
+      const bigArrayAmount = new Array(count).fill(amount);
 
       await disperseContract.disperseEther(bigArrayAddress, bigArrayAmount, {
-        value: amount.mul(3),
+        value: amount.mul(count),
       });
 
       const balance0After = await ethers.provider.getBalance(accounts[0].address);
       const balance1After = await ethers.provider.getBalance(accounts[1].address);
 
-      expect(balance0After.sub(balance0)).to.be.eq(parseEther("0.01").mul("500"));
+      expect(balance0After.sub(balance0)).to.be.eq(amount.mul(count));
       expect(balance1After.sub(balance1)).to.be.eq(0);
     });
 
