@@ -1,4 +1,4 @@
-import "@nomiclabs/hardhat-etherscan";
+import "@nomicfoundation/hardhat-verify";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
@@ -11,11 +11,14 @@ import type { HardhatUserConfig } from "hardhat/types";
 
 dotenv.config();
 
+const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [];
+
 const config: HardhatUserConfig = {
   //@ts-ignore
   etherscan: {
     apiKey: {
       // BSC
+      bsc: process.env.BSCSCAN_API_KEY || "",
       bscTestnet: process.env.BSCSCAN_API_KEY || "",
       // ETH
       goerli: process.env.ETHERSCAN_API_KEY || "",

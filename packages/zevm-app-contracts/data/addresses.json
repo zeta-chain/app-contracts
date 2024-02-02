@@ -1,11 +1,11 @@
 {
   "zevm": {
     "zeta_testnet": {
-      "disperse": "0xf394dc01879E39f19eDA533EFD10C82eEee5B2b1",
-      "rewardDistributorFactory": "0x667e4C493d40015256BDC89E3ba750B2F90359E1",
-      "zetaSwap": "0x44D1F1f9289DBA1Cf5824bd667184cEBE020aA1c",
-      "zetaSwapBtcInbound": "0x008b393933D5CA2457Df570CA5D628380FFf6da4",
-      "invitationManager": "0xF4cF881A3d23936e3710ef2Cbbe93f71C4389918"
+      "disperse": "0x23ce409Ea60c3d75827d04D9db3d52F3af62e44d",
+      "rewardDistributorFactory": "0xB9dc665610CF5109cE23aBBdaAc315B41FA094c1",
+      "zetaSwap": "0xA8168Dc495Ed61E70f5c1941e2860050AB902cEF",
+      "zetaSwapBtcInbound": "0x358E2cfC0E16444Ba7D3164Bbeeb6bEA7472c559",
+      "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d"
     }
   }
 }

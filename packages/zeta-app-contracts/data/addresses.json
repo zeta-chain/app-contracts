@@ -8,7 +8,7 @@
     },
     "bsc_mainnet": {
       "multiChainSwap": "",
-      "multiChainValue": "",
+      "multiChainValue": "0x33e5fCFfe910B99DB46c259804fCA1317EA0Aa89",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     },
@@ -26,7 +26,7 @@
     },
     "eth_mainnet": {
       "multiChainSwap": "",
-      "multiChainValue": "",
+      "multiChainValue": "0x910966E1C0Bc9FD74f499723c19Ff9799fE258a5",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     },
@@ -44,7 +44,7 @@
     },
     "zeta_testnet": {
       "multiChainSwap": "",
-      "multiChainValue": "0x82aC45D07dEe4DBDe050e838beF345347DEd99a8",
+      "multiChainValue": "0x36Cfb6dCd6926dFb749dc8E4b28efc73f3e6FAe3",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     }
