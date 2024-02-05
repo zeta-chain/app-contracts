@@ -1,10 +1,4 @@
-import {
-  getAddress,
-  isMainnetNetwork,
-  isProtocolNetworkName,
-  isTestnetNetwork,
-  zetaProtocolMainNetworks,
-} from "@zetachain/protocol-contracts/dist/lib";
+import { getAddress, isProtocolNetworkName, isTestnetNetwork } from "@zetachain/protocol-contracts/dist/lib";
 import { ethers, network } from "hardhat";
 
 import { MultiChainValue, MultiChainValue__factory } from "../../typechain-types";
