@@ -1,4 +1,10 @@
-import { getAddress, isProtocolNetworkName } from "@zetachain/protocol-contracts/dist/lib";
+import {
+  getAddress,
+  isMainnetNetwork,
+  isProtocolNetworkName,
+  isTestnetNetwork,
+  zetaProtocolMainNetworks,
+} from "@zetachain/protocol-contracts/dist/lib";
 import { ethers, network } from "hardhat";
 
 import { MultiChainValue, MultiChainValue__factory } from "../../typechain-types";
@@ -21,21 +27,19 @@ async function main() {
 
   console.log("MultiChainValue post rutine...");
 
-  networkName !== "goerli_testnet" &&
-    (await (await contract.addAvailableChainId(getChainId("goerli_testnet")))
-      .wait()
-      .catch((e: any) => console.error(e)));
+  //@ts-ignore
+  const isTestnet = isTestnetNetwork(networkName);
 
-  networkName !== "mumbai_testnet" &&
-    (await (await contract.addAvailableChainId(getChainId("mumbai_testnet")))
-      .wait()
-      .catch((e: any) => console.error(e)));
-
-  networkName !== "bsc_testnet" &&
-    (await (await contract.addAvailableChainId(getChainId("bsc_testnet"))).wait().catch((e: any) => console.error(e)));
-
-  networkName !== "zeta_testnet" &&
-    (await (await contract.addAvailableChainId(getChainId("zeta_testnet"))).wait().catch((e: any) => console.error(e)));
+  if (isTestnet) {
+    await (await contract.addAvailableChainId(getChainId("goerli_testnet"))).wait().catch((e: any) => console.error(e));
+    await (await contract.addAvailableChainId(getChainId("bsc_testnet"))).wait().catch((e: any) => console.error(e));
+    await (await contract.addAvailableChainId(getChainId("zeta_testnet"))).wait().catch((e: any) => console.error(e));
+    await (await contract.addAvailableChainId(getChainId("mumbai_testnet"))).wait().catch((e: any) => console.error(e));
+  } else {
+    await (await contract.addAvailableChainId(getChainId("bsc_mainnet"))).wait().catch((e: any) => console.error(e));
+    await (await contract.addAvailableChainId(getChainId("zeta_mainnet"))).wait().catch((e: any) => console.error(e));
+    await (await contract.addAvailableChainId(getChainId("eth_mainnet"))).wait().catch((e: any) => console.error(e));
+  }
 
   console.log("MultiChainValue post rutine finish");
 }
