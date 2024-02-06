@@ -102,12 +102,6 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     }
 
     function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external isValidRevertCall(zetaRevert) {
-        bool success1 = ZetaEth(zetaToken).approve(address(this), zetaRevert.remainingZetaValue);
-        bool success2 = ZetaEth(zetaToken).transferFrom(
-            address(this),
-            zetaRevert.zetaTxSenderAddress,
-            zetaRevert.remainingZetaValue
-        );
-        if (!(success1 && success2)) revert ErrorTransferringZeta();
+        //@dev this version do not handle revert
     }
 }

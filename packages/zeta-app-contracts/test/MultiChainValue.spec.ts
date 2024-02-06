@@ -78,14 +78,7 @@ describe("MultiChainValue tests", () => {
 
       await expect(tx)
         .to.be.emit(zetaConnectorMockContract, "Send")
-        .withArgs(
-          chainBId,
-          account1Address.toLowerCase(),
-          300000,
-          defaultAbiCoder.encode(["address"], [deployer.address]),
-          10,
-          defaultAbiCoder.encode(["string"], [""])
-        );
+        .withArgs(chainBId, account1Address.toLowerCase(), 300000, "0x", 10, defaultAbiCoder.encode(["string"], [""]));
     });
 
     it("Should send native token", async () => {
@@ -138,7 +131,7 @@ describe("MultiChainValue tests", () => {
         ethers.utils.hexZeroPad("0x0", 32)
       );
 
-      const balance = await zetaEthMockContract.balanceOf(account1.address);
+      const balance = await zetaEthMockContract.balanceOf(multiChainValueContractA.address);
       await expect(balance).to.be.eq(remainingZetaValue);
     });
 
