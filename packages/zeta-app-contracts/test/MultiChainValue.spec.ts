@@ -82,17 +82,10 @@ describe("MultiChainValue tests", () => {
     });
 
     it("Should send native token", async () => {
-      const tx = multiChainValueContractA.sendZeta(chainBId, account1Address, { value: 10 });
+      const tx = multiChainValueContractA.sendZeta(chainBId, account1Address, 100000, { value: 10 });
       await expect(tx)
         .to.be.emit(zetaConnectorMockContract, "Send")
-        .withArgs(
-          chainBId,
-          account1Address.toLowerCase(),
-          300000,
-          defaultAbiCoder.encode(["address"], [deployer.address]),
-          10,
-          defaultAbiCoder.encode(["string"], [""])
-        );
+        .withArgs(chainBId, account1Address.toLowerCase(), 100000, "0x", 10, defaultAbiCoder.encode(["string"], [""]));
     });
 
     it("Should prevent sending value to a disabled chainId", async () => {

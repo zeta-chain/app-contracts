@@ -44,13 +44,13 @@
     },
     "zeta_testnet": {
       "multiChainSwap": "",
-      "multiChainValue": "0x51886eC8E70e9331916fE44f1a10B641100094Fc",
+      "multiChainValue": "0x73B37B8BAbAC0e846bB2C4c581e60bFF2BFBE76e",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     },
     "zeta_mainnet": {
       "multiChainSwap": "",
-      "multiChainValue": "0x113d1e0fA690746b6Bd86CaDCEA712f22CFEAc05",
+      "multiChainValue": "0xC459AB4Ac46cE53A30D4C4B6f49176989483b2Cf",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     }
