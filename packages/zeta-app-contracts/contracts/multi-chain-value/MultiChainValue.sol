@@ -85,7 +85,12 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     /**
      * @dev If the destination chain is a valid chain, send the Zeta tokens to that chain
      */
-    function send(uint256 destinationChainId, bytes calldata destinationAddress, uint256 zetaValueAndGas) external {
+    function send(
+        uint256 destinationChainId,
+        bytes calldata destinationAddress,
+        uint256 zetaValueAndGas,
+        uint256 destinationGasLimit
+    ) external {
         if (!availableChainIds[destinationChainId]) revert InvalidDestinationChainId();
         if (zetaValueAndGas == 0) revert InvalidZetaValueAndGas();
 
@@ -97,7 +102,7 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: destinationAddress,
-                destinationGasLimit: 300000,
+                destinationGasLimit: destinationGasLimit,
                 message: abi.encode(),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")

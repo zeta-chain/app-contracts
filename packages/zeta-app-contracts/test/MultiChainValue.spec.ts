@@ -74,7 +74,7 @@ describe("MultiChainValue tests", () => {
   describe("send", () => {
     it("Should send msg", async () => {
       await zetaEthMockContract.approve(multiChainValueContractA.address, parseEther("1000"));
-      const tx = multiChainValueContractA.send(chainBId, account1Address, 10);
+      const tx = multiChainValueContractA.send(chainBId, account1Address, 10, 300000);
 
       await expect(tx)
         .to.be.emit(zetaConnectorMockContract, "Send")
@@ -89,13 +89,13 @@ describe("MultiChainValue tests", () => {
     });
 
     it("Should prevent sending value to a disabled chainId", async () => {
-      const tx = multiChainValueContractA.send(1, account1Address, 100_000);
+      const tx = multiChainValueContractA.send(1, account1Address, 100_000, 300000);
       await expect(tx).to.be.revertedWith("InvalidDestinationChainId");
     });
 
     it("Should prevent sending 0 value", async () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
-      const tx = multiChainValueContractA.send(1, account1Address, 0);
+      const tx = multiChainValueContractA.send(1, account1Address, 0, 300000);
       await expect(tx).to.be.revertedWith("InvalidZetaValueAndGas");
     });
 
