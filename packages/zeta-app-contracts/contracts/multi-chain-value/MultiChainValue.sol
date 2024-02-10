@@ -22,7 +22,7 @@ interface MultiChainValueErrors {
 
 /**
  * @dev MultiChainValue goal is to send Zeta token from ZEVM to other chains.
- * This contract is not recommended to use in other chains than ZEVM because can't handle onReverseRevert events.
+ * This contract is not recommended to use in other chains than ZEVM because can't handle onRevert events.
  */
 contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     address public zetaToken;
