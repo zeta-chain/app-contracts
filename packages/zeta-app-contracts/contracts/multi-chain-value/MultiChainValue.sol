@@ -21,8 +21,8 @@ interface MultiChainValueErrors {
 }
 
 /**
- * @dev MultiChainValue goal is to send Zeta token across all supported chains
- * Extends the logic defined in ZetaInteractor to handle multichain standards
+ * @dev MultiChainValue goal is to send Zeta token from ZEVM to other chains.
+ * This contract cannot handle 'onRevert' events, so it should only be used in ZEVM and not on other chains.
  */
 contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     address public zetaToken;
@@ -56,7 +56,11 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     /**
      * @dev If the destination chain is a valid chain, send the Zeta tokens to that chain
      */
-    function sendZeta(uint256 destinationChainId, bytes calldata destinationAddress) public payable {
+    function sendZeta(
+        uint256 destinationChainId,
+        bytes calldata destinationAddress,
+        uint256 destinationGasLimit
+    ) public payable {
         uint256 zetaValueAndGas = msg.value;
 
         if (!availableChainIds[destinationChainId]) revert InvalidDestinationChainId();
@@ -70,8 +74,8 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: destinationAddress,
-                destinationGasLimit: 300000,
-                message: abi.encode(msg.sender),
+                destinationGasLimit: destinationGasLimit,
+                message: abi.encode(),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
@@ -81,7 +85,12 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     /**
      * @dev If the destination chain is a valid chain, send the Zeta tokens to that chain
      */
-    function send(uint256 destinationChainId, bytes calldata destinationAddress, uint256 zetaValueAndGas) external {
+    function send(
+        uint256 destinationChainId,
+        bytes calldata destinationAddress,
+        uint256 zetaValueAndGas,
+        uint256 destinationGasLimit
+    ) external {
         if (!availableChainIds[destinationChainId]) revert InvalidDestinationChainId();
         if (zetaValueAndGas == 0) revert InvalidZetaValueAndGas();
 
@@ -93,8 +102,8 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
             ZetaInterfaces.SendInput({
                 destinationChainId: destinationChainId,
                 destinationAddress: destinationAddress,
-                destinationGasLimit: 300000,
-                message: abi.encode(msg.sender),
+                destinationGasLimit: destinationGasLimit,
+                message: abi.encode(),
                 zetaValueAndGas: zetaValueAndGas,
                 zetaParams: abi.encode("")
             })
@@ -102,10 +111,6 @@ contract MultiChainValue is ZetaInteractor, MultiChainValueErrors {
     }
 
     function onZetaRevert(ZetaInterfaces.ZetaRevert calldata zetaRevert) external isValidRevertCall(zetaRevert) {
-        address messageFrom = abi.decode(zetaRevert.message, (address));
-
-        bool success1 = ZetaEth(zetaToken).approve(address(this), zetaRevert.remainingZetaValue);
-        bool success2 = ZetaEth(zetaToken).transferFrom(address(this), messageFrom, zetaRevert.remainingZetaValue);
-        if (!(success1 && success2)) revert ErrorTransferringZeta();
+        //@dev this version do not handle revert
     }
 }

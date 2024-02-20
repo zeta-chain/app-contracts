@@ -74,42 +74,28 @@ describe("MultiChainValue tests", () => {
   describe("send", () => {
     it("Should send msg", async () => {
       await zetaEthMockContract.approve(multiChainValueContractA.address, parseEther("1000"));
-      const tx = multiChainValueContractA.send(chainBId, account1Address, 10);
+      const tx = multiChainValueContractA.send(chainBId, account1Address, 10, 300000);
 
       await expect(tx)
         .to.be.emit(zetaConnectorMockContract, "Send")
-        .withArgs(
-          chainBId,
-          account1Address.toLowerCase(),
-          300000,
-          defaultAbiCoder.encode(["address"], [deployer.address]),
-          10,
-          defaultAbiCoder.encode(["string"], [""])
-        );
+        .withArgs(chainBId, account1Address.toLowerCase(), 300000, "0x", 10, defaultAbiCoder.encode(["string"], [""]));
     });
 
     it("Should send native token", async () => {
-      const tx = multiChainValueContractA.sendZeta(chainBId, account1Address, { value: 10 });
+      const tx = multiChainValueContractA.sendZeta(chainBId, account1Address, 100000, { value: 10 });
       await expect(tx)
         .to.be.emit(zetaConnectorMockContract, "Send")
-        .withArgs(
-          chainBId,
-          account1Address.toLowerCase(),
-          300000,
-          defaultAbiCoder.encode(["address"], [deployer.address]),
-          10,
-          defaultAbiCoder.encode(["string"], [""])
-        );
+        .withArgs(chainBId, account1Address.toLowerCase(), 100000, "0x", 10, defaultAbiCoder.encode(["string"], [""]));
     });
 
     it("Should prevent sending value to a disabled chainId", async () => {
-      const tx = multiChainValueContractA.send(1, account1Address, 100_000);
+      const tx = multiChainValueContractA.send(1, account1Address, 100_000, 300000);
       await expect(tx).to.be.revertedWith("InvalidDestinationChainId");
     });
 
     it("Should prevent sending 0 value", async () => {
       await (await multiChainValueContractA.addAvailableChainId(1)).wait();
-      const tx = multiChainValueContractA.send(1, account1Address, 0);
+      const tx = multiChainValueContractA.send(1, account1Address, 0, 300000);
       await expect(tx).to.be.revertedWith("InvalidZetaValueAndGas");
     });
 
@@ -138,7 +124,7 @@ describe("MultiChainValue tests", () => {
         ethers.utils.hexZeroPad("0x0", 32)
       );
 
-      const balance = await zetaEthMockContract.balanceOf(account1.address);
+      const balance = await zetaEthMockContract.balanceOf(multiChainValueContractA.address);
       await expect(balance).to.be.eq(remainingZetaValue);
     });
 

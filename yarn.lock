@@ -2767,19 +2767,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/networks@npm:^2.4.3":
-  version: 2.5.0
-  resolution: "@zetachain/networks@npm:2.5.0"
+"@zetachain/networks@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@zetachain/networks@npm:4.0.0"
   dependencies:
     dotenv: ^16.1.4
-  checksum: f208dbaa2b38e71069f8eb6ddd2b0a6d11f6f987579fcf4242b4398befa61eea381162984f14f339cee61f3a34e9463df20bfd53f3e670bb721b76c09d9840ac
+  checksum: 2013304de6959e9b33a2e4a23f49dd13ce9747bf4084332fda700ca32f719931998985a65e6e7c017c0919ff9167899a0529dbfaec274917aa8c28e6ac4faa0a
   languageName: node
   linkType: hard
 
-"@zetachain/protocol-contracts@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@zetachain/protocol-contracts@npm:3.0.1"
-  checksum: 5a833dc9f59b69b83654754f4587aad57f4c9859908bc3fd9b5f3f6329cf803bf68e66aff4f355a99fb7e23726526196610e43987d15ec60208cc5564bc94259
+"@zetachain/protocol-contracts@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@zetachain/protocol-contracts@npm:4.0.1"
+  checksum: 8d21c901001a735a4a43c4dd9eb90bc8121822bec1d51f0267061f771431691b4bcd7fcdaedb0e7b8bbd0d318937c86972076bf846e5c67506dbab389f9407ff
   languageName: node
   linkType: hard
 
@@ -2789,8 +2789,8 @@ __metadata:
   dependencies:
     "@defi-wonderland/smock": ^2.3.4
     "@openzeppelin/contracts": ^4.9.3
-    "@zetachain/networks": ^2.4.3
-    "@zetachain/protocol-contracts": ^3.0.1
+    "@zetachain/networks": ^4.0.0
+    "@zetachain/protocol-contracts": ^4.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -2804,8 +2804,8 @@ __metadata:
   dependencies:
     "@openzeppelin/contracts": 4.9.3
     "@uniswap/v2-periphery": 1.1.0-beta.0
-    "@zetachain/networks": ^2.4.3
-    "@zetachain/protocol-contracts": ^3.0.1
+    "@zetachain/networks": ^4.0.0
+    "@zetachain/protocol-contracts": ^4.0.1
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
