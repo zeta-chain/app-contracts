@@ -67,9 +67,6 @@ const preCalculatedResults = [
 
 // Function to check if a transaction involves the specified address
 const isTransactionOfInterest = (tx: any, address: string) => {
-  if (tx.hash === "A0x6a8b592fbe88c440e1e491b1d30f4e1a87b4b62df1e37bf5201c885440510bb0") {
-    console.log(tx);
-  }
   try {
     const isBTCDestination = tx?.to?.toLowerCase() === address.toLowerCase();
     const isWithdraw = tx?.input?.toLowerCase().includes("0xc7012626");
@@ -101,7 +98,6 @@ const findTransactionsInRange = async () => {
 
       totalTx += filteredTx.length;
       if (filteredTx.length > 0) {
-        // console.log(filteredTx.map((tx: any) => tx.hash));
         txHashes = txHashes.concat(filteredTx.map((tx: any) => tx.hash));
       }
 
