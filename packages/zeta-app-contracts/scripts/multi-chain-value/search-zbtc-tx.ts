@@ -83,7 +83,9 @@ const findTransactionsInRange = async () => {
   let totalTx = 0;
   let totalErrorTx = 0;
   let txHashes: string[] = [];
-  for (let i = 0; i < END_BLOCK; i++) {
+  let i = 0;
+  const MAX_PAGE = 1000;
+  while (i < MAX_PAGE) {
     const API_URL = `https://${API_ENDPOINT}/api?module=account&action=txlist&address=${ADDRESS}&sort=asc&filter_by=to&page=${i}&offset=1000`;
 
     try {
@@ -109,6 +111,7 @@ const findTransactionsInRange = async () => {
       if (endBlock >= END_BLOCK) {
         break;
       }
+      i++;
     } catch (e) {
       console.log(`Error fetching block ${i}`, e);
     }
