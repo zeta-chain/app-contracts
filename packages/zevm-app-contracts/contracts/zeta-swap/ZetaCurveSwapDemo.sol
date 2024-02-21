@@ -40,14 +40,14 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         return 18;
     }
 
-    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 receipient) private {
+    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 recipient) private {
         (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
 
         if (gasZRC20 != targetZRC20) revert WrongGasContract();
         if (gasFee >= amount) revert NotEnoughToPayGasFee();
 
         IZRC20(targetZRC20).approve(targetZRC20, gasFee);
-        IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
+        IZRC20(targetZRC20).withdraw(abi.encodePacked(recipient), amount - gasFee);
     }
 
     function onCrossChainCall(
@@ -56,7 +56,7 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
         uint256 amount,
         bytes calldata message
     ) external override {
-        (address targetZRC20, bytes32 receipient, ) = abi.decode(message, (address, bytes32, uint256));
+        (address targetZRC20, bytes32 recipient, ) = abi.decode(message, (address, bytes32, uint256));
 
         address[] memory path = new address[](2);
         path[0] = zrc20;
@@ -69,6 +69,6 @@ contract ZetaCurveSwapDemo is zContract, ZetaCurveSwapErrors {
 
         uint256 outAmount = ICRV3(crv3pool).exchange(i, j, amount, 0, false);
 
-        _doWithdrawal(targetZRC20, outAmount, receipient);
+        _doWithdrawal(targetZRC20, outAmount, recipient);
     }
 }

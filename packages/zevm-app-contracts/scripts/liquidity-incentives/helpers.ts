@@ -23,7 +23,7 @@ export const deployRewardByToken = async (
     deployer.address,
     deployer.address,
     zetaTokenAddress,
-    // @dev: now we send both tokens so contract calculate internaly LP address
+    // @dev: now we send both tokens so contract calculate internally LP address
     zetaTokenAddress,
     tokenAddress
   );

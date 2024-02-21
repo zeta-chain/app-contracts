@@ -42,14 +42,14 @@ library SwapHelperLib {
         );
     }
 
-    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 receipient) internal {
+    function _doWithdrawal(address targetZRC20, uint256 amount, bytes32 recipient) internal {
         (address gasZRC20, uint256 gasFee) = IZRC20(targetZRC20).withdrawGasFee();
 
         if (gasZRC20 != targetZRC20) revert WrongGasContract();
         if (gasFee >= amount) revert NotEnoughToPayGasFee();
 
         IZRC20(targetZRC20).approve(targetZRC20, gasFee);
-        IZRC20(targetZRC20).withdraw(abi.encodePacked(receipient), amount - gasFee);
+        IZRC20(targetZRC20).withdraw(abi.encodePacked(recipient), amount - gasFee);
     }
 
     function _existsPairPool(address uniswapV2Factory, address zrc20A, address zrc20B) internal view returns (bool) {

@@ -1,6 +1,6 @@
 /* ********************************* */
 /* How to run this script 
-/* To run this script you have to setup the enviroment (yarn and setup .env) and run this command 
+/* To run this script you have to setup the environment (yarn and setup .env) and run this command 
 /* ZETA_NETWORK=athens npx hardhat run scripts/zeta-swap/stress-swap.ts --network "polygon-mumbai" 
 /* In the example we use "polygon-mumbai", that's the source network. Can be any valid source network 
 /* Be sure to have enough gas tokens to pay all the tx 

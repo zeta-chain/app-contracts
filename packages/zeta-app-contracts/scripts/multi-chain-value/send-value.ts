@@ -10,7 +10,7 @@ import { getAppAddress, getChainId } from "../address.helpers";
 
 const networkName = network.name;
 
-const doTranfer = async (
+const doTransfer = async (
   sourceChain: ZetaProtocolNetwork,
   multiChainValueContract: MultiChainValue,
   chainId: number,
@@ -46,10 +46,10 @@ const main = async () => {
 
   const destinationAddress = ethers.utils.solidityPack(["address"], [process.env.PUBLIC_KEY_1 ?? signer.address]);
 
-  await doTranfer(networkName, multiChainValueContract, getChainId("goerli_testnet"), amount, destinationAddress);
-  await doTranfer(networkName, multiChainValueContract, getChainId("mumbai_testnet"), amount, destinationAddress);
-  await doTranfer(networkName, multiChainValueContract, getChainId("bsc_testnet"), amount, destinationAddress);
-  await doTranfer(networkName, multiChainValueContract, getChainId("zeta_testnet"), amount, destinationAddress);
+  await doTransfer(networkName, multiChainValueContract, getChainId("goerli_testnet"), amount, destinationAddress);
+  await doTransfer(networkName, multiChainValueContract, getChainId("mumbai_testnet"), amount, destinationAddress);
+  await doTransfer(networkName, multiChainValueContract, getChainId("bsc_testnet"), amount, destinationAddress);
+  await doTransfer(networkName, multiChainValueContract, getChainId("zeta_testnet"), amount, destinationAddress);
 };
 
 main().catch((error) => {

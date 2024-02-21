@@ -25,7 +25,7 @@ contract ZetaSwapBtcInbound is zContract {
         uint256 amount,
         bytes calldata message
     ) external virtual override onlySystem {
-        address receipient = BytesHelperLib.bytesToAddress(message, 0);
+        address recipient = BytesHelperLib.bytesToAddress(message, 0);
         uint32 targetZRC20ChainId = BytesHelperLib.bytesToUint32(message, 20);
         address targetZRC20 = systemContract.gasCoinZRC20ByChainId(targetZRC20ChainId);
 
@@ -38,6 +38,6 @@ contract ZetaSwapBtcInbound is zContract {
             targetZRC20,
             0
         );
-        SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, BytesHelperLib.addressToBytes(receipient));
+        SwapHelperLib._doWithdrawal(targetZRC20, outputAmount, BytesHelperLib.addressToBytes(recipient));
     }
 }
