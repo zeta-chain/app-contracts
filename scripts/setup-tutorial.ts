@@ -2,13 +2,16 @@ import { Wallet } from "ethers";
 import * as fs from "fs";
 import * as https from "https";
 
+// Path to the JSON file storing wallet information
 const jsonPath = "scripts/.wallet.json";
 
+// Interface defining the structure of the wallet configuration
 interface WalletConfig {
   address: string;
   privateKey: string;
 }
 
+// Function to save environment files with wallet information
 function saveEnvFiles(address: string, privateKey: string): void {
   const value: string = `
 PRIVATE_KEY=${privateKey}
@@ -16,6 +19,7 @@ ZETA_NETWORK=athens
 EXECUTE_PROGRAMMATICALLY=true`;
   const filePaths: string[] = ["packages/example-contracts/.env", "packages/zevm-example-contracts/.env"];
 
+  // Write wallet information to each environment file
   filePaths.forEach((filePath: string) => {
     fs.writeFile(filePath, value, (err: NodeJS.ErrnoException | null) => {
       if (err) {
@@ -26,6 +30,8 @@ EXECUTE_PROGRAMMATICALLY=true`;
     });
   });
 }
+
+// Function to save wallet information to a JSON file
 function saveWalletFile(address: string, privateKey: string, jsonPath: string): void {
   const data = `{"address": "${address}", "privateKey": "${privateKey}"}`;
 
@@ -42,6 +48,8 @@ function saveWalletFile(address: string, privateKey: string, jsonPath: string): 
     }
   });
 }
+
+// Function to call the faucet and request testnet assets
 function callFaucet(address: string): void {
   // Hit Faucet to get some testnet Zeta
   console.log("Requesting testnet assets from the faucet...");
@@ -67,6 +75,7 @@ function callFaucet(address: string): void {
   req.end();
 }
 
+// Function to check if the wallet file exists, and execute a callback if it does
 function createWallet(filePath: string, callback: () => void): void {
   fs.access(filePath, (err) => {
     if (!err) {
@@ -75,6 +84,7 @@ function createWallet(filePath: string, callback: () => void): void {
   });
 }
 
+// Function to get or create a wallet based on the wallet file
 async function getOrCreateWallet(filePath: string): Promise<Wallet> {
   let wallet: Wallet;
 
@@ -96,6 +106,7 @@ async function getOrCreateWallet(filePath: string): Promise<Wallet> {
   return wallet;
 }
 
+// Main function to get or create a wallet, and perform necessary actions
 const wallet = getOrCreateWallet(jsonPath).then(async (wallet) => {
   console.log(`Your Wallet Address: ${wallet.address}`);
   console.log(`Your Private Key: ${wallet.privateKey.substring(2)}`);
