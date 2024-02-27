@@ -13,7 +13,7 @@
       "zetaTokenConsumerUniV3": ""
     },
     "bsc_testnet": {
-      "multiChainSwap": "0x8BD7144Ddb59c9Fa3Dcf809998521E9cAD946fa1",
+      "multiChainSwap": "",
       "multiChainValue": "",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
@@ -31,13 +31,13 @@
       "zetaTokenConsumerUniV3": ""
     },
     "goerli_testnet": {
-      "multiChainSwap": "0x323745f16C93e56a98012970c28788498d8B3a14",
+      "multiChainSwap": "",
       "multiChainValue": "",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     },
     "mumbai_testnet": {
-      "multiChainSwap": "0xb1b812b664c28E1bA1d35De925Ae88b7Bc7cdCF5",
+      "multiChainSwap": "",
       "multiChainValue": "",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""

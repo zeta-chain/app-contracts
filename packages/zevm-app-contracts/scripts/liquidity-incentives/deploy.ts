@@ -21,7 +21,7 @@ async function main() {
   const rewardDistributorFactory = await RewardDistributorFactoryFactory.deploy(zetaTokenAddress, SYSTEM_CONTRACT);
   await rewardDistributorFactory.deployed();
   console.log("RewardDistributorFactory deployed to:", rewardDistributorFactory.address);
-  saveAddress("rewardDistributorFactory", rewardDistributorFactory.address);
+  saveAddress("rewardDistributorFactory", rewardDistributorFactory.address, networkName);
 }
 
 main().catch((error) => {
