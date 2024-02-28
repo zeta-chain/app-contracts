@@ -10,7 +10,6 @@ interface WalletConfig {
   address: string;
   privateKey: string;
 }
-
 // Function to save environment files with wallet information
 function saveEnvFiles(address: string, privateKey: string): void {
   const value: string = `
