@@ -20,7 +20,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 12,
   },
-  // Define ESLint plugins
+  // Define ESLint plugins.
   plugins: ["@typescript-eslint", "prettier", "simple-import-sort", "sort-keys-fix", "typescript-sort-keys"],
   // Define ESLint rules
   rules: {
