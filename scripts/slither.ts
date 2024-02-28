@@ -7,7 +7,6 @@ const projectRoot = path.join(__dirname, "../");
 
 // Solidity compiler version
 const solcVersion = "0.8.7";
-
 // Timestamp for unique file naming
 const timestamp = Date.now();
 
