@@ -8,7 +8,7 @@
     },
     "bsc_mainnet": {
       "multiChainSwap": "",
-      "multiChainValue": "0x33e5fCFfe910B99DB46c259804fCA1317EA0Aa89",
+      "multiChainValue": "",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     },
@@ -26,7 +26,7 @@
     },
     "eth_mainnet": {
       "multiChainSwap": "",
-      "multiChainValue": "0x910966E1C0Bc9FD74f499723c19Ff9799fE258a5",
+      "multiChainValue": "",
       "zetaTokenConsumerUniV2": "",
       "zetaTokenConsumerUniV3": ""
     },
