@@ -22,7 +22,28 @@ const config: HardhatUserConfig = {
       // ETH
       goerli: process.env.ETHERSCAN_API_KEY || "",
       mainnet: process.env.ETHERSCAN_API_KEY || "",
+      zeta_mainnet: "NO_TOKEN",
+      zeta_testnet: "NO_TOKEN",
     },
+    //@ts-ignore
+    customChains: [
+      {
+        chainId: 7000,
+        network: "zeta_mainnet",
+        urls: {
+          apiURL: "https://zetachain.blockscout.com/api",
+          browserURL: "https://zetachain.blockscout.com",
+        },
+      },
+      {
+        chainId: 7001,
+        network: "zeta_testnet",
+        urls: {
+          apiURL: "https://zetachain-athens-3.blockscout.com/api",
+          browserURL: "https://zetachain-athens-3.blockscout.com",
+        },
+      },
+    ],
   },
   gasReporter: {
     currency: "USD",

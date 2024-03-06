@@ -7,11 +7,13 @@ import { saveAddress } from "../address.helpers";
 const networkName = network.name;
 
 const invitationManager = async () => {
+  if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
+
   const InvitationManagerFactory = (await ethers.getContractFactory("InvitationManager")) as InvitationManager__factory;
   const invitationManager = await InvitationManagerFactory.deploy();
   await invitationManager.deployed();
   console.log("InvitationManager deployed to:", invitationManager.address);
-  saveAddress("invitationManager", invitationManager.address);
+  saveAddress("invitationManager", invitationManager.address, networkName);
 };
 
 const main = async () => {

@@ -24,16 +24,14 @@ export const getSystemContractAddress = () => {
   return protocolAddresses["zevm"]["zeta_testnet"].systemContract;
 };
 
-export const saveAddress = (name: string, address: string) => {
-  const networkName = "zeta_testnet";
-
+export const saveAddress = (name: string, address: string, networkName: ZetaProtocolNetwork) => {
   console.log(`Updating ${name} address on ${networkName}.`);
 
   const filename = join(__dirname, `../data/addresses.json`);
 
   const newAddresses = JSON.parse(readFileSync(filename, "utf8"));
 
-  newAddresses["zevm"]["zeta_testnet"][name] = address;
+  newAddresses["zevm"][networkName][name] = address;
 
   writeFileSync(filename, JSON.stringify(newAddresses, null, 2));
 };

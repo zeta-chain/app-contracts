@@ -14,7 +14,7 @@ async function main() {
   const disperseFactory = await DisperseFactory.deploy();
   await disperseFactory.deployed();
   console.log("Disperse deployed to:", disperseFactory.address);
-  saveAddress("disperse", disperseFactory.address);
+  saveAddress("disperse", disperseFactory.address, networkName);
 }
 
 main().catch((error) => {
