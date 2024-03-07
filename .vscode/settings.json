@@ -6,7 +6,7 @@
     "statusBarItem.hoverBackground": "#71C87D"
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "[solidity]": {
 		"editor.tabSize": 4,

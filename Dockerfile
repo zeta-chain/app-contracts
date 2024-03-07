@@ -1,5 +1,5 @@
 
-FROM node:16.14-alpine
+FROM node:16.16-alpine
 
 ENV SHELL /bin/ash
 ENV EXECUTE_PROGRAMMATICALLY=true
@@ -24,4 +24,3 @@ RUN cd packages/zevm-app-contracts && npx hardhat compile && cd -
 WORKDIR /home/zetachain/
 
 ENTRYPOINT ["ash"]
-
