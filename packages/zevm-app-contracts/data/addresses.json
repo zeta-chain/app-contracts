@@ -5,7 +5,8 @@
       "rewardDistributorFactory": "0xB9dc665610CF5109cE23aBBdaAc315B41FA094c1",
       "zetaSwap": "0xA8168Dc495Ed61E70f5c1941e2860050AB902cEF",
       "zetaSwapBtcInbound": "0x358E2cfC0E16444Ba7D3164Bbeeb6bEA7472c559",
-      "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d"
+      "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d",
+      "withdrawERC20": "0xB5De3Eb98e29853a99adA24029786aa670f6D580"
     }
   }
 }

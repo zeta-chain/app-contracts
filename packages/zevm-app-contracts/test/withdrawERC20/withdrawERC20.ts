@@ -4,7 +4,8 @@ import { expect } from "chai";
 import { parseEther } from "ethers/lib/utils";
 import { ethers, network } from "hardhat";
 
-import { Disperse, Disperse__factory, MockZRC20, MockZRC20__factory } from "../typechain-types";
+import { WithdrawERC20 } from "../../typechain-types/contracts/withdrawErc20/withdrawErc20.sol";
+import { WithdrawERC20__factory } from "../../typechain-types/factories/contracts/withdrawErc20/withdrawErc20.sol";
 
 describe("WithdrawERC20 tests", () => {
   let withdrawERC20Contract: WithdrawERC20;
@@ -17,8 +18,8 @@ describe("WithdrawERC20 tests", () => {
 
     await network.provider.send("hardhat_setBalance", [deployer.address, parseUnits("1000000").toHexString()]);
 
-    const DisperseFactory = (await ethers.getContractFactory("Disperse")) as Disperse__factory;
-    withdrawERC20Contract = (await DisperseFactory.deploy()) as Disperse;
+    const WithdrawERC20Factory = (await ethers.getContractFactory("WithdrawERC20")) as WithdrawERC20__factory;
+    withdrawERC20Contract = (await WithdrawERC20Factory.deploy()) as WithdrawERC20;
     await withdrawERC20Contract.deployed();
   });
 
