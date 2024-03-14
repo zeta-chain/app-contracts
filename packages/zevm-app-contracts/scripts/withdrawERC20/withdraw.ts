@@ -8,7 +8,7 @@ import { getZEVMAppAddress } from "../address.helpers";
 const networkName = network.name;
 
 const ZUSDC_ADDRESS = "0x0cbe0dF132a6c6B4a2974Fa1b7Fb953CF0Cc798a";
-const AMOUNT = ethers.utils.parseUnits("5", 6);
+const AMOUNT = ethers.utils.parseUnits("0.5", 6);
 
 async function main() {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
