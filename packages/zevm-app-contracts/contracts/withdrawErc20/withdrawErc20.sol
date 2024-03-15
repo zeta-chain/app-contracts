@@ -8,6 +8,8 @@ import "@zetachain/toolkit/contracts/SwapHelperLib.sol";
 contract WithdrawERC20 {
     SystemContract public immutable systemContract;
 
+    error InsufficientInputAmount();
+
     constructor(address systemContractAddress) {
         systemContract = SystemContract(systemContractAddress);
     }
@@ -26,6 +28,8 @@ contract WithdrawERC20 {
             gasZRC20,
             amount
         );
+
+        if (inputForGas > amount) revert InsufficientInputAmount();
 
         IZRC20(gasZRC20).approve(zrc20, gasFee);
         IZRC20(zrc20).withdraw(to, amount - inputForGas);
