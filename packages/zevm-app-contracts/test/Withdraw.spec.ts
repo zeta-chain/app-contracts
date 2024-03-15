@@ -72,5 +72,13 @@ describe("Withdraw tests", () => {
       const balance = await mockUSDCContracts.balanceOf(fakeTSS.address);
       expect(balance).to.equal(decodedEventData.args.value);
     });
+
+    it("Should revert if it's not enogth", async () => {
+      const INITIAL_AMOUNT = parseEther("0.01");
+
+      await mockUSDCContracts.approve(withdrawERC20Contract.address, INITIAL_AMOUNT);
+      const tx = withdrawERC20Contract.withdraw(mockUSDCContracts.address, INITIAL_AMOUNT, fakeTSS.address);
+      await expect(tx).to.be.reverted;
+    });
   });
 });
