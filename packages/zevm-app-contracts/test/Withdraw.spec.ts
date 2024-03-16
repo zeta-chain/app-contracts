@@ -73,7 +73,7 @@ describe("Withdraw tests", () => {
       expect(balance).to.equal(decodedEventData.args.value);
     });
 
-    it("Should revert if it's not enogth", async () => {
+    it("Should revert if it's not enough", async () => {
       const INITIAL_AMOUNT = parseEther("0.01");
 
       await mockUSDCContracts.approve(withdrawERC20Contract.address, INITIAL_AMOUNT);
