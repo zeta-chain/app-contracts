@@ -1,5 +1,5 @@
 import { MaxUint256 } from "@ethersproject/constants";
-import { parseUnits } from "@ethersproject/units";
+import { parseEther, parseUnits } from "@ethersproject/units";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
@@ -48,8 +48,9 @@ export const evmSetup = async (
   const token1Contract = (await ZRC20Factory.deploy(parseUnits("1000000"), "tBNB", "tBNB")) as MockZRC20;
   const token2Contract = (await ZRC20Factory.deploy(parseUnits("1000000"), "gETH", "gETH")) as MockZRC20;
   const token3Contract = (await ZRC20Factory.deploy(parseUnits("1000000"), "tMATIC", "tMATIC")) as MockZRC20;
+  const token4Contract = (await ZRC20Factory.deploy(parseUnits("1000000"), "USDC", "USDC")) as MockZRC20;
 
-  const ZRC20Contracts = [token1Contract, token2Contract, token3Contract];
+  const ZRC20Contracts = [token1Contract, token2Contract, token3Contract, token4Contract];
 
   const SystemContractFactory = (await ethers.getContractFactory("MockSystemContract")) as MockSystemContract__factory;
 
@@ -62,10 +63,13 @@ export const evmSetup = async (
   await systemContract.setGasCoinZRC20(97, ZRC20Contracts[0].address);
   await systemContract.setGasCoinZRC20(5, ZRC20Contracts[1].address);
   await systemContract.setGasCoinZRC20(80001, ZRC20Contracts[2].address);
+  await ZRC20Contracts[3].setGasFeeAddress(ZRC20Contracts[1].address);
+  await ZRC20Contracts[3].setGasFee(parseEther("0.01"));
 
   await addZetaEthLiquidity(signer, ZRC20Contracts[0], uniswapRouterAddr);
   await addZetaEthLiquidity(signer, ZRC20Contracts[1], uniswapRouterAddr);
   await addZetaEthLiquidity(signer, ZRC20Contracts[2], uniswapRouterAddr);
+  await addZetaEthLiquidity(signer, ZRC20Contracts[3], uniswapRouterAddr);
 
   return { ZRC20Contracts, systemContract };
 };
