@@ -11,6 +11,10 @@ import { WithdrawERC20 } from "../typechain-types/contracts/withdrawErc20/withdr
 import { WithdrawERC20__factory } from "../typechain-types/factories/contracts/withdrawErc20/withdrawErc20.sol";
 import { evmSetup } from "./test.helpers";
 
+const encodeToBytes = (destination: string) => {
+  return ethers.utils.hexlify(ethers.utils.zeroPad(destination, 32));
+};
+
 describe("Withdraw tests", () => {
   let withdrawERC20Contract: WithdrawERC20;
   let ZRC20Contracts: MockZRC20[];
@@ -44,12 +48,13 @@ describe("Withdraw tests", () => {
 
   describe("WithdrawERC20", () => {
     it("Should withdraw", async () => {
+      const encodedDestination = encodeToBytes(fakeTSS.address);
       const INITIAL_AMOUNT = parseEther("10");
       const gasFee = await mockUSDCContracts.gasFee();
       const expectedAmount = INITIAL_AMOUNT.sub(gasFee);
 
       await mockUSDCContracts.approve(withdrawERC20Contract.address, INITIAL_AMOUNT);
-      const tx = await withdrawERC20Contract.withdraw(mockUSDCContracts.address, INITIAL_AMOUNT, fakeTSS.address);
+      const tx = await withdrawERC20Contract.withdraw(mockUSDCContracts.address, INITIAL_AMOUNT, encodedDestination);
       const receipt = await tx.wait();
 
       expect(receipt.events).not.to.be.undefined;
@@ -60,7 +65,7 @@ describe("Withdraw tests", () => {
       const decodedEventData = mockUSDCContracts.interface.parseLog(withdrawalEvent);
 
       expect(decodedEventData.args.from).to.equal(withdrawERC20Contract.address);
-      expect(decodedEventData.args.to).equal(fakeTSS.address.toLowerCase());
+      expect(decodedEventData.args.to).equal(encodedDestination.toLowerCase());
 
       //@dev: We are assuming that the value is within 10% of the expected amount because we lost something on swap
       expect(decodedEventData.args.value).to.be.lt(expectedAmount);
@@ -77,7 +82,11 @@ describe("Withdraw tests", () => {
       const INITIAL_AMOUNT = parseEther("0.01");
 
       await mockUSDCContracts.approve(withdrawERC20Contract.address, INITIAL_AMOUNT);
-      const tx = withdrawERC20Contract.withdraw(mockUSDCContracts.address, INITIAL_AMOUNT, fakeTSS.address);
+      const tx = withdrawERC20Contract.withdraw(
+        mockUSDCContracts.address,
+        INITIAL_AMOUNT,
+        encodeToBytes(fakeTSS.address)
+      );
       await expect(tx).to.be.reverted;
     });
   });

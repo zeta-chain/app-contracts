@@ -37,7 +37,7 @@ contract MockZRC20 is ERC20 {
     }
 
     function withdraw(bytes calldata to, uint256 amount) external returns (bool) {
-        address toAddress = BytesHelperLib.bytesToAddress(to, 0);
+        address toAddress = BytesHelperLib.bytesToAddress(to, 12);
         emit Withdrawal(msg.sender, to, amount, gasFee, 0);
         return transfer(toAddress, amount);
     }
