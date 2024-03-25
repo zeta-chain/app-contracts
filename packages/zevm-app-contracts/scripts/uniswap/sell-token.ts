@@ -16,7 +16,7 @@ import { getChainId, getSystemContractAddress } from "../address.helpers";
 import { getNow, printReserves } from "./uniswap.helpers";
 
 const networkName = network.name;
-const SYSTEM_CONTRACT = getSystemContractAddress();
+const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
 
 const BTC_TO_SELL = parseUnits("0", 8);
 const ETH_TO_SELL = parseUnits("0");

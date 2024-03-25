@@ -17,10 +17,10 @@ const main = async () => {
 
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
-  const systemContractAddress = getSystemContractAddress();
+  const systemContractAddress = getSystemContractAddress(networkName);
   const systemContract = await SystemContract__factory.connect(systemContractAddress, deployer);
 
-  const factoryContractAddress = getZEVMAppAddress("rewardDistributorFactory");
+  const factoryContractAddress = getZEVMAppAddress("rewardDistributorFactory", networkName);
 
   const rewardDistributorFactory = RewardDistributorFactory__factory.connect(factoryContractAddress, deployer);
 

@@ -6,6 +6,8 @@ import { ethers, network } from "hardhat";
 import { getZEVMAppAddress } from "../address.helpers";
 import { getSwapData } from "./helpers";
 
+const networkName = network.name;
+
 const main = async () => {
   if (!isProtocolNetworkName(network.name)) throw new Error("Invalid network name");
 
@@ -16,7 +18,7 @@ const main = async () => {
 
   const [signer] = await ethers.getSigners();
 
-  const zetaSwapAddress = getZEVMAppAddress("zetaSwap");
+  const zetaSwapAddress = getZEVMAppAddress("zetaSwap", networkName);
 
   const tssAddress = getAddress("tss", network.name);
 

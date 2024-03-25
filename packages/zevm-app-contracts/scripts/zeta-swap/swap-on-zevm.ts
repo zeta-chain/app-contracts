@@ -16,7 +16,7 @@ const main = async () => {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
   const [signer] = await ethers.getSigners();
 
-  const zetaSwap = getZEVMAppAddress(USE_BTC_SWAP ? "zetaSwapBtcInbound" : "zetaSwap");
+  const zetaSwap = getZEVMAppAddress(USE_BTC_SWAP ? "zetaSwapBtcInbound" : "zetaSwap", networkName);
 
   const amount = parseUnits("0.00001", 8);
   const sourceToken = getZRC20Address("btc_testnet");

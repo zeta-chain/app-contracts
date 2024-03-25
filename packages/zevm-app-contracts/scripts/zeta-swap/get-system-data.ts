@@ -1,8 +1,10 @@
 import { ZetaProtocolNetwork } from "@zetachain/protocol-contracts";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import { SystemContract, SystemContract__factory } from "../../typechain-types";
 import { getChainId, getGasSymbolByNetwork, getSystemContractAddress } from "../address.helpers";
+
+const networkName = network.name;
 
 const getZRC20Address = async (systemContract: SystemContract, network: ZetaProtocolNetwork) => {
   const tokenAddress = await systemContract.gasCoinZRC20ByChainId(getChainId(network));
@@ -13,7 +15,7 @@ const getZRC20Address = async (systemContract: SystemContract, network: ZetaProt
 
 async function main() {
   const [deployer] = await ethers.getSigners();
-  const SYSTEM_CONTRACT = getSystemContractAddress();
+  const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
   console.log(`SYSTEM CONTRACT:`, SYSTEM_CONTRACT);
 
   const systemContract = await SystemContract__factory.connect(SYSTEM_CONTRACT, deployer);

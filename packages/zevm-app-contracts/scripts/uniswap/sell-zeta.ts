@@ -15,7 +15,7 @@ import { getChainId, getSystemContractAddress } from "../address.helpers";
 import { getNow, printReserves } from "./uniswap.helpers";
 
 const networkName = network.name;
-const SYSTEM_CONTRACT = getSystemContractAddress();
+const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
 
 const ZETA_TO_SELL = parseUnits("0.001");
 

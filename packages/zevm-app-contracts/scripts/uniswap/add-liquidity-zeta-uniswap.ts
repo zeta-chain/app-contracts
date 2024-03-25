@@ -19,7 +19,7 @@ import { getNow, printReserves, sortPair } from "./uniswap.helpers";
 
 const networkName = network.name;
 
-const SYSTEM_CONTRACT = getSystemContractAddress();
+const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
 
 const BTC_TO_ADD = parseUnits("0", 8);
 const ETH_TO_ADD = parseUnits("0");

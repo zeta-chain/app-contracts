@@ -6,7 +6,7 @@ import { getSystemContractAddress, saveAddress } from "../address.helpers";
 
 const networkName = network.name;
 
-const SYSTEM_CONTRACT = getSystemContractAddress();
+const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
 
 async function main() {
   const [deployer] = await ethers.getSigners();

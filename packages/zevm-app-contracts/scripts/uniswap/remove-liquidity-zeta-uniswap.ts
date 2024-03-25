@@ -19,7 +19,7 @@ import { getChainId, getSystemContractAddress } from "../address.helpers";
 import { getNow, printReserves, sortPair } from "./uniswap.helpers";
 
 const networkName = network.name;
-const SYSTEM_CONTRACT = getSystemContractAddress();
+const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
 
 const removeTokenEthLiquidity = async (
   tokenContract: ERC20,
