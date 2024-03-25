@@ -51,6 +51,13 @@ const config: HardhatUserConfig = {
   },
   networks: {
     ...getHardhatConfigNetworks(),
+    // zeta_mainnet: {
+    //   accounts: PRIVATE_KEYS,
+    //   chainId: 7000,
+    //   gas: 5000000,
+    //   gasPrice: 80000000000,
+    //   url: "https://zetachain-evm.blockpi.network/v1/rpc/public",
+    // },
   },
   solidity: {
     compilers: [

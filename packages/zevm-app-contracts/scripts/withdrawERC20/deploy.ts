@@ -1,4 +1,5 @@
 import { isProtocolNetworkName } from "@zetachain/protocol-contracts";
+import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
 import { WithdrawERC20__factory } from "../../typechain-types/factories/contracts/withdrawErc20/withdrawErc20.sol";
@@ -6,7 +7,7 @@ import { getSystemContractAddress, saveAddress } from "../address.helpers";
 
 const networkName = network.name;
 
-const SYSTEM_CONTRACT = getSystemContractAddress();
+const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
 
 async function main() {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");

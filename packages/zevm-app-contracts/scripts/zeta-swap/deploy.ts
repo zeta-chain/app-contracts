@@ -10,7 +10,7 @@ const main = async () => {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
   console.log(`Deploying ZetaSwap...`);
-  const SYSTEM_CONTRACT = getSystemContractAddress();
+  const SYSTEM_CONTRACT = getSystemContractAddress(networkName);
 
   const Factory = (await ethers.getContractFactory("ZetaSwap")) as ZetaSwap__factory;
   const contract = (await Factory.deploy(SYSTEM_CONTRACT)) as ZetaSwap;

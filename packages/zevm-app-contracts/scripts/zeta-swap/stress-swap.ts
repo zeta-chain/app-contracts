@@ -65,7 +65,7 @@ const main = async () => {
 
   const [signer] = await ethers.getSigners();
 
-  const zetaSwapAddress = getZEVMAppAddress("zetaSwap");
+  const zetaSwapAddress = getZEVMAppAddress("zetaSwap", networkName);
 
   const tssAddress = getAddress("tss", swappableNetwork);
 

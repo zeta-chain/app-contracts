@@ -17,7 +17,7 @@ const main = async () => {
 
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
-  const systemContractAddress = getSystemContractAddress();
+  const systemContractAddress = getSystemContractAddress(networkName);
   const systemContract = await SystemContract__factory.connect(systemContractAddress, deployer);
 
   await addReward(deployer, systemContract, REWARD_CONTRACT_ADDRESS, REWARD_DURATION, REWARDS_AMOUNT);

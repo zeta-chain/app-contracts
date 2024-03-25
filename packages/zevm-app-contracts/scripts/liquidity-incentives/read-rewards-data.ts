@@ -39,7 +39,7 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
-  const factoryContractAddress = getZEVMAppAddress("rewardDistributorFactory");
+  const factoryContractAddress = getZEVMAppAddress("rewardDistributorFactory", networkName);
 
   const rewardDistributorFactory = RewardDistributorFactory__factory.connect(factoryContractAddress, deployer);
   const incentivesContractsLen = await rewardDistributorFactory.incentivesContractsLen();
