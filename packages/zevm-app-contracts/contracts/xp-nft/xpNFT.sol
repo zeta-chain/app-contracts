@@ -35,6 +35,8 @@ contract ZetaXP is ERC721URIStorage, Ownable {
 
     // Event for New Mint
     event NewNFTMinted(address indexed sender, uint256 indexed tokenId);
+    // Event for NFT Update
+    event NFTUpdated(address indexed sender, uint256 indexed tokenId);
 
     error InvalidSigner();
     error LengthMismatch();
@@ -105,7 +107,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         uint256[] memory taskIds,
         Task[] memory taskValues
     ) private pure returns (bytes32) {
-        bytes memory encodedData = abi.encodePacked(
+        bytes memory encodedData = abi.encode(
             to,
             tokenId,
             data_.xpTotal,
@@ -117,10 +119,27 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         );
 
         for (uint256 i = 0; i < taskIds.length; i++) {
-            encodedData = abi.encodePacked(encodedData, taskIds[i], taskValues[i].completed, taskValues[i].count);
+            encodedData = abi.encode(encodedData, taskIds[i], taskValues[i].completed, taskValues[i].count);
         }
 
         return keccak256(encodedData);
+    }
+
+    function _updateNFT(
+        address to,
+        uint256 tokenId,
+        Data memory data_,
+        uint256[] calldata taskIds,
+        Task[] calldata taskValues,
+        Signature calldata signature
+    ) internal {
+        _verify(to, tokenId, data_, taskIds, taskValues, signature);
+        if (taskIds.length != taskValues.length) revert LengthMismatch();
+
+        data[tokenId] = data_;
+        for (uint256 i = 0; i < taskIds.length; i++) {
+            tasks[tokenId][taskIds[i]] = taskValues[i];
+        }
     }
 
     // External mint function
@@ -132,18 +151,26 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         Task[] calldata taskValues,
         Signature calldata signature
     ) external {
-        _verify(to, tokenId, data_, taskIds, taskValues, signature);
-        if (taskIds.length != taskValues.length) revert LengthMismatch();
-
         _mint(to, tokenId);
         _setTokenURI(tokenId, string(abi.encodePacked(baseTokenURI, _uint2str(tokenId))));
 
-        data[tokenId] = data_;
-        for (uint256 i = 0; i < taskIds.length; i++) {
-            tasks[tokenId][taskIds[i]] = taskValues[i];
-        }
+        _updateNFT(to, tokenId, data_, taskIds, taskValues, signature);
 
         emit NewNFTMinted(to, tokenId);
+    }
+
+    // External mint function
+    function updateNFT(
+        address to,
+        uint256 tokenId,
+        Data memory data_,
+        uint256[] calldata taskIds,
+        Task[] calldata taskValues,
+        Signature calldata signature
+    ) external {
+        _updateNFT(to, tokenId, data_, taskIds, taskValues, signature);
+
+        emit NFTUpdated(to, tokenId);
     }
 
     // Set the base URI for tokens

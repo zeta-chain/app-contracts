@@ -45,7 +45,7 @@ export const getSignature = async (
     ]
   );
 
-  // let combinedPayload = payload;
+  let combinedPayload = payload;
   for (let i = 0; i < tasksId.length; i++) {
     payload = ethers.utils.defaultAbiCoder.encode(
       ["bytes", "uint256", "bool", "uint256"],

@@ -5,7 +5,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
 import { ZetaXP } from "../../typechain-types";
-import { Data, getSignature, NFT, Task } from "./test.helpers";
+import { getSignature, NFT } from "./test.helpers";
 
 describe("XP NFT Contract test", () => {
   let zetaXP: ZetaXP, inviter: SignerWithAddress, invitee: SignerWithAddress, addrs: SignerWithAddress[];
@@ -49,23 +49,31 @@ describe("XP NFT Contract test", () => {
     });
   });
 
-  describe("Invitations test", () => {
-    it("Should verify an invitation and store it", async () => {
+  describe("NFT test", () => {
+    it("Should mint and NFT", async () => {
       const sig = await getSignature(inviter, invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
       await zetaXP.mintNFT(invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
-      // const expirationDate = await getTomorrowTimestamp();
-      // const sig = await getInvitationSig(inviter, expirationDate);
-      // const hasBeenVerifiedBefore = await zetaXP.hasBeenVerified(invitee.address);
-      // await expect(hasBeenVerifiedBefore).to.be.eq(false);
-      // const tx = await zetaXP.connect(invitee).confirmAndAcceptInvitation(inviter.address, expirationDate, sig);
-      // const rec = await tx.wait();
-      // const block = await ethers.provider.getBlock(rec.blockNumber);
-      // const invitation = await zetaXP.acceptedInvitationsTimestamp(inviter.address, invitee.address);
-      // await expect(invitation).to.be.eq(block.timestamp);
-      // const invitationCount = await zetaXP.getInviteeCount(inviter.address);
-      // await expect(invitationCount).to.be.eq(1);
-      // const hasBeenVerifiedAfter = await zetaXP.hasBeenVerified(invitee.address);
-      // await expect(hasBeenVerifiedAfter).to.be.eq(true);
+
+      const owner = await zetaXP.ownerOf(1);
+      await expect(owner).to.be.eq(invitee.address);
+
+      const nftData = await zetaXP.data(1);
+      await expect(nftData.xpTotal).to.be.eq(sampleNFT.data.xpTotal);
+      await expect(nftData.level).to.be.eq(sampleNFT.data.level);
+      await expect(nftData.testnetCampaignParticipant).to.be.eq(sampleNFT.data.testnetCampaignParticipant);
+      await expect(nftData.enrollDate).to.be.eq(sampleNFT.data.enrollDate);
+      await expect(nftData.mintDate).to.be.eq(sampleNFT.data.mintDate);
+      await expect(nftData.generation).to.be.eq(sampleNFT.data.generation);
+
+      for (let i = 0; i < sampleNFT.tasksId.length; i++) {
+        const sampleTask = sampleNFT.tasks[i];
+        const task = await zetaXP.tasks(sampleNFT.tokenId, sampleNFT.tasksId[i]);
+        await expect(task.completed).to.be.eq(sampleTask.completed);
+        await expect(task.count).to.be.eq(sampleTask.count);
+      }
+
+      const url = await zetaXP.tokenURI(1);
+      await expect(url).to.be.eq("https://api.zetachain.io/nft/1");
     });
   });
 });
