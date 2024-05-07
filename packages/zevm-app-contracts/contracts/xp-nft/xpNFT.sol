@@ -161,16 +161,16 @@ contract ZetaXP is ERC721URIStorage, Ownable {
 
     // External mint function
     function updateNFT(
-        address to,
         uint256 tokenId,
         Data memory data_,
         uint256[] calldata taskIds,
         Task[] calldata taskValues,
         Signature calldata signature
     ) external {
-        _updateNFT(to, tokenId, data_, taskIds, taskValues, signature);
+        address owner = ownerOf(tokenId);
+        _updateNFT(owner, tokenId, data_, taskIds, taskValues, signature);
 
-        emit NFTUpdated(to, tokenId);
+        emit NFTUpdated(owner, tokenId);
     }
 
     // Set the base URI for tokens
