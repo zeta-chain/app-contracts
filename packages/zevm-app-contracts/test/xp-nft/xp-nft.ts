@@ -43,11 +43,6 @@ describe("XP NFT Contract test", () => {
     };
   });
 
-  describe("True", () => {
-    it("Should be true", async () => {
-      expect(true).to.equal(true);
-    });
-  });
 
   const validateNFT = async (nft: NFT) => {
     const owner = await zetaXP.ownerOf(nft.tokenId);
