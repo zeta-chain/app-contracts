@@ -6,7 +6,7 @@ export interface Task {
   count: number;
 }
 
-export interface Data {
+export interface TokenData {
   enrollDate: number;
   generation: number;
   level: number;
@@ -16,7 +16,7 @@ export interface Data {
 }
 
 export interface NFT {
-  data: Data;
+  data: TokenData;
   tasks: Task[];
   tasksId: number[];
   to: string;
@@ -27,7 +27,7 @@ export const getSignature = async (
   signer: SignerWithAddress,
   to: string,
   tokenId: number,
-  data: Data,
+  data: TokenData,
   tasksId: number[],
   tasks: Task[]
 ) => {
@@ -45,7 +45,6 @@ export const getSignature = async (
     ]
   );
 
-  let combinedPayload = payload;
   for (let i = 0; i < tasksId.length; i++) {
     payload = ethers.utils.defaultAbiCoder.encode(
       ["bytes", "uint256", "bool", "uint256"],

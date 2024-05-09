@@ -17,7 +17,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         uint256 count;
     }
 
-    struct Data {
+    struct TokenData {
         uint256 xpTotal;
         uint256 level;
         uint256 testnetCampaignParticipant;
@@ -26,7 +26,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         uint256 generation;
     }
 
-    mapping(uint256 => Data) public tokenData;
+    mapping(uint256 => TokenData) public tokenData;
     mapping(uint256 => mapping(uint256 => Task)) public tasksByTokenId;
 
     // Base URL for NFT images
@@ -86,7 +86,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
     function _verify(
         address to,
         uint256 tokenId,
-        Data memory data_,
+        TokenData memory data_,
         uint256[] calldata taskIds,
         Task[] calldata taskValues,
         Signature calldata signature
@@ -103,7 +103,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
     function _calculateHash(
         address to,
         uint256 tokenId,
-        Data memory data_,
+        TokenData memory data_,
         uint256[] memory taskIds,
         Task[] memory taskValues
     ) private pure returns (bytes32) {
@@ -128,7 +128,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
     function _updateNFT(
         address to,
         uint256 tokenId,
-        Data memory data_,
+        TokenData memory data_,
         uint256[] calldata taskIds,
         Task[] calldata taskValues,
         Signature calldata signature
@@ -136,9 +136,9 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         _verify(to, tokenId, data_, taskIds, taskValues, signature);
         if (taskIds.length != taskValues.length) revert LengthMismatch();
 
-        data[tokenId] = data_;
+        tokenData[tokenId] = data_;
         for (uint256 i = 0; i < taskIds.length; i++) {
-            tasks[tokenId][taskIds[i]] = taskValues[i];
+            tasksByTokenId[tokenId][taskIds[i]] = taskValues[i];
         }
     }
 
@@ -146,7 +146,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
     function mintNFT(
         address to,
         uint256 tokenId,
-        Data memory data_,
+        TokenData memory data_,
         uint256[] calldata taskIds,
         Task[] calldata taskValues,
         Signature calldata signature
@@ -162,7 +162,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
     // External mint function
     function updateNFT(
         uint256 tokenId,
-        Data memory data_,
+        TokenData memory data_,
         uint256[] calldata taskIds,
         Task[] calldata taskValues,
         Signature calldata signature

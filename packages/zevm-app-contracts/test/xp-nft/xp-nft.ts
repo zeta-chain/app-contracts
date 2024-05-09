@@ -8,15 +8,15 @@ import { ZetaXP } from "../../typechain-types";
 import { getSignature, NFT } from "./test.helpers";
 
 describe("XP NFT Contract test", () => {
-  let zetaXP: ZetaXP, inviter: SignerWithAddress, invitee: SignerWithAddress, addrs: SignerWithAddress[];
+  let zetaXP: ZetaXP, signer: SignerWithAddress, user: SignerWithAddress, addrs: SignerWithAddress[];
   let sampleNFT: NFT;
 
   beforeEach(async () => {
-    [inviter, invitee, ...addrs] = await ethers.getSigners();
+    [signer, user, ...addrs] = await ethers.getSigners();
     const zetaXPFactory = await ethers.getContractFactory("ZetaXP");
 
     //@ts-ignore
-    zetaXP = await zetaXPFactory.deploy("ZETA NFT", "ZNFT", "https://api.zetachain.io/nft/", inviter.address);
+    zetaXP = await zetaXPFactory.deploy("ZETA NFT", "ZNFT", "https://api.zetachain.io/nft/", signer.address);
 
     sampleNFT = {
       data: {
@@ -38,17 +38,16 @@ describe("XP NFT Contract test", () => {
         },
       ],
       tasksId: [2, 3],
-      to: invitee.address,
+      to: user.address,
       tokenId: 1,
     };
   });
-
 
   const validateNFT = async (nft: NFT) => {
     const owner = await zetaXP.ownerOf(nft.tokenId);
     await expect(owner).to.be.eq(nft.to);
 
-    const nftData = await zetaXP.data(nft.tokenId);
+    const nftData = await zetaXP.tokenData(nft.tokenId);
     await expect(nftData.xpTotal).to.be.eq(nft.data.xpTotal);
     await expect(nftData.level).to.be.eq(nft.data.level);
     await expect(nftData.testnetCampaignParticipant).to.be.eq(nft.data.testnetCampaignParticipant);
@@ -58,7 +57,7 @@ describe("XP NFT Contract test", () => {
 
     for (let i = 0; i < nft.tasksId.length; i++) {
       const sampleTask = nft.tasks[i];
-      const task = await zetaXP.tasks(nft.tokenId, nft.tasksId[i]);
+      const task = await zetaXP.tasksByTokenId(nft.tokenId, nft.tasksId[i]);
       await expect(task.completed).to.be.eq(sampleTask.completed);
       await expect(task.count).to.be.eq(sampleTask.count);
     }
@@ -69,27 +68,27 @@ describe("XP NFT Contract test", () => {
 
   describe("NFT test", () => {
     it("Should mint an NFT", async () => {
-      const sig = await getSignature(inviter, invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
-      await zetaXP.mintNFT(invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
+      const sig = await getSignature(signer, user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
+      await zetaXP.mintNFT(user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
 
       await validateNFT(sampleNFT);
     });
 
     it("Should emit event on minting", async () => {
-      const sig = await getSignature(inviter, invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
-      const tx = zetaXP.mintNFT(invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
-      await expect(tx).to.emit(zetaXP, "NewNFTMinted").withArgs(invitee.address, 1);
+      const sig = await getSignature(signer, user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
+      const tx = zetaXP.mintNFT(user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
+      await expect(tx).to.emit(zetaXP, "NewNFTMinted").withArgs(user.address, 1);
     });
 
     it("Should revert if signature it's not correct", async () => {
-      const sig = await getSignature(addrs[0], invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
-      const tx = zetaXP.mintNFT(invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
+      const sig = await getSignature(addrs[0], user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
+      const tx = zetaXP.mintNFT(user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
       await expect(tx).to.be.revertedWith("InvalidSigner");
     });
 
     it("Should update NFT", async () => {
-      const sig = await getSignature(inviter, invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
-      await zetaXP.mintNFT(invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
+      const sig = await getSignature(signer, user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
+      await zetaXP.mintNFT(user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
 
       const updatedSampleNFT = {
         data: {
@@ -111,13 +110,13 @@ describe("XP NFT Contract test", () => {
           },
         ],
         tasksId: [2, 3],
-        to: invitee.address,
+        to: user.address,
         tokenId: 1,
       };
 
       const updatedSig = await getSignature(
-        inviter,
-        invitee.address,
+        signer,
+        user.address,
         1,
         updatedSampleNFT.data,
         updatedSampleNFT.tasksId,
@@ -134,8 +133,8 @@ describe("XP NFT Contract test", () => {
     const url = await zetaXP.baseTokenURI();
     await expect(url).to.be.eq("https://api.zetachain.io/nft/v2/");
 
-    const sig = await getSignature(inviter, invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
-    await zetaXP.mintNFT(invitee.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
+    const sig = await getSignature(signer, user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks);
+    await zetaXP.mintNFT(user.address, 1, sampleNFT.data, sampleNFT.tasksId, sampleNFT.tasks, sig);
     const tokenURI = await zetaXP.tokenURI(1);
     await expect(tokenURI).to.be.eq("https://api.zetachain.io/nft/v2/1");
   });
