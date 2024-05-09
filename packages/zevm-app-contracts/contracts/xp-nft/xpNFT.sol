@@ -26,7 +26,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         uint256 generation;
     }
 
-    mapping(uint256 => Data) public data;
+    mapping(uint256 => Data) public tokenData;
     mapping(uint256 => mapping(uint256 => Task)) public tasksByTokenId;
 
     // Base URL for NFT images
