@@ -6,7 +6,7 @@ export interface Task {
   count: number;
 }
 
-export interface TokenData {
+export interface ZetaXPData {
   enrollDate: number;
   generation: number;
   level: number;
@@ -15,40 +15,52 @@ export interface TokenData {
   xpTotal: number;
 }
 
+export interface Signature {
+  r: string;
+  s: string;
+  v: number;
+}
+
 export interface NFT {
-  data: TokenData;
-  tasks: Task[];
-  tasksId: number[];
+  taskIds: number[];
+  taskValues: Task[];
   to: string;
   tokenId: number;
+  xpData: ZetaXPData;
+}
+
+export interface UpdateParam extends NFT {
+  sigTimestamp: number;
+  signature: Signature;
 }
 
 export const getSignature = async (
   signer: SignerWithAddress,
+  timestamp: number,
   to: string,
   tokenId: number,
-  data: TokenData,
-  tasksId: number[],
-  tasks: Task[]
+  nft: NFT
 ) => {
+  const { xpData } = nft;
   let payload = ethers.utils.defaultAbiCoder.encode(
-    ["address", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256"],
+    ["address", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256"],
     [
       to,
       tokenId,
-      data.xpTotal,
-      data.level,
-      data.testnetCampaignParticipant,
-      data.enrollDate,
-      data.mintDate,
-      data.generation,
+      timestamp,
+      xpData.xpTotal,
+      xpData.level,
+      xpData.testnetCampaignParticipant,
+      xpData.enrollDate,
+      xpData.mintDate,
+      xpData.generation,
     ]
   );
 
-  for (let i = 0; i < tasksId.length; i++) {
+  for (let i = 0; i < nft.taskIds.length; i++) {
     payload = ethers.utils.defaultAbiCoder.encode(
       ["bytes", "uint256", "bool", "uint256"],
-      [payload, tasksId[i], tasks[i].completed, tasks[i].count]
+      [payload, nft.taskIds[i], nft.taskValues[i].completed, nft.taskValues[i].count]
     );
   }
 

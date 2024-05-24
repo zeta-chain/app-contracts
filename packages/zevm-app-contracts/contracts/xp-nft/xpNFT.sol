@@ -17,7 +17,7 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         uint256 count;
     }
 
-    struct TokenData {
+    struct ZetaXPData {
         uint256 xpTotal;
         uint256 level;
         uint256 testnetCampaignParticipant;
@@ -26,8 +26,19 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         uint256 generation;
     }
 
-    mapping(uint256 => TokenData) public tokenData;
+    struct UpdateData {
+        address to;
+        uint256 tokenId;
+        ZetaXPData xpData;
+        uint256[] taskIds;
+        Task[] taskValues;
+        Signature signature;
+        uint256 sigTimestamp;
+    }
+
+    mapping(uint256 => ZetaXPData) public zetaXPData;
     mapping(uint256 => mapping(uint256 => Task)) public tasksByTokenId;
+    mapping(uint256 => uint256) lastUpdateTimestampByTokenId;
 
     // Base URL for NFT images
     string public baseTokenURI;
@@ -40,6 +51,8 @@ contract ZetaXP is ERC721URIStorage, Ownable {
 
     error InvalidSigner();
     error LengthMismatch();
+    error TransferNotAllowed();
+    error OutdatedSignature();
 
     constructor(
         string memory name,
@@ -83,98 +96,87 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         return string(bstr);
     }
 
-    function _verify(
-        address to,
-        uint256 tokenId,
-        TokenData memory data_,
-        uint256[] calldata taskIds,
-        Task[] calldata taskValues,
-        Signature calldata signature
-    ) private view {
-        bytes32 payloadHash = _calculateHash(to, tokenId, data_, taskIds, taskValues);
+    function _verify(UpdateData memory updateData) private view {
+        bytes32 payloadHash = _calculateHash(updateData);
         bytes32 messageHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
 
-        address messageSigner = ecrecover(messageHash, signature.v, signature.r, signature.s);
+        address messageSigner = ecrecover(
+            messageHash,
+            updateData.signature.v,
+            updateData.signature.r,
+            updateData.signature.s
+        );
 
         if (signerAddress != messageSigner) revert InvalidSigner();
+        if (updateData.sigTimestamp <= lastUpdateTimestampByTokenId[updateData.tokenId]) revert OutdatedSignature();
     }
 
     // Function to compute the hash of the data and tasks for a token
-    function _calculateHash(
-        address to,
-        uint256 tokenId,
-        TokenData memory data_,
-        uint256[] memory taskIds,
-        Task[] memory taskValues
-    ) private pure returns (bytes32) {
+    function _calculateHash(UpdateData memory updateData) private pure returns (bytes32) {
+        ZetaXPData memory xpData = updateData.xpData;
         bytes memory encodedData = abi.encode(
-            to,
-            tokenId,
-            data_.xpTotal,
-            data_.level,
-            data_.testnetCampaignParticipant,
-            data_.enrollDate,
-            data_.mintDate,
-            data_.generation
+            updateData.to,
+            updateData.tokenId,
+            updateData.sigTimestamp,
+            xpData.xpTotal,
+            xpData.level,
+            xpData.testnetCampaignParticipant,
+            xpData.enrollDate,
+            xpData.mintDate,
+            xpData.generation
         );
 
-        for (uint256 i = 0; i < taskIds.length; i++) {
-            encodedData = abi.encode(encodedData, taskIds[i], taskValues[i].completed, taskValues[i].count);
+        for (uint256 i = 0; i < updateData.taskIds.length; i++) {
+            encodedData = abi.encode(
+                encodedData,
+                updateData.taskIds[i],
+                updateData.taskValues[i].completed,
+                updateData.taskValues[i].count
+            );
         }
 
         return keccak256(encodedData);
     }
 
-    function _updateNFT(
-        address to,
-        uint256 tokenId,
-        TokenData memory data_,
-        uint256[] calldata taskIds,
-        Task[] calldata taskValues,
-        Signature calldata signature
-    ) internal {
-        _verify(to, tokenId, data_, taskIds, taskValues, signature);
-        if (taskIds.length != taskValues.length) revert LengthMismatch();
+    function _updateNFT(UpdateData memory updateData) internal {
+        _verify(updateData);
+        lastUpdateTimestampByTokenId[updateData.tokenId] = updateData.sigTimestamp;
+        ZetaXPData memory xpData = updateData.xpData;
+        zetaXPData[updateData.tokenId] = xpData;
 
-        tokenData[tokenId] = data_;
-        for (uint256 i = 0; i < taskIds.length; i++) {
-            tasksByTokenId[tokenId][taskIds[i]] = taskValues[i];
+        if (updateData.taskIds.length != updateData.taskValues.length) revert LengthMismatch();
+
+        zetaXPData[updateData.tokenId] = updateData.xpData;
+        for (uint256 i = 0; i < updateData.taskIds.length; i++) {
+            tasksByTokenId[updateData.tokenId][updateData.taskIds[i]] = updateData.taskValues[i];
         }
     }
 
     // External mint function
-    function mintNFT(
-        address to,
-        uint256 tokenId,
-        TokenData memory data_,
-        uint256[] calldata taskIds,
-        Task[] calldata taskValues,
-        Signature calldata signature
-    ) external {
-        _mint(to, tokenId);
-        _setTokenURI(tokenId, string(abi.encodePacked(baseTokenURI, _uint2str(tokenId))));
+    function mintNFT(UpdateData calldata mintData) external {
+        _mint(mintData.to, mintData.tokenId);
+        _setTokenURI(mintData.tokenId, string(abi.encodePacked(baseTokenURI, _uint2str(mintData.tokenId))));
 
-        _updateNFT(to, tokenId, data_, taskIds, taskValues, signature);
+        _updateNFT(mintData);
 
-        emit NewNFTMinted(to, tokenId);
+        emit NewNFTMinted(mintData.to, mintData.tokenId);
     }
 
     // External mint function
-    function updateNFT(
-        uint256 tokenId,
-        TokenData memory data_,
-        uint256[] calldata taskIds,
-        Task[] calldata taskValues,
-        Signature calldata signature
-    ) external {
-        address owner = ownerOf(tokenId);
-        _updateNFT(owner, tokenId, data_, taskIds, taskValues, signature);
+    function updateNFT(UpdateData memory updateData) external {
+        address owner = ownerOf(updateData.tokenId);
+        updateData.to = owner;
+        _updateNFT(updateData);
 
-        emit NFTUpdated(owner, tokenId);
+        emit NFTUpdated(owner, updateData.tokenId);
     }
 
     // Set the base URI for tokens
     function setBaseURI(string calldata _uri) external onlyOwner {
         baseTokenURI = _uri;
+    }
+
+    function _transfer(address from, address to, uint256 tokenId) internal override {
+        revert TransferNotAllowed();
     }
 }
