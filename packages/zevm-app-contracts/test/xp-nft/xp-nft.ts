@@ -7,6 +7,8 @@ import { ethers } from "hardhat";
 import { ZetaXP } from "../../typechain-types";
 import { getSignature, NFT, UpdateParam } from "./test.helpers";
 
+const ZETA_BASE_URL = "https://api.zetachain.io/nft/";
+
 describe("XP NFT Contract test", () => {
   let zetaXP: ZetaXP, signer: SignerWithAddress, user: SignerWithAddress, addrs: SignerWithAddress[];
   let sampleNFT: NFT;
@@ -16,7 +18,7 @@ describe("XP NFT Contract test", () => {
     const zetaXPFactory = await ethers.getContractFactory("ZetaXP");
 
     //@ts-ignore
-    zetaXP = await zetaXPFactory.deploy("ZETA NFT", "ZNFT", "https://api.zetachain.io/nft/", signer.address);
+    zetaXP = await zetaXPFactory.deploy("ZETA NFT", "ZNFT", ZETA_BASE_URL, signer.address);
 
     sampleNFT = {
       taskIds: [2, 3],
@@ -65,7 +67,7 @@ describe("XP NFT Contract test", () => {
     }
 
     const url = await zetaXP.tokenURI(nft.tokenId);
-    await expect(url).to.be.eq(`https://api.zetachain.io/nft/${nft.tokenId}`);
+    await expect(url).to.be.eq(`${ZETA_BASE_URL}${nft.tokenId}`);
   };
 
   describe("NFT test", () => {
@@ -187,9 +189,9 @@ describe("XP NFT Contract test", () => {
   });
 
   it("Should update base url", async () => {
-    await zetaXP.setBaseURI("https://api.zetachain.io/nft/v2/");
+    await zetaXP.setBaseURI(`${ZETA_BASE_URL}v2/`);
     const url = await zetaXP.baseTokenURI();
-    await expect(url).to.be.eq("https://api.zetachain.io/nft/v2/");
+    await expect(url).to.be.eq(`${ZETA_BASE_URL}v2/`);
 
     {
       const currentBlock = await ethers.provider.getBlock("latest");
@@ -208,11 +210,11 @@ describe("XP NFT Contract test", () => {
       await zetaXP.mintNFT(nftParams);
     }
     const tokenURI = await zetaXP.tokenURI(1);
-    await expect(tokenURI).to.be.eq("https://api.zetachain.io/nft/v2/1");
+    await expect(tokenURI).to.be.eq(`${ZETA_BASE_URL}v2/1`);
   });
 
   it("Should revert if not owner want to update base url", async () => {
-    const tx = zetaXP.connect(addrs[0]).setBaseURI("https://api.zetachain.io/nft/v2/");
+    const tx = zetaXP.connect(addrs[0]).setBaseURI(`${ZETA_BASE_URL}v2/`);
     expect(tx).to.be.revertedWith("Ownable: caller is not the owner");
   });
 
