@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract ZetaXP is ERC721URIStorage, Ownable {
+contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     /* An ECDSA signature. */
     struct Signature {
         uint8 v;
@@ -12,33 +12,16 @@ contract ZetaXP is ERC721URIStorage, Ownable {
         bytes32 s;
     }
 
-    struct Task {
-        bool completed;
-        uint256 count;
-    }
-
-    struct ZetaXPData {
-        uint256 xpTotal;
-        uint256 level;
-        uint256 testnetCampaignParticipant;
-        uint256 enrollDate;
-        uint256 mintDate;
-        uint256 generation;
-    }
-
     struct UpdateData {
         address to;
         uint256 tokenId;
-        ZetaXPData xpData;
-        uint256[] taskIds;
-        Task[] taskValues;
         Signature signature;
         uint256 sigTimestamp;
+        uint256 signedUp;
     }
 
-    mapping(uint256 => ZetaXPData) public zetaXPData;
-    mapping(uint256 => mapping(uint256 => Task)) public tasksByTokenId;
     mapping(uint256 => uint256) lastUpdateTimestampByTokenId;
+    mapping(uint256 => uint256) signedUpByTokenId;
 
     // Base URL for NFT images
     string public baseTokenURI;
@@ -54,23 +37,30 @@ contract ZetaXP is ERC721URIStorage, Ownable {
     error TransferNotAllowed();
     error OutdatedSignature();
 
-    constructor(
+    function initialize(
         string memory name,
         string memory symbol,
         string memory baseTokenURI_,
         address signerAddress_
-    ) ERC721(name, symbol) {
+    ) public initializer {
+        __ERC721_init(name, symbol);
+        __Ownable_init();
         baseTokenURI = baseTokenURI_;
         signerAddress = signerAddress_;
     }
 
-    // The following functions are overrides required by Solidity.
-
-    function tokenURI(uint256 tokenId) public view override(ERC721URIStorage) returns (string memory) {
-        return super.tokenURI(tokenId);
+    function version() public pure virtual returns (string memory) {
+        return "1.0.0";
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721URIStorage) returns (bool) {
+    // The following functions are overrides required by Solidity.
+    function tokenURI(uint256 tokenId) public view override(ERC721Upgradeable) returns (string memory) {
+        _requireMinted(tokenId);
+
+        return string(abi.encodePacked(baseTokenURI, _uint2str(tokenId)));
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721Upgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
@@ -113,27 +103,12 @@ contract ZetaXP is ERC721URIStorage, Ownable {
 
     // Function to compute the hash of the data and tasks for a token
     function _calculateHash(UpdateData memory updateData) private pure returns (bytes32) {
-        ZetaXPData memory xpData = updateData.xpData;
         bytes memory encodedData = abi.encode(
             updateData.to,
             updateData.tokenId,
             updateData.sigTimestamp,
-            xpData.xpTotal,
-            xpData.level,
-            xpData.testnetCampaignParticipant,
-            xpData.enrollDate,
-            xpData.mintDate,
-            xpData.generation
+            updateData.signedUp
         );
-
-        for (uint256 i = 0; i < updateData.taskIds.length; i++) {
-            encodedData = abi.encode(
-                encodedData,
-                updateData.taskIds[i],
-                updateData.taskValues[i].completed,
-                updateData.taskValues[i].count
-            );
-        }
 
         return keccak256(encodedData);
     }
@@ -141,21 +116,12 @@ contract ZetaXP is ERC721URIStorage, Ownable {
     function _updateNFT(UpdateData memory updateData) internal {
         _verify(updateData);
         lastUpdateTimestampByTokenId[updateData.tokenId] = updateData.sigTimestamp;
-        ZetaXPData memory xpData = updateData.xpData;
-        zetaXPData[updateData.tokenId] = xpData;
-
-        if (updateData.taskIds.length != updateData.taskValues.length) revert LengthMismatch();
-
-        zetaXPData[updateData.tokenId] = updateData.xpData;
-        for (uint256 i = 0; i < updateData.taskIds.length; i++) {
-            tasksByTokenId[updateData.tokenId][updateData.taskIds[i]] = updateData.taskValues[i];
-        }
+        signedUpByTokenId[updateData.tokenId] = updateData.signedUp;
     }
 
     // External mint function
     function mintNFT(UpdateData calldata mintData) external {
         _mint(mintData.to, mintData.tokenId);
-        _setTokenURI(mintData.tokenId, string(abi.encodePacked(baseTokenURI, _uint2str(mintData.tokenId))));
 
         _updateNFT(mintData);
 

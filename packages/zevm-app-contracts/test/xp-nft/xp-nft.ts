@@ -2,7 +2,7 @@ import { expect, use } from "chai";
 import { solidity } from "ethereum-waffle";
 use(solidity);
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 import { ZetaXP } from "../../typechain-types";
 import { getSignature, NFT, UpdateParam } from "./test.helpers";
@@ -17,32 +17,14 @@ describe("XP NFT Contract test", () => {
     [signer, user, ...addrs] = await ethers.getSigners();
     const zetaXPFactory = await ethers.getContractFactory("ZetaXP");
 
-    //@ts-ignore
-    zetaXP = await zetaXPFactory.deploy("ZETA NFT", "ZNFT", ZETA_BASE_URL, signer.address);
+    zetaXP = await upgrades.deployProxy(zetaXPFactory, ["ZETA NFT", "ZNFT", ZETA_BASE_URL, signer.address]);
+
+    await zetaXP.deployed();
 
     sampleNFT = {
-      taskIds: [2, 3],
-      taskValues: [
-        {
-          completed: true,
-          count: 10,
-        },
-        {
-          completed: false,
-          count: 5,
-        },
-      ],
+      signedUp: 1234,
       to: user.address,
       tokenId: 1,
-      xpData: {
-        enrollDate: 5435,
-        generation: 2314,
-        level: 7,
-        mintDate: 34,
-
-        testnetCampaignParticipant: 2,
-        xpTotal: 67,
-      },
     };
   });
 
@@ -50,142 +32,92 @@ describe("XP NFT Contract test", () => {
     const owner = await zetaXP.ownerOf(nft.tokenId);
     await expect(owner).to.be.eq(nft.to);
 
-    const nftData = await zetaXP.zetaXPData(nft.tokenId);
-    const { xpData } = nft;
-    await expect(nftData.xpTotal).to.be.eq(xpData.xpTotal);
-    await expect(nftData.level).to.be.eq(xpData.level);
-    await expect(nftData.testnetCampaignParticipant).to.be.eq(xpData.testnetCampaignParticipant);
-    await expect(nftData.enrollDate).to.be.eq(xpData.enrollDate);
-    await expect(nftData.mintDate).to.be.eq(xpData.mintDate);
-    await expect(nftData.generation).to.be.eq(xpData.generation);
-
-    for (let i = 0; i < nft.taskIds.length; i++) {
-      const sampleTask = nft.taskValues[i];
-      const task = await zetaXP.tasksByTokenId(nft.tokenId, nft.taskIds[i]);
-      await expect(task.completed).to.be.eq(sampleTask.completed);
-      await expect(task.count).to.be.eq(sampleTask.count);
-    }
-
     const url = await zetaXP.tokenURI(nft.tokenId);
     await expect(url).to.be.eq(`${ZETA_BASE_URL}${nft.tokenId}`);
   };
 
-  describe("NFT test", () => {
-    it("Should mint an NFT", async () => {
+  it("Should mint an NFT", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigTimestamp = currentBlock.timestamp;
+
+    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
+
+    const nftParams: UpdateParam = {
+      ...sampleNFT,
+      sigTimestamp,
+      signature,
+    } as UpdateParam;
+
+    await zetaXP.mintNFT(nftParams);
+
+    await validateNFT(sampleNFT);
+  });
+
+  it("Should emit event on minting", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigTimestamp = currentBlock.timestamp;
+
+    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
+
+    const nftParams: UpdateParam = {
+      ...sampleNFT,
+      sigTimestamp,
+      signature,
+    } as UpdateParam;
+    const tx = zetaXP.mintNFT(nftParams);
+    await expect(tx).to.emit(zetaXP, "NewNFTMinted").withArgs(user.address, 1);
+  });
+
+  it("Should revert if signature it's not correct", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigTimestamp = currentBlock.timestamp;
+
+    const signature = await getSignature(addrs[0], sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
+
+    const nftParams: UpdateParam = {
+      ...sampleNFT,
+      sigTimestamp,
+      signature,
+    } as UpdateParam;
+
+    const tx = zetaXP.mintNFT(nftParams);
+    await expect(tx).to.be.revertedWith("InvalidSigner");
+  });
+
+  it("Should update NFT", async () => {
+    {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
 
-      const signature = await getSignature(signer, sigTimestamp, user.address, 1, sampleNFT);
+      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
-        to: user.address,
-        tokenId: 1,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
+    }
 
-      await validateNFT(sampleNFT);
-    });
+    const updatedSampleNFT = { ...sampleNFT, signedUp: 4321 };
 
-    it("Should emit event on minting", async () => {
+    {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
 
-      const signature = await getSignature(signer, sigTimestamp, user.address, 1, sampleNFT);
+      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, updatedSampleNFT);
 
       const nftParams: UpdateParam = {
-        ...sampleNFT,
+        ...updatedSampleNFT,
         sigTimestamp,
         signature,
-        to: user.address,
-        tokenId: 1,
-      } as UpdateParam;
-      const tx = zetaXP.mintNFT(nftParams);
-      await expect(tx).to.emit(zetaXP, "NewNFTMinted").withArgs(user.address, 1);
-    });
-
-    it("Should revert if signature it's not correct", async () => {
-      const currentBlock = await ethers.provider.getBlock("latest");
-      const sigTimestamp = currentBlock.timestamp;
-
-      const signature = await getSignature(addrs[0], sigTimestamp, user.address, 1, sampleNFT);
-
-      const nftParams: UpdateParam = {
-        ...sampleNFT,
-        sigTimestamp,
-        signature,
-        to: user.address,
-        tokenId: 1,
       } as UpdateParam;
 
-      const tx = zetaXP.mintNFT(nftParams);
-      await expect(tx).to.be.revertedWith("InvalidSigner");
-    });
+      await zetaXP.updateNFT(nftParams);
+    }
 
-    it("Should update NFT", async () => {
-      {
-        const currentBlock = await ethers.provider.getBlock("latest");
-        const sigTimestamp = currentBlock.timestamp;
-
-        const signature = await getSignature(signer, sigTimestamp, user.address, 1, sampleNFT);
-
-        const nftParams: UpdateParam = {
-          ...sampleNFT,
-          sigTimestamp,
-          signature,
-          to: user.address,
-          tokenId: 1,
-        } as UpdateParam;
-
-        await zetaXP.mintNFT(nftParams);
-      }
-
-      const updatedSampleNFT = {
-        taskIds: [2, 3],
-        taskValues: [
-          {
-            completed: true,
-            count: 10,
-          },
-          {
-            completed: true,
-            count: 5,
-          },
-        ],
-        to: user.address,
-        tokenId: 1,
-        xpData: {
-          enrollDate: 5435,
-          generation: 2314,
-          level: 7,
-          mintDate: 34,
-          testnetCampaignParticipant: 2,
-          xpTotal: 100,
-        },
-      };
-
-      {
-        const currentBlock = await ethers.provider.getBlock("latest");
-        const sigTimestamp = currentBlock.timestamp;
-
-        const signature = await getSignature(signer, sigTimestamp, user.address, 1, updatedSampleNFT);
-
-        const nftParams: UpdateParam = {
-          ...updatedSampleNFT,
-          sigTimestamp,
-          signature,
-          to: user.address,
-          tokenId: 1,
-        } as UpdateParam;
-
-        await zetaXP.updateNFT(nftParams);
-      }
-
-      validateNFT(updatedSampleNFT);
-    });
+    validateNFT(updatedSampleNFT);
   });
 
   it("Should update base url", async () => {
@@ -197,20 +129,60 @@ describe("XP NFT Contract test", () => {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
 
-      const signature = await getSignature(signer, sigTimestamp, user.address, 1, sampleNFT);
+      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
-        to: user.address,
-        tokenId: 1,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
     }
     const tokenURI = await zetaXP.tokenURI(1);
     await expect(tokenURI).to.be.eq(`${ZETA_BASE_URL}v2/1`);
+  });
+
+  it("Should update base url for minted tokens", async () => {
+    {
+      const currentBlock = await ethers.provider.getBlock("latest");
+      const sigTimestamp = currentBlock.timestamp;
+
+      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
+
+      const nftParams: UpdateParam = {
+        ...sampleNFT,
+        sigTimestamp,
+        signature,
+      } as UpdateParam;
+
+      await zetaXP.mintNFT(nftParams);
+    }
+
+    await zetaXP.setBaseURI(`${ZETA_BASE_URL}v2/`);
+    const url = await zetaXP.baseTokenURI();
+    await expect(url).to.be.eq(`${ZETA_BASE_URL}v2/`);
+
+    {
+      const sampleNFT2 = { ...sampleNFT, tokenId: 2 };
+      const currentBlock = await ethers.provider.getBlock("latest");
+      const sigTimestamp = currentBlock.timestamp;
+
+      const signature = await getSignature(signer, sigTimestamp, user.address, sampleNFT2.tokenId, sampleNFT2);
+
+      const nftParams: UpdateParam = {
+        ...sampleNFT2,
+        sigTimestamp,
+        signature,
+      } as UpdateParam;
+
+      await zetaXP.mintNFT(nftParams);
+    }
+    const tokenURI1 = await zetaXP.tokenURI(1);
+    await expect(tokenURI1).to.be.eq(`${ZETA_BASE_URL}v2/1`);
+
+    const tokenURI2 = await zetaXP.tokenURI(1);
+    await expect(tokenURI2).to.be.eq(`${ZETA_BASE_URL}v2/1`);
   });
 
   it("Should revert if not owner want to update base url", async () => {
@@ -223,14 +195,12 @@ describe("XP NFT Contract test", () => {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
 
-      const signature = await getSignature(signer, sigTimestamp, user.address, 1, sampleNFT);
+      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
-        to: user.address,
-        tokenId: 1,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
@@ -243,19 +213,28 @@ describe("XP NFT Contract test", () => {
     const currentBlock = await ethers.provider.getBlock("latest");
     const sigTimestamp = currentBlock.timestamp;
 
-    const signature = await getSignature(signer, sigTimestamp, user.address, 1, sampleNFT);
+    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT.tokenId, sampleNFT);
 
     const nftParams: UpdateParam = {
       ...sampleNFT,
       sigTimestamp,
       signature,
-      to: user.address,
-      tokenId: 1,
     } as UpdateParam;
 
     await zetaXP.mintNFT(nftParams);
 
     const tx = zetaXP.updateNFT(nftParams);
     await expect(tx).to.be.revertedWith("OutdatedSignature");
+  });
+
+  it("Should upgrade", async () => {
+    const version = await zetaXP.version();
+    await expect(version).to.be.eq("1.0.0");
+
+    const ZetaXPFactory = await ethers.getContractFactory("ZetaXPV2");
+    const zetaXPV2 = await upgrades.upgradeProxy(zetaXP.address, ZetaXPFactory);
+
+    const version2 = await zetaXPV2.version();
+    await expect(version2).to.be.eq("2.0.0");
   });
 });
