@@ -68,7 +68,7 @@ describe("XP NFT Contract test", () => {
     await expect(tx).to.emit(zetaXP, "NewNFTMinted").withArgs(user.address, 1);
   });
 
-  it("Should revert if signature it's not correct", async () => {
+  it("Should revert if signature is not correct", async () => {
     const currentBlock = await ethers.provider.getBlock("latest");
     const sigTimestamp = currentBlock.timestamp;
 
