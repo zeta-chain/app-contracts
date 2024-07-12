@@ -1,0 +1,59 @@
+name: Slither
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
+    types:
+      - synchronize
+      - opened
+      - reopened
+      - ready_for_review
+
+jobs:
+  slither:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - project: "zeta-app-contracts"
+            file: "zeta.sarif"
+          - project: "zevm-app-contracts"
+            file: "zevm.sarif"
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Compile contracts
+        continue-on-error: true
+        run: yarn compile
+
+      - name: Run Slither on ${{ matrix.project}}
+        uses: crytic/slither-action@main
+        continue-on-error: true
+        with:
+          ignore-compile: true
+          sarif: ${{ matrix.file}}
+          node-version: "18"
+          target: packages/${{ matrix.project}}
+          fail-on: none
+
+      - name: Upload zevm-app-contracts SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ matrix.file}}
