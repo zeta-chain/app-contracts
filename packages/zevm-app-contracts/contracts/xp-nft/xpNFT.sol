@@ -28,7 +28,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     address public signerAddress;
 
     // Event for New Mint
-    event NewNFTMinted(address indexed sender, uint256 indexed tokenId);
+    event NFTMinted(address indexed sender, uint256 indexed tokenId);
     // Event for NFT Update
     event NFTUpdated(address indexed sender, uint256 indexed tokenId);
 
@@ -125,7 +125,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
 
         _updateNFT(mintData);
 
-        emit NewNFTMinted(mintData.to, mintData.tokenId);
+        emit NFTMinted(mintData.to, mintData.tokenId);
     }
 
     // External mint function

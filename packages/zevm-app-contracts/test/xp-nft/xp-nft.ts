@@ -65,7 +65,7 @@ describe("XP NFT Contract test", () => {
       signature,
     } as UpdateParam;
     const tx = zetaXP.mintNFT(nftParams);
-    await expect(tx).to.emit(zetaXP, "NewNFTMinted").withArgs(user.address, 1);
+    await expect(tx).to.emit(zetaXP, "NFTMinted").withArgs(user.address, 1);
   });
 
   it("Should revert if signature is not correct", async () => {
