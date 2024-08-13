@@ -1,6 +1,7 @@
 import "@nomicfoundation/hardhat-verify";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
+import "@openzeppelin/hardhat-upgrades";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "tsconfig-paths/register";
@@ -57,6 +58,7 @@ const config: HardhatUserConfig = {
       { version: "0.5.10" /** For create2 factory */ },
       { version: "0.6.6" /** For uniswap v2 */ },
       { version: "0.8.7" },
+      { version: "0.8.9" },
     ],
     settings: {
       /**
