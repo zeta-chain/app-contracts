@@ -7,7 +7,16 @@
       "zetaSwapBtcInbound": "0x358E2cfC0E16444Ba7D3164Bbeeb6bEA7472c559",
       "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d",
       "withdrawERC20": "0xa349B9367cc54b47CAb8D09A95836AE8b4D1d84E",
-      "ZetaXP": "0x80ECE9a08ba893e1B863C0c6B3c098268C146E40"
+      "ZetaXP": "0xE1DfA5dfd1d6c6b47C8c9b8726EdD019D365491D"
+    },
+    "zeta_mainnet": {
+      "disperse": "0x23ce409Ea60c3d75827d04D9db3d52F3af62e44d",
+      "rewardDistributorFactory": "0xB9dc665610CF5109cE23aBBdaAc315B41FA094c1",
+      "zetaSwap": "0xA8168Dc495Ed61E70f5c1941e2860050AB902cEF",
+      "zetaSwapBtcInbound": "0x358E2cfC0E16444Ba7D3164Bbeeb6bEA7472c559",
+      "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d",
+      "withdrawERC20": "0xa349B9367cc54b47CAb8D09A95836AE8b4D1d84E",
+      "ZetaXP": "0x6926b6ea978d59a8Ab6aC05486Fd0bED6D15eC29"
     }
   }
 }
