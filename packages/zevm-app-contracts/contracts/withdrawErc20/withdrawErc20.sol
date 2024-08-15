@@ -19,15 +19,7 @@ contract WithdrawERC20 {
 
         (address gasZRC20, uint256 gasFee) = IZRC20(zrc20).withdrawGasFee();
 
-        uint256 inputForGas = SwapHelperLib.swapTokensForExactTokens(
-            systemContract.wZetaContractAddress(),
-            systemContract.uniswapv2FactoryAddress(),
-            systemContract.uniswapv2Router02Address(),
-            zrc20,
-            gasFee,
-            gasZRC20,
-            amount
-        );
+        uint256 inputForGas = SwapHelperLib.swapTokensForExactTokens(systemContract, zrc20, gasFee, gasZRC20, amount);
 
         if (inputForGas > amount) revert InsufficientInputAmount();
 
