@@ -23,6 +23,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     mapping(uint256 => uint256) public lastUpdateTimestampByTokenId;
     mapping(uint256 => uint256) public signedUpByTokenId;
     mapping(uint256 => bytes32) public tagByTokenId;
+    mapping(address => mapping(bytes32 => uint256)) public tokenByUserTag;
 
     // Base URL for NFT images
     string public baseTokenURI;
@@ -40,6 +41,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     error LengthMismatch();
     error TransferNotAllowed();
     error OutdatedSignature();
+    error TagAlreadyHoldByUser();
 
     function initialize(
         string memory name,
@@ -122,6 +124,8 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         _verify(tokenId, updateData);
         lastUpdateTimestampByTokenId[tokenId] = updateData.sigTimestamp;
         signedUpByTokenId[tokenId] = updateData.signedUp;
+        tagByTokenId[tokenId] = updateData.tag;
+        tokenByUserTag[updateData.to][updateData.tag] = tokenId;
     }
 
     // External mint function with auto-incremented token ID
@@ -129,6 +133,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         uint256 newTokenId = _currentTokenId;
         _mint(mintData.to, newTokenId);
 
+        if (tokenByUserTag[mintData.to][mintData.tag] != 0) revert TagAlreadyHoldByUser();
         _updateNFT(newTokenId, mintData);
 
         emit NFTMinted(mintData.to, newTokenId, mintData.tag);
@@ -140,6 +145,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     function updateNFT(uint256 tokenId, UpdateData memory updateData) external {
         address owner = ownerOf(tokenId);
         updateData.to = owner;
+        if (tokenByUserTag[owner][updateData.tag] != tokenId) revert TagAlreadyHoldByUser();
         _updateNFT(tokenId, updateData);
 
         emit NFTUpdated(owner, tokenId, updateData.tag);

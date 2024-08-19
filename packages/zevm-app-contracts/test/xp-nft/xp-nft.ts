@@ -175,7 +175,11 @@ describe("XP NFT Contract test", () => {
     await expect(url).to.be.eq(`${ZETA_BASE_URL}v2/`);
 
     {
-      const sampleNFT2 = { ...sampleNFT, tokenId: 2 };
+      const sampleNFT2 = {
+        ...sampleNFT,
+        tag: ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(["string"], ["XP_NFT2"])),
+        tokenId: 2,
+      };
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
 
@@ -249,5 +253,65 @@ describe("XP NFT Contract test", () => {
 
     const version2 = await zetaXPV2.version();
     await expect(version2).to.be.eq("2.0.0");
+  });
+
+  it("Should revert if user already have the tag", async () => {
+    {
+      const currentBlock = await ethers.provider.getBlock("latest");
+      const sigTimestamp = currentBlock.timestamp;
+
+      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+
+      const nftParams: UpdateParam = {
+        ...sampleNFT,
+        sigTimestamp,
+        signature,
+      } as UpdateParam;
+
+      await zetaXP.mintNFT(nftParams);
+    }
+
+    {
+      const sampleNFT2 = {
+        ...sampleNFT,
+        tokenId: 2,
+      };
+      const currentBlock = await ethers.provider.getBlock("latest");
+      const sigTimestamp = currentBlock.timestamp;
+
+      const signature = await getSignature(signer, sigTimestamp, user.address, sampleNFT2);
+
+      const nftParams: UpdateParam = {
+        ...sampleNFT2,
+        sigTimestamp,
+        signature,
+      } as UpdateParam;
+
+      const tx = zetaXP.mintNFT(nftParams);
+      await expect(tx).to.be.revertedWith("TagAlreadyHoldByUser");
+    }
+  });
+
+  it("Should query by tag and by user", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigTimestamp = currentBlock.timestamp;
+
+    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+
+    const nftParams: UpdateParam = {
+      ...sampleNFT,
+      sigTimestamp,
+      signature,
+    } as UpdateParam;
+
+    const tx = await zetaXP.mintNFT(nftParams);
+    const receipt = await tx.wait();
+    const tokenId = getTokenIdFromRecipient(receipt);
+
+    const queriedTokenId = await zetaXP.tokenByUserTag(sampleNFT.to, sampleNFT.tag);
+    await expect(queriedTokenId).to.be.eq(tokenId);
+
+    const queriedTag = await zetaXP.tagByTokenId(tokenId);
+    await expect(queriedTag).to.be.eq(sampleNFT.tag);
   });
 });
