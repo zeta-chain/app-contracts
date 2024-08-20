@@ -43,7 +43,7 @@ describe("LiquidityIncentives tests", () => {
     await ZRC20Contract.connect(signer).approve(rewardDistributorContract.address, amount);
     await ZETA_ERC20.connect(signer).approve(rewardDistributorContract.address, zetaNeeded);
 
-    return await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZRC20Contract.address, amount);
+    return await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZRC20Contract.address, amount, 0, 0);
   };
 
   const stakeZETA = async (signer: SignerWithAddress, amount: BigNumber) => {
@@ -54,7 +54,7 @@ describe("LiquidityIncentives tests", () => {
     await ZRC20Contract.connect(signer).approve(rewardDistributorContract.address, amount);
     await ZETA_ERC20.connect(signer).approve(rewardDistributorContract.address, zetaNeeded);
 
-    return await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZETA_ERC20.address, zetaNeeded);
+    return await rewardDistributorContract.connect(signer).addLiquidityAndStake(ZETA_ERC20.address, zetaNeeded, 0, 0);
   };
 
   beforeEach(async () => {
