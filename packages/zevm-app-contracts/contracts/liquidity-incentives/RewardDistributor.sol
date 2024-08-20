@@ -44,7 +44,12 @@ contract RewardDistributor is StakingRewards {
         systemContract = SystemContract(systemContract_);
     }
 
-    function _addLiquidity(uint256 tokenAmountA, uint256 tokenAmountB) internal returns (uint256) {
+    function _addLiquidity(
+        uint256 tokenAmountA,
+        uint256 tokenAmountB,
+        uint amountAMin,
+        uint amountBMin
+    ) internal returns (uint256) {
         bool transfer = stakingTokenA.transferFrom(msg.sender, address(this), tokenAmountA);
         if (!transfer) revert TransferFailed();
         bool approve = stakingTokenA.approve(systemContract.uniswapv2Router02Address(), 0);
@@ -62,8 +67,8 @@ contract RewardDistributor is StakingRewards {
             address(stakingTokenB),
             tokenAmountA,
             tokenAmountB,
-            0,
-            0,
+            amountAMin,
+            amountBMin,
             address(this),
             block.timestamp + MAX_DEADLINE
         );
@@ -91,7 +96,12 @@ contract RewardDistributor is StakingRewards {
         return (otherTokenReserve * amount) / tokenReserve;
     }
 
-    function addLiquidityAndStake(address tokenAddress, uint256 amount) external nonReentrant {
+    function addLiquidityAndStake(
+        address tokenAddress,
+        uint256 amount,
+        uint amountAMin,
+        uint amountBMin
+    ) external nonReentrant {
         if (amount == 0) revert ZeroStakeAmount();
         address otherTokenAddress = address(stakingTokenA) == tokenAddress
             ? address(stakingTokenB)
@@ -110,7 +120,7 @@ contract RewardDistributor is StakingRewards {
 
         lastDeposit[msg.sender] = block.timestamp;
         unlockTokensAt[msg.sender] = type(uint256).max;
-        uint256 LPTokenAmount = _addLiquidity(amount, otherTokenAmount);
+        uint256 LPTokenAmount = _addLiquidity(amount, otherTokenAmount, amountAMin, amountBMin);
         _stakeFromContract(LPTokenAmount);
     }
 

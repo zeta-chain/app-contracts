@@ -36,9 +36,9 @@ describe("ZetaSwap tests", () => {
     zetaMultiOutputContract = (await Factory.deploy(systemContract.address)) as ZetaMultiOutput;
     await zetaMultiOutputContract.deployed();
 
-    zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[0].address);
-    zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[1].address);
-    zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[2].address);
+    await zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[0].address);
+    await zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[1].address);
+    await zetaMultiOutputContract.registerDestinationToken(ZRC20Contracts[2].address);
   });
 
   describe("ZetaMultiOutput", () => {
