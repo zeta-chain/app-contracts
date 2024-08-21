@@ -3,6 +3,7 @@ pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     /* An ECDSA signature. */
@@ -47,10 +48,12 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         string memory name,
         string memory symbol,
         string memory baseTokenURI_,
-        address signerAddress_
+        address signerAddress_,
+        address owner
     ) public initializer {
         __ERC721_init(name, symbol);
         __Ownable_init();
+        transferOwnership(owner);
         baseTokenURI = baseTokenURI_;
         signerAddress = signerAddress_;
         _currentTokenId = 1; // Start token IDs from 1
@@ -95,9 +98,10 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
 
     function _verify(uint256 tokenId, UpdateData memory updateData) private view {
         bytes32 payloadHash = _calculateHash(updateData);
-        bytes32 messageHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
 
-        address messageSigner = ecrecover(
+        bytes32 messageHash = ECDSA.toEthSignedMessageHash(payloadHash);
+
+        address messageSigner = ECDSA.recover(
             messageHash,
             updateData.signature.v,
             updateData.signature.r,
