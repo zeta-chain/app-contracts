@@ -6,6 +6,8 @@ import { saveAddress } from "../address.helpers";
 
 const networkName = network.name;
 
+const name = "XP NFT";
+const symbol = "XPNFT";
 const ZETA_BASE_URL = "https://api.zetachain.io/nft/";
 const signer = "0x1d24d94520B94B26351f6573de5ef9731c48531A";
 const owner = "0x1d24d94520B94B26351f6573de5ef9731c48531A";
@@ -28,7 +30,7 @@ const deployZetaXP = async () => {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
   const ZetaXPFactory = (await ethers.getContractFactory("ZetaXP")) as ZetaXP__factory;
-  const zetaXP = await upgrades.deployProxy(ZetaXPFactory, ["ZETA NFT", "ZNFT", ZETA_BASE_URL, signer, owner]);
+  const zetaXP = await upgrades.deployProxy(ZetaXPFactory, [name, symbol, ZETA_BASE_URL, signer, owner]);
 
   await zetaXP.deployed();
 
@@ -40,7 +42,7 @@ const deployZetaXP = async () => {
 
   saveAddress("ZetaXP", zetaXP.address, networkName);
 
-  await verifyContract(zetaXP.address, ["ZETA NFT", "ZNFT", ZETA_BASE_URL, signer]);
+  await verifyContract(zetaXP.address, [name, symbol, ZETA_BASE_URL, signer]);
   await verifyContract(implementationAddress, []);
 };
 
