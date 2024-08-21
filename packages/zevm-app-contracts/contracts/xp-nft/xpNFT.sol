@@ -65,6 +65,17 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         return "1.0.0";
     }
 
+    // Internal function to set the signer address
+    function setSignerAddress(address signerAddress_) external onlyOwner {
+        if (signerAddress_ == address(0)) revert InvalidAddress();
+        signerAddress = signerAddress_;
+    }
+
+    // Set the base URI for tokens
+    function setBaseURI(string calldata _uri) external onlyOwner {
+        baseTokenURI = _uri;
+    }
+
     // The following functions are overrides required by Solidity.
     function tokenURI(uint256 tokenId) public view override(ERC721Upgradeable) returns (string memory) {
         _requireMinted(tokenId);
@@ -155,11 +166,6 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         _updateNFT(tokenId, updateData);
 
         emit NFTUpdated(owner, tokenId, updateData.tag);
-    }
-
-    // Set the base URI for tokens
-    function setBaseURI(string calldata _uri) external onlyOwner {
-        baseTokenURI = _uri;
     }
 
     function _transfer(address from, address to, uint256 tokenId) internal override {
