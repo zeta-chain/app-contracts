@@ -42,7 +42,7 @@ const deployZetaXP = async () => {
 
   saveAddress("ZetaXP", zetaXP.address, networkName);
 
-  await verifyContract(zetaXP.address, [name, symbol, ZETA_BASE_URL, signer]);
+  await verifyContract(zetaXP.address, [name, symbol, ZETA_BASE_URL, signer, owner]);
   await verifyContract(implementationAddress, []);
 };
 

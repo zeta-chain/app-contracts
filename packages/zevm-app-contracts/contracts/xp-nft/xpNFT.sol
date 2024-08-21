@@ -39,6 +39,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     event NFTUpdated(address indexed sender, uint256 indexed tokenId, bytes32 tag);
 
     error InvalidSigner();
+    error InvalidAddress();
     error LengthMismatch();
     error TransferNotAllowed();
     error OutdatedSignature();
@@ -51,6 +52,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         address signerAddress_,
         address owner
     ) public initializer {
+        if (signerAddress_ == address(0)) revert InvalidAddress();
         __ERC721_init(name, symbol);
         __Ownable_init();
         transferOwnership(owner);
