@@ -30,33 +30,12 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
     error InvalidSigner();
     error InvalidAddress();
     error TaskAlreadyClaimed();
+    error TransferFailed();
 
     constructor(address signerAddress_, address owner) Ownable() {
         if (signerAddress_ == address(0)) revert InvalidAddress();
         transferOwnership(owner);
         signerAddress = signerAddress_;
-    }
-
-    // Helper function to convert uint to string
-    function _uint2str(uint _i) internal pure returns (string memory _uintAsString) {
-        if (_i == 0) {
-            return "0";
-        }
-        uint j = _i;
-        uint len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint k = len;
-        while (_i != 0) {
-            k = k - 1;
-            uint8 temp = (uint8(48 + (_i % 10)));
-            bstr[k] = bytes1(temp);
-            _i /= 10;
-        }
-        return string(bstr);
     }
 
     function _verify(ClaimData memory claimData) private view {
@@ -89,7 +68,8 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
 
         taskCompletedByUser[claimData.to][claimData.taskId] = true;
 
-        payable(claimData.to).transfer(claimData.amount);
+        (bool success, ) = claimData.to.call{value: claimData.amount}("");
+        if (!success) revert TransferFailed();
 
         emit Claimed(claimData.to, claimData.taskId, claimData.amount);
     }
@@ -100,6 +80,7 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
     }
 
     function withdraw(address wallet) external onlyOwner {
+        if (wallet == address(0)) revert InvalidAddress();
         payable(wallet).transfer(address(this).balance);
     }
 
