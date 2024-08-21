@@ -79,9 +79,10 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
         signerAddress = signerAddress_;
     }
 
-    function withdraw(address wallet) external onlyOwner {
+    function withdraw(address wallet, uint256 amount) external onlyOwner {
         if (wallet == address(0)) revert InvalidAddress();
-        payable(wallet).transfer(address(this).balance);
+        if (amount > address(this).balance) revert TransferFailed();
+        payable(wallet).transfer(amount);
     }
 
     receive() external payable {}
