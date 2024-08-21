@@ -2,6 +2,7 @@ import { expect, use } from "chai";
 import { solidity } from "ethereum-waffle";
 use(solidity);
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import exp from "constants";
 import { ethers, upgrades } from "hardhat";
 
 import { ZetaXP } from "../../typechain-types";
@@ -17,7 +18,13 @@ describe("XP NFT Contract test", () => {
     [signer, user, ...addrs] = await ethers.getSigners();
     const zetaXPFactory = await ethers.getContractFactory("ZetaXP");
 
-    zetaXP = await upgrades.deployProxy(zetaXPFactory, ["ZETA NFT", "ZNFT", ZETA_BASE_URL, signer.address]);
+    zetaXP = await upgrades.deployProxy(zetaXPFactory, [
+      "ZETA NFT",
+      "ZNFT",
+      ZETA_BASE_URL,
+      signer.address,
+      signer.address,
+    ]);
 
     await zetaXP.deployed();
     const tag = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(["string"], ["XP_NFT"]));
@@ -313,5 +320,17 @@ describe("XP NFT Contract test", () => {
 
     const queriedTag = await zetaXP.tagByTokenId(tokenId);
     await expect(queriedTag).to.be.eq(sampleNFT.tag);
+  });
+
+  it("Should transfer ownership", async () => {
+    {
+      const ownerAddr = await zetaXP.owner();
+      expect(ownerAddr).to.be.eq(signer.address);
+    }
+    await zetaXP.transferOwnership(user.address);
+    {
+      const ownerAddr = await zetaXP.owner();
+      expect(ownerAddr).to.be.eq(user.address);
+    }
   });
 });
