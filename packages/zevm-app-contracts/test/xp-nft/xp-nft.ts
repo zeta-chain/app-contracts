@@ -355,4 +355,22 @@ describe("XP NFT Contract test", () => {
       expect(ownerAddr).to.be.eq(user.address);
     }
   });
+
+  it("Should revert if signatured expired", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigTimestamp = currentBlock.timestamp;
+    const signatureExpiration = sigTimestamp - 1000;
+
+    const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
+
+    const nftParams: UpdateParam = {
+      ...sampleNFT,
+      sigTimestamp,
+      signature,
+      signatureExpiration,
+    } as UpdateParam;
+
+    const tx = zetaXP.mintNFT(nftParams);
+    await expect(tx).to.be.revertedWith("SignatureExpired");
+  });
 });
