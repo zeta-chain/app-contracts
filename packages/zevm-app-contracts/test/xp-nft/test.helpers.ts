@@ -8,7 +8,6 @@ export interface Signature {
 }
 
 export interface NFT {
-  signedUp: number;
   tag: string;
   to: string;
 }
@@ -16,13 +15,20 @@ export interface NFT {
 export interface UpdateParam extends NFT {
   sigTimestamp: number;
   signature: Signature;
+  signatureExpiration: number;
   tokenId: number;
 }
 
-export const getSignature = async (signer: SignerWithAddress, timestamp: number, to: string, nft: NFT) => {
+export const getSignature = async (
+  signer: SignerWithAddress,
+  signatureExpiration: number,
+  timestamp: number,
+  to: string,
+  nft: NFT
+) => {
   let payload = ethers.utils.defaultAbiCoder.encode(
     ["address", "uint256", "uint256", "bytes32"],
-    [to, timestamp, nft.signedUp, nft.tag]
+    [to, signatureExpiration, timestamp, nft.tag]
   );
 
   const payloadHash = ethers.utils.keccak256(payload);

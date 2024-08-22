@@ -16,13 +16,12 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     struct UpdateData {
         address to;
         Signature signature;
+        uint256 signatureExpiration;
         uint256 sigTimestamp;
-        uint256 signedUp;
         bytes32 tag;
     }
 
     mapping(uint256 => uint256) public lastUpdateTimestampByTokenId;
-    mapping(uint256 => uint256) public signedUpByTokenId;
     mapping(uint256 => bytes32) public tagByTokenId;
     mapping(address => mapping(bytes32 => uint256)) public tokenByUserTag;
 
@@ -39,6 +38,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     event NFTUpdated(address indexed sender, uint256 indexed tokenId, bytes32 tag);
 
     error InvalidSigner();
+    error SignatureExpired();
     error InvalidAddress();
     error LengthMismatch();
     error TransferNotAllowed();
@@ -111,6 +111,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         );
 
         if (signerAddress != messageSigner) revert InvalidSigner();
+        if (block.timestamp > updateData.signatureExpiration) revert SignatureExpired();
         if (updateData.sigTimestamp <= lastUpdateTimestampByTokenId[tokenId]) revert OutdatedSignature();
     }
 
@@ -118,8 +119,8 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     function _calculateHash(UpdateData memory updateData) private pure returns (bytes32) {
         bytes memory encodedData = abi.encode(
             updateData.to,
+            updateData.signatureExpiration,
             updateData.sigTimestamp,
-            updateData.signedUp,
             updateData.tag
         );
 
@@ -129,7 +130,6 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     function _updateNFT(uint256 tokenId, UpdateData memory updateData) internal {
         _verify(tokenId, updateData);
         lastUpdateTimestampByTokenId[tokenId] = updateData.sigTimestamp;
-        signedUpByTokenId[tokenId] = updateData.signedUp;
         tagByTokenId[tokenId] = updateData.tag;
         tokenByUserTag[updateData.to][updateData.tag] = tokenId;
     }
