@@ -17,6 +17,7 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
     struct ClaimData {
         address to;
         Signature signature;
+        uint256 sigExpiration;
         bytes32 taskId;
         uint256 amount;
     }
@@ -28,6 +29,7 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
     event Claimed(address indexed to, bytes32 indexed taskId, uint256 amount);
 
     error InvalidSigner();
+    error SignatureExpired();
     error InvalidAddress();
     error TaskAlreadyClaimed();
     error TransferFailed();
@@ -51,11 +53,17 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
         );
 
         if (signerAddress != messageSigner) revert InvalidSigner();
+        if (block.timestamp > claimData.sigExpiration) revert SignatureExpired();
     }
 
     // Function to compute the hash of the data and tasks for a token
     function _calculateHash(ClaimData memory claimData) private pure returns (bytes32) {
-        bytes memory encodedData = abi.encode(claimData.to, claimData.taskId, claimData.amount);
+        bytes memory encodedData = abi.encode(
+            claimData.to,
+            claimData.sigExpiration,
+            claimData.taskId,
+            claimData.amount
+        );
 
         return keccak256(encodedData);
     }
