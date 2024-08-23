@@ -1,8 +1,5 @@
-import { expect, use } from "chai";
-import { solidity } from "ethereum-waffle";
-use(solidity);
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import exp from "constants";
+import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 
 import { ZetaXP } from "../../typechain-types";
@@ -30,7 +27,6 @@ describe("XP NFT Contract test", () => {
     const tag = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(["string"], ["XP_NFT"]));
 
     sampleNFT = {
-      signedUp: 1234,
       tag,
       to: user.address,
     };
@@ -52,13 +48,15 @@ describe("XP NFT Contract test", () => {
   it("Should mint an NFT", async () => {
     const currentBlock = await ethers.provider.getBlock("latest");
     const sigTimestamp = currentBlock.timestamp;
+    const signatureExpiration = sigTimestamp + 1000;
 
-    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+    const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
     const nftParams: UpdateParam = {
       ...sampleNFT,
       sigTimestamp,
       signature,
+      signatureExpiration,
     } as UpdateParam;
 
     const tx = await zetaXP.mintNFT(nftParams);
@@ -71,13 +69,15 @@ describe("XP NFT Contract test", () => {
   it("Should emit event on minting", async () => {
     const currentBlock = await ethers.provider.getBlock("latest");
     const sigTimestamp = currentBlock.timestamp;
+    const signatureExpiration = sigTimestamp + 1000;
 
-    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+    const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
     const nftParams: UpdateParam = {
       ...sampleNFT,
       sigTimestamp,
       signature,
+      signatureExpiration,
     } as UpdateParam;
     const tx = zetaXP.mintNFT(nftParams);
     await expect(tx).to.emit(zetaXP, "NFTMinted").withArgs(user.address, 1, sampleNFT.tag);
@@ -86,13 +86,15 @@ describe("XP NFT Contract test", () => {
   it("Should revert if signature is not correct", async () => {
     const currentBlock = await ethers.provider.getBlock("latest");
     const sigTimestamp = currentBlock.timestamp;
+    const signatureExpiration = sigTimestamp + 1000;
 
-    const signature = await getSignature(addrs[0], sigTimestamp, sampleNFT.to, sampleNFT);
+    const signature = await getSignature(addrs[0], signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
     const nftParams: UpdateParam = {
       ...sampleNFT,
       sigTimestamp,
       signature,
+      signatureExpiration,
     } as UpdateParam;
 
     const tx = zetaXP.mintNFT(nftParams);
@@ -104,13 +106,15 @@ describe("XP NFT Contract test", () => {
     {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       const tx = await zetaXP.mintNFT(nftParams);
@@ -123,13 +127,15 @@ describe("XP NFT Contract test", () => {
     {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, updatedSampleNFT);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, updatedSampleNFT);
 
       const nftParams: UpdateParam = {
         ...updatedSampleNFT,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       await zetaXP.updateNFT(tokenId, nftParams);
@@ -146,13 +152,15 @@ describe("XP NFT Contract test", () => {
     {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
@@ -165,13 +173,15 @@ describe("XP NFT Contract test", () => {
     {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
@@ -189,13 +199,15 @@ describe("XP NFT Contract test", () => {
       };
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, user.address, sampleNFT2);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, user.address, sampleNFT2);
 
       const nftParams: UpdateParam = {
         ...sampleNFT2,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
@@ -216,13 +228,15 @@ describe("XP NFT Contract test", () => {
     {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
@@ -234,13 +248,15 @@ describe("XP NFT Contract test", () => {
   it("Should revert if try to use same signature twice", async () => {
     const currentBlock = await ethers.provider.getBlock("latest");
     const sigTimestamp = currentBlock.timestamp;
+    const signatureExpiration = sigTimestamp + 1000;
 
-    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+    const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
     const nftParams: UpdateParam = {
       ...sampleNFT,
       sigTimestamp,
       signature,
+      signatureExpiration,
     } as UpdateParam;
 
     const tx = await zetaXP.mintNFT(nftParams);
@@ -266,13 +282,15 @@ describe("XP NFT Contract test", () => {
     {
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
       const nftParams: UpdateParam = {
         ...sampleNFT,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       await zetaXP.mintNFT(nftParams);
@@ -285,13 +303,15 @@ describe("XP NFT Contract test", () => {
       };
       const currentBlock = await ethers.provider.getBlock("latest");
       const sigTimestamp = currentBlock.timestamp;
+      const signatureExpiration = sigTimestamp + 1000;
 
-      const signature = await getSignature(signer, sigTimestamp, user.address, sampleNFT2);
+      const signature = await getSignature(signer, signatureExpiration, sigTimestamp, user.address, sampleNFT2);
 
       const nftParams: UpdateParam = {
         ...sampleNFT2,
         sigTimestamp,
         signature,
+        signatureExpiration,
       } as UpdateParam;
 
       const tx = zetaXP.mintNFT(nftParams);
@@ -302,13 +322,15 @@ describe("XP NFT Contract test", () => {
   it("Should query by tag and by user", async () => {
     const currentBlock = await ethers.provider.getBlock("latest");
     const sigTimestamp = currentBlock.timestamp;
+    const signatureExpiration = sigTimestamp + 1000;
 
-    const signature = await getSignature(signer, sigTimestamp, sampleNFT.to, sampleNFT);
+    const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
 
     const nftParams: UpdateParam = {
       ...sampleNFT,
       sigTimestamp,
       signature,
+      signatureExpiration,
     } as UpdateParam;
 
     const tx = await zetaXP.mintNFT(nftParams);
@@ -332,5 +354,23 @@ describe("XP NFT Contract test", () => {
       const ownerAddr = await zetaXP.owner();
       expect(ownerAddr).to.be.eq(user.address);
     }
+  });
+
+  it("Should revert if signatured expired", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigTimestamp = currentBlock.timestamp;
+    const signatureExpiration = sigTimestamp - 1000;
+
+    const signature = await getSignature(signer, signatureExpiration, sigTimestamp, sampleNFT.to, sampleNFT);
+
+    const nftParams: UpdateParam = {
+      ...sampleNFT,
+      sigTimestamp,
+      signature,
+      signatureExpiration,
+    } as UpdateParam;
+
+    const tx = zetaXP.mintNFT(nftParams);
+    await expect(tx).to.be.revertedWith("SignatureExpired");
   });
 });
