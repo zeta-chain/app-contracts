@@ -27,6 +27,7 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
     address public signerAddress;
 
     event Claimed(address indexed to, bytes32 indexed taskId, uint256 amount);
+    event Withdrawn(address indexed wallet, uint256 amount);
 
     error InvalidSigner();
     error SignatureExpired();
@@ -91,6 +92,15 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
         if (wallet == address(0)) revert InvalidAddress();
         if (amount > address(this).balance) revert TransferFailed();
         payable(wallet).transfer(amount);
+        emit Withdrawn(wallet, amount);
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
     }
 
     receive() external payable {}
