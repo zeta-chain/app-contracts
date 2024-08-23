@@ -1,6 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, utils } from "ethers";
+import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { InstantRewards } from "../../typechain-types";
@@ -125,6 +126,72 @@ describe("Instant Rewards Contract test", () => {
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.revertedWith("Pausable: paused");
+  });
+
+  it("Should revert if try to claim twice with same signature", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigExpiration = currentBlock.timestamp + 1000;
+    const amount = utils.parseEther("1");
+    const taskId = encodeTaskId("WALLET/TASK/EPOC");
+    const to = owner.address;
+
+    // transfer some funds to the contract
+    await owner.sendTransaction({
+      to: instantRewards.address,
+      value: amount,
+    });
+
+    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+
+    instantRewards.claim(claimDataSigned);
+
+    const tx = instantRewards.claim(claimDataSigned);
+    await expect(tx).to.revertedWith("TaskAlreadyClaimed");
+  });
+
+  it("Should revert if try to claim same task with another signature", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigExpiration = currentBlock.timestamp + 1000;
+    const amount = utils.parseEther("1");
+    const taskId = encodeTaskId("WALLET/TASK/EPOC");
+    const to = owner.address;
+
+    // transfer some funds to the contract
+    await owner.sendTransaction({
+      to: instantRewards.address,
+      value: amount,
+    });
+
+    {
+      const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+      instantRewards.claim(claimDataSigned);
+    }
+    const claimDataSigned = await getClaimDataSigned(signer, amount.add(parseEther("1")), sigExpiration, taskId, to);
+    const tx = instantRewards.claim(claimDataSigned);
+    await expect(tx).to.revertedWith("TaskAlreadyClaimed");
+  });
+
+  it("Should revert if try to claim with an old valid signature if a new one was used", async () => {
+    const currentBlock = await ethers.provider.getBlock("latest");
+    const sigExpiration = currentBlock.timestamp + 1000;
+    const amount = utils.parseEther("2");
+    const taskId = encodeTaskId("WALLET/TASK/EPOC");
+    const to = owner.address;
+
+    // transfer some funds to the contract
+    await owner.sendTransaction({
+      to: instantRewards.address,
+      value: amount,
+    });
+
+    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+
+    const newClaimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration + 1000, taskId, to);
+
+    instantRewards.claim(newClaimDataSigned);
+
+    const tx = instantRewards.claim(claimDataSigned);
+    await expect(tx).to.revertedWith("TaskAlreadyClaimed");
   });
 
   it("Should revert if not owner try to pause", async () => {
