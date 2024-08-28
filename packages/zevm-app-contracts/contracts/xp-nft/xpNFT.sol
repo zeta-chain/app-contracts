@@ -1,21 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
-    /* An ECDSA signature. */
-    struct Signature {
-        uint8 v;
-        bytes32 r;
-        bytes32 s;
-    }
+contract ZetaXP is ERC721Upgradeable, Ownable2StepUpgradeable, EIP712Upgradeable {
+    bytes32 private constant MINTORUPDATE_TYPEHASH =
+        keccak256("MintOrUpdateNFT(address to,uint256 signatureExpiration,uint256 sigTimestamp,bytes32 tag)");
 
     struct UpdateData {
         address to;
-        Signature signature;
+        bytes signature;
         uint256 signatureExpiration;
         uint256 sigTimestamp;
         bytes32 tag;
@@ -36,6 +34,10 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     event NFTMinted(address indexed sender, uint256 indexed tokenId, bytes32 tag);
     // Event for NFT Update
     event NFTUpdated(address indexed sender, uint256 indexed tokenId, bytes32 tag);
+    // Event for Signer Update
+    event SignerUpdated(address indexed signerAddress);
+    // Event for Base URI Update
+    event BaseURIUpdated(string baseURI);
 
     error InvalidSigner();
     error SignatureExpired();
@@ -45,6 +47,11 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     error OutdatedSignature();
     error TagAlreadyHoldByUser();
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize(
         string memory name,
         string memory symbol,
@@ -53,6 +60,7 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
         address owner
     ) public initializer {
         if (signerAddress_ == address(0)) revert InvalidAddress();
+        __EIP712_init("ZetaXP", "1");
         __ERC721_init(name, symbol);
         __Ownable_init();
         transferOwnership(owner);
@@ -69,59 +77,42 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     function setSignerAddress(address signerAddress_) external onlyOwner {
         if (signerAddress_ == address(0)) revert InvalidAddress();
         signerAddress = signerAddress_;
+        emit SignerUpdated(signerAddress_);
     }
 
     // Set the base URI for tokens
     function setBaseURI(string calldata _uri) external onlyOwner {
         baseTokenURI = _uri;
+        emit BaseURIUpdated(_uri);
     }
 
     // The following functions are overrides required by Solidity.
     function tokenURI(uint256 tokenId) public view override(ERC721Upgradeable) returns (string memory) {
         _requireMinted(tokenId);
 
-        return string(abi.encodePacked(baseTokenURI, _uint2str(tokenId)));
+        return string(abi.encodePacked(baseTokenURI, Strings.toString(tokenId)));
     }
 
     function supportsInterface(bytes4 interfaceId) public view override(ERC721Upgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
-    // Helper function to convert uint to string
-    function _uint2str(uint _i) internal pure returns (string memory _uintAsString) {
-        if (_i == 0) {
-            return "0";
-        }
-        uint j = _i;
-        uint len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint k = len;
-        while (_i != 0) {
-            k = k - 1;
-            uint8 temp = (uint8(48 + (_i % 10)));
-            bstr[k] = bytes1(temp);
-            _i /= 10;
-        }
-        return string(bstr);
-    }
-
     function _verify(uint256 tokenId, UpdateData memory updateData) private view {
-        bytes32 payloadHash = _calculateHash(updateData);
-
-        bytes32 messageHash = ECDSA.toEthSignedMessageHash(payloadHash);
-
-        address messageSigner = ECDSA.recover(
-            messageHash,
-            updateData.signature.v,
-            updateData.signature.r,
-            updateData.signature.s
+        bytes32 structHash = keccak256(
+            abi.encode(
+                MINTORUPDATE_TYPEHASH,
+                updateData.to,
+                updateData.signatureExpiration,
+                updateData.sigTimestamp,
+                updateData.tag
+            )
         );
+        bytes32 constructedHash = _hashTypedDataV4(structHash);
 
-        if (signerAddress != messageSigner) revert InvalidSigner();
+        if (!SignatureChecker.isValidSignatureNow(signerAddress, constructedHash, updateData.signature)) {
+            revert InvalidSigner();
+        }
+
         if (block.timestamp > updateData.signatureExpiration) revert SignatureExpired();
         if (updateData.sigTimestamp <= lastUpdateTimestampByTokenId[tokenId]) revert OutdatedSignature();
     }
@@ -162,7 +153,13 @@ contract ZetaXP is ERC721Upgradeable, OwnableUpgradeable {
     function updateNFT(uint256 tokenId, UpdateData memory updateData) external {
         address owner = ownerOf(tokenId);
         updateData.to = owner;
-        if (tokenByUserTag[owner][updateData.tag] != tokenId) revert TagAlreadyHoldByUser();
+        bool willUpdateTag = tagByTokenId[tokenId] != updateData.tag;
+
+        if (willUpdateTag) {
+            if (tokenByUserTag[owner][updateData.tag] != 0) revert TagAlreadyHoldByUser();
+            tokenByUserTag[owner][tagByTokenId[tokenId]] = 0;
+        }
+
         _updateNFT(tokenId, updateData);
 
         emit NFTUpdated(owner, tokenId, updateData.tag);
