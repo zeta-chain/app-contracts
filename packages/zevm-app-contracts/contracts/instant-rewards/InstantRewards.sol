@@ -1,22 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
-    /* An ECDSA signature. */
-    struct Signature {
-        uint8 v;
-        bytes32 r;
-        bytes32 s;
-    }
+contract InstantRewards is Ownable, Pausable, ReentrancyGuard, EIP712 {
+    bytes32 private constant CLAIM_TYPEHASH =
+        keccak256("Claim(address to,uint256 sigExpiration,bytes32 taskId,uint256 amount)");
 
     struct ClaimData {
         address to;
-        Signature signature;
+        bytes signature;
         uint256 sigExpiration;
         bytes32 taskId;
         uint256 amount;
@@ -35,38 +32,23 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard {
     error TaskAlreadyClaimed();
     error TransferFailed();
 
-    constructor(address signerAddress_, address owner) Ownable() {
+    constructor(address signerAddress_, address owner) Ownable() EIP712("InstantRewards", "1") {
         if (signerAddress_ == address(0)) revert InvalidAddress();
         transferOwnership(owner);
         signerAddress = signerAddress_;
     }
 
     function _verify(ClaimData memory claimData) private view {
-        bytes32 payloadHash = _calculateHash(claimData);
-
-        bytes32 messageHash = ECDSA.toEthSignedMessageHash(payloadHash);
-
-        address messageSigner = ECDSA.recover(
-            messageHash,
-            claimData.signature.v,
-            claimData.signature.r,
-            claimData.signature.s
+        bytes32 structHash = keccak256(
+            abi.encode(CLAIM_TYPEHASH, claimData.to, claimData.sigExpiration, claimData.taskId, claimData.amount)
         );
+        bytes32 constructedHash = _hashTypedDataV4(structHash);
 
-        if (signerAddress != messageSigner) revert InvalidSigner();
+        if (!SignatureChecker.isValidSignatureNow(signerAddress, constructedHash, claimData.signature)) {
+            revert InvalidSigner();
+        }
+
         if (block.timestamp > claimData.sigExpiration) revert SignatureExpired();
-    }
-
-    // Function to compute the hash of the data and tasks for a token
-    function _calculateHash(ClaimData memory claimData) private pure returns (bytes32) {
-        bytes memory encodedData = abi.encode(
-            claimData.to,
-            claimData.sigExpiration,
-            claimData.taskId,
-            claimData.amount
-        );
-
-        return keccak256(encodedData);
     }
 
     function claim(ClaimData memory claimData) external whenNotPaused nonReentrant {

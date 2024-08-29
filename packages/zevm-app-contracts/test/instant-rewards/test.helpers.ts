@@ -1,12 +1,5 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
-import { ethers } from "hardhat";
-
-export interface Signature {
-  r: string;
-  s: string;
-  v: number;
-}
 
 export interface ClaimData {
   amount: BigNumber;
@@ -16,18 +9,38 @@ export interface ClaimData {
 }
 
 export interface ClaimDataSigned extends ClaimData {
-  signature: Signature;
+  signature: string;
 }
 
-export const getSignature = async (signer: SignerWithAddress, claimData: ClaimData) => {
-  let payload = ethers.utils.defaultAbiCoder.encode(
-    ["address", "uint256", "bytes32", "uint256"],
-    [claimData.to, claimData.sigExpiration, claimData.taskId, claimData.amount]
-  );
+export const getSignature = async (
+  chainId: number,
+  verifyingContract: string,
+  signer: SignerWithAddress,
+  claimData: ClaimData
+) => {
+  const domain = {
+    chainId: chainId,
+    name: "InstantRewards",
+    verifyingContract: verifyingContract,
+    version: "1",
+  };
 
-  const payloadHash = ethers.utils.keccak256(payload);
+  const types = {
+    Claim: [
+      { name: "to", type: "address" },
+      { name: "sigExpiration", type: "uint256" },
+      { name: "taskId", type: "bytes32" },
+      { name: "amount", type: "uint256" },
+    ],
+  };
 
-  // This adds the message prefix
-  const signature = await signer.signMessage(ethers.utils.arrayify(payloadHash));
-  return ethers.utils.splitSignature(signature);
+  const value = {
+    amount: claimData.amount,
+    sigExpiration: claimData.sigExpiration,
+    taskId: claimData.taskId,
+    to: claimData.to,
+  };
+  // Signing the data
+  const signature = await signer._signTypedData(domain, types, value);
+  return signature;
 };

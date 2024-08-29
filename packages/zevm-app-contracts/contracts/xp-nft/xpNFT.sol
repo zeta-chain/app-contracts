@@ -117,18 +117,6 @@ contract ZetaXP is ERC721Upgradeable, Ownable2StepUpgradeable, EIP712Upgradeable
         if (updateData.sigTimestamp <= lastUpdateTimestampByTokenId[tokenId]) revert OutdatedSignature();
     }
 
-    // Function to compute the hash of the data and tasks for a token
-    function _calculateHash(UpdateData memory updateData) private pure returns (bytes32) {
-        bytes memory encodedData = abi.encode(
-            updateData.to,
-            updateData.signatureExpiration,
-            updateData.sigTimestamp,
-            updateData.tag
-        );
-
-        return keccak256(encodedData);
-    }
-
     function _updateNFT(uint256 tokenId, UpdateData memory updateData) internal {
         _verify(tokenId, updateData);
         lastUpdateTimestampByTokenId[tokenId] = updateData.sigTimestamp;
