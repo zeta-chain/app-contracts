@@ -289,6 +289,7 @@ describe("Instant Rewards Contract test", () => {
       expect(ownerAddr).to.be.eq(owner.address);
     }
     await instantRewards.transferOwnership(user.address);
+    await instantRewards.connect(user).acceptOwnership();
     {
       const ownerAddr = await instantRewards.owner();
       expect(ownerAddr).to.be.eq(user.address);

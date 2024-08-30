@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-contract InstantRewards is Ownable, Pausable, ReentrancyGuard, EIP712 {
+contract InstantRewards is Ownable2Step, Pausable, ReentrancyGuard, EIP712 {
     bytes32 private constant CLAIM_TYPEHASH =
         keccak256("Claim(address to,uint256 sigExpiration,bytes32 taskId,uint256 amount)");
 
@@ -23,6 +23,7 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard, EIP712 {
 
     address public signerAddress;
 
+    event SignerUpdated(address indexed signerAddress);
     event Claimed(address indexed to, bytes32 indexed taskId, uint256 amount);
     event Withdrawn(address indexed wallet, uint256 amount);
 
@@ -51,7 +52,7 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard, EIP712 {
         if (block.timestamp > claimData.sigExpiration) revert SignatureExpired();
     }
 
-    function claim(ClaimData memory claimData) external whenNotPaused nonReentrant {
+    function claim(ClaimData memory claimData) external nonReentrant whenNotPaused {
         claimData.to = msg.sender;
         _verify(claimData);
 
@@ -68,12 +69,15 @@ contract InstantRewards is Ownable, Pausable, ReentrancyGuard, EIP712 {
     function setSignerAddress(address signerAddress_) external onlyOwner {
         if (signerAddress_ == address(0)) revert InvalidAddress();
         signerAddress = signerAddress_;
+        emit SignerUpdated(signerAddress_);
     }
 
     function withdraw(address wallet, uint256 amount) external onlyOwner {
         if (wallet == address(0)) revert InvalidAddress();
         if (amount > address(this).balance) revert TransferFailed();
-        payable(wallet).transfer(amount);
+        (bool success, ) = wallet.call{value: amount}("");
+        if (!success) revert TransferFailed();
+
         emit Withdrawn(wallet, amount);
     }
 
