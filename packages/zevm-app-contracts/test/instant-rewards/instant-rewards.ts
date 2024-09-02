@@ -7,6 +7,8 @@ import { ethers } from "hardhat";
 import { InstantRewards } from "../../typechain-types";
 import { ClaimData, getSignature } from "./test.helpers";
 
+const HARDHAT_CHAIN_ID = 1337;
+
 describe("Instant Rewards Contract test", () => {
   let instantRewards: InstantRewards,
     owner: SignerWithAddress,
@@ -17,6 +19,8 @@ describe("Instant Rewards Contract test", () => {
   const encodeTaskId = (taskId: string) => utils.keccak256(utils.defaultAbiCoder.encode(["string"], [taskId]));
 
   const getClaimDataSigned = async (
+    chainId: number,
+    verifyingContract: string,
     signer: SignerWithAddress,
     amount: BigNumber,
     sigExpiration: number,
@@ -30,7 +34,7 @@ describe("Instant Rewards Contract test", () => {
       to,
     };
 
-    const signature = await getSignature(signer, claimData);
+    const signature = await getSignature(chainId, verifyingContract, signer, claimData);
     return {
       ...claimData,
       signature,
@@ -59,7 +63,15 @@ describe("Instant Rewards Contract test", () => {
       value: amount,
     });
 
-    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration,
+      taskId,
+      to
+    );
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.emit(instantRewards, "Claimed").withArgs(owner.address, taskId, amount);
@@ -81,7 +93,15 @@ describe("Instant Rewards Contract test", () => {
       value: amount,
     });
 
-    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration,
+      taskId,
+      to
+    );
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.emit(instantRewards, "Claimed").withArgs(owner.address, taskId, amount);
@@ -94,7 +114,15 @@ describe("Instant Rewards Contract test", () => {
     const taskId = encodeTaskId("WALLET/TASK/EPOC");
     const to = user.address;
 
-    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration,
+      taskId,
+      to
+    );
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.revertedWith("InvalidSigner");
@@ -107,7 +135,15 @@ describe("Instant Rewards Contract test", () => {
     const taskId = encodeTaskId("WALLET/TASK/EPOC");
     const to = owner.address;
 
-    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration,
+      taskId,
+      to
+    );
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.revertedWith("SignatureExpired");
@@ -122,7 +158,15 @@ describe("Instant Rewards Contract test", () => {
 
     await instantRewards.pause();
 
-    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration,
+      taskId,
+      to
+    );
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.revertedWith("Pausable: paused");
@@ -141,7 +185,15 @@ describe("Instant Rewards Contract test", () => {
       value: amount,
     });
 
-    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration,
+      taskId,
+      to
+    );
 
     instantRewards.claim(claimDataSigned);
 
@@ -163,10 +215,26 @@ describe("Instant Rewards Contract test", () => {
     });
 
     {
-      const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+      const claimDataSigned = await getClaimDataSigned(
+        HARDHAT_CHAIN_ID,
+        instantRewards.address,
+        signer,
+        amount,
+        sigExpiration,
+        taskId,
+        to
+      );
       instantRewards.claim(claimDataSigned);
     }
-    const claimDataSigned = await getClaimDataSigned(signer, amount.add(parseEther("1")), sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount.add(parseEther("1")),
+      sigExpiration,
+      taskId,
+      to
+    );
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.revertedWith("TaskAlreadyClaimed");
   });
@@ -184,9 +252,25 @@ describe("Instant Rewards Contract test", () => {
       value: amount,
     });
 
-    const claimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration, taskId, to);
+    const claimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration,
+      taskId,
+      to
+    );
 
-    const newClaimDataSigned = await getClaimDataSigned(signer, amount, sigExpiration + 1000, taskId, to);
+    const newClaimDataSigned = await getClaimDataSigned(
+      HARDHAT_CHAIN_ID,
+      instantRewards.address,
+      signer,
+      amount,
+      sigExpiration + 1000,
+      taskId,
+      to
+    );
 
     instantRewards.claim(newClaimDataSigned);
 
@@ -205,6 +289,7 @@ describe("Instant Rewards Contract test", () => {
       expect(ownerAddr).to.be.eq(owner.address);
     }
     await instantRewards.transferOwnership(user.address);
+    await instantRewards.connect(user).acceptOwnership();
     {
       const ownerAddr = await instantRewards.owner();
       expect(ownerAddr).to.be.eq(user.address);

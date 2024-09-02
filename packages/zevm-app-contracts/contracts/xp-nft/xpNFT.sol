@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
@@ -115,18 +115,6 @@ contract ZetaXP is ERC721Upgradeable, Ownable2StepUpgradeable, EIP712Upgradeable
 
         if (block.timestamp > updateData.signatureExpiration) revert SignatureExpired();
         if (updateData.sigTimestamp <= lastUpdateTimestampByTokenId[tokenId]) revert OutdatedSignature();
-    }
-
-    // Function to compute the hash of the data and tasks for a token
-    function _calculateHash(UpdateData memory updateData) private pure returns (bytes32) {
-        bytes memory encodedData = abi.encode(
-            updateData.to,
-            updateData.signatureExpiration,
-            updateData.sigTimestamp,
-            updateData.tag
-        );
-
-        return keccak256(encodedData);
     }
 
     function _updateNFT(uint256 tokenId, UpdateData memory updateData) internal {
