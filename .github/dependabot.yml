@@ -1,7 +1,10 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/" 
+    directories: 
+      - "/"
+      - "/packages/zeta-app-contracts"
+      - "/packages/zevm-app-contracts"
     schedule:
       interval: "daily"
     commit-message:
@@ -12,5 +15,3 @@ updates:
       - dependency-name: "@zetachain/toolkit"
       - dependency-name: "@zetachain/networks"
       - dependency-name: "@zetachain/protocol-contracts"
-      - dependency-name: "@zetachain/universalkit"
-      - dependency-name: "@zetachain/localnet"
