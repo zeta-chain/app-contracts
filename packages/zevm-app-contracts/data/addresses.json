@@ -16,7 +16,8 @@
       "zetaSwapBtcInbound": "0x358E2cfC0E16444Ba7D3164Bbeeb6bEA7472c559",
       "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d",
       "withdrawERC20": "0xa349B9367cc54b47CAb8D09A95836AE8b4D1d84E",
-      "ZetaXP": "0x6926b6ea978d59a8Ab6aC05486Fd0bED6D15eC29"
+      "ZetaXP": "0x9A4e8bB5FFD8088ecF1DdE823e97Be8080BD38cb",
+      "InstantRewards": "0x018412ec1D5bBb864eAe0A4BECaa683052890238"
     }
   }
 }
