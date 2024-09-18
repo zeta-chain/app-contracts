@@ -3790,10 +3790,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/protocol-contracts@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@zetachain/protocol-contracts@npm:4.0.1"
-  checksum: 8d21c901001a735a4a43c4dd9eb90bc8121822bec1d51f0267061f771431691b4bcd7fcdaedb0e7b8bbd0d318937c86972076bf846e5c67506dbab389f9407ff
+"@zetachain/protocol-contracts@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@zetachain/protocol-contracts@npm:9.0.0"
+  checksum: 9b1f86a414840be406cef0342b64916bc03abf50faf48565e2ae0e5eecf427cd94fd35a64aeec75f8547ecb9f9eb81efab8d15d0a90c2d0975539be96d350f70
   languageName: node
   linkType: hard
 
@@ -3839,7 +3839,7 @@ __metadata:
     "@defi-wonderland/smock": ^2.3.4
     "@openzeppelin/contracts": ^4.9.3
     "@zetachain/networks": ^4.0.0
-    "@zetachain/protocol-contracts": ^4.0.1
+    "@zetachain/protocol-contracts": ^9.0.0
     ethers: 5.6.8
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
@@ -3856,7 +3856,7 @@ __metadata:
     "@openzeppelin/hardhat-upgrades": ^1.7.0-rc.0
     "@uniswap/v2-periphery": 1.1.0-beta.0
     "@zetachain/networks": ^4.0.0
-    "@zetachain/protocol-contracts": ^4.0.1
+    "@zetachain/protocol-contracts": ^9.0.0
     hardhat-gas-reporter: ^1.0.8
     solidity-coverage: ^0.7.20
     tsconfig-paths: ^3.14.1
