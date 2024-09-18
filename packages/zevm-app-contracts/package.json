@@ -1,6 +1,6 @@
 {
   "name": "@zetachain/zevm-app-contracts",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "license": "MIT",
   "author": "zetachain",
   "publishConfig": {
