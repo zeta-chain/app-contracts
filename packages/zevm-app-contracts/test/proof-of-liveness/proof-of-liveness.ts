@@ -1,12 +1,10 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { BigNumber, utils } from "ethers";
-import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { ProofOfLiveness } from "../../typechain-types";
 
-const HARDHAT_CHAIN_ID = 1337;
+const PROOF_PERIOD = 24 * 60 * 60; // 24 hours in seconds
 
 describe("Proof Of Liveness Contract test", () => {
   let proofOfLiveness: ProofOfLiveness,
@@ -34,8 +32,6 @@ describe("Proof Of Liveness Contract test", () => {
   });
 
   it("Should proof 5 times every 24 hours and return correct view values", async () => {
-    const PROOF_PERIOD = 24 * 60 * 60; // 24 hours in seconds
-
     // Prove liveness 5 times
     for (let i = 0; i < 5; i++) {
       // Call the proveLiveness function
@@ -55,8 +51,6 @@ describe("Proof Of Liveness Contract test", () => {
   });
 
   it("Should proof 5 times every 24 hours and return correct view values if one day is missing", async () => {
-    const PROOF_PERIOD = 24 * 60 * 60; // 24 hours in seconds
-
     // Prove liveness 5 times
     for (let i = 0; i < 5; i++) {
       // Call the proveLiveness function if day is not 3
