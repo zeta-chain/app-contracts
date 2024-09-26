@@ -8,7 +8,8 @@
       "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d",
       "withdrawERC20": "0xa349B9367cc54b47CAb8D09A95836AE8b4D1d84E",
       "ZetaXP": "0x5c25b6f4D2b7a550a80561d3Bf274C953aC8be7d",
-      "InstantRewards": "0x10DfEd4ba9b8F6a1c998E829FfC0325D533c80E3"
+      "InstantRewards": "0x10DfEd4ba9b8F6a1c998E829FfC0325D533c80E3",
+      "ProofOfLiveness": "0x981EB6fD19717Faf293Fba0cBD05C6Ac97b8C808"
     },
     "zeta_mainnet": {
       "disperse": "0x23ce409Ea60c3d75827d04D9db3d52F3af62e44d",
@@ -18,7 +19,8 @@
       "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d",
       "withdrawERC20": "0xa349B9367cc54b47CAb8D09A95836AE8b4D1d84E",
       "ZetaXP": "0x9A4e8bB5FFD8088ecF1DdE823e97Be8080BD38cb",
-      "InstantRewards": "0x018412ec1D5bBb864eAe0A4BECaa683052890238"
+      "InstantRewards": "0x018412ec1D5bBb864eAe0A4BECaa683052890238",
+      "ProofOfLiveness": "0x327c9837B183e69C522a30E6f91A42c86e057432"
     }
   }
 }
