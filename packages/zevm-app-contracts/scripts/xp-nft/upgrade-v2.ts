@@ -2,7 +2,6 @@ import { isProtocolNetworkName } from "@zetachain/protocol-contracts";
 import { ethers, network, upgrades } from "hardhat";
 
 import addresses from "../../data/addresses.json";
-import { ZetaXP__factory } from "../../typechain-types";
 import { saveAddress } from "../address.helpers";
 import { verifyContract } from "../explorer.helpers";
 
@@ -12,7 +11,7 @@ const upgradeZetaXP = async () => {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
 
   //@ts-ignore
-  const nftAddress = addresses[networkName].ZetaXP;
+  const nftAddress = addresses["zevm"][networkName].ZetaXP;
 
   const ZetaXPFactory = await ethers.getContractFactory("ZetaXP_V2");
   const zetaXP = await upgrades.upgradeProxy(nftAddress, ZetaXPFactory);
