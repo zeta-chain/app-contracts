@@ -10,7 +10,7 @@ const HARDHAT_CHAIN_ID = 1337;
 
 const encodeTag = (tag: string) => ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(["string"], [tag]));
 
-describe("XP NFT Contract test", () => {
+describe("XP NFT V2 Contract Back compatibility test", () => {
   let zetaXP: ZetaXP, signer: SignerWithAddress, user: SignerWithAddress, addrs: SignerWithAddress[];
   let sampleNFT: NFT;
 
@@ -27,6 +27,10 @@ describe("XP NFT Contract test", () => {
     ]);
 
     await zetaXP.deployed();
+
+    const ZetaXPFactory = await ethers.getContractFactory("ZetaXP_V2");
+    await upgrades.upgradeProxy(zetaXP.address, ZetaXPFactory);
+
     const tag = encodeTag("XP_NFT");
 
     sampleNFT = {
@@ -349,17 +353,6 @@ describe("XP NFT Contract test", () => {
 
     const tx1 = zetaXP.updateNFT(tokenId, nftParams);
     await expect(tx1).to.be.revertedWith("OutdatedSignature");
-  });
-
-  it("Should upgrade", async () => {
-    const version = await zetaXP.version();
-    await expect(version).to.be.eq("1.0.0");
-
-    const ZetaXPFactory = await ethers.getContractFactory("ZetaXPV2");
-    const zetaXPV2 = await upgrades.upgradeProxy(zetaXP.address, ZetaXPFactory);
-
-    const version2 = await zetaXPV2.version();
-    await expect(version2).to.be.eq("1.0.1");
   });
 
   it("Should revert if user already have the tag", async () => {
