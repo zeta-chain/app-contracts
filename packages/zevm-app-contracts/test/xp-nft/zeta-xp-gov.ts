@@ -21,7 +21,7 @@ describe("ZetaXPGov", () => {
 
   beforeEach(async () => {
     [signer, user, ...addrs] = await ethers.getSigners();
-    const zetaXPFactory = await ethers.getContractFactory("ZetaXP");
+    const zetaXPFactory = await ethers.getContractFactory("ZetaXP_V2");
 
     zetaXP = await upgrades.deployProxy(zetaXPFactory, [
       "ZETA NFT",
@@ -32,9 +32,6 @@ describe("ZetaXPGov", () => {
     ]);
 
     await zetaXP.deployed();
-
-    const ZetaXPFactory = await ethers.getContractFactory("ZetaXP_V2");
-    zetaXP = await upgrades.upgradeProxy(zetaXP.address, ZetaXPFactory);
 
     // Deploy the TimelockController contract
     const timelockFactory = await ethers.getContractFactory("TimelockController");
@@ -54,7 +51,13 @@ describe("ZetaXPGov", () => {
     zetaGov = await ZetaXPGovFactory.deploy(zetaXP.address, timelock.address, 4);
     await zetaGov.deployed();
 
-    await zetaGov.setTagValidToVote(encodeTag("XP_NFT"));
+    // Assign proposer and executor roles to the signer
+    const proposerRole = await timelock.PROPOSER_ROLE();
+    const executorRole = await timelock.EXECUTOR_ROLE();
+    await timelock.grantRole(proposerRole, zetaGov.address);
+    await timelock.grantRole(executorRole, zetaGov.address);
+
+    await zetaGov.setTagValidToVote(tag);
   });
 
   // Helper function to extract token ID from minting receipt
@@ -115,10 +118,16 @@ describe("ZetaXPGov", () => {
     await zetaXP.setLevel({ level, sigTimestamp, signature, signatureExpiration, tokenId });
   };
 
-  it("Should be able to vote", async () => {
-    const user = addrs[0];
-    const nftId = await mintNFTToUser(user);
-    await setLevelToNFT(nftId, 3);
+  it("Should be able to vote and meet quorum", async () => {
+    const user1 = addrs[0];
+    const user2 = addrs[1]; // Añadimos un segundo usuario para alcanzar el quórum
+
+    // Mint NFTs to both users
+    const nftId1 = await mintNFTToUser(user1);
+    await setLevelToNFT(nftId1, 3);
+
+    const nftId2 = await mintNFTToUser(user2);
+    await setLevelToNFT(nftId2, 3);
 
     // Create a proposal to vote on
     const targets = ["0x0000000000000000000000000000000000000000"];
@@ -134,21 +143,34 @@ describe("ZetaXPGov", () => {
     await ethers.provider.send("evm_increaseTime", [7200]); // Fast forward 2 hours to ensure voting delay is over
     await ethers.provider.send("evm_mine", []); // Mine the next block
 
-    // User votes for the proposal using their NFT
-    await zetaGov.connect(user).castVote(proposalId, 1); // Assuming 1 is a vote in favor
+    // Both users vote for the proposal using their NFTs
+    await zetaGov.connect(user1).castVote(proposalId, 1); // Assuming 1 is a vote in favor
+    await zetaGov.connect(user2).castVote(proposalId, 1); // Second user votes in favor
 
     // Optionally, increase the block number to simulate time passing and end the voting period
-    await ethers.provider.send("evm_increaseTime", [3600]); // Fast forward one hour
+    await ethers.provider.send("evm_increaseTime", [50400]); // Fast forward 1 week to end the voting period
     await ethers.provider.send("evm_mine", []); // Mine the next block
 
-    // Queue and execute the proposal after voting period is over
+    // Queue the proposal after voting period is over
     const descriptionHash = ethers.utils.id(description);
     await zetaGov.connect(signer).queue(targets, values, calldatas, descriptionHash);
+
+    // Increase time to meet the timelock delay
+    await ethers.provider.send("evm_increaseTime", [3600]); // Fast forward 1 hour to meet timelock delay
+    await ethers.provider.send("evm_mine", []); // Mine the next block
+
+    // Execute the proposal after the timelock delay has passed
     const executeTx = await zetaGov.connect(signer).execute(targets, values, calldatas, descriptionHash);
     await executeTx.wait();
 
     // Assertions
     const proposalState = await zetaGov.state(proposalId);
     expect(proposalState).to.equal(7); // Assuming 7 means 'executed'
+
+    // Get the proposal votes after the voting period
+    const votes = await zetaGov.proposalVotes(proposalId);
+    expect(votes.abstainVotes).to.equal(0);
+    expect(votes.againstVotes).to.equal(0);
+    expect(votes.forVotes).to.equal(6);
   });
 });
