@@ -18,7 +18,8 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
     constructor(
         ZetaXP_V2 _xpNFT,
         TimelockController _timelock,
-        uint256 _quorumPercentage // Set the quorum percentage (e.g., 4%)
+        uint256 _quorumPercentage, // Set the quorum percentage (e.g., 4%)
+        bytes32 _tag
     )
         Governor("ZetaXPGov")
         GovernorSettings(7200 /* 1 day */, 50400 /* 1 week */, 0)
@@ -26,10 +27,10 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
     {
         xpNFT = _xpNFT;
         quorumPercentage = _quorumPercentage;
+        tagValidToVote = _tag;
     }
 
-    // @todo: implement access control
-    function setTagValidToVote(bytes32 _tag) external {
+    function setTagValidToVote(bytes32 _tag) external onlyGovernance {
         tagValidToVote = _tag;
     }
 

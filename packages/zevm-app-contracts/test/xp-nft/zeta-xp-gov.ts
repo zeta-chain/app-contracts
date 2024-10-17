@@ -48,7 +48,7 @@ describe("ZetaXPGov", () => {
 
     // Deploy the ZetaXPGov contract
     const ZetaXPGovFactory = await ethers.getContractFactory("ZetaXPGov");
-    zetaGov = await ZetaXPGovFactory.deploy(zetaXP.address, timelock.address, 4);
+    zetaGov = await ZetaXPGovFactory.deploy(zetaXP.address, timelock.address, 4, tag);
     await zetaGov.deployed();
 
     // Assign proposer and executor roles to the signer
@@ -56,8 +56,6 @@ describe("ZetaXPGov", () => {
     const executorRole = await timelock.EXECUTOR_ROLE();
     await timelock.grantRole(proposerRole, zetaGov.address);
     await timelock.grantRole(executorRole, zetaGov.address);
-
-    await zetaGov.setTagValidToVote(tag);
   });
 
   // Helper function to extract token ID from minting receipt
