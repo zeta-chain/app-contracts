@@ -5,6 +5,6 @@ import "../xpNFT.sol";
 
 contract ZetaXPV2 is ZetaXP {
     function version() public pure override returns (string memory) {
-        return "2.0.0";
+        return "1.0.1";
     }
 }
