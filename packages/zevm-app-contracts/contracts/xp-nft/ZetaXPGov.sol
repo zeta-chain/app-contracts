@@ -28,7 +28,8 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
         quorumPercentage = _quorumPercentage;
     }
 
-    function setTagValidToVote(bytes32 _tag) external onlyGovernance {
+    // @todo: implement access control
+    function setTagValidToVote(bytes32 _tag) external {
         tagValidToVote = _tag;
     }
 
