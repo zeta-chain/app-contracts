@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 contract ZetaXP is ERC721Upgradeable, Ownable2StepUpgradeable, EIP712Upgradeable {
-    bytes32 private constant MINTORUPDATE_TYPEHASH =
+    bytes32 internal constant MINTORUPDATE_TYPEHASH =
         keccak256("MintOrUpdateNFT(address to,uint256 signatureExpiration,uint256 sigTimestamp,bytes32 tag)");
 
     struct UpdateData {
@@ -28,7 +28,7 @@ contract ZetaXP is ERC721Upgradeable, Ownable2StepUpgradeable, EIP712Upgradeable
     address public signerAddress;
 
     // Counter for the next token ID
-    uint256 private _currentTokenId;
+    uint256 internal _currentTokenId;
 
     // Event for New Mint
     event NFTMinted(address indexed sender, uint256 indexed tokenId, bytes32 tag);
@@ -97,7 +97,7 @@ contract ZetaXP is ERC721Upgradeable, Ownable2StepUpgradeable, EIP712Upgradeable
         return super.supportsInterface(interfaceId);
     }
 
-    function _verify(uint256 tokenId, UpdateData memory updateData) private view {
+    function _verify(uint256 tokenId, UpdateData memory updateData) internal view {
         bytes32 structHash = keccak256(
             abi.encode(
                 MINTORUPDATE_TYPEHASH,
