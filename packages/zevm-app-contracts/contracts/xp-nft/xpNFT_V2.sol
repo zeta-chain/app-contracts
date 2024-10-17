@@ -55,6 +55,6 @@ contract ZetaXP_V2 is ZetaXP {
     }
 
     function totalSupply() external view returns (uint256) {
-        return _currentTokenId;
+        return _currentTokenId - 1;
     }
 }
