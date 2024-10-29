@@ -10,8 +10,8 @@
       "ZetaXP": "0x5c25b6f4D2b7a550a80561d3Bf274C953aC8be7d",
       "InstantRewards": "0x10DfEd4ba9b8F6a1c998E829FfC0325D533c80E3",
       "ProofOfLiveness": "0x981EB6fD19717Faf293Fba0cBD05C6Ac97b8C808",
-      "TimelockController": "0x26F16EB99F195F1f401b0Afcafa2FEbb9427CE09",
-      "ZetaXPGov": "0x7B01E3060B9aAb92E3b981DB699330bB582a53C0"
+      "TimelockController": "0x75C2C7dD9f8Fe9f7B303570Db164504106D019F5",
+      "ZetaXPGov": "0xCA95803a99000863D935D3aA86a1a7F190F06D0a"
     },
     "zeta_mainnet": {
       "disperse": "0x23ce409Ea60c3d75827d04D9db3d52F3af62e44d",

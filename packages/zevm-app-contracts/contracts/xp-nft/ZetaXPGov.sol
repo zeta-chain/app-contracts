@@ -42,7 +42,6 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
     ) internal view override returns (uint256) {
         uint256 tokenId = xpNFT.tokenByUserTag(account, tagValidToVote);
         uint256 level = xpNFT.getLevel(tokenId);
-        require(level > 0, "ZetaXPGov: invalid NFT level");
 
         // Assign voting weight based on NFT level
         if (level == 1) {
@@ -118,5 +117,19 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
 
     function _executor() internal view override(Governor, GovernorTimelockControl) returns (address) {
         return super._executor();
+    }
+
+    function _castVote(
+        uint256 proposalId,
+        address account,
+        uint8 support,
+        string memory reason,
+        bytes memory params
+    ) internal override returns (uint256) {
+        uint256 tokenId = xpNFT.tokenByUserTag(account, tagValidToVote);
+        uint256 level = xpNFT.getLevel(tokenId);
+        require(level > 0, "ZetaXPGov: invalid NFT level");
+
+        return super._castVote(proposalId, account, support, reason, params);
     }
 }

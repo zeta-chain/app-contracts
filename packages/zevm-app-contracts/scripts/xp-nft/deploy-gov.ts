@@ -4,6 +4,8 @@ import { ethers, network } from "hardhat";
 import { getZEVMAppAddress, saveAddress } from "../address.helpers";
 import { verifyContract } from "../explorer.helpers";
 
+const QUANTUM_PERCENTAGE = 4;
+
 const networkName = network.name;
 
 const encodeTag = (tag: string) => ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(["string"], [tag]));
@@ -40,12 +42,12 @@ const deployXPGov = async () => {
 
   // Deploy the ZetaXPGov contract
   const ZetaXPGovFactory = await ethers.getContractFactory("ZetaXPGov");
-  const zetaGov = await ZetaXPGovFactory.deploy(zetaXPAddress, timelockAddress, 4, tag);
+  const zetaGov = await ZetaXPGovFactory.deploy(zetaXPAddress, timelockAddress, QUANTUM_PERCENTAGE, tag);
   await zetaGov.deployed();
 
   const zetaGovAddress = zetaGov.address;
 
-  executeVerifyContract("ZetaXPGov", zetaGovAddress, [zetaXPAddress, timelockAddress, 4, tag]);
+  executeVerifyContract("ZetaXPGov", zetaGovAddress, [zetaXPAddress, timelockAddress, QUANTUM_PERCENTAGE, tag]);
 
   // Assign proposer and executor roles to the signer
   const proposerRole = await timelock.PROPOSER_ROLE();
