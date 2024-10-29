@@ -42,6 +42,7 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
     ) internal view override returns (uint256) {
         uint256 tokenId = xpNFT.tokenByUserTag(account, tagValidToVote);
         uint256 level = xpNFT.getLevel(tokenId);
+        require(level > 0, "ZetaXPGov: invalid NFT level");
 
         // Assign voting weight based on NFT level
         if (level == 1) {
