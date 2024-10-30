@@ -238,4 +238,82 @@ describe("ZetaXPGov", () => {
     expect(votes.againstVotes).to.equal(1);
     expect(votes.forVotes).to.equal(3);
   });
+
+  it("Should revert if try to vote with 0 voting power", async () => {
+    const user1 = addrs[0];
+
+    // Create a proposal to vote on
+    const targets = ["0x0000000000000000000000000000000000000000"];
+    const values = [0];
+    const calldatas = ["0x"];
+    const description = "Proposal #1";
+
+    const proposeTx = await zetaGov.connect(signer).propose(targets, values, calldatas, description);
+    const proposeReceipt = await proposeTx.wait();
+    const proposalId = proposeReceipt.events?.find((e) => e.event === "ProposalCreated")?.args?.proposalId;
+
+    // Increase the time and mine blocks to move to the voting phase
+    await ethers.provider.send("evm_increaseTime", [7200]); // Fast forward 2 hours to ensure voting delay is over
+    await ethers.provider.send("evm_mine", []); // Mine the next block
+
+    // Both users vote for the proposal using their NFTs
+    const tx = zetaGov.connect(user1).castVote(proposalId, VoteType.FOR);
+    await expect(tx).to.be.revertedWith("ZetaXPGov: invalid NFT level");
+  });
+
+  it("Should revert if try to propose and min level is not archive", async () => {
+    const user1 = addrs[0];
+    const user2 = addrs[1];
+    const user3 = addrs[2];
+
+    // Mint NFTs to both users
+    const nftId1 = await mintNFTToUser(user1);
+    await setLevelToNFT(nftId1, 3);
+
+    const nftId2 = await mintNFTToUser(user2);
+    await setLevelToNFT(nftId2, 2);
+
+    const nftId3 = await mintNFTToUser(user3);
+    await setLevelToNFT(nftId3, 1);
+
+    // Create a proposal to vote on
+    const targets = [zetaGov.address];
+    const values = [0];
+    const calldatas = [zetaGov.interface.encodeFunctionData("setMinLevelToPropose", [2])];
+    const description = "Update min level to propose";
+
+    const proposeTx = await zetaGov.connect(signer).propose(targets, values, calldatas, description);
+    const proposeReceipt = await proposeTx.wait();
+    const proposalId = proposeReceipt.events?.find((e) => e.event === "ProposalCreated")?.args?.proposalId;
+
+    // Increase the time and mine blocks to move to the voting phase
+    await ethers.provider.send("evm_increaseTime", [7200]); // Fast forward 2 hours to ensure voting delay is over
+    await ethers.provider.send("evm_mine", []); // Mine the next block
+
+    // Both users vote for the proposal using their NFTs
+    await zetaGov.connect(user1).castVote(proposalId, VoteType.FOR);
+    await zetaGov.connect(user2).castVote(proposalId, VoteType.ABSTAIN);
+    await zetaGov.connect(user3).castVote(proposalId, VoteType.AGAINST);
+
+    // Optionally, increase the block number to simulate time passing and end the voting period
+    await ethers.provider.send("evm_increaseTime", [50400]); // Fast forward 1 week to end the voting period
+    await ethers.provider.send("evm_mine", []); // Mine the next block
+
+    // Queue the proposal after voting period is over
+    const descriptionHash = ethers.utils.id(description);
+    await zetaGov.connect(signer).queue(targets, values, calldatas, descriptionHash);
+
+    // Increase time to meet the timelock delay
+    await ethers.provider.send("evm_increaseTime", [3600]); // Fast forward 1 hour to meet timelock delay
+    await ethers.provider.send("evm_mine", []); // Mine the next block
+
+    // Execute the proposal after the timelock delay has passed
+    const executeTx = await zetaGov.connect(signer).execute(targets, values, calldatas, descriptionHash);
+    await executeTx.wait();
+
+    {
+      const proposeTx = zetaGov.connect(signer).propose(targets, values, calldatas, description);
+      await expect(proposeTx).to.be.revertedWith("ZetaXPGov: insufficient level to propose");
+    }
+  });
 });

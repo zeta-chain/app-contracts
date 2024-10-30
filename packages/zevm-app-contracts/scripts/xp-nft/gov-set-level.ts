@@ -8,7 +8,7 @@ import { getZEVMAppAddress, saveAddress } from "../address.helpers";
 
 const networkName = network.name;
 
-const user = "0x3a600ECC217387e7Cf9F82fc2F3ffFb43F20FF80";
+const user = "0x19caCb4c0A7fC25598CC44564ED0eCA01249fc31";
 const encodeTag = (tag: string) => ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(["string"], [tag]));
 
 // Helper function to set the level of an NFT
