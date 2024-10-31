@@ -52,7 +52,7 @@ contract InstantRewards is Ownable2Step, Pausable, ReentrancyGuard, EIP712 {
         if (block.timestamp > claimData.sigExpiration) revert SignatureExpired();
     }
 
-    function claim(ClaimData memory claimData) external nonReentrant whenNotPaused {
+    function claim(ClaimData memory claimData) public virtual nonReentrant whenNotPaused {
         claimData.to = msg.sender;
         _verify(claimData);
 
@@ -72,7 +72,7 @@ contract InstantRewards is Ownable2Step, Pausable, ReentrancyGuard, EIP712 {
         emit SignerUpdated(signerAddress_);
     }
 
-    function withdraw(address wallet, uint256 amount) external onlyOwner {
+    function withdraw(address wallet, uint256 amount) public virtual onlyOwner {
         if (wallet == address(0)) revert InvalidAddress();
         if (amount > address(this).balance) revert TransferFailed();
         (bool success, ) = wallet.call{value: amount}("");
