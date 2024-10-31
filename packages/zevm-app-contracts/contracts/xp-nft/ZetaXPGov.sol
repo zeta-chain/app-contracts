@@ -14,6 +14,7 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
     bytes32 public tagValidToVote;
     ZetaXP_V2 public xpNFT;
     uint256 public quorumPercentage; // New state to store the quorum percentage
+    uint256 public minLevelToPropose; // New state to store the minimum level required to propose
 
     constructor(
         ZetaXP_V2 _xpNFT,
@@ -34,14 +35,26 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
         tagValidToVote = _tag;
     }
 
+    function setQuorumPercentage(uint256 _quorumPercentage) external onlyGovernance {
+        quorumPercentage = _quorumPercentage;
+    }
+
+    function setMinLevelToPropose(uint256 _minLevelToPropose) external onlyGovernance {
+        minLevelToPropose = _minLevelToPropose;
+    }
+
+    function _getLevel(address account) internal view returns (uint256) {
+        uint256 tokenId = xpNFT.tokenByUserTag(account, tagValidToVote);
+        return xpNFT.getLevel(tokenId);
+    }
+
     // Override the _getVotes function to apply custom weight based on NFT levels
     function _getVotes(
         address account,
         uint256 blockNumber,
         bytes memory params
     ) internal view override returns (uint256) {
-        uint256 tokenId = xpNFT.tokenByUserTag(account, tagValidToVote);
-        uint256 level = xpNFT.getLevel(tokenId);
+        uint256 level = _getLevel(account);
 
         // Assign voting weight based on NFT level
         if (level == 1) {
@@ -117,5 +130,30 @@ contract ZetaXPGov is Governor, GovernorSettings, GovernorCountingSimple, Govern
 
     function _executor() internal view override(Governor, GovernorTimelockControl) returns (address) {
         return super._executor();
+    }
+
+    function _castVote(
+        uint256 proposalId,
+        address account,
+        uint8 support,
+        string memory reason,
+        bytes memory params
+    ) internal override returns (uint256) {
+        uint256 level = _getLevel(account);
+        require(level > 0, "ZetaXPGov: invalid NFT level");
+
+        return super._castVote(proposalId, account, support, reason, params);
+    }
+
+    function propose(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        string memory description
+    ) public virtual override(Governor, IGovernor) returns (uint256) {
+        uint256 level = _getLevel(msg.sender);
+        require(level >= minLevelToPropose, "ZetaXPGov: insufficient level to propose");
+
+        return super.propose(targets, values, calldatas, description);
     }
 }
