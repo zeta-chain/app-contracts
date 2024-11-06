@@ -9,7 +9,7 @@ import { ClaimData, getSignature } from "./test.helpers";
 
 const HARDHAT_CHAIN_ID = 1337;
 
-describe("Instant Rewards Contract test", () => {
+describe("Instant Rewards V2 Contract Compatibility test", () => {
   let instantRewards: InstantRewardsV2,
     owner: SignerWithAddress,
     signer: SignerWithAddress,
@@ -198,7 +198,7 @@ describe("Instant Rewards Contract test", () => {
       to
     );
 
-    instantRewards.claim(claimDataSigned);
+    await instantRewards.claim(claimDataSigned);
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.revertedWith("TaskAlreadyClaimed");
@@ -227,7 +227,7 @@ describe("Instant Rewards Contract test", () => {
         taskId,
         to
       );
-      instantRewards.claim(claimDataSigned);
+      await instantRewards.claim(claimDataSigned);
     }
     const claimDataSigned = await getClaimDataSigned(
       HARDHAT_CHAIN_ID,
@@ -275,7 +275,7 @@ describe("Instant Rewards Contract test", () => {
       to
     );
 
-    instantRewards.claim(newClaimDataSigned);
+    await instantRewards.claim(newClaimDataSigned);
 
     const tx = instantRewards.claim(claimDataSigned);
     await expect(tx).to.revertedWith("TaskAlreadyClaimed");

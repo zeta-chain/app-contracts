@@ -47,7 +47,7 @@ contract InstantRewardsV2 is InstantRewards {
         super.claim(claimData);
     }
 
-    function withdraw(address wallet, uint256 amount) public override {
+    function withdraw(address wallet, uint256 amount) public override onlyOwner {
         if (isActive()) revert InstantRewardStillActive();
         super.withdraw(wallet, amount);
     }
