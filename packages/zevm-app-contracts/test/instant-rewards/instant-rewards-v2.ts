@@ -1,13 +1,8 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { BigNumber, utils } from "ethers";
-import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 import { InstantRewardsFactory, InstantRewardsV2 } from "../../typechain-types";
-import { ClaimData, getSignature } from "./test.helpers";
-
-const HARDHAT_CHAIN_ID = 1337;
 
 describe("Instant Rewards Contract test", () => {
   let instantRewardsFactory: InstantRewardsFactory,
@@ -16,31 +11,6 @@ describe("Instant Rewards Contract test", () => {
     signer: SignerWithAddress,
     user: SignerWithAddress,
     addrs: SignerWithAddress[];
-
-  const encodeTaskId = (taskId: string) => utils.keccak256(utils.defaultAbiCoder.encode(["string"], [taskId]));
-
-  const getClaimDataSigned = async (
-    chainId: number,
-    verifyingContract: string,
-    signer: SignerWithAddress,
-    amount: BigNumber,
-    sigExpiration: number,
-    taskId: string,
-    to: string
-  ) => {
-    const claimData: ClaimData = {
-      amount,
-      sigExpiration,
-      taskId,
-      to,
-    };
-
-    const signature = await getSignature(chainId, verifyingContract, signer, claimData);
-    return {
-      ...claimData,
-      signature,
-    };
-  };
 
   beforeEach(async () => {
     [deployer, owner, signer, user, ...addrs] = await ethers.getSigners();
