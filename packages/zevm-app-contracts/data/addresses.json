@@ -1,7 +1,7 @@
 {
   "zevm": {
     "zeta_testnet": {
-      "disperse": "0x23ce409Ea60c3d75827d04D9db3d52F3af62e44d",
+      "disperse": "0x049893Bd0fC4923FC1B1136Ef2ac996C55D4942C",
       "rewardDistributorFactory": "0xB9dc665610CF5109cE23aBBdaAc315B41FA094c1",
       "zetaSwap": "0xA8168Dc495Ed61E70f5c1941e2860050AB902cEF",
       "zetaSwapBtcInbound": "0x358E2cfC0E16444Ba7D3164Bbeeb6bEA7472c559",
@@ -11,7 +11,8 @@
       "InstantRewards": "0x10DfEd4ba9b8F6a1c998E829FfC0325D533c80E3",
       "ProofOfLiveness": "0x981EB6fD19717Faf293Fba0cBD05C6Ac97b8C808",
       "TimelockController": "0x44139C2150c11c25f517B8a8F974b59C82aEe709",
-      "ZetaXPGov": "0x854032d484aE21acC34F36324E55A8080F21Af12"
+      "ZetaXPGov": "0x854032d484aE21acC34F36324E55A8080F21Af12",
+      "invitationManagerV2": "0xb80f6360194Dd6B47B80bd8730b3dBb05a39e723"
     },
     "zeta_mainnet": {
       "disperse": "0x23ce409Ea60c3d75827d04D9db3d52F3af62e44d",

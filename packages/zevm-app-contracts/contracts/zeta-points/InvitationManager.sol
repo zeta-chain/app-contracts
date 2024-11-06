@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity ^0.8.20;
 
 contract InvitationManager {
     /* An ECDSA signature. */
@@ -69,7 +69,7 @@ contract InvitationManager {
         return userVerificationTimestamps[userAddress];
     }
 
-    function _verifySignature(address inviter, uint256 expiration, Signature calldata signature) private pure {
+    function _verifySignature(address inviter, uint256 expiration, Signature calldata signature) internal pure {
         bytes32 payloadHash = keccak256(abi.encode(inviter, expiration));
         bytes32 messageHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
 
