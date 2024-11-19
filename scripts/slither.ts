@@ -2,11 +2,18 @@ import inquirer from "inquirer";
 import { execSync } from "node:child_process";
 import path from "node:path";
 
+// Root directory of the project
 const projectRoot = path.join(__dirname, "../");
+
+// Solidity compiler version
 const solcVersion = "0.8.7";
+// Timestamp for unique file naming
 const timestamp = Date.now();
+
+// List of package names to choose from
 const packageNames = ["protocol-contracts", "example-contracts"];
 
+// Function to get the package name based on user input
 async function getPackageName() {
   let packageName;
 
@@ -21,7 +28,7 @@ async function getPackageName() {
 
     return packageName;
   } else {
-    packageName = await inquirer.prompt([
+    const { contracts } = await inquirer.prompt([
       {
         choices: packageNames,
         message: "Which set of contracts would you like to test?",
@@ -30,17 +37,18 @@ async function getPackageName() {
       },
     ]);
 
-    return packageName.contracts;
+    return contracts;
   }
 }
 
+// Function to get the filter paths based on user input
 async function getFilterPaths() {
   if (process.env.CI) return "";
 
-  const { confirm: includeLibraries } = await inquirer.prompt([
+  const { includeLibraries } = await inquirer.prompt([
     {
       message: "Do you want to include OpenZeppelin & Uniswap libraries in this scan?",
-      name: "confirm",
+      name: "includeLibraries",
       type: "confirm",
     },
   ]);
@@ -48,7 +56,8 @@ async function getFilterPaths() {
   return includeLibraries ? "" : `--filter-paths "node_modules/@openzeppelin/","node_modules/@uniswap/"`;
 }
 
-const run = async (command: string) => {
+// Function to execute a shell command
+const run = async (command) => {
   try {
     console.log("Starting -- This may take a few minutes...");
 
@@ -63,19 +72,24 @@ const run = async (command: string) => {
     console.error(`${error}`);
   }
 };
-function runSlither(packageName: string, filterPaths: string) {
+
+// Function to run Slither analysis
+function runSlither(packageName, filterPaths) {
   const dockerCommand = `cd /home/trufflecon/packages/${packageName} && \
   solc-select use ${solcVersion} && \
   slither --json ../../scripts/slither-results/${packageName}-${timestamp}.json \
   --sarif ../../scripts/slither-results/${packageName}-${timestamp}.sarif \
   --checklist  ./ ${filterPaths} | tee ../../scripts/slither-results/${packageName}-${timestamp}.md`;
+
   run(`docker run -v "${projectRoot}":/home/trufflecon trailofbits/eth-security-toolbox  -c "${dockerCommand}"`);
 }
 
+// Main function to orchestrate Slither analysis
 async function main() {
   runSlither(await getPackageName(), await getFilterPaths());
 }
 
+// Execute the main function and handle errors
 main()
   .then(() => process.exit(0))
   .catch((error) => {
