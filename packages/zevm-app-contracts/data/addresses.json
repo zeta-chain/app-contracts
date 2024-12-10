@@ -12,7 +12,8 @@
       "ProofOfLiveness": "0x981EB6fD19717Faf293Fba0cBD05C6Ac97b8C808",
       "TimelockController": "0x44139C2150c11c25f517B8a8F974b59C82aEe709",
       "ZetaXPGov": "0x854032d484aE21acC34F36324E55A8080F21Af12",
-      "invitationManagerV2": "0xb80f6360194Dd6B47B80bd8730b3dBb05a39e723"
+      "invitationManagerV2": "0xb80f6360194Dd6B47B80bd8730b3dBb05a39e723",
+      "InstantRewardsFactory": "0x02F054A5BeeB2653d1c2403cBe9B262356fdD5E4"
     },
     "zeta_mainnet": {
       "disperse": "0x23ce409Ea60c3d75827d04D9db3d52F3af62e44d",
@@ -22,7 +23,7 @@
       "invitationManager": "0x3649C03C472B698213926543456E9c21081e529d",
       "withdrawERC20": "0xa349B9367cc54b47CAb8D09A95836AE8b4D1d84E",
       "ZetaXP": "0x9A4e8bB5FFD8088ecF1DdE823e97Be8080BD38cb",
-      "InstantRewards": "0x018412ec1D5bBb864eAe0A4BECaa683052890238",
+      "InstantRewards": "0xfD5dcBf68c81274B48593Cb4b0322e965741392b",
       "ProofOfLiveness": "0x327c9837B183e69C522a30E6f91A42c86e057432"
     }
   }

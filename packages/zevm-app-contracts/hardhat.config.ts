@@ -40,8 +40,8 @@ const config: HardhatUserConfig = {
         chainId: 7001,
         network: "zeta_testnet",
         urls: {
-          apiURL: "https://zetachain-athens-3.blockscout.com/api",
-          browserURL: "https://zetachain-athens-3.blockscout.com",
+          apiURL: "https://zetachain-testnet.blockscout.com/api",
+          browserURL: "https://zetachain-testnet.blockscout.com",
         },
       },
     ],
@@ -52,6 +52,13 @@ const config: HardhatUserConfig = {
   },
   networks: {
     ...getHardhatConfigNetworks(),
+    zeta_mainnet: {
+      accounts: PRIVATE_KEYS,
+      chainId: 7000,
+      gas: "auto",
+      gasMultiplier: 3,
+      url: `https://zetachain-evm.blockpi.network/v1/rpc/public`,
+    },
   },
   solidity: {
     compilers: [

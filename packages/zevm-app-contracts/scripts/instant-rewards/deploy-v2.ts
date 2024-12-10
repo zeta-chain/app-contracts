@@ -7,7 +7,7 @@ import { verifyContract } from "../explorer.helpers";
 
 const networkName = network.name;
 
-const owner = "0x1d24d94520B94B26351f6573de5ef9731c48531A";
+const owner = "0xD7E8bD37db625a4856E056D2617C9d140dB99182";
 
 const deployInstantRewards = async () => {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
@@ -21,7 +21,7 @@ const deployInstantRewards = async () => {
 
   console.log("InstantRewards deployed to:", InstantRewards.address);
 
-  saveAddress("InstantRewards", InstantRewards.address, networkName);
+  saveAddress("InstantRewardsFactory", InstantRewards.address, networkName);
 
   await verifyContract(InstantRewards.address, [owner]);
 };
