@@ -10,7 +10,7 @@ const networkName = network.name;
 
 const OWNERS = {
   zeta_mainnet: "0xD7E8bD37db625a4856E056D2617C9d140dB99182",
-  zeta_testnet: "0xD7E8bD37db625a4856E056D2617C9d140dB99182",
+  zeta_testnet: "0x1d24d94520B94B26351f6573de5ef9731c48531A",
 };
 
 //@ts-ignore
@@ -48,7 +48,11 @@ const deployInstantRewardsSample = async (instantRewards: InstantRewardsFactory)
   if (!instantRewardsAddress) throw new Error("InstantRewards address not found");
   console.log("InstantRewards deployed to:", instantRewardsAddress);
 
-  await verifyContract(instantRewardsAddress, [owner, ...params]);
+  await verifyContract(
+    instantRewardsAddress,
+    [owner, ...params],
+    "contracts/instant-rewards/InstantRewardsV2.sol:InstantRewardsV2"
+  );
 };
 
 const deployInstantRewards = async () => {
@@ -65,11 +69,7 @@ const deployInstantRewards = async () => {
 
   saveAddress("InstantRewardsFactory", instantRewards.address, networkName);
 
-  await verifyContract(
-    instantRewards.address,
-    [owner],
-    "contracts/instant-rewards/InstantRewardsV2.sol:InstantRewardsV2"
-  );
+  await verifyContract(instantRewards.address, [owner]);
 
   return instantRewards;
 };
