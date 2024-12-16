@@ -15,8 +15,14 @@ const OWNERS = {
 
 //@ts-ignore
 const owner = OWNERS[networkName];
+console.log("Owner:", owner);
 
-const deployInstantRewardsSample = async (instantRewards: InstantRewardsFactory) => {
+const deployInstantRewardsSample = async (instantRewardsFactoryAddress: string) => {
+  const [deployer] = await ethers.getSigners();
+
+  const InstantRewardsFactory = new InstantRewardsFactory__factory(deployer);
+  const instantRewards = InstantRewardsFactory.attach(instantRewardsFactoryAddress);
+
   // get current timestamp from ethers
   const block = await ethers.provider.getBlock("latest");
   const timestamp = block.timestamp;
@@ -38,7 +44,7 @@ const deployInstantRewardsSample = async (instantRewards: InstantRewardsFactory)
   });
 
   const rec = await tx.wait();
-  console.log(rec);
+
   // query event InstantRewardsCreated to get the address
   const event = rec.events?.find((event) => event.event === "InstantRewardsCreated");
 
@@ -70,6 +76,7 @@ const deployInstantRewards = async () => {
   saveAddress("InstantRewardsFactory", instantRewards.address, networkName);
 
   await verifyContract(instantRewards.address, [owner]);
+  // await verifyContract("0xAf5693bBC958e442462F411F46421e389c7A8602", [owner]);
 
   return instantRewards;
 };
@@ -77,7 +84,8 @@ const deployInstantRewards = async () => {
 const main = async () => {
   if (!isProtocolNetworkName(networkName)) throw new Error("Invalid network name");
   const instantRewards = await deployInstantRewards();
-  await deployInstantRewardsSample(instantRewards);
+  await deployInstantRewardsSample(instantRewards.address);
+  // await deployInstantRewardsSample("0x3A557fe83FD734f21DD35E98f546B9706d486F55");
 };
 
 main().catch((error) => {
