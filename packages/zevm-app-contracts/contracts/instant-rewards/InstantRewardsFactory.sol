@@ -13,7 +13,7 @@ contract InstantRewardsFactory is Ownable {
     error StartTimeInPast();
     error EndTimeBeforeStart();
 
-    event InstantRewardsCreated(address indexed instantRewards, address indexed owner, string indexed name);
+    event InstantRewardsCreated(address indexed instantRewards, address indexed owner, string name);
 
     constructor(address owner) Ownable() {
         transferOwnership(owner);
@@ -50,7 +50,6 @@ contract InstantRewardsFactory is Ownable {
             avatarUrl,
             description
         );
-        instantRewards.transferOwnership(owner());
         emit InstantRewardsCreated(address(instantRewards), owner(), name);
         return address(instantRewards);
     }
