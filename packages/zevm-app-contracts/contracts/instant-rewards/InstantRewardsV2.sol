@@ -8,6 +8,9 @@ contract InstantRewardsV2 is InstantRewards {
 
     uint256 public start;
     uint256 public end;
+    string public promoUrl;
+    string public avatarUrl;
+    string public description;
 
     event TimeframeUpdated(uint256 start, uint256 end);
 
@@ -20,13 +23,19 @@ contract InstantRewardsV2 is InstantRewards {
         address owner,
         uint256 start_,
         uint256 end_,
-        string memory name_
+        string memory name_,
+        string memory promoUrl_,
+        string memory avatarUrl_,
+        string memory description_
     ) InstantRewards(signerAddress_, owner) {
         if (signerAddress_ == address(0)) revert InvalidAddress();
         if (start_ > end_) revert InvalidTimeframe();
         start = start_;
         end = end_;
         name = name_;
+        promoUrl = promoUrl_;
+        avatarUrl = avatarUrl_;
+        description = description_;
     }
 
     function isActive() public view returns (bool) {
@@ -48,7 +57,6 @@ contract InstantRewardsV2 is InstantRewards {
     }
 
     function withdraw(address wallet, uint256 amount) public override onlyOwner {
-        if (isActive()) revert InstantRewardStillActive();
         super.withdraw(wallet, amount);
     }
 }

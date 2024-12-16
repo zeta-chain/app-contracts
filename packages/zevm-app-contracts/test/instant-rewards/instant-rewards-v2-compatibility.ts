@@ -48,7 +48,16 @@ describe("Instant Rewards V2 Contract Compatibility test", () => {
     const start = (await ethers.provider.getBlock("latest")).timestamp + 1;
     const end = start + 1000;
 
-    instantRewards = await instantRewardsFactory.deploy(signer.address, owner.address, start, end, "Instant Rewards");
+    instantRewards = await instantRewardsFactory.deploy(
+      signer.address,
+      owner.address,
+      start,
+      end,
+      "Instant Rewards",
+      "http://img.com",
+      "http://avatar.com",
+      "Description"
+    );
 
     await instantRewards.deployed();
   });
@@ -322,7 +331,7 @@ describe("Instant Rewards V2 Contract Compatibility test", () => {
     expect(balanceOfUser).to.be.eq(userBalanceBefore.add(amountToWithdraw));
   });
 
-  it("Should fail if try to withdraw an active IR", async () => {
+  it("Should be able to withdraw an active IR", async () => {
     const amount = utils.parseEther("2");
     const amountToWithdraw = utils.parseEther("1");
     // transfer some funds to the contract
@@ -331,7 +340,6 @@ describe("Instant Rewards V2 Contract Compatibility test", () => {
       value: amount,
     });
 
-    const tx = instantRewards.withdraw(user.address, amountToWithdraw);
-    await expect(tx).to.revertedWith("InstantRewardStillActive");
+    await instantRewards.withdraw(user.address, amountToWithdraw);
   });
 });

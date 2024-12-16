@@ -2,12 +2,12 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable2Step.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-contract InstantRewards is Ownable2Step, Pausable, ReentrancyGuard, EIP712 {
+contract InstantRewards is Ownable, Pausable, ReentrancyGuard, EIP712 {
     bytes32 private constant CLAIM_TYPEHASH =
         keccak256("Claim(address to,uint256 sigExpiration,bytes32 taskId,uint256 amount)");
 
