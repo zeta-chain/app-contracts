@@ -17,7 +17,6 @@ describe("Instant Rewards Contract test", () => {
     const instantRewardsFactoryF = await ethers.getContractFactory("InstantRewardsFactory");
     instantRewardsFactory = (await instantRewardsFactoryF.deploy(owner.address)) as InstantRewardsFactory;
     await instantRewardsFactory.deployed();
-    await instantRewardsFactory.connect(owner).acceptOwnership();
   });
 
   it("Should deploy an IR instance", async () => {
@@ -25,7 +24,9 @@ describe("Instant Rewards Contract test", () => {
     const start = currentBlock.timestamp + 1000;
     const end = start + 1000;
     const name = "Instant Rewards";
-    const tx = instantRewardsFactory.connect(owner).createInstantRewards(signer.address, start, end, name);
+    const tx = instantRewardsFactory
+      .connect(owner)
+      .createInstantRewards(signer.address, start, end, name, "http://img.com", "http://avatar.com", "Description");
     await expect(tx).to.emit(instantRewardsFactory, "InstantRewardsCreated");
 
     const events = await instantRewardsFactory.queryFilter("InstantRewardsCreated");
@@ -47,7 +48,15 @@ describe("Instant Rewards Contract test", () => {
     const start = currentBlock.timestamp + 1000;
     const end = start + 1000;
     const name = "Instant Rewards";
-    const tx = instantRewardsFactory.createInstantRewards(signer.address, start, end, name);
+    const tx = instantRewardsFactory.createInstantRewards(
+      signer.address,
+      start,
+      end,
+      name,
+      "http://img.com",
+      "http://avatar.com",
+      "Description"
+    );
     await expect(tx).to.revertedWith("AccessDenied");
   });
 
@@ -58,7 +67,15 @@ describe("Instant Rewards Contract test", () => {
     const start = currentBlock.timestamp + 1000;
     const end = start + 1000;
     const name = "Instant Rewards";
-    const tx = instantRewardsFactory.createInstantRewards(signer.address, start, end, name);
+    const tx = instantRewardsFactory.createInstantRewards(
+      signer.address,
+      start,
+      end,
+      name,
+      "http://img.com",
+      "http://avatar.com",
+      "Description"
+    );
     await expect(tx).to.emit(instantRewardsFactory, "InstantRewardsCreated");
   });
 });
