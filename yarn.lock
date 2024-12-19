@@ -3765,15 +3765,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/networks@npm:7.0.0":
-  version: 7.0.0
-  resolution: "@zetachain/networks@npm:7.0.0"
-  dependencies:
-    dotenv: ^16.1.4
-  checksum: 96eab0095341ca4f14dec73d53da301e05d6af86dc51b452c3fb5d7fb52feed4be56bba6b5ce0ddf0cd5aa3461563e0e5fe1e507a7c60a37944b1f6449afb04a
-  languageName: node
-  linkType: hard
-
 "@zetachain/networks@npm:^4.0.0":
   version: 4.0.0
   resolution: "@zetachain/networks@npm:4.0.0"
@@ -3783,10 +3774,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/protocol-contracts@npm:7.0.0":
-  version: 7.0.0
-  resolution: "@zetachain/protocol-contracts@npm:7.0.0"
-  checksum: 550f46c38cc334c8fb62ff810bd5f92a2db778b4db4bc18eace971aaa63635d6ce99efda73df00b54638442afe807de654a81489bf8521ca76d23b0b328bcc11
+"@zetachain/networks@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@zetachain/networks@npm:9.0.0"
+  dependencies:
+    dotenv: ^16.1.4
+  checksum: cf2ac15338d849c55bfd27b95278ac7021c8caa3124a650c8ce4ba7422ff3fbe26c1dad3fedb63d1092a6614121d94cf6bb980ec33b8b8e0ae4888cee9bca2b8
+  languageName: node
+  linkType: hard
+
+"@zetachain/protocol-contracts@npm:8.0.0-rc1":
+  version: 8.0.0-rc1
+  resolution: "@zetachain/protocol-contracts@npm:8.0.0-rc1"
+  checksum: 43c767405ee3db9b2fd9813703a4d6aeb019872a24202ed0e641b3fe085b6fab72510f5c1d2c7e20bdb92b6bfcabc701cce14edbcc946aebdb588e2b1e0b64e2
   languageName: node
   linkType: hard
 
@@ -3797,9 +3797,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zetachain/toolkit@npm:10.0.0":
-  version: 10.0.0
-  resolution: "@zetachain/toolkit@npm:10.0.0"
+"@zetachain/toolkit@npm:12.0.0":
+  version: 12.0.0
+  resolution: "@zetachain/toolkit@npm:12.0.0"
   dependencies:
     "@inquirer/prompts": ^2.1.1
     "@inquirer/select": 1.1.3
@@ -3807,8 +3807,8 @@ __metadata:
     "@openzeppelin/contracts": ^4.9.6
     "@uniswap/v2-periphery": ^1.1.0-beta.0
     "@zetachain/faucet-cli": ^4.0.1
-    "@zetachain/networks": 7.0.0
-    "@zetachain/protocol-contracts": 7.0.0
+    "@zetachain/networks": ^9.0.0
+    "@zetachain/protocol-contracts": 8.0.0-rc1
     axios: ^1.4.0
     bech32: ^2.0.0
     bip39: ^3.1.0
@@ -3828,7 +3828,7 @@ __metadata:
     spinnies: ^0.5.1
     tiny-secp256k1: ^2.2.3
     ws: ^8.13.0
-  checksum: 21d240cb5c4ab570831ae2991526a30742033b42d3c91163a8282943885ebfaf0aa24e83483582804bbd561fbeb5bc713f728bfea39660b1b334601f9fcad152
+  checksum: 16cfea62c2003e07ca39c36f74ebcbeff9f32716618476ccb6121b64bc060faf8be3fdd979e38292336b8500e2cd097c9ddb02e1ba03ca7bab706ced423a1836
   languageName: node
   linkType: hard
 
@@ -15147,7 +15147,7 @@ __metadata:
     "@types/node": ^17.0.25
     "@typescript-eslint/eslint-plugin": ^5.20.0
     "@typescript-eslint/parser": ^5.20.0
-    "@zetachain/toolkit": 10.0.0
+    "@zetachain/toolkit": 12.0.0
     chai: ^4.3.6
     dotenv: ^16.0.0
     eslint: ^8.13.0
