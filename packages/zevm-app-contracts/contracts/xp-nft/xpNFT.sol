@@ -153,7 +153,7 @@ contract ZetaXP is ERC721Upgradeable, Ownable2StepUpgradeable, EIP712Upgradeable
         emit NFTUpdated(owner, tokenId, updateData.tag);
     }
 
-    function _transfer(address from, address to, uint256 tokenId) internal override {
+    function _transfer(address from, address to, uint256 tokenId) internal virtual override {
         revert TransferNotAllowed();
     }
 }
