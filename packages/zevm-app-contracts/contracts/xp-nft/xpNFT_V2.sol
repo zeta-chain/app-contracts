@@ -20,7 +20,7 @@ contract ZetaXP_V2 is ZetaXP {
     // Event for Level Set
     event LevelSet(address indexed sender, uint256 indexed tokenId, uint256 level);
 
-    function version() public pure override returns (string memory) {
+    function version() public pure virtual override returns (string memory) {
         return "2.0.0";
     }
 
