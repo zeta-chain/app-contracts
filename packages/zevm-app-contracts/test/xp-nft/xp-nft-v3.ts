@@ -72,7 +72,7 @@ describe("XP NFT V3 Contract test", () => {
     return getTokenIdFromRecipient(receipt);
   };
 
-  it("Should update NFT level", async () => {
+  it("Should transfer successfully", async () => {
     const user2 = addrs[0];
     const sampleNFT2 = { ...sampleNFT, to: user2.address };
 
